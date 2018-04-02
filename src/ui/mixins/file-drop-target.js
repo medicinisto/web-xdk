@@ -8,8 +8,9 @@
 import ImageModel from '../messages/image/layer-image-message-model';
 import FileModel from '../messages/file/layer-file-message-model';
 import CarouselModel from '../messages/carousel/layer-carousel-message-model';
+import mixins from './index';
 
-module.exports = {
+mixins.FileDropTarget = module.exports = {
   properties: {
     /**
      * By default, this widget supports dropping Files from your file system to send them as Messages.

@@ -1,3 +1,4 @@
+/* eslint-disable */
 if (window.Notification) {
   describe('layer-notifier', function() {
     var el, testRoot, client, conversation, message, notification;
@@ -9,7 +10,7 @@ if (window.Notification) {
     beforeEach(function() {
       client = new Layer.init({
         appId: 'Fred'
-      });
+      }).on('challenge', function() {});
       client.user = new Layer.Core.Identity({
         userId: 'FrodoTheDodo',
         id: 'layer:///identities/FrodoTheDodo',

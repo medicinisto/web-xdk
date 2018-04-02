@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('layer-avatar', function() {
   var el, testRoot, client;
 
@@ -8,7 +9,7 @@ describe('layer-avatar', function() {
   beforeEach(function() {
     client = new Layer.init({
       appId: 'Fred'
-    });
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       id: 'layer:///identities/FrodoTheDodo',
@@ -129,6 +130,38 @@ describe('layer-avatar', function() {
         })
     ];
     expect(el.classList.contains('layer-avatar-cluster')).toBe(true);
+  });
+
+  it("Should set layer-empty-avatar on nameless identity", function() {
+    el.users = [
+      new Layer.Core.Identity({userId: 'AA', id: 'layer:///identities/AA'})
+    ];
+    expect(el.childNodes[0].classList.contains('layer-empty-avatar')).toBe(true);
+
+    el.users = [
+      new Layer.Core.Identity({userId: 'AA', id: 'layer:///identities/AA'}),
+      new Layer.Core.Identity({userId: 'BB', id: 'layer:///identities/BB', displayName: "BB"})
+    ];
+    expect(el.childNodes[0].classList.contains('layer-empty-avatar')).toBe(false);
+    expect(el.childNodes[1].classList.contains('layer-empty-avatar')).toBe(true);
+  });
+
+  it("Should set layer-empty-group-avatar on nameless identities", function() {
+    el.users = [
+      new Layer.Core.Identity({userId: 'AA', id: 'layer:///identities/AA'}),
+      new Layer.Core.Identity({userId: 'BB', id: 'layer:///identities/BB'})
+    ];
+    expect(el.childNodes[0].classList.contains('layer-empty-group-avatar')).toBe(true);
+    expect(el.childNodes.length).toEqual(1);
+
+    el.users = [
+      new Layer.Core.Identity({userId: 'AA', id: 'layer:///identities/AA'}),
+      new Layer.Core.Identity({userId: 'BB', id: 'layer:///identities/BB'}),
+      new Layer.Core.Identity({userId: 'CC', id: 'layer:///identities/CC', displayName: "CC"})
+    ];
+    expect(el.childNodes[0].classList.contains('layer-empty-group-avatar')).toBe(false);
+    expect(el.childNodes[0].classList.contains('layer-empty-avatar')).toBe(false);
+    expect(el.childNodes[1].classList.contains('layer-empty-group-avatar')).toBe(true);
   });
 
   it("Should have a layer-presence widget with its user set", function() {

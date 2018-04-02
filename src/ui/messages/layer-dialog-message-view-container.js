@@ -87,7 +87,7 @@ registerComponent('layer-dialog-message-view-container', {
     },
 
     /**
-     * Title for the titlebar; comes from `this.properties.ui._getTitle()`
+     * Title for the titlebar; comes from `this.properties.ui.getTitle()`
      *
      * @property {String} title
      */
@@ -98,7 +98,7 @@ registerComponent('layer-dialog-message-view-container', {
     },
 
     /**
-     * Icon for the titlebar; comes from `this.properties.ui._getIconClass()`
+     * Icon for the titlebar; comes from `this.properties.ui.getIconClass()`
      *
      * @property {String} icon
      */
@@ -134,8 +134,8 @@ registerComponent('layer-dialog-message-view-container', {
 
 
     onRerender() {
-      this.icon = this.properties.ui._getIconClass();
-      this.title = this.properties.ui._getTitle();
+      this.icon = this.properties.ui.getIconClass();
+      this.title = this.properties.ui.getTitle();
     },
 
     /**

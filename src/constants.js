@@ -101,6 +101,14 @@ module.exports = {
    */
   STANDARD_MIME_TYPES: {
     TEXT: 'application/vnd.layer.text+json',
-    RESPONSESUMMARY: 'application/vnd.layer.responsesummary+json',
+    RESPONSESUMMARY: 'application/vnd.layer.responsesummary-v2+json',
+    RESPONSE_INITIAL_STATE: 'application/vnd.layer.initialresponsestate-v1+json',
+  },
+
+  CRDT_TYPES: {
+    FIRST_WRITER_WINS: 'FWW',
+    LAST_WRITER_WINS: 'LWW',
+    LAST_WRITER_WINS_NULLABLE: 'LWWN',
+    SET: 'Set',
   },
 };

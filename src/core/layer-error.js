@@ -176,6 +176,14 @@ LayerError.ErrorDictionary = {
   valueNotSupported: 'The value provided is not a supported value',
   permissionDenied: 'Operation not allowed on that object',
   adapterError: 'You must call Layer.init() before you can use an adapter',
+  eventHandlerRequired: 'You must provide an event handler for',
+  dbManagerNotLoaded: 'DbManager NOT imported. Persistence disabled!',
+  identityMissing: 'Identity Object required',
+  modelStateNotRegistered: 'Model state must be registered to be used',
+  invalidCRDTType: 'Invalid CRDT Type; use Layer.Constants.CRDT_TYPES',
+  useBeforeMessageCreation: 'Must be done before creating a Message',
+  enabledForMissing: 'enabledFor is a required property',
+  invalidMimeType: 'MIME Type is invalid',
 };
 
 module.exports = Core.LayerError = LayerError;

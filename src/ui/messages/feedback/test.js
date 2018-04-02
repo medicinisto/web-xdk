@@ -30,8 +30,8 @@ describe('Feedback Message Components', function() {
     });
 
     client = new Layer.init({
-      appId: 'layer:///apps/staging/Fred'
-    });
+      appId: 'layer:///apps/staging/Fred',
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -92,7 +92,7 @@ describe('Feedback Message Components', function() {
         summary: "${customer} didn't like you",
         responseMessage: "${customer} didn't respond to you",
         placeholder: "got something to say, do ya?",
-        enabledFor: [client.user.id],
+        enabledFor: client.user.id,
       });
 
       model.generateMessage(conversation, function(m) {
@@ -107,7 +107,7 @@ describe('Feedback Message Components', function() {
         summary: "${customer} didn't like you",
         response_message: "${customer} didn't respond to you",
         placeholder: "got something to say, do ya?",
-        enabled_for: [client.user.id],
+        enabled_for: client.user.id,
       });
     });
 
@@ -127,7 +127,7 @@ describe('Feedback Message Components', function() {
               summary: "${customer} didn't like you",
               response_message: "${customer} didn't respond to you",
               placeholder: "got something to say, do ya?",
-              enabled_for: [client.user.id],
+              enabled_for: client.user.id,
             }),
           }
         ]
@@ -144,20 +144,18 @@ describe('Feedback Message Components', function() {
       expect(model.summary).toEqual("${customer} didn't like you");
       expect(model.responseMessage).toEqual("${customer} didn't respond to you");
       expect(model.placeholder).toEqual("got something to say, do ya?");
-      expect(model.enabledFor).toEqual([client.user.id]);
+      expect(model.enabledFor).toEqual(client.user.id);
     });
 
-    it("Should process the response", function() {
+    it("Should apply state changes to the model", function() {
       var model = new FeedbackModel({
-        enabledFor: [client.user.id]
+        enabledFor: client.user.id
       });
 
-      var responses = {};
-      responses[client.user.userId] = {
-        rating: 4,
-        comment: "hello"
-      };
-      model.responses._participantData = responses;
+      model.responses.addState('rating', 4);
+      model.responses.addState('comment', 'hello');
+      expect(model.rating).toEqual(0);
+
       model.parseModelResponses();
       expect(model.rating).toEqual(4);
       expect(model.comment).toEqual("hello");
@@ -169,7 +167,7 @@ describe('Feedback Message Components', function() {
         spyOn(Layer.Core.Conversation.prototype, "send");
 
         var model = new FeedbackModel({
-          enabledFor: [client.user.id]
+          enabledFor: client.user.id
         });
         model.generateMessage(conversation);
         model.message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
@@ -178,7 +176,10 @@ describe('Feedback Message Components', function() {
         StatusModel = Layer.Core.Client.getMessageTypeModelClass("StatusModel");
 
         // Run
+        jasmine.clock().install();
         model.sendFeedback();
+        jasmine.clock().tick(1000);
+        jasmine.clock().uninstall();
 
         // Posttest
         var args = Layer.Core.Conversation.prototype.send.calls.allArgs()[0];
@@ -193,11 +194,25 @@ describe('Feedback Message Components', function() {
         expect(JSON.parse(responsePart.body)).toEqual(jasmine.objectContaining({
           response_to: model.message.id,
           response_to_node_id: model.message.getRootPart().nodeId,
-          participant_data: {
-            rating: 2,
-            comment: "howdy ho",
-            sent_at: jasmine.any(String)
-          }
+          changes: [{
+            type: 'FWW',
+            operation: 'add',
+            name: 'rating',
+            value: 2,
+            id: jasmine.any(String)
+          }, {
+            type: 'FWW',
+            operation: 'add',
+            name: 'comment',
+            value: 'howdy ho',
+            id: jasmine.any(String)
+          }, {
+            type: 'FWW',
+            operation: 'add',
+            name: 'sent_at',
+            value: jasmine.any(String),
+            id: jasmine.any(String)
+          }]
         }));
         expect(textPart.mimeType).toEqual(StatusModel.MIMEType);
         expect(textPart.mimeAttributes.role).toEqual("status");
@@ -219,7 +234,7 @@ describe('Feedback Message Components', function() {
       el = document.createElement('layer-message-viewer');
       testRoot.appendChild(el);
       model = new FeedbackModel({
-        enabledFor: [client.user.id]
+        enabledFor: client.user.id
       });
 
       model.generateMessage(conversation, function(m) {
@@ -300,7 +315,7 @@ describe('Feedback Message Components', function() {
         prompt: "all hail ${customer}",
         promptWait: "all wait ${customer}",
         summary: "all summaries for ${customer}",
-        enabledFor: [client.user.id]
+        enabledFor: client.user.id
       });
 
       model.generateMessage(conversation, function(m) {

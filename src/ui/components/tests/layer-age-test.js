@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('layer-age', function() {
   var el, d, client;
 
@@ -6,7 +7,7 @@ describe('layer-age', function() {
     jasmine.clock().install();
     client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
-    });
+    }).on('challenge', function() {});
     el = document.createElement('layer-age');
     Layer.Utils.defer.flush();
     d = new Date('2010-10-10');

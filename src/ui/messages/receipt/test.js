@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('Receipt Message Components', function() {
   var ReceiptModel, ProductModel, ChoiceModel, LocationModel;
   var conversation, message;
@@ -18,8 +19,8 @@ describe('Receipt Message Components', function() {
     });
 
     client = new Layer.init({
-      appId: 'layer:///apps/staging/Fred'
-    });
+      appId: 'layer:///apps/staging/Fred',
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -101,8 +102,8 @@ describe('Receipt Message Components', function() {
             imageUrls: ["https://layer.com/about/c"],
             description: "e",
             options: [
-              new ChoiceModel({choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]}),
-              new ChoiceModel({choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]})
+              new ChoiceModel({enabledFor: client.user.id, choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]}),
+              new ChoiceModel({enabledFor: client.user.id, choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]})
             ],
             currency: "doh",
             price: "f",
@@ -121,7 +122,7 @@ describe('Receipt Message Components', function() {
       expect(message.parts.size).toEqual(6);
       var rootPart = message.getRootPart();
       var choiceItems = message.getPartsMatchingAttribute({'role': 'options'});
-      var productItems = message.getPartsMatchingAttribute({'role': 'product-items'});
+      var productItems = message.getPartsMatchingAttribute({'role': 'product-item'});
       var shippingItems = message.getPartsMatchingAttribute({'role': 'shipping-address'});
       var billingItems = message.getPartsMatchingAttribute({'role': 'billing-address'});
 
@@ -149,11 +150,13 @@ describe('Receipt Message Components', function() {
 
       expect(choiceItems[0].mimeType).toEqual(ChoiceModel.MIMEType);
       expect(JSON.parse(choiceItems[0].body)).toEqual({
+        enabled_for: client.user.id,
         choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]
       });
 
       expect(choiceItems[1].mimeType).toEqual(ChoiceModel.MIMEType);
       expect(JSON.parse(choiceItems[1].body)).toEqual({
+        enabled_for: client.user.id,
         choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]
       });
 
@@ -220,7 +223,7 @@ describe('Receipt Message Components', function() {
           },
           {
           id: 'layer:///messages/' + uuid1 + '/parts/' + uuid5,
-          mime_type: ProductModel.MIMEType + '; role=product-items; node-id=a; parent-node-id=r',
+          mime_type: ProductModel.MIMEType + '; role=product-item; node-id=a; parent-node-id=r',
           body: JSON.stringify({
             name: "a",
             brand: "b",
@@ -238,12 +241,14 @@ describe('Receipt Message Components', function() {
           id: 'layer:///messages/' + uuid1 + '/parts/' + uuid6,
           mime_type:  ChoiceModel.MIMEType + "; role=options; parent-node-id=a",
           body: JSON.stringify({
+            enabled_for: client.user.id,
             choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]
           })
         }, {
           id: 'layer:///messages/' + uuid1 + '/parts/' + uuid7,
           mime_type:  ChoiceModel.MIMEType + "; role=options; parent-node-id=a",
           body: JSON.stringify({
+            enabled_for: client.user.id,
             choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]
           })
         }]
@@ -326,8 +331,8 @@ describe('Receipt Message Components', function() {
             imageUrls: ["https://layer.com/about/c"],
             description: "e",
             options: [
-              new ChoiceModel({choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]}),
-              new ChoiceModel({choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]})
+              new ChoiceModel({enabledFor: client.user.id, choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]}),
+              new ChoiceModel({enabledFor: client.user.id, choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]})
             ],
             currency: "doh",
             price: "f",

@@ -64,6 +64,7 @@
  * @extends Layer.Core.Root
  * @author Michael Kantor
  */
+import ContentTypeParser from '../../utils/content-type-parser';
 import { client as Client } from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
@@ -142,23 +143,16 @@ class MessagePart extends Root {
 
   _moveMimeTypeToAttributes(mimeType) {
     const attributes = this.mimeAttributes;
-    const parameters = mimeType.split(/\s*;\s*/);
-    if (!parameters) return;
-    const wasInitializing = this.isInitializing;
-    this.isInitializing = true;
-    mimeType = parameters.shift();
-    this.isInitializing = wasInitializing;
+    const parsedMimeType = ContentTypeParser(mimeType);
 
-    parameters.forEach((param) => {
-      const index = param.indexOf('=');
-      if (index === -1) {
-        attributes[param] = true;
-      } else {
-        const pName = param.substring(0, index);
-        const pValue = param.substring(index + 1);
-        attributes[pName] = pValue;
-      }
-    });
+
+    if (parsedMimeType) {
+      parsedMimeType.parameterList.forEach((parameter) => {
+        attributes[parameter.key] = parameter.value;
+      });
+      mimeType = parsedMimeType.type + '/' + parsedMimeType.subtype;
+    }
+
     return mimeType;
   }
 
@@ -216,7 +210,9 @@ class MessagePart extends Root {
    * @return {Layer.Core.Content} this
    */
   fetchContent(callback) {
-    if (this._content && !this.isFiring) {
+    if (this.body) {
+      callback(this.body);
+    } else if (this._content && !this.isFiring) {
       this.isFiring = true;
       const type = this.mimeType === 'image/jpeg+preview' ? 'image/jpeg' : this.mimeType;
       this._content.loadContent(type, (err, result) => {
@@ -237,16 +233,14 @@ class MessagePart extends Root {
    * @param {Function} callback
    */
   _fetchContentCallback(err, result, callback) {
+    this.isFiring = false;
     if (err) {
       this.trigger('content-loaded-error', err);
+    } else if (this.isTextualMimeType()) {
+      Util.fetchTextFromFile(result, text => this._fetchContentComplete(text, callback));
     } else {
-      this.isFiring = false;
-      if (this.isTextualMimeType()) {
-        Util.fetchTextFromFile(result, text => this._fetchContentComplete(text, callback));
-      } else {
-        this.url = URL.createObjectURL(result);
-        this._fetchContentComplete(result, callback);
-      }
+      this.url = URL.createObjectURL(result);
+      this._fetchContentComplete(result, callback);
     }
   }
 
@@ -302,7 +296,13 @@ class MessagePart extends Root {
    * @return {Layer.Core.Content} this
    */
   fetchStream(callback) {
+    // Locally generate External Content
+    if (this.__url) this._fetchStreamComplete(this.__url, callback);
+
+    // No external content
     if (!this._content) throw new Error(ErrorDictionary.contentRequired);
+
+    // Expired external content
     if (this._content.isExpired()) {
       this._content.refreshContent(url => this._fetchStreamComplete(url, callback));
     } else {
@@ -624,6 +624,8 @@ class MessagePart extends Root {
       if (message) {
         this._messageTypeModel = Client.createMessageTypeModel(message, this);
       }
+    } else if (this._messageTypeModel && !this._messageTypeModel.message) {
+      this._messageTypeModel.message = this._getMessage();
     }
     return this._messageTypeModel;
   }

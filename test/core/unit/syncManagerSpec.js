@@ -384,44 +384,6 @@ describe("The SyncManager Class", function() {
             // Posttest
             expect(syncManager._xhrHandleConnectionError).toHaveBeenCalledWith();
         });
-
-        it("Should write failed requests back database if the request wasn't removed from queue", function() {
-            spyOn(client.dbManager, "writeSyncEvents");
-            var result = {request: request};
-            spyOn(syncManager, "_getErrorState").and.returnValue('fred');
-
-            // Run
-            syncManager._xhrError(result);
-
-            // Posttest
-            expect(client.dbManager.writeSyncEvents).toHaveBeenCalledWith([request]);
-        });
-
-        it("Should write failed requests back database if the request wasn't removed from receiptQueue", function() {
-            spyOn(client.dbManager, "writeSyncEvents");
-            var result = {request: request};
-            syncManager.queue = [];
-            syncManager.receiptQueue = [request];
-
-            // Run
-            syncManager._xhrError(result);
-
-            // Posttest
-            expect(client.dbManager.writeSyncEvents).toHaveBeenCalledWith([request]);
-        });
-
-        it("Should not write failed requests back database if the request was removed", function() {
-            spyOn(client.dbManager, "writeSyncEvents");
-            var result = {request: request};
-            syncManager.queue = [];
-            syncManager.receiptQueue = [];
-
-            // Run
-            syncManager._xhrError(result);
-
-            // Posttest
-            expect(client.dbManager.writeSyncEvents).not.toHaveBeenCalled();
-        });
     });
 
     describe("The _xhrHandleServerUnavailableError() method", function() {

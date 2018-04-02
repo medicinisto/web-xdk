@@ -476,9 +476,25 @@ class SocketManager extends Root {
         callback: null,
         isChangesArray: false,
       });
+
+      // Once PLAT-3580 has been fixed, this entire call can be removed;
+      // Server should deliver presence as a `change` event in response to the above `Presence.update`
+      setTimeout(() => {
+        client.socketRequestManager.sendRequest({
+          data: {
+            method: 'Presence.sync',
+            data: { ids: [client.user.id] },
+          },
+          isChangesArray: true,
+          operation: 'READ',
+          target: null,
+          depends: [],
+          isPersistenceDisabled: true,
+        });
+      }, 200);
     }
 
-    if (timestamp) {
+    if (timestamp && client.isPresenceEnabled) {
       this.syncPresence(timestamp, callback);
     } else if (callback) {
       callback({ success: true });

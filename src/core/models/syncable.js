@@ -288,7 +288,7 @@ class Syncable extends Root {
   // See parent class for docs
   trigger(evtName, args) {
     this._clearObject();
-    super.trigger(evtName, args);
+    return super.trigger(evtName, args);
   }
 
   /**

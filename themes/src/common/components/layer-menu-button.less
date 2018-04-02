@@ -3,8 +3,6 @@
  */
 layer-menu-button {
   span {
-    top: -9px;
-    left: -9px;
     padding: 0px 8px;
     font-size: 20px;
     color: @menu-button-color;
@@ -12,6 +10,11 @@ layer-menu-button {
       opacity: 1;
       color: @menu-button-hover-color;
     }
+  }
+
+  display: none;
+  &.layer-has-menu {
+    display: block;
   }
 }
 .layer-list-item:hover layer-menu-button span {

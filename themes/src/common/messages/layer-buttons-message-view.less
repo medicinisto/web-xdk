@@ -21,10 +21,17 @@ layer-buttons-message-view {
     border-top-width: 0px;
   }
 
+  // Prevent cropping corners on safari
+  & > .layer-button-list > *:last-child {
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    overflow-y: hidden;
+  }
+
 
   layer-choice-button {
     layer-action-button {
-      border-right: solid 1px @color-g2;
+      border-right: solid 1px @color-role-heavy-border;
     }
     layer-action-button:last-child {
       border-right-width: 0px;

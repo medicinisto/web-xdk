@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('layer-conversation-list', function() {
   var el, testRoot, client, query;
 
@@ -10,7 +11,7 @@ describe('layer-conversation-list', function() {
     jasmine.clock().install();
     client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
-    });
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',

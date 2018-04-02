@@ -1,5 +1,71 @@
 # Web XDK Change Log
 
+## 4.0.0
+
+*Breaking Changes*
+
+* WEB-1421: Client now throws errors if a `challenge` event is not registered.  All apps should register this event even if only to handle reauthentication
+* Titled Message View Container now expects the Message Type View to provide `getTitle()` and `getIconClass()` methods rather than `_getTitle()` and `_getIconClass()` methods.
+* CRDT data structures replacing old Response Message datastructures.
+* Custom Messages must now register any state shared via Response Messages
+* Receipt Message has renamed Message Parts with Product Information from `product-items` to `product-item`
+
+All Changes:
+
+* WEB-1631: `Layer.Core.Message.deliveryStatus` and `Layer.Core.Message.readStatus` now more correctly handles case where `Layer.Core.Conversation` is still loading
+  from the server.
+* WEB-1421: Client now throws errors if a `challenge` event is not registered.  All apps should register this event even if only to handle reauthentication
+* WEB-1198: Filters out invalid Identities from `createConversation` and `addParticipants`
+* WEB-1619: Adds Anonymous avatar and group avatar graphics
+* WEB-1247: Handles scenario where External Content is being accessed prior to it having been created
+* WEB-1574: Now triggers `move` events and rerenders UI when adding Conversation Query results to individually fetched Conversations
+* If `isPersistenceEnabled` is used, but no `import @layerhq/core/db-manager` then an error is thrown
+* WEB-1267: Now correctly writes Receipt Requests to `indexedDB` and loads them on reloading the app (if `isPersistenceEnabled` is `true`)
+* Small adjustments to positioning of Conversation List Item's `<layer-menu-button />`
+* The FileUploadButton component now supports `onFilesSelected` and `onModelsGenerated` as properties that can be assigned event handler functions
+* Setting `messageViewer.messageViewContainerTagName = null` prior to `onAfterCreate` now correctly skips the use of any Message View Container
+  for a Custom Message Type (for use in managing sub-message-viewers).
+* Titled Message View Container now expects the Message Type View to provide `getTitle()` and `getIconClass()` methods rather than `_getTitle()` and `_getIconClass()` methods.
+* Fixes `model.source` for the File Message Type Model to refer to a `Layer.Core.MessagePart`
+* Message Type Models now trigger a `message-type-model:has-new-message` event when a locally generated model gets its Message
+* Message event `messages:sending` can now have `evt.cancel()` called on them to prevent the Message from being sent.
+* APIs and usage around Response Messages has changed; most developers do not directly create nor interact with these;
+  so consult docs if this is likely to impact you.
+* `layer-choice-model-generate-response-message` event is removed
+* `message-type-model:customization` event is still present for custom models, but no longer used
+* `message-type-model:change` events now correctly use `property` rather than `propertyName` in the change report.
+* `message-type-model:sending-response-message` event now lets apps customize Response Messages or prevent them from being sent
+* Custom Message Types now have the following additional life cycle methods:
+    * registerAllStates: Function for registering any states sent/received via Response Messages by this MessageType.
+    * initializeNewModel: Called durinacg initialization on any Message Type Model that is being instantiated from locally generated properties, and not from a Message
+    * initializeAnonymousModel: Called during initalization on any Message Type Model that is "anonymous" (i.e. it has a Message, but no MessagePart from which it gets its data and responses)
+* WEB-1735, WEB-1733: Provides a build using `import '@layerhq/web-xdk/index-lite'`
+    * Build comes without Webcomponents polyfil
+    * Build comes without emoji libraries
+    * Build comes without the ConversationView being a file drop target for sending attachments
+    * Build comes without the ConversationView detecting keystrokes and refocusing on the Compose Bar
+    * Changes to all builds:
+        * Refactors initialization for all Mixins
+        * Text Handlers that are missing are ignored and assumed to have been optimized out of the build
+        * Mixins within Component definitions may now be Strings naming the Mixin which can be imported later
+        * Mixins that lack definitions are ignored and assumed to have been optimized out of the build
+* WEB-1742: Removes End of List indicators from Conversation List and Identity List
+* WEB-1715: Adjustments to various uses of the color "blue" in the themes
+* WEB-1710: `open-file-action` of the File Message now able to open files smaller than 2KB
+* WEB-1723: Removes `bottom-border` between items in the Conversation List and Identity List; change `@color-role-list-item-border` in themes to restore or change this.
+* WEB-1722: Buttons now use bold font
+* WEB-1720: CSS fixes to Button Message corners for Safari
+* WEB-1714: Persistence now relies on existing deduplication and no longer removes Sync Requests from IndexedDB to prevent multiple tabs from firing requests
+* WEB-1725: DOM structure changes for Conversation Items within the Conversation List
+    * CSS changes around all `<layer-menu-button />` components
+    * CSS and DOM changes around all Conversation Items
+    * Changes to the position and contents of Conversation Item's Replaceable Content (which now includes both the date and menu buttons)
+* Deprecates `messageTypeModel.getParentModel()` method; use `messageTypeModel.parentModel` property instead
+* WEB-1711: Removes 450px fixed max width for messages; now only for Product Messages
+* WEB-1730: Adds `npm` `content-type-parser` package to parse and validate MIME Types (imported as a file rather than npm module due to IE11 babel support needs)
+* Fixes initialization of Presence / restoration of Presence
+* Removes Menu Buttons from Conversation List and Message List; these can be enabled by setting a function as the `getMenuItem` property on these components
+
 ## 1.0.0-pre2.8
 
 *Breaking Changes*

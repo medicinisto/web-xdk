@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe("Size Property Mixin", function() {
   var called;
   beforeAll(function() {
@@ -21,7 +22,7 @@ describe("Size Property Mixin", function() {
     called = false;
     client = Layer.init({
       appId: 'layer:///apps/staging/Fred'
-    });
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',

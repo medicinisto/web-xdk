@@ -91,7 +91,7 @@
  * @extends Layer.Core.MessageTypeModel
  */
 import { Client, MessagePart, MessageTypeModel, Root, MessageTypeModels } from '../../../core';
-import { uuid, hyphenate, camelCase, clone } from '../../../utils';
+import { hyphenate, camelCase, clone } from '../../../utils';
 import ChoiceModel from '../choice/layer-choice-message-model';
 import ChoiceItem from '../choice/layer-choice-message-model-item';
 
@@ -113,23 +113,28 @@ class ButtonsModel extends MessageTypeModel {
    * @param {Layer.Core.MessagePart[]} callback.parts
    */
   generateParts(callback) {
-    const body = {
-      buttons: this.buttons.map((button) => {
-        if (button.type === 'choice') {
-          const obj = clone(button);
-          const data = obj.data;
-          if (data) {
-            obj.data = {};
-            Object.keys(data).forEach((dataKey) => {
-              obj.data[hyphenate(dataKey, '_')] = data[dataKey];
-            });
-          }
-          return obj;
-        } else {
-          return button;
+    this._setupButtonModels();
+    const buttons = this.buttons.map((button) => {
+      if (button.type === 'choice') {
+        delete button.data.preselectedChoice; // temporary value to generate the initial response state
+        const obj = clone(button);
+        const data = obj.data;
+
+        if (data) {
+          obj.data = {};
+          Object.keys(data).forEach((dataKey) => {
+            obj.data[hyphenate(dataKey, '_')] = data[dataKey];
+          });
         }
-      }),
-    };
+        return obj;
+      } else {
+        return button;
+      }
+    });
+
+    // Call initBodyWithMetadata after initial_response_data has been added by the above code
+    const body = this.initBodyWithMetadata([]);
+    body.buttons = buttons;
 
     this.part = new MessagePart({
       mimeType: this.constructor.MIMEType,
@@ -159,7 +164,7 @@ class ButtonsModel extends MessageTypeModel {
   // If this.responses.part is set then _setupButtonModels was already called
   parseMessage() {
     super.parseMessage();
-    if (!this.responses.part) this._setupButtonModels();
+    this._setupButtonModels();
   }
 
   parseModelChildParts({ parts, init }) {
@@ -194,10 +199,15 @@ class ButtonsModel extends MessageTypeModel {
         button.data[camelCase(dataKey)] = buttonData[dataKey];
       });
 
-      // We don't yet have support for updating a Choice Model if one were to change on the server.
-      // Only generate the ChoiceModel if it doesn't already exist.
-      // Otherwise just make sure its `responses` get updated
-      if (!this.choices[button.data.responseName || 'selection']) {
+      // Make sure that each of our Anonymous Choice Models receives the Message
+      const currentChoice = this.choices[button.data.responseName || 'selection'];
+      if (currentChoice && !currentChoice.message && this.message) {
+        currentChoice.message = this.message;
+      }
+
+      // Generate the Choice Model if it doesn't yet exist (will eventually need to handle message updates
+      // that redefine these)
+      if (!currentChoice) {
 
         // The Choice Model will be instantiated with these properties
         const obj = {
@@ -205,7 +215,8 @@ class ButtonsModel extends MessageTypeModel {
           message: this.message,
           parentId: this.nodeId,
           responses: this.responses,
-          id: ButtonsModel.prefixUUID + uuid(this.message.id) + '/parts/buttonchoice' + index,
+          isAnonymous: true,
+          parentModel: this,
         };
 
         // Copy all data from button.data into the object for the Choice Model.
@@ -217,6 +228,8 @@ class ButtonsModel extends MessageTypeModel {
         const model = new ChoiceModel(obj);
 
         this.choices[model.responseName] = model;
+
+        // Any change in state for the anonymous Choice model will trigger a change event on this Button Model
         model.on('message-type-model:change', evt => this.trigger('message-type-model:change', evt));
 
         // Update the preselectedChoice based on any responses
@@ -331,4 +344,3 @@ Root.initClass.apply(ButtonsModel, [ButtonsModel, 'ButtonsModel', MessageTypeMod
 Client.registerMessageTypeModelClass(ButtonsModel, 'ButtonsModel');
 
 module.exports = ButtonsModel;
-

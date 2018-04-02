@@ -9,7 +9,7 @@ describe('layer-file-upload-button', function() {
   beforeEach(function() {
     client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
-    });
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',

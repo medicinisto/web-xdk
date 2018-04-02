@@ -11,17 +11,29 @@
  * Each Layer.Core.Message should only have a single instance of a Message Type Model;
  * to maintain this connection, they will share UUIDs.
  *
+ * Anonymous Models can be created but require a Message to function properly and to be destroyed when the message is destroyed
+ * (`model.message` may be set after the constructor):
+ *
+ * ```
+ * model = new SomeModelType({
+ *   isAnonymous: true,
+ *   prop1: value1,
+ *   message: message,
+ * });
+ * ```
+ *
  * @class  Layer.Core.MessageTypeModel
  * @extends Layer.Core.Root
  */
-import { client as Client } from '../../settings';
+import { client } from '../../settings';
 import Core from '../namespace';
 import Util from '../../utils';
 import Root from '../root';
 import Message from './message';
 import Identity from './identity';
 import { ErrorDictionary } from '../layer-error';
-import ResponseSummaryModel from './message-type-response-summary-model';
+import MessageTypeResponseSummary from './message-type-response-summary';
+import { STANDARD_MIME_TYPES } from '../../constants';
 
 class MessageTypeModel extends Root {
   /**
@@ -31,14 +43,25 @@ class MessageTypeModel extends Root {
    * @param {Object} options
    * @param {Layer.Core.Message} options.message
    * @param {Layer.Core.MessagePart} options.part
-   * @private
+   * @protected
    * @return {Layer.Core.MessageTypeModel}
    */
   constructor(options = {}) {
     if (!options.action) options.action = {};
 
     super(options);
-    this.responses = new ResponseSummaryModel();
+
+    if (this.part) {
+      this.id = MessageTypeModel.prefixUUID + this.part.id.replace(/^.*messages\//, '');
+      client._addMessageTypeModel(this);
+    }
+
+    if (this.isAnonymous) {
+      if (!options.parentModel) throw new Error('parentModel property requried for anonymous models');
+      this.responses = options.parentModel.responses;
+    } else {
+      this.responses = new MessageTypeResponseSummary({ parentModel: this });
+    }
 
     if (!this.customData) this.customData = {};
     this.currentMessageRenderer = this.constructor.messageRenderer;
@@ -48,10 +71,111 @@ class MessageTypeModel extends Root {
     if (this.message) {
       this._setupMessage();
       // Some anonymous models will have a message but not have a part to parse
-      if (this.part) {
+      if (!this.isAnonymous) {
         this.parseMessage();
+      } else {
+        this._initializeAnonymousModel();
       }
+    } else {
+      this._initializeNewModel();
     }
+  }
+
+  /**
+   * When initializing anonymous models, this handles the initialization.
+   *
+   * Called from the constructor.
+   *
+   * Part of the Lifecycle of Message Type Models, which consists of:
+   *
+   * 1. Import properties passed into the constructor
+   * 2. Link to the parentModel's Response Summary
+   * 3. Initialize structures
+   * 4. Register All States
+   * 5. Any custom initializeAnonymousModel provided by the model subclass
+   *
+   * @method _initializeAnonymousModel
+   * @private
+   */
+  _initializeAnonymousModel() {
+    this._registerAllStates();
+    this.initializeAnonymousModel();
+  }
+
+  /**
+   * Called from the Constructor when initializing an Anonymous Model.
+   *
+   * Provide your own custom logic in your class.
+   *
+   * @method initializeAnonymousModel
+   * @abstract
+   */
+  initializeAnonymousModel() {}
+
+  /**
+   * When initializing a new model from properties rather than from a Layer.Core.Message, this handles the initialization.
+   *
+   * Called from the constructor.
+   *
+   * Part of the Lifecycle of Message Type Models, which consists of:
+   *
+   * 1. Import properties passed into the constructor
+   * 2. Initialize a Response Summary
+   * 3. Initialize structures
+   * 4. Register All States
+   * 5. Any custom initializeNewModel provided by the model subclass
+   *
+   * @method _initializeNewModel
+   * @private
+   */
+  _initializeNewModel() {
+    this._registerAllStates();
+    this.initializeNewModel();
+  }
+
+  /**
+   * Called from the Constructor when initializing a new Model from Properties instead of from a Message.
+   *
+   * Provide your own custom logic in your class.
+   *
+   * @method initializeNewModel
+   * @abstract
+   */
+  initializeNewModel() {
+
+  }
+
+  /**
+   * Register all states that the Message Type Model will manage through Response Messages.
+   *
+   * Starts by registering all common states, and then calls {@link #registerAllStates}
+   *
+   * @method _registerAllStates
+   * @private
+   */
+  _registerAllStates() {
+    Object.keys(MessageTypeModel.customStates).forEach(stateName =>
+      this.responses.registerState(stateName, MessageTypeModel.customStates[stateName]));
+    this.registerAllStates();
+  }
+
+  /**
+   * Register all states that this Message Type Model will manage through Response Messages.
+   *
+   * Ignore this if your Message Type Model does not provide any custom states.
+   *
+   * ```
+   * registerAllStates() {
+   *   this.responses.registerState('my-state', Layer.Constants.CRDT_TYPES.FIRST_WRITER_WINS);
+   *   this.responses.registerState('my-other-state', Layer.Constants.CRDT_TYPES.LAST_WRITER_WINS);
+   * }
+   * ```
+   *
+   * @method registerAllStates
+   * @abstract
+   */
+  registerAllStates() {
+
   }
 
   /**
@@ -141,7 +265,7 @@ class MessageTypeModel extends Root {
     if (!conversation) throw new Error(ErrorDictionary.conversationMissing);
     if (!(conversation instanceof Root)) throw new Error(ErrorDictionary.conversationMissing);
     this.generateParts((parts) => {
-      this.childParts = parts;
+      this.childParts = parts.concat(this._generateInitialStateParts(parts));
       this.part.mimeAttributes.role = 'root';
       // this.part.mimeAttributes.xdkVersion = 'webxdk-' + version;
       this.message = conversation.createMessage({
@@ -149,14 +273,39 @@ class MessageTypeModel extends Root {
         parts: this.childParts,
       });
 
-      Client._removeMessageTypeModel(this);
+      client._removeMessageTypeModel(this);
       this.id = MessageTypeModel.prefixUUID + this.part.id.replace(/^.*messages\//, '');
-      Client._addMessageTypeModel(this);
-      this._setupMessage();
+      client._addMessageTypeModel(this);
       this.parseModelChildParts({ changes: this.childParts.map(part => ({ type: 'added', part })), isEdit: false });
+      this.trigger('message-type-model:has-new-message'); // do this before the callback so it fires before message.send() is called
       if (callback) callback(this.message);
     });
     return this;
+  }
+
+  /**
+   * After generating a Message, generate all of its `initial_response_state` Message Parts.
+   * These tell the server what the Message's Initial State should be; the server then initializes
+   * its `response_summary` Message Part from this (thus providing this Message Type MOdel with an initial {@link #responses} data.
+   *
+   * @method _generateInitialStateParts
+   * @private
+   * @param {Layer.Core.MessagePart[]} parts
+   */
+  _generateInitialStateParts(parts) {
+    const initialStateParts = [];
+    parts.forEach((part) => {
+      const model = part._messageTypeModel;
+      if (model && model.initialResponseState) {
+        initialStateParts.push(new Core.MessagePart({
+          mimeType: STANDARD_MIME_TYPES.RESPONSE_INITIAL_STATE +
+            `;role=initial_response_state;parent-node-id=${part.nodeId}`,
+          body: JSON.stringify(model.initialResponseState),
+        }));
+        model.initialResponseState = null;
+      }
+    });
+    return initialStateParts;
   }
 
   /**
@@ -196,6 +345,7 @@ class MessageTypeModel extends Root {
    * @param {Layer.Core.MessagePart[]} parts       Array of Parts that should be added to the Message
    */
   addChildModel(model, role, callback) {
+    model.parentModel = this;
     model.generateParts((moreParts) => {
       moreParts[0].mimeAttributes.role = role;
       moreParts[0].mimeAttributes['parent-node-id'] = this.part.nodeId;
@@ -269,22 +419,22 @@ class MessageTypeModel extends Root {
       this.childModels = this.childParts.map(part => part.createModel()).filter(model => model);
 
       this.childParts.forEach(part => part.on('messageparts:change', this._handlePartChanges, this));
+
+      // For any part added/removed call suitable handlers (and remove any older handlers which mostly only show up in unit tests)
+      this.message.off('messages:part-added', this._handlePartAdded, this);
+      this.message.off('messages:part-removed', this._handlePartRemoved, this);
+      this.message.on('messages:part-added', this._handlePartAdded, this);
+      this.message.on('messages:part-removed', this._handlePartRemoved, this);
     } else {
       this.childParts = [];
       this.childModels = [];
     }
 
-    // For any part added/removed call suitable handlers (and remove any older handlers which mostly only show up in unit tests)
-    this.message.off('messages:part-added', this._handlePartAdded, this);
-    this.message.off('messages:part-removed', this._handlePartRemoved, this);
-    this.message.on('messages:part-added', this._handlePartAdded, this);
-    this.message.on('messages:part-removed', this._handlePartRemoved, this);
-
     // If the message is destroyed, destroy the model as well
     this.message.on('destroy', this.destroy, this);
 
     // Register this model so that it can be retrieved instead of re-instantiated
-    Client._addMessageTypeModel(this);
+    client._addMessageTypeModel(this);
   }
 
   /**
@@ -314,7 +464,7 @@ class MessageTypeModel extends Root {
    */
   initBodyWithMetadata(fields) {
     const body = { };
-    const newFields = ['action', 'customData'].concat(fields);
+    const newFields = ['action', 'customData', 'initialResponseState'].concat(fields);
     newFields.forEach((fieldName) => {
       if (this.propertyHasValue(fieldName)) {
         if (Array.isArray(this[fieldName]) && this[fieldName].length === 0) return;
@@ -364,14 +514,19 @@ class MessageTypeModel extends Root {
    */
   parseMessage() {
     const responses = this.childParts.filter(part => part.mimeAttributes.role === 'response_summary')[0];
+    this.responses.part = responses;
 
     this.parseModelPart({
       payload: this.part.body ? JSON.parse(this.part.body) : {},
       isEdit: false,
     });
-    if (responses) this._parseModelResponses(responses);
+    this._registerAllStates();
+    if (responses) {
+      this._parseModelResponses(responses);
+    }
     this.parseModelChildParts({ changes: this.childParts.map(part => ({ type: 'added', part })), isEdit: false });
   }
+
 
   /**
    * This method parses the {@link #part} to extract the information that will be managed by the model.
@@ -399,7 +554,7 @@ class MessageTypeModel extends Root {
       if (modelName in this.constructor.prototype) {
         if (this[modelName] !== payload[propertyName]) {
           this._triggerAsync('message-type-model:change', {
-            propertyName: modelName,
+            property: modelName,
             oldValue: this[modelName],
             newValue: payload[propertyName],
           });
@@ -464,24 +619,12 @@ class MessageTypeModel extends Root {
    */
   _parseModelResponses(responsePart) {
     if (responsePart) {
-      const oldData = this.responses._participantData;
       if (this.responses.parseResponsePart(responsePart)) {
         this.parseModelResponses(); // Call the public method that lets each model update its state
-        this._triggerAsync('message-type-model:change', {
-          propertyName: 'responses._participantData',
-          oldValue: oldData,
-          newValue: this.responses._participantData,
-        });
       }
     } else {
-      const oldData = this.responses._participantData;
       this.responses.reset();
       this.parseModelResponses(); // Call the public method that lets each model update its state
-      this._triggerAsync('message-type-model:change', {
-        propertyName: 'responses._participantData',
-        oldValue: oldData,
-        newValue: this.responses._participantData,
-      });
     }
   }
 
@@ -644,12 +787,12 @@ class MessageTypeModel extends Root {
    * @method _getBubbleEventsTo
    */
   _getBubbleEventsTo() {
-    return Client;
+    return client;
   }
 
   // Parent method docuemnts this
   destroy() {
-    Client._removeMessageTypeModel(this);
+    client._removeMessageTypeModel(this);
     delete this.message;
     super.destroy();
   }
@@ -825,16 +968,42 @@ class MessageTypeModel extends Root {
     return this.part ? this.part.parentId : this.__parentId;
   }
 
-  __getMessageSender() {
-    return this.message ? this.message.sender : Client.user;
+  // See parentModel property docs below
+  __getParentModel() {
+    if (this.__parentModel) return this.__parentModel;
+    const parentId = this.parentId;
+    const part = parentId ? this.message.findPart(aPart => aPart.nodeId === parentId) : null;
+    return part ? part.createModel() : null;
   }
 
+  // See messageSender property docs below
+  __getMessageSender() {
+    return this.message ? this.message.sender : client.user;
+  }
+
+  // See messageSentAt property docs below
   __getMessageSentAt() {
     return this.message ? this.message.sentAt : null;
   }
 
+  // See messageReceipientStatus property docs below
   __getMessageRecipientStatus() {
     return this.message ? this.message.recipientStatus : null;
+  }
+
+  // See typeLabel property docs below
+  __getTypeLabel() {
+    return this.constructor.LabelSingular;
+  }
+
+  // Any time the part property is set, tell that part its associated with this model
+  __updatePart(part) {
+    part._messageTypeModel = this;
+  }
+
+  // Any time the Message property is set, call {@link #_setupMessage}
+  __updateMessage(message) {
+    this._setupMessage();
   }
 
   /**
@@ -842,11 +1011,10 @@ class MessageTypeModel extends Root {
    *
    * @method getParentModel
    * @returns {Layer.Core.MessageTypeModel}
+   * @deprecated use `this.parentModel` property instead
    */
   getParentModel() {
-    const parentId = this.parentId;
-    const part = parentId ? this.message.findPart(aPart => aPart.nodeId === parentId) : null;
-    return part ? part.createModel() : null;
+    return this.parentModel;
   }
 
   /**
@@ -872,13 +1040,19 @@ class MessageTypeModel extends Root {
   }
 
   toString() {
-    return `[${this.constructor.name} ${this.id}]`;
-  }
-
-  __getTypeLabel() {
-    return this.constructor.LabelSingular;
+    return `[${this.getModelName()} ${this.id}]`;
   }
 }
+
+/**
+ * An anonymous Message Type Model is one that does not have a Layer.Core.MessagePart that it listens to.
+ *
+ * This typically happens when a Message Type Model is represented by only a small part of a Message Part, and that Message Part
+ * actually represents some Parent Model.
+ *
+ * @property {Boolean}
+ */
+MessageTypeModel.prototype.isAnonymous = false;
 
 /**
  * Unique identifier, derived from the associated Part ID.
@@ -896,6 +1070,13 @@ MessageTypeModel.prototype.id = '';
 MessageTypeModel.prototype.parentId = null;
 
 /**
+ * Property to access the Parent Model of this model
+ *
+ * @property {Layer.Core.MessageTypeModel}
+ */
+MessageTypeModel.prototype.parentModel = null;
+
+/**
  * Node Identifier to uniquely identify this Message Part such that a Parent ID can reference it.
  *
  * @readonly
@@ -909,6 +1090,23 @@ MessageTypeModel.prototype.nodeId = null;
  * @property {Layer.Core.Message}
  */
 MessageTypeModel.prototype.message = null;
+
+/**
+ * Root Part defining this Model
+ *
+ * @property {Layer.Core.MessagePart}
+ */
+MessageTypeModel.prototype.part = null;
+
+/**
+ * The role of this model.
+ *
+ * The role is defined by the MessagePart for this Model, and
+ * determines what this Model means to its Parent Model in the Model tree.
+ *
+ * @property {String}
+ */
+MessageTypeModel.prototype.role = null;
 
 /**
  * Message Parts that are directly used by this model.
@@ -991,31 +1189,14 @@ MessageTypeModel.prototype.actionEvent = '';
 MessageTypeModel.prototype.actionData = null;
 
 /**
- * Root Part defining this Model
- *
- * @property {Layer.Core.MessagePart}
- */
-MessageTypeModel.prototype.part = null;
-
-/**
- * The role of this model.
- *
- * The role is defined by the MessagePart for this Model, and
- * determines what this Model means to its Parent Model in the Model tree.
- *
- * @property {String}
- */
-MessageTypeModel.prototype.role = null;
-
-/**
  * Stores all user responses which can be accessed using `getResponse` or `getResponses`
  *
  * ```
- * console.log(model.responses.getResponse(identityId, 'selection');
+ * console.log(model.responses.getState('selection', identityId);
  * > 'brain-eating-musically-inclined-zombie'
  * ```
  *
- * @property {Layer.Core.MessageTypeResponseSummaryModel}
+ * @property {Layer.Core.MessageTypeResponseSummary}
  */
 MessageTypeModel.prototype.responses = null;
 
@@ -1039,6 +1220,26 @@ MessageTypeModel.prototype.responses = null;
  * @property {String}
  */
 MessageTypeModel.prototype.currentMessageRenderer = '';
+
+/**
+ * The requested UI Component name for rendering this model in a Layer.UI.messages.MessageViewerExpanded.
+ *
+ * This property is set from the static `messageRendererExpanded` property provided by most Models.
+ *
+ * Some models may need this value to be dynamically looked up instead of static:
+ *
+ * ```
+ * __getCurrentMessageRenderer() {
+ *   if (this.xxx) {
+ *     return 'view1';
+ *   else {
+ *     return 'view2';
+ *   }
+ * }
+ * ```
+ *
+ * @property {String}
+ */
 MessageTypeModel.prototype.currentMessageRendererExpanded = '';
 
 /**
@@ -1126,6 +1327,28 @@ MessageTypeModel.MIMEType = '';
  */
 MessageTypeModel.messageRenderer = '';
 
+/**
+ * The UI Component to render this model in a Layer.UI.messages.MessageViewerExpanded
+ *
+ * @static
+ * @property {String} [messageRendererExpanded=]
+ * @abstract
+ */
+MessageTypeModel.messageRendererExpanded = '';
+
+/**
+ * Add Custom States that will be registered and understood across all Message Type Models
+ *
+ * ```
+ * Layer.Core.MessageTypeModel.customState['frodo-is-a-dodo'] = Layer.Constants.CRDT_TYPES.SET;
+ * Layer.Core.MessageTypeModel.customState['sauruman-the-wise-ass'] = Layer.Constants.CRDT_TYPES.FIRST_WRITER_WINS;
+ * ```
+ *
+ * @static
+ * @property {Object} customStates
+ */
+MessageTypeModel.customStates = {};
+
 MessageTypeModel.prefixUUID = 'layer:///MessageTypeModels/';
 MessageTypeModel._supportedEvents = [
 
@@ -1154,6 +1377,45 @@ MessageTypeModel._supportedEvents = [
   'message-type-model:customization',
 
   /**
+   * Customize the Response Message before it is sent.
+   *
+   * ```
+   * client.on('message-type-model:sending-response-message', function(evt) {
+   *   const { respondingToModel, responseModel } = evt;
+   *   if (respondingToModel.getModelName() === 'ChoiceModel') {
+   *     // Customize the Text displayed in the Response
+   *     responseModel.displayModel.text = "Something important just changed";
+   *
+   *     // Add additional changes
+   *     respondingToModel.addState('who-is-a-dodo', 'frodo-the-dodo');
+   *     respondingToModel.addState('who-is-a-odo', 'shape-shifter-from-deep-space-9');
+   * });
+   * ```
+   *
+   * You can prevent the Response Message from being sent using `evt.cancel()`:
+   *
+   * ```
+   * client.on('message-type-model:sending-response-message', function(evt) {
+   *    var preventedOperations = evt.responseModel.operations.filter(operation => operation.type === 'remove', operation.value === 'red');
+   *    if (preventedOperations.length) {
+   *      evt.cancel();
+   *    }
+   * });
+   * ```
+   *
+   * > *Note*
+   * >
+   * > While `evt.cancel()` can be used to prevent sending a Response Message, and therefore prevent sharing these state changes with other
+   * > participants, your local user's state *has* been changed, and is not automatically rolled back to its prior state.
+   *
+   * @event
+   * @param {Layer.Core.LayerEvent} evt
+   * @param {Layer.Core.MessageTypeModel} evt.respondingToModel
+   * @param {Layer.UI.messages.ResponseMessageModel} evt.responseModel
+   */
+  'message-type-model:sending-response-message',
+
+  /**
    * Any event used to customize the notification sent when sending a Message
    * representing this model.
    *
@@ -1168,6 +1430,15 @@ MessageTypeModel._supportedEvents = [
    * @param {Layer.Core.LayerEvent} evt
    */
   'message-type-model:notification',
+
+  /**
+   * An event that is triggered for locally created models once they have generated their message.
+   *
+   * @event
+   * @param {Layer.Core.LayerEvent} evt
+   */
+  'message-type-model:has-new-message',
 ].concat(Root._supportedEvents);
+
 Root.initClass.apply(MessageTypeModel, [MessageTypeModel, 'MessageTypeModel', Core]);
 module.exports = MessageTypeModel;

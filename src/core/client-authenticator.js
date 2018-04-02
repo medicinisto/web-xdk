@@ -38,7 +38,7 @@ import SyncManager from './sync-manager';
 import Identity from './models/identity';
 import { XHRSyncEvent, WebsocketSyncEvent } from './sync-event';
 import { LOCALSTORAGE_KEYS, ACCEPT } from '../constants';
-import Util, { xhr, logger } from '../utils';
+import Util, { xhr, logger, defer } from '../utils';
 
 const MAX_XHR_RETRIES = 3;
 
@@ -403,6 +403,7 @@ class ClientAuthenticator extends Root {
   _authenticate(nonce) {
     this._lastChallengeTime = Date.now();
     if (nonce) {
+      this._requireEvent('challenge');
       this.trigger('challenge', {
         nonce,
         callback: this.answerAuthenticationChallenge.bind(this),
@@ -598,7 +599,7 @@ class ClientAuthenticator extends Root {
     if (!this.dbManager) {
       if (!DbManager) {
         if (this.isPersistenceEnabled && this.isTrustedDevice) {
-          logger.error('DbManager NOT imported. Persistence disabled!');
+          throw new Error(ErrorDictionary.dbManagerNotLoaded);
         }
       } else {
         this.dbManager = new DbManager({
@@ -673,6 +674,7 @@ class ClientAuthenticator extends Root {
     if (!this.isReady) {
       this.isReady = true;
       this.trigger('ready');
+      defer(() => this._requireEvent('challenge')); // Require an event handler for reauthentication
     }
   }
 

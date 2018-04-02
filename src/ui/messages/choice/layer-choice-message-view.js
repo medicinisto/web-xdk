@@ -85,20 +85,20 @@ registerComponent('layer-choice-message-view', {
     /**
      * Provide a CSS class to the `<layer-titled-message-view-container />` to help it select an image to render.
      *
-     * @method _getIconClass
+     * @method getIconClass
      * @protected
      */
-    _getIconClass() {
+    getIconClass() {
       return 'layer-poll-message-view-icon';
     },
 
     /**
      * Provide a title to the `<layer-titled-message-view-container />`.
      *
-     * @method _getTitle
+     * @method getTitle
      * @protected
      */
-    _getTitle() {
+    getTitle() {
       return this.model.title;
     },
 

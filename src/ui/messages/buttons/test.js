@@ -29,8 +29,8 @@ describe('Button Message Components', function() {
     });
 
     client = Layer.init({
-      appId: 'layer:///apps/staging/Fred'
-    });
+      appId: 'layer:///apps/staging/Fred',
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -227,7 +227,7 @@ describe('Button Message Components', function() {
             data: {
               responseName: "isliked",
               allowReselect: true,
-              enabledFor: ["layer:///identities/a"]
+              enabledFor: "layer:///identities/a"
             }
           },
           {
@@ -238,7 +238,8 @@ describe('Button Message Components', function() {
             data: {
               responseName: "isstarred",
               allowDeselect: true,
-              customResponseData: {hey: "ho"}
+              customResponseData: {hey: "ho"},
+              enabledFor: "layer:///identities/a"
             }
           },
           {
@@ -249,7 +250,8 @@ describe('Button Message Components', function() {
             data: {
               responseName: "issuperstarred",
               allowMultiselect: true,
-              customResponseData: {hey: "ho"}
+              customResponseData: {hey: "ho"},
+              enabledFor: "layer:///identities/a"
             }
           }
         ],
@@ -274,7 +276,7 @@ describe('Button Message Components', function() {
       expect(isliked.allowMultiselect).toBe(false);
       expect(isliked.allowDeselect).toBe(false);
       expect(isliked.allowReselect).toBe(true);
-      expect(isliked.enabledFor).toEqual(["layer:///identities/a"]);
+      expect(isliked.enabledFor).toEqual("layer:///identities/a");
       expect(isliked.choices.map(function(choice) {return choice.id;})).toEqual(["l", "d"]);
 
       expect(issuperstarred).toEqual(jasmine.any(ChoiceModel));
@@ -294,7 +296,8 @@ describe('Button Message Components', function() {
             ],
             data: {
               responseName: "isliked",
-              allowReselect: true
+              allowReselect: true,
+              enabledFor: "layer:///identities/a"
             }
           },
           {
@@ -304,7 +307,8 @@ describe('Button Message Components', function() {
             ],
             data: {
               responseName: "isstarred",
-              allowDeselect: true
+              allowDeselect: true,
+              enabledFor: "layer:///identities/a"
             }
           }
         ],
@@ -330,7 +334,8 @@ describe('Button Message Components', function() {
             ],
             data: {
               response_name: "isliked",
-              allow_reselect: true
+              allow_reselect: true,
+              enabled_for: "layer:///identities/a"
             }
           },
           {
@@ -340,7 +345,8 @@ describe('Button Message Components', function() {
             ],
             data: {
               response_name: "isstarred",
-              allow_deselect: true
+              allow_deselect: true,
+              enabled_for: "layer:///identities/a"
             }
           }
         ]
@@ -372,7 +378,8 @@ describe('Button Message Components', function() {
                 ],
                 data: {
                   responseName: "isstarred",
-                  allowDeselect: true
+                  allowDeselect: true,
+                  enabledFor: "layer:///identities/a"
                 }
               }
             ]
@@ -397,7 +404,8 @@ describe('Button Message Components', function() {
           ],
           data: {
             responseName: "isstarred",
-            allowDeselect: true
+            allowDeselect: true,
+            enabledFor: "layer:///identities/a"
           }
         }
       ]);
@@ -553,7 +561,8 @@ describe('Button Message Components', function() {
             ],
             data: {
               responseName: "isstarred",
-              allowDeselect: true
+              allowDeselect: true,
+              enabledFor: client.user.id
             }
           }
         ]
@@ -601,7 +610,8 @@ describe('Button Message Components', function() {
             ],
             data: {
               responseName: "isstarred",
-              allowDeselect: true
+              allowDeselect: true,
+              enabledFor: client.user.id
             }
           }
         ]
@@ -643,7 +653,8 @@ describe('Button Message Components', function() {
             ],
             data: {
               responseName: "isstarred",
-              allowDeselect: true
+              allowDeselect: true,
+              enabledFor: "layer:///identities/a"
             }
           }
         ],
@@ -697,7 +708,8 @@ describe('Button Message Components', function() {
               allowDeselect: true,
               customResponseData: {
                 a: "b", c: "d"
-              }
+              },
+              enabledFor: client.user.id
             }
           }
         ],
@@ -723,6 +735,7 @@ describe('Button Message Components', function() {
       } else {
         buttons.childNodes[0].childNodes[0].click();
       }
+      jasmine.clock().tick(1000);
 
       var responsePart = responseMessage.getRootPart();
       var statusPart = responseMessage.findPart(function(part) {
@@ -737,13 +750,25 @@ describe('Button Message Components', function() {
       });
 
       expect(responsePart.nodeId.length > 0).toBe(true);
-      expect(responsePart.mimeType).toEqual('application/vnd.layer.response+json');
+      expect(responsePart.mimeType).toEqual('application/vnd.layer.response-v2+json');
       expect(JSON.parse(responsePart.body)).toEqual({
-        participant_data: {
-          isstarred: "fav",
-          a: "b",
-          c: "d"
+        changes: [{
+          operation: "add",
+          value: "fav",
+          name: "isstarred",
+          id: jasmine.any(String),
+          type: 'LWWN'
         },
+        {
+          operation: "add",
+          name: "custom_response_data",
+          id: jasmine.any(String),
+          type: 'LWWN',
+          value: {
+            a: "b",
+            c: "d"
+          }
+        }],
         response_to: message.id,
         response_to_node_id: model.part.nodeId
       });

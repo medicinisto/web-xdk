@@ -570,7 +570,11 @@ class DbManager extends Root {
 
         const transaction = this.db.transaction([tableName], 'readwrite');
         const store = transaction.objectStore(tableName);
-        transaction.oncomplete = transaction.onerror = callback;
+        if (callback) transaction.oncomplete = evt => callback(evt);
+        transaction.onerror = (evt) => {
+          Util.logger.error(evt);
+          if (callback) callback();
+        };
 
         data.forEach((item) => {
           try {
@@ -1229,7 +1233,9 @@ class DbManager extends Root {
   /**
    * Claim a Sync Event.
    *
-   * A sync event is claimed by locking the table,  validating that it is still in the table... and then deleting it from the table.
+   * A sync event is claimed by locking the table,  validating that it is still in the table.
+   * Currently its assumed that all operations are safe to fire more than once, so the request
+   * is not flagged as "firing/in-flight/etc..." and another tab may try to pick this up and fire it as well.
    *
    * @method claimSyncEvent
    * @param {Layer.Core.SyncEvent} syncEvent
@@ -1242,7 +1248,6 @@ class DbManager extends Root {
       const transaction = this.db.transaction(['syncQueue'], 'readwrite');
       const store = transaction.objectStore('syncQueue');
       store.get(syncEvent.id).onsuccess = evt => callback(Boolean(evt.target.result));
-      store.delete(syncEvent.id);
     });
   }
 

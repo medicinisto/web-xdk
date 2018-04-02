@@ -70,22 +70,22 @@ registerComponent('layer-receipt-message-view', {
     /**
      * Provide the Titled Message Container with an Icon CSS Class
      *
-     * @method _getIconClass
+     * @method getIconClass
      * @returns {String}
      * @protected
      */
-    _getIconClass() {
+    getIconClass() {
       return 'layer-receipt-message-view-icon';
     },
 
     /**
      * Provides the Titled Message Container with title text
      *
-     * @method _getTitle
+     * @method getTitle
      * @returns {String}
      * @protected
      */
-    _getTitle() {
+    getTitle() {
       return this.model.title || 'Order Confirmation';
     },
 

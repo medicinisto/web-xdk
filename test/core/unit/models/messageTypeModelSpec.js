@@ -16,7 +16,7 @@ describe("The Message Type Model class", function() {
       client = new Layer.init({
           appId: appId,
           url: "https://doh.com"
-      });
+      }).on('challenge', function() {});
       client.userId = "999";
       client.user = new Layer.Core.Identity({
         userId: client.userId,
@@ -52,8 +52,8 @@ describe("The Message Type Model class", function() {
   describe("The constructor", function() {
     it("Should initialize an empty Response Summary Model", function() {
       var model = new TextModel({});
-      expect(model.responses).toEqual(jasmine.any(Layer.Core.MessageTypeResponseSummaryModel));
-      expect(Layer.Core.MessageTypeResponseSummaryModel).not.toBe(null);
+      expect(model.responses).toEqual(jasmine.any(Layer.Core.MessageTypeResponseSummary));
+      expect(Layer.Core.MessageTypeResponseSummary).not.toBe(null);
     });
 
     it("Should initialize an empty childParts and childModels arrays", function() {
@@ -82,7 +82,7 @@ describe("The Message Type Model class", function() {
       var message = new Layer.Core.Message({
         parts: [{body: "{}", mimeType: FeedbackModel.MIMEType}]
       });
-      model = new FeedbackModel({ message: message });
+      model = new FeedbackModel({ message: message, part: message.filterParts()[0] });
       expect(Layer.Core.MessageTypeModel.prototype._setupMessage).toHaveBeenCalled();
     });
 
@@ -99,15 +99,74 @@ describe("The Message Type Model class", function() {
       var message = new Layer.Core.Message({
         parts: [{body: "{}", mimeType: FeedbackModel.MIMEType}]
       });
-      model = new FeedbackModel({ message: message });
+      var model2 = new FeedbackModel({ message: message, isAnonymous: true, parentModel: model });
       expect(Layer.Core.MessageTypeModel.prototype.parseMessage).not.toHaveBeenCalled();
 
       // Run 3
       var message = new Layer.Core.Message({
         parts: [{body: "{}", mimeType: FeedbackModel.MIMEType}]
       });
-      model = new FeedbackModel({ message: message, part: message.filterParts()[0] });
+      var model3 = new FeedbackModel({ message: message, part: message.filterParts()[0] });
       expect(Layer.Core.MessageTypeModel.prototype.parseMessage).toHaveBeenCalledWith();
+    });
+
+    it("Should call initializeNewModel rather than parseMessage only when initialized without a message", function() {
+      spyOn(Layer.Core.MessageTypeModel.prototype, "parseMessage");
+      spyOn(Layer.Core.MessageTypeModel.prototype, "initializeNewModel");
+      spyOn(Layer.Core.MessageTypeModel.prototype, "initializeAnonymousModel");
+      var TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel')
+      var model = new TextModel({});
+      expect(Layer.Core.MessageTypeModel.prototype.parseMessage).not.toHaveBeenCalled();
+      expect(Layer.Core.MessageTypeModel.prototype.initializeNewModel).toHaveBeenCalledWith();
+      expect(Layer.Core.MessageTypeModel.prototype.initializeAnonymousModel).not.toHaveBeenCalled();
+    });
+
+    it("Should call initializeAnonymousModel rather than parseMessage only when initialized with isAnonymous", function() {
+      var parentModel = new Layer.Core.MessageTypeModel({});
+      spyOn(Layer.Core.MessageTypeModel.prototype, "parseMessage");
+      spyOn(Layer.Core.MessageTypeModel.prototype, "initializeNewModel");
+      spyOn(Layer.Core.MessageTypeModel.prototype, "initializeAnonymousModel");
+      var TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
+      var message = new Layer.Core.Message({
+        parts: [{body: "{}", mimeType: TextModel.MIMEType}]
+      });
+      var model = new TextModel({
+        message: message,
+        isAnonymous: true,
+        parentModel: parentModel,
+      });
+      expect(Layer.Core.MessageTypeModel.prototype.parseMessage).not.toHaveBeenCalled();
+      expect(Layer.Core.MessageTypeModel.prototype.initializeNewModel).not.toHaveBeenCalled();
+      expect(Layer.Core.MessageTypeModel.prototype.initializeAnonymousModel).toHaveBeenCalledWith();
+    });
+
+    it("Should call registerAllStates for all types of initialization", function() {
+      var TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
+      spyOn(TextModel.prototype, "registerAllStates");
+      // test local models
+      var model1 = new TextModel({});
+      expect(TextModel.prototype.registerAllStates).toHaveBeenCalledWith();
+      TextModel.prototype.registerAllStates.calls.reset();
+
+      // test anonymous models
+      var message = new Layer.Core.Message({
+        parts: [{body: "{}", mimeType: TextModel.MIMEType}]
+      });
+      var model2 = new TextModel({
+        message: message,
+        isAnonymous: true,
+        parentModel: model1,
+      });
+      expect(TextModel.prototype.registerAllStates).toHaveBeenCalledWith();
+      TextModel.prototype.registerAllStates.calls.reset();
+
+      // test message models
+      var model3 = new TextModel({
+        message: message,
+        part: message.filterParts()[0]
+      });
+      expect(TextModel.prototype.registerAllStates).toHaveBeenCalledWith();
+      TextModel.prototype.registerAllStates.calls.reset();
     });
   });
 
@@ -127,7 +186,7 @@ describe("The Message Type Model class", function() {
   describe("The generateMessage() method", function() {
     it("Should do nothing but call the callback if there is already a message", function() {
       var m = conversation.createMessage("Hello");
-      var model = new TextModel({ message: m });
+      var model = new TextModel({ message: m, part: m.filterParts()[0] });
       spyOn(conversation, "createMessage");
       var spy = jasmine.createSpy("spyme");
 
@@ -229,12 +288,33 @@ describe("The Message Type Model class", function() {
     });
 
     it("Should call _parseModelResponses and parseModelResponses if there are responses", function() {
-      message.addPart(new Layer.Core.MessagePart({mimeType: Layer.Constants.STANDARD_MIME_TYPES.RESPONSESUMMARY + ';role=response_summary;parent-node-id=' + message.findPart().nodeId, body: JSON.stringify({participant_data: {hey: {ho: "there"}}})}));
+      message.addPart(new Layer.Core.MessagePart({
+        mimeType: Layer.Constants.STANDARD_MIME_TYPES.RESPONSESUMMARY + '; parent-node-id=' + message.filterParts()[0].nodeId + '; role=response_summary',
+        body: JSON.stringify({
+          '999': {
+            hey: {
+              adds: [{value: "ho", ids: ["abc"]}],
+              removes: []
+            }
+          }
+        })
+      }));
       var model = new TextModel({ message: message, part: message.findPart() });
+      model.responses.registerState('hey', Layer.Constants.CRDT_TYPES.LAST_WRITER_WINS);
       model._setupMessage();
       spyOn(model, "_parseModelResponses").and.callThrough();
       spyOn(model, "parseModelResponses").and.callThrough();
-      model.responses._participantData.hey.ho = "hum";
+      message.parts.add(new Layer.Core.MessagePart({
+        mimeType: Layer.Constants.STANDARD_MIME_TYPES.RESPONSESUMMARY + '; parent-node-id=' + message.filterParts()[0].nodeId + '; role=response_summary',
+        body: JSON.stringify({
+          '999': {
+            hey: {
+              adds: [{value: "ho2", ids: ["abcd"]}],
+              removes: ["abc"]
+            }
+          }
+        })
+      }));
 
       // Run
       model.parseMessage();
@@ -329,11 +409,12 @@ describe("The Message Type Model class", function() {
       var ProductModel = Layer.Core.Client.getMessageTypeModelClass('ProductModel');
       model.part = new Layer.Core.MessagePart({body: JSON.stringify({description: "hello"}), mimeType: ProductModel.MIMEType });
       spyOn(model, "_triggerAsync").and.callThrough();
+      model.responses.registerState('favorite', Layer.Constants.CRDT_TYPES.FIRST_WRITER_WINS);
       model.parseMessage();
 
       // Pretest
       expect(model._triggerAsync).toHaveBeenCalledWith("message-type-model:change", {
-        propertyName: "description",
+        property: "description",
         oldValue: "hello there",
         newValue: "hello"
       });
@@ -341,10 +422,13 @@ describe("The Message Type Model class", function() {
 
       // Run
       message.addPart(new Layer.Core.MessagePart({
-        mimeType: "application/vnd.layer.responsesummary+json; parent-node-id=" + model.nodeId + "; role=response_summary",
+        mimeType: "application/vnd.layer.responsesummary-v2+json; parent-node-id=" + model.nodeId + "; role=response_summary",
         body: JSON.stringify({
-          participant_data: {
-            userA: { favorite: true }
+          "layer:///identities/999": {
+            favorite: {
+              adds: [{value: true, ids: ["abc"]}],
+              removes: []
+            }
           }
         })
       }));
@@ -352,11 +436,10 @@ describe("The Message Type Model class", function() {
 
       // Posttest
       expect(model._triggerAsync).toHaveBeenCalledWith("message-type-model:change", {
-        propertyName: 'responses._participantData',
-        oldValue: {},
-        newValue: {
-          userA: { favorite: true }
-        }
+        property: 'responses.favorite',
+        oldValue: null,
+        newValue: true,
+        identityId: 'layer:///identities/999'
       });
     });
 

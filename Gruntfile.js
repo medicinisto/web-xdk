@@ -216,7 +216,7 @@ module.exports = function (grunt) {
         options: {
           'builtin-classes': false,
           'warnings': ['-no_doc', '-dup_member', '-link_ambiguous', '-cat_class_missing'],
-          'external': ['HTMLTemplateElement', 'Websocket', 'Blob', 'KeyboardEvent', 'DocumentFragment', 'IDBVersionChangeEvent', 'IDBKeyRange', 'IDBDatabase', 'File', 'Canvas', 'CustomEvent', 'Set'],
+          'external': ['HTMLTemplateElement', 'Websocket', 'Blob', 'KeyboardEvent', 'DocumentFragment', 'IDBVersionChangeEvent', 'IDBKeyRange', 'IDBDatabase', 'File', 'Canvas', 'CustomEvent', 'Set', 'Uint8Array'],
           'title': 'Layer UI for Web - API Documentation',
           'categories': ['jsduck-config/categories.json'],
           'head-html': HTML_HEAD,
@@ -714,20 +714,6 @@ module.exports = function (grunt) {
         } else {
           folderName = "ui_tests";
         }
-      /*
-        var folderName = file.replace(/src\/ui\/?(.*?)\/.*$/, "$1");
-        var componentFolderName = file.replace(/src\/ui\/components\/?(.*?)\/.*$/, "$1");
-
-        // Arbitrary subdivision of the components folder which has too many tests for IE11
-        if (componentFolderName === 'tests') {
-          if (file.match(/(-list|-item)(-test)?.js/)) {
-            folderName += '-lists';
-          }
-        }
-
-        if (folderName === 'ui-utils' || folderName === 'handlers') folderName = 'mixins';
-        if (folderName === 'messages') folderName = 'components';
-*/
 
         if (!scripts[folderName]) scripts[folderName] = [];
         scripts[folderName].push(scriptTag);
@@ -895,6 +881,5 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['build']);
 
   // Open a port for running tests and rebuild whenever anything interesting changes
-  grunt.registerTask("develop", ["connect:develop", "watch"]);
+  grunt.registerTask("develop", ["connect:develop", "debug", "watch"]);
 };
-

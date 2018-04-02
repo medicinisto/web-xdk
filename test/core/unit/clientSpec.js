@@ -220,6 +220,10 @@ describe("The Client class", function() {
             it("Should return identities by server object", function() {
                expect(client._fixIdentities([{user_id: userIdentity2.userId, id: userIdentity2.id, display_name: userIdentity2.displayName}])).toEqual([userIdentity2]);
             });
+
+            it("Should filter out invalid Identities", function() {
+                expect(client._fixIdentities([{}])).toEqual([]);
+            });
         });
 
 

@@ -124,6 +124,7 @@
  * @class  Layer.Core.Message
  * @extends Layer.Core.Syncable
  */
+import ContentTypeParser from '../../utils/content-type-parser';
 import { client as Client } from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
@@ -302,6 +303,12 @@ class Message extends Syncable {
         newValue: change.newValue,
         part: evt.target,
       });
+
+      // A MIME Type change is equivalent to removing the old part and adding a new part for some use cases
+      if (change.property === 'mimeType') {
+        this._triggerAsync('messages:part-removed', { part: evt.target });
+        this._triggerAsync('messages:part-added', { part: evt.target });
+      }
     });
   }
 
@@ -389,6 +396,11 @@ class Message extends Syncable {
       throw new Error(ErrorDictionary.alreadySent);
     }
 
+    this.parts.forEach((part) => {
+      if (!ContentTypeParser(part.mimeType)) {
+        throw new Error(ErrorDictionary.invalidMimeType + ': ' + part.mimeType);
+      }
+    });
 
     if (conversation.isLoading) {
       conversation.once(conversation.constructor.eventPrefix + ':loaded', () => this.send(notification));
@@ -416,7 +428,10 @@ class Message extends Syncable {
       Client._addMessage(this);
 
       // allow for modification of message before sending
-      this.trigger('messages:sending', { notification });
+      const evt = this.trigger('messages:sending', { notification, cancelable: true });
+      if (evt.canceled) {
+        return;
+      }
 
       const data = {
         parts: new Array(this.parts.size),
@@ -1179,6 +1194,17 @@ Message._supportedEvents = [
    *   if (evt.target.getModelName() === 'ResponseModel') {
    *     evt.detail.notification.text = evt.detail.notification.title = '';
    *   }
+   * });
+   * ```
+   *
+   * You may also use this event to prevent the message from being sent; typically you should destroy the message after.
+   *
+   * ```
+   * client.on('messages:sending', function(evt) {
+   *   if (evt.target.getModelName() === 'ResponseModel') {
+   *     evt.cancel();
+   *     evt.target.destroy();
+   *    }
    * });
    * ```
    *

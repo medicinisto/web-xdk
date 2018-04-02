@@ -24,7 +24,7 @@ module.exports.handlers = handlers;
  */
 module.exports._setupOrderedHandlers = () => {
   handlersOrdered = Object.keys(handlers).filter(handlerName =>
-    handlers[handlerName].enabled)
+    handlers[handlerName].enabled && handlers[handlerName].handler)
     .map(handlerName => handlers[handlerName])
     .sort((a, b) => {
       if (a.order > b.order) return 1;
@@ -56,13 +56,17 @@ module.exports.sanitizeText = text => (text || '')
  *
  * ```
  * this.innerHTML = Layer.UI.handlers.text.processText("hello <script> world I :-) at thee");
+ *
+ * // Emoji processing only:
+ * this.innerHTML = Layer.UI.handlers.text.processText("hello <script> world I :-) at thee", ['emoji']);
  * ```
  *
  * @method processText
  * @param {String} text
+ * @param {String[]} [handlerNames]  Uses the default handlers if names not passed
  * @returns {String}
  */
-module.exports.processText = (text) => {
+module.exports.processText = (text, handlerNames) => {
   if (text === '') return text;
   if (!handlersOrdered.length) module.exports._setupOrderedHandlers();
 
@@ -73,8 +77,12 @@ module.exports.processText = (text) => {
     text: processedText.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;'),
   };
 
+  const currentHandlers = handlerNames ?
+    handlersOrdered.filter(handler => handlerNames.indexOf(handler.name) !== -1) :
+    handlersOrdered;
+
   // Iterate over each handler, calling each handler.
-  handlersOrdered.forEach((handlerDef) => {
+  currentHandlers.forEach((handlerDef) => {
     handlerDef.handler(textData);
   });
   return textData.text;

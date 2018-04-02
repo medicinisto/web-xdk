@@ -1,11 +1,12 @@
+/* eslint-disable */
 describe("List Item Mixin", function() {
 
   var el, testRoot, client;
   beforeEach(function() {
     jasmine.clock().install();
     client = new Layer.init({
-      appId: 'layer:///apps/staging/Fred'
-    });
+      appId: 'layer:///apps/staging/Fred',
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       id: 'layer:///identities/FrodoTheDodo',

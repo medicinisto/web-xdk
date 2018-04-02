@@ -3,7 +3,7 @@
 /* eslint-disable-next-line */
 import { NetInfo } from 'react-native';
 import base64JS from 'base64-js';
-import Layer from './index';
+import Core from './index';
 /* istanbul ignore next */
 
 global.getNativeSupport = (module) => {
@@ -29,4 +29,4 @@ global.getNativeSupport = (module) => {
       return NetInfo;
   }
 };
-module.exports = Layer;
+module.exports = Core;

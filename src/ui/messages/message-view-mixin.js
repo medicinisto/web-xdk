@@ -5,8 +5,9 @@
  */
 
 import Constants from '../constants';
+import mixins from '../mixins';
 
-module.exports = {
+mixins.MessageViewMixin = module.exports = {
   properties: {
 
     /**
@@ -31,7 +32,13 @@ module.exports = {
         if (oldModel) oldModel.off(null, null, this);
         if (newModel) {
           newModel.on('message-type-model:change', this.onRerender, this);
-          newModel.on('message-type-model:customization', this._forwardEvent, this);
+          newModel.on([
+            'message-type-model:change',
+            'message-type-model:customization',
+            'message-type-model:sending-response-message',
+            'message-type-model:notification',
+            'message-type-model:has-new-message',
+          ].join(' '), this._forwardEvent, this); // not well tested
         }
       },
     },
@@ -124,6 +131,14 @@ module.exports = {
     cssClassList: {
       value: ['layer-message-type-view'],
     },
+
+    /**
+     * Hide any `replaceableContent` to the left and right of the Message Item to make more room for this Message.
+     *
+     * That typically means hiding any Avatars, Menu Buttons, etc...
+     *
+     * @property {Boolean} [hideMessageItemRightAndLeftContent=false]
+     */
     hideMessageItemRightAndLeftContent: {},
   },
   methods: {
@@ -175,6 +190,12 @@ module.exports = {
      *
      * If `evt.preventDefault()` was called on the UI event, call `evt.cancel()`
      *
+     * > *Note*
+     * >
+     * > This needs to be better documented in public docs... or removed
+     *
+     * @method _forwardEvent
+     * @private
      * @param {Layer.Core.LayerEvent} evt
      */
     _forwardEvent(evt) {

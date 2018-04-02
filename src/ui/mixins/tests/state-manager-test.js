@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe("State property", function() {
   var testRoot, client;
 
@@ -8,8 +9,8 @@ describe("State property", function() {
   beforeEach(function() {
     jasmine.clock().install();
     client = Layer.init({
-      appId: 'layer:///apps/staging/Fred'
-    });
+      appId: 'layer:///apps/staging/Fred',
+    }).on('challenge', function() {});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
   });

@@ -264,7 +264,7 @@ registerComponent('layer-replaceable-content', {
         node = document.createElement('div');
         node.classList.add('layer-replaceable-inner');
         node.innerHTML = result;
-        CustomElements.upgradeAll(node);
+        if (typeof CustomElements !== 'undefined') CustomElements.upgradeAll(node);
       } else {
         node = result;
       }

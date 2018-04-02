@@ -514,9 +514,12 @@ registerComponent('layer-message-list', {
      * ```
      * Layer.init({
      *   mixins: {
-     *     methods: {
-     *       getMessageItemTagName(message) {
-     *         return 'layer-message-item-received';
+     *     'layer-message-list': {
+     *       methods: {
+     *         mode: Layer.UI.registerComponent.MODES.OVERWRITE,
+     *         getMessageItemTagName(message) {
+     *           return 'layer-message-item-received';
+     *         }
      *       }
      *     }
      *   }

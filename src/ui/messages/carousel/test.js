@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('Carousel Message Components', function() {
   var CarouselModel, TextModel, client;
   var conversation;
@@ -28,8 +29,8 @@ describe('Carousel Message Components', function() {
     });
 
     client = new Layer.init({
-      appId: 'layer:///apps/staging/Fred'
-    });
+      appId: 'layer:///apps/staging/Fred',
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',

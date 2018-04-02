@@ -212,7 +212,7 @@ registerComponent('layer-message-viewer-expanded', {
         this.nodes.inner.appendChild(cardUI);
       }
 
-      CustomElements.takeRecords();
+      if (typeof CustomElements !== 'undefined') CustomElements.takeRecords();
       if (this.nodes.cardContainer) this.nodes.cardContainer._onAfterCreate();
       if (cardUI._onAfterCreate) cardUI._onAfterCreate();
       if (this.nodes.cardContainer) cardUI._setupContainerClasses();

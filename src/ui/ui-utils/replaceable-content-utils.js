@@ -65,4 +65,9 @@ module.exports = {
    * @property {String} senderNode Describes a `div` for rendering Message sender's name within a Message List
    */
   senderNode: '<div layer-id="sender" class="layer-sender-name"></div>',
+
+  /**
+   * @property {String} Age of the current Conversation, for rendering Conversation Items
+   */
+  conversationAge: '<layer-conversation-item-date layer-id="date"></layer-conversation-item-date>',
 };

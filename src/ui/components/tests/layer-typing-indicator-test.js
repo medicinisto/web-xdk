@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('layer-typing-indicator', function() {
   var el, testRoot, client, conversation, user1;
 
@@ -6,7 +7,7 @@ describe('layer-typing-indicator', function() {
 
     client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
-    });
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',

@@ -214,7 +214,27 @@ class ConversationsQuery extends Query {
     }
   }
 
+  _appendResults(results, fromDb) {
+    const oldData = this._firstRun ? this.data.map((item, index) => ({ item, index })) : [];
+    super._appendResults(results, fromDb);
+
+    oldData.forEach(({ item, index }) => {
+      const newIndex = this._getIndex(item.id);
+      if (newIndex !== index) {
+        this._triggerChange({
+          type: 'move',
+          target: this._getData(item),
+          query: this,
+          isChange: false,
+          fromIndex: index,
+          toIndex: newIndex,
+        });
+      }
+    });
+  }
+
   _handleAddEvent(name, evt) {
+
     // Filter out any Conversations already in our data
     const list = evt[name].filter(conversation => this._getIndex(conversation.id) === -1)
       .filter(obj => !this.filter || this.filter(obj));

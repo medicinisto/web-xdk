@@ -163,11 +163,11 @@ class WebsocketRequestManager {
     const body = Util.clone(data);
     body.request_id = 'r' + this._nextRequestId++;
     logger.debug(`Request ${body.request_id} is sending`);
-    if (callback) {
+    if (callback || isChangesArray) {
       this._requestCallbacks[body.request_id] = {
         request_id: body.request_id,
         date: Date.now(),
-        callback,
+        callback: callback || function f() {},
         isChangesArray,
         method: data.method,
         batchIndex: -1,

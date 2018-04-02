@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('layer-membership-item', function() {
   var el, testRoot, client;
 
@@ -8,8 +9,8 @@ describe('layer-membership-item', function() {
   beforeEach(function() {
     jasmine.clock().install();
     client = new Layer.init({
-      appId: 'Fred'
-    });
+      appId: 'Fred',
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       id: 'layer:///identities/FrodoTheDodo',

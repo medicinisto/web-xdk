@@ -96,14 +96,14 @@ registerComponent('layer-carousel-message-view', {
     /**
      * @experimental
      */
-    _getIconClass() {
+    getIconClass() {
       return '';
     },
 
     /**
      * @experimental
      */
-    _getTitle() {
+    getTitle() {
       return this.model.title;
     },
 

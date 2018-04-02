@@ -3,6 +3,7 @@ describe("The Message Type Response Summary class", function() {
   var appId = "Fred's App";
   var conversation,
       client,
+      user1, user2,
       requests;
 
   afterAll(function() {
@@ -15,137 +16,163 @@ describe("The Message Type Response Summary class", function() {
       client = new Layer.init({
           appId: appId,
           url: "https://doh.com"
-      });
+      }).on('challenge', function() {});
       client.userId = "999";
-      client.user = new Layer.Core.Identity({
-        userId: client.userId,
-        id: "layer:///identities/" + client.userId,
-        firstName: "first",
-        lastName: "last",
-        phoneNumber: "phone",
-        emailAddress: "email",
-        metadata: {},
-        publicKey: "public",
-        avatarUrl: "avatar",
-        displayName: "display",
-        syncState: Layer.Constants.SYNC_STATE.SYNCED,
-        isFullIdentity: true,
-        isMine: true
-      });
+      client.user = new Layer.Core.Identity({userId: 'userA'});
 
 
       client._clientAuthenticated();
       client._clientReady();
       client.onlineManager.isOnline = true;
 
+      user1 = client.user;
+      user2 = new Layer.Core.Identity({userId: 'userB'});
+
       conversation = Layer.Core.Conversation._createFromServer(responses.conversation2).conversation;
       requests.reset();
       client.syncManager.queue = [];
   });
   afterEach(function() {
+
       client.destroy();
       jasmine.Ajax.uninstall();
   });
 
   describe("The constructor", function() {
-    it("Should initialize participantData", function() {
-      expect(new Layer.Core.MessageTypeResponseSummaryModel({})._participantData).toEqual({});
+    it("Should initialize _trackers", function() {
+      expect(new Layer.Core.MessageTypeResponseSummary({})._trackers).toEqual({});
     });
   });
 
-  describe("The getResponse() method", function() {
-    var model, userId1, userId2;
+  describe("The getState() method", function() {
+    var parentModel, model, userId1, userId2;
     beforeEach(function() {
-      model = new Layer.Core.MessageTypeResponseSummaryModel({})
-      userId1 = 'userA';
-      userId2 = 'userB';
-      model._participantData = {};
-      model._participantData[userId1] = {
-        frodo: "dodo",
-        sauruman: "nincompoop"
+      parentModel = new Layer.Core.MessageTypeModel({});
+      model = parentModel.responses;
+      model.registerState('frodo', Layer.Constants.CRDT_TYPES.FIRST_WRITER_WINS);
+      model.registerState('sauruman', Layer.Constants.CRDT_TYPES.LAST_WRITER_WINS);
+      model.registerState('hey', Layer.Constants.CRDT_TYPES.FIRST_WRITER_WINS);
+      var body = {};
+      body[user2.id] = {};
+      body[user2.id].frodo = {
+        adds: [{value: 'modo', ids: ['aaaa']}],
+        removes: []
       };
-      model._participantData[userId2] = {
-        frodo: "modo",
-        bilbo: "bagged"
+      body[user2.id].sauruman = {
+        adds: [{value: 'nincompoop2', ids: ['aaaa']}],
+        removes: []
       };
+
+      model.parseResponsePart(new Layer.Core.MessagePart({
+        mimeType: Layer.Constants.STANDARD_MIME_TYPES.RESPONSESUMMARY,
+        body: JSON.stringify(body),
+      }));
+      model.addState('frodo', 'dodo');
+      model.addState('sauruman', 'nincompoop');
     });
+
     afterEach(function() {
       model.destroy();
     });
     it("Should return the specified result", function() {
-      expect(model.getResponse('frodo', userId1)).toEqual("dodo");
-      expect(model.getResponse('frodo', userId2)).toEqual("modo");
+      expect(model.getState('frodo', user1.id)).toEqual("dodo");
+      expect(model.getState('frodo', user2.id)).toEqual("modo");
     });
 
-    it("Should return null if key has no entry", function() {
-      expect(model.getResponse('bilbo', userId1)).toBe(null);
-      expect(model.getResponse('bilbo2', userId1)).toBe(null);
+    it("Should throw error if key is not registered", function() {
+      expect(function() {
+        expect(model.getState('bilbo', user1.id)).toBe(null);
+      }).toThrowError(Layer.Core.LayerError.ErrorDictionary.modelStateNotRegistered);
     });
 
     it("Should return null if identity has no entry", function() {
-      expect(model.getResponse('frodo', 'userC')).toBe(null);
+      expect(model.getState('frodo', 'layer:///identities/userC')).toBe(null);
     });
   });
 
-  describe("The getResponses() method", function() {
-    var model, userId1, userId2;
+  describe("The getStates() method", function() {
+    var model, parentModel;
     beforeEach(function() {
-      model = new Layer.Core.MessageTypeResponseSummaryModel({})
-      userId1 = 'userA';
-      userId2 = 'userB';
-      model._participantData = {};
-      model._participantData[userId1] = {
-        frodo: "dodo",
-        sauruman: "nincompoop",
-        empty: ""
+      parentModel = new Layer.Core.MessageTypeModel({});
+      model = parentModel.responses;
+      model.registerState('frodo', Layer.Constants.CRDT_TYPES.FIRST_WRITER_WINS);
+      model.registerState('sauruman', Layer.Constants.CRDT_TYPES.LAST_WRITER_WINS);
+      model.registerState('bilbo', Layer.Constants.CRDT_TYPES.FIRST_WRITER_WINS);
+
+      var body = {};
+      body[user2.id] = {};
+      body[user2.id].frodo = {
+        adds: [{value: 'modo', ids: ['bbbb']}],
+        removes: []
       };
-      model._participantData[userId2] = {
-        frodo: "modo",
-        bilbo: "bagged",
-        empty: "is how I feel"
+      body[user2.id].bilbo = {
+        adds: [{value: 'bagged', ids: ['ccccc']}],
+        removes: []
       };
+
+      model.parseResponsePart(new Layer.Core.MessagePart({
+        mimeType: Layer.Constants.STANDARD_MIME_TYPES.RESPONSESUMMARY,
+        body: JSON.stringify(body),
+      }));
+
+      model.addState('frodo', 'dodo');
+      model.addState('sauruman', 'nincompoop');
     });
     afterEach(function() {
       model.destroy();
     });
 
     it("Should return all values of frodo", function() {
-      expect(model.getResponses('frodo')).toEqual([
-        {identityId: userId1, value: 'dodo'},
-        {identityId: userId2, value: 'modo'}
+      expect(model.getStates('frodo', [user1.id, user2.id])).toEqual([
+        {identityId: user1.id, value: 'dodo'},
+        {identityId: user2.id, value: 'modo'}
       ]);
     });
 
     it("Should return all values of frodo for userB", function() {
-      expect(model.getResponses('frodo', [userId2])).toEqual([
-        {identityId: userId2, value: 'modo'}
+      expect(model.getStates('frodo', [user2.id])).toEqual([
+        {identityId: user2.id, value: 'modo'}
       ]);
     });
 
     it("Should return one value for bilbo and one for sauruman", function() {
-      expect(model.getResponses('bilbo')).toEqual([
-        {identityId: userId2, value: 'bagged'}
+      expect(model.getStates('bilbo', [user1.id, user2.id])).toEqual([
+        {identityId: user2.id, value: 'bagged'}
       ]);
 
-      expect(model.getResponses('sauruman')).toEqual([
-        {identityId: userId1, value: 'nincompoop'}
+      expect(model.getStates('sauruman', [user1.id, user2.id])).toEqual([
+        {identityId: user1.id, value: 'nincompoop'}
       ]);
     });
 
     it("Should return one value for bilbo and zero for sauruman for user2", function() {
-      expect(model.getResponses('bilbo', [userId2])).toEqual([
-        {identityId: userId2, value: 'bagged'}
+      expect(model.getStates('bilbo', [user2.id])).toEqual([
+        {identityId: user2.id, value: 'bagged'}
       ]);
 
-      expect(model.getResponses('sauruman', [userId2])).toEqual([
+      expect(model.getStates('sauruman', [user2.id])).toEqual([
       ]);
     });
+  });
 
-    it("Should return all empty values", function() {
-      expect(model.getResponses('empty')).toEqual([
-        {identityId: userId1, value: ""},
-        {identityId: userId2, value: "is how I feel"}
-      ]);
+  describe("The MultiIdentityStateTrackers", function() {
+    it("Should create one per registered state", function() {
+      // test 1
+      var model = new Layer.Core.MessageTypeModel({});
+      expect(model.responses._trackers).toEqual({});
+
+      // test 2
+      model.responses.registerState('hey', Layer.Constants.CRDT_TYPES.FIRST_WRITER_WINS);
+      expect(model.responses._trackers).toEqual({
+        hey: jasmine.any(Layer.Core.CRDT.CRDTMultiIdentityStateTracker)
+      });
+
+      // test 3
+      model.responses.registerState('ho', Layer.Constants.CRDT_TYPES.SET);
+      expect(model.responses._trackers).toEqual({
+        hey: jasmine.any(Layer.Core.CRDT.CRDTMultiIdentityStateTracker),
+        ho: jasmine.any(Layer.Core.CRDT.CRDTMultiIdentityStateTracker)
+      });
     });
   });
 });

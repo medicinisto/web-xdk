@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe("List Selection Mixin", function() {
 
   var el, testRoot, client, query;
@@ -5,8 +6,8 @@ describe("List Selection Mixin", function() {
   beforeEach(function() {
     jasmine.clock().install();
     client = new Layer.init({
-      appId: 'layer:///apps/staging/Fred'
-    });
+      appId: 'layer:///apps/staging/Fred',
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',

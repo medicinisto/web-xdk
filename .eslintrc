@@ -24,7 +24,7 @@
     "arrow-paren": ["as-needed", { "requireForBlockBody": true }],
     "react/no-children-prop": 0,
     "react/prop-types": 0,
-    "no-cond-assign": ["error", "except-parens"]
+    "no-cond-assign": [2, "except-parens"]
   },
   "env": {
       "browser": true,

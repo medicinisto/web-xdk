@@ -35,6 +35,7 @@
  */
 import { registerComponent } from './component';
 import Clickable from '../mixins/clickable';
+import { processText } from '../handlers/text/text-handlers';
 
 registerComponent('layer-action-button', {
   mixins: [Clickable],
@@ -61,7 +62,7 @@ registerComponent('layer-action-button', {
      */
     text: {
       set(value) {
-        this.nodes.button.innerText = value;
+        this.nodes.button.innerHTML = processText(value, ['emoji']);
       },
     },
 
@@ -72,7 +73,7 @@ registerComponent('layer-action-button', {
      */
     tooltip: {
       set(value) {
-        this.nodes.button.title = value;
+        this.nodes.button.title = processText(value, ['emoji']);
       },
     },
 

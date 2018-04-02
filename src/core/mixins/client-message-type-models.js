@@ -18,8 +18,61 @@ const MessageTypeModelNameHash = {};
 
 module.exports = {
   events: [
+    /**
+     * A property of this model has changed.
+     *
+     * ```
+     * client.on('message-type-model:change', function(evt) {
+     *    if (evt.target.getModelName() === 'ChoiceModel') {
+     *      var responseChanges = evt.getChangesFor('responses');
+     *      responseChanges.forEach(change => console.log(change.propertyName + " has changed from ', change.oldValue, ' to ', change.newValue);
+     *    }
+     * });
+     * ```
+     *
+     * @event
+     * @param {Layer.Core.LayerEvent} evt
+     */
     'message-type-model:change',
     'message-type-model:customization',
+
+    /**
+     * A Message has been created for this model, but has not yet been sent.
+     *
+     * ```
+     * client.on('message-type-model:has-new-message', function(evt) {
+     *    var model = evt.target;
+     *    var message = model.message;
+     *    message.addPart(new Layer.Core.MessagePart({mimeType: "text/note", body: "This part has been added"}));
+     * });
+     * ```
+     */
+    'message-type-model:has-new-message',
+
+    /**
+     * Customize the Response Message before it is sent.
+     *
+     * ```
+     * client.on('message-type-model:sending-response-message', function(evt) {
+     *   const { respondingToModel, responseModel } = evt;
+     *   if (respondingToModel.getModelName() === 'ChoiceModel') {
+     *     responseModel.displayModel.text = "Something important just changed";
+     *     responseModel.addOperations([new Layer.Core.CRDT.Changes({
+     *       operation: "add",
+     *       type: Layer.Constants.CRDT_TYPES.FIRST_WRITER_WINS,
+     *       name: 'my-custom-state',
+     *       value: 'frodo-the-dodo',
+     *       id: Layer.Utils.randomString(6)
+     *     })]);
+     * });
+     * ```
+     *
+     * @event
+     * @param {Layer.Core.LayerEvent} evt
+     * @param {Layer.Core.MessageTypeModel} evt.respondingToModel
+     * @param {Layer.UI.messages.ResponseMessageModel} evt.responseModel
+     */
+    'message-type-model:sending-response-message',
 
     /**
      * Any event used to customize the notification sent when sending a Message

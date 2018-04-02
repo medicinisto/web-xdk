@@ -60,12 +60,9 @@
  */
 import { client } from '../../settings';
 import Core from '../../core';
-import Constants from '../../constants';
 import UIConstants from '../constants';
 import { registerComponent } from './component';
 import HasQuery from '../mixins/has-query';
-import FocusOnKeydown from '../mixins/focus-on-keydown';
-import FileDropTarget from '../mixins/file-drop-target';
 import Throttler from '../mixins/throttler';
 import Utils from '../../utils';
 
@@ -74,7 +71,7 @@ import './layer-compose-bar';
 import './layer-typing-indicator';
 
 registerComponent('layer-conversation-view', {
-  mixins: [HasQuery, FocusOnKeydown, FileDropTarget, Throttler],
+  mixins: [HasQuery, 'FocusOnKeydown', 'FileDropTarget', Throttler],
   template: `
     <layer-message-list layer-id='list'></layer-message-list>
     <layer-typing-indicator layer-id='typingIndicators'></layer-typing-indicator>
@@ -587,16 +584,6 @@ registerComponent('layer-conversation-view', {
      */
     getMenuItems: {
       type: Function,
-      value: function getMenuItems(message) {
-        return [
-          {
-            text: 'delete',
-            method() {
-              message.delete(Constants.DELETION_MODE.ALL);
-            },
-          },
-        ];
-      },
       set(value) {
         this.nodes.list.getMenuItems = value;
       },

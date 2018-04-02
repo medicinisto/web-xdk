@@ -67,8 +67,9 @@
  * @deprecated
  */
 import { registerComponent } from '../components/component';
+import mixins from './index';
 
-module.exports = {
+mixins.Throttler = module.exports = {
   properties: {
     /**
      * The Layer.Core.Message to be rendered.

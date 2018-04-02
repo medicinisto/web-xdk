@@ -6,7 +6,9 @@
  *
  * @class Layer.UI.mixins.StateManager
  */
-module.exports = {
+import mixins from './index';
+
+mixins.Throttler = module.exports = {
   properties: {
     /**
      * This state property enables your application to  expose application state to the widget.

@@ -237,6 +237,11 @@ registerComponent('layer-message-status', {
           html = this.pendingTemplate;
         }
 
+        // Don't yet have a deliveryStatus / readStatus
+        else if (!message.deliveryStatus && !message.readStatus) {
+          html = '';
+        }
+
         // Message has been acknowledged by the server, but has not been delivered to anyone
         else if (message.deliveryStatus === Constants.RECIPIENT_STATE.NONE) {
           html = this.sentTemplate;

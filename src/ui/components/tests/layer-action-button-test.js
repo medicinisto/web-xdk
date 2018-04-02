@@ -1,10 +1,11 @@
+/* eslint-disable */
 describe('layer-action-button', function() {
   var el, testRoot, client;
 
   beforeEach(function() {
     client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
-    });
+    }).on('challenge', function() {});
     el = document.createElement('layer-action-button');
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);

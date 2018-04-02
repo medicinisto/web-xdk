@@ -23,7 +23,11 @@ module.exports.isInBackground = () => !document.hasFocus() || document.hidden;
  * @method showFullScreen
  * @param {String} url
  */
-module.exports.showFullScreen = url => window.open(url);
+module.exports.showFullScreen = (url) => {
+  if (url && url.length > 7) {
+    window.open(url);
+  }
+};
 
 /**
  * Calculates a scaled size given a set of dimensions and the maximum allowed width/height.

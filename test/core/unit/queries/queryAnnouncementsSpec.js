@@ -16,7 +16,7 @@ describe("The AnnouncementsQuery Class", function() {
         client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
-        });
+        }).on("challenge", function() {});
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
         client.user = new Layer.Core.Identity({

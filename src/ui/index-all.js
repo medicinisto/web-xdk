@@ -15,6 +15,7 @@
  * which we don't want; do not let JSDuck parse this file.
  *
  */
+import 'webcomponents.js/webcomponents-lite';
 
 import LayerUI from './layer-ui';
 
@@ -24,7 +25,7 @@ import './adapters/backbone';
 import './adapters/react';
 
 // Load from components folder
-import Component from './components/component';
+import './components/component';
 import './components/layer-replaceable-content';
 import './components/layer-notifier';
 import './components/layer-conversation-view';
@@ -69,36 +70,22 @@ import './message-actions/open-url-action';
 import './message-actions/open-file-action';
 import './message-actions/open-map-action';
 
-import Clickable from './mixins/clickable';
-import FileDropTarget from './mixins/file-drop-target';
-import MessageHandler from './mixins/message-handler';
-import HasQuery from './mixins/has-query';
-import List from './mixins/list';
-import ListItem from './mixins/list-item';
-import ListSelection from './mixins/list-selection';
-import ListItemSelection from './mixins/list-item-selection';
-import FocusOnKeydown from './mixins/focus-on-keydown';
-import MessageViewMixin from './messages/message-view-mixin';
-import QueryEndIndicator from './mixins/query-end-indicator';
-import SizeProperty from './mixins/size-property';
-import Throttler from './mixins/throttler';
+import './mixins/clickable';
+import './mixins/file-drop-target';
+import './mixins/message-handler';
+import './mixins/has-query';
+import './mixins/list';
+import './mixins/list-item';
+import './mixins/list-selection';
+import './mixins/list-item-selection';
+import './mixins/focus-on-keydown';
+import './messages/message-view-mixin';
+import './mixins/query-end-indicator';
+import './mixins/size-property';
+import './mixins/throttler';
+import mixins from './mixins';
 
-LayerUI.mixins = {
-  Clickable,
-  FileDropTarget,
-  MessageHandler,
-  HasQuery,
-  List,
-  ListItem,
-  ListSelection,
-  ListItemSelection,
-  FocusOnKeydown,
-  MessageViewMixin,
-  QueryEndIndicator,
-  SizeProperty,
-  Throttler,
-  Component,
-};
+LayerUI.mixins = mixins;
 LayerUI.UIUtils.dateSeparator = dateSeparator;
 
 // If we don't expose global.layerUI then custom templates can not load and call window.Layer.UI.registerTemplate()

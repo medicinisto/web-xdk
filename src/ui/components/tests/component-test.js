@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('Components', function() {
   var el, testRoot, client, query;
 
@@ -9,7 +10,7 @@ describe('Components', function() {
     jasmine.clock().install();
     client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
-    });
+    }).on('challenge', function() {});
     testRoot = document.createElement('div');
     document.body.appendChild(testRoot);
   });

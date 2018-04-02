@@ -43,15 +43,13 @@ registerComponent('layer-conversation-item', {
       <div class='layer-conversation-item-content'>
         <div class='layer-conversation-title-row'>
           <layer-conversation-title layer-id='title'></layer-conversation-title>
-          <layer-conversation-item-date layer-id='date'></layer-conversation-item-date>
+          <layer-replaceable-content
+            class='layer-conversation-right-side'
+            name='conversationRowRightSide'>
+          </layer-replaceable-content>
         </div>
         <layer-conversation-last-message layer-id='lastMessage'></layer-conversation-last-message>
       </div>
-
-      <layer-replaceable-content
-        class='layer-conversation-right-side'
-        name='conversationRowRightSide'>
-      </layer-replaceable-content>
     </div>
   `,
   style: `

@@ -27,7 +27,6 @@
  * While there are many other methods defined here, for new projects ignore everything except layerUI.settings, Layer.UI.init and layerUI.adapters.
  */
 
-import 'webcomponents.js/webcomponents-lite';
 import { registerComponent, _registerAll, unregisterComponent } from './components/component';
 import './handlers/message/layer-message-unknown';
 import Constants from './constants';

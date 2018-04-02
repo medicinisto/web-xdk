@@ -25,7 +25,7 @@ describe("The Client Authenticator Class", function() {
             appId: appId,
             reset: true,
             url: "https://duh.com"
-        });
+        }).on('challenge', function() {});
 
         userIdentity = new Layer.Core.Identity({
           userId: userId,
@@ -45,6 +45,7 @@ describe("The Client Authenticator Class", function() {
     });
 
     afterEach(function() {
+        Layer.Utils.defer.flush();
         if (Layer.client) Layer.client.destroy();
         jasmine.clock().uninstall();
         jasmine.Ajax.uninstall();
@@ -821,6 +822,7 @@ describe("The Client Authenticator Class", function() {
             });
 
             it("Should provide the challenge event", function () {
+                client.on('challenge', function() {});
                 spyOn(client, "trigger");
                 client._authenticate("mynonce");
 
@@ -832,9 +834,17 @@ describe("The Client Authenticator Class", function() {
             });
 
             it("Should setup the _lastChallengeTime property", function() {
+                client.on('challenge', function() {});
                 client._lastChallengeTime = 0;
                 client._authenticate("");
                 expect(client._lastChallengeTime).not.toEqual(0);
+            });
+
+            it("Should throw an error if no challenge event handler", function() {
+                client.off('challenge', null, null);
+                expect(function() {
+                    client._authenticate("mynonce");
+                }).toThrowError(Layer.Core.LayerError.ErrorDictionary.eventHandlerRequired + ' \'challenge\'');
             });
         });
 

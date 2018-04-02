@@ -58,7 +58,6 @@
  * @mixin Layer.UI.mixins.QueryEndIndicator
  */
 import Core from '../../../core';
-import Constants from '../../../constants';
 import UIConstants from '../../constants';
 import { registerComponent } from '../component';
 import List from '../../mixins/list';
@@ -67,6 +66,7 @@ import ListSelection from '../../mixins/list-selection';
 import SizeProperty from '../../mixins/size-property';
 import EmptyList from '../../mixins/empty-list';
 import QueryEndIndicator from '../../mixins/query-end-indicator';
+import RCUtils from '../../ui-utils/replaceable-content-utils';
 
 registerComponent('layer-conversation-list', {
   mixins: [List, ListSelection, ListLoadIndicator, SizeProperty, EmptyList, QueryEndIndicator],
@@ -322,16 +322,6 @@ registerComponent('layer-conversation-list', {
      */
     getMenuItems: {
       type: Function,
-      value: function getMenuItems(conversation) {
-        return [
-          {
-            text: 'delete',
-            method() {
-              conversation.delete(Constants.DELETION_MODE.ALL);
-            },
-          },
-        ];
-      },
     },
 
     /**
@@ -411,13 +401,7 @@ registerComponent('layer-conversation-list', {
           div.appendChild(groupCounter);
           return div;
         },
-        conversationRowRightSide(widget) {
-          const div = document.createElement('div');
-          const menuButton = document.createElement('layer-menu-button');
-          menuButton.setAttribute('layer-id', 'menuButton');
-          div.appendChild(menuButton);
-          return div;
-        },
+        conversationRowRightSide: RCUtils.conversationAge + RCUtils.menuNode,
       },
     },
   },

@@ -1,3 +1,4 @@
+/* eslint-disable */
 // TODO: Apply this to a temporary list rather than an existing widget
 describe("Query End Mixin", function() {
 
@@ -7,8 +8,8 @@ describe("Query End Mixin", function() {
     jasmine.clock().install();
 
     client = Layer.init({
-      appId: 'layer:///apps/staging/Fred'
-    });
+      appId: 'layer:///apps/staging/Fred',
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',

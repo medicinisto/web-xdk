@@ -118,7 +118,7 @@ class ReceiptModel extends MessageTypeModel {
 
   parseModelChildParts({ parts, init }) {
     // Gather all of the product items for this Receipt Message, and generate models for them
-    this.items = this.getModelsByRole('product-items');
+    this.items = this.getModelsByRole('product-item');
 
     // Gather addresses from this Receipt Message, and generate models for them
     this.billingAddress = this.getModelsByRole('billing-address')[0];
@@ -351,7 +351,7 @@ ReceiptModel.SummaryTemplate = '${typeLabel} for ${itemCount} ${itemLabel}'; // 
  * @property {String} modelSet.role     Role name of the Message Part containing the submodel data.
  */
 ReceiptModel.modelSet = [
-  { model: 'items', role: 'product-items' },
+  { model: 'items', role: 'product-item' },
   { model: 'shippingAddress', role: 'shipping-address' },
   { model: 'billingAddress', role: 'billing-address' },
   { model: 'merchantModel', role: 'merchant' },

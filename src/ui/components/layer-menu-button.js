@@ -50,16 +50,11 @@ registerComponent('layer-menu-button', {
   template: '<span>&#8285;</span>',
   style: `
     layer-menu-button {
-      display: block;
       cursor: pointer;
-      position: relative;
-      width: 0px;
-      height: 14px;
     }
     layer-menu-button span {
       user-select: none;
       -webkit-user-select: none;
-      position: absolute;
     }
   `,
   properties: {
@@ -79,7 +74,7 @@ registerComponent('layer-menu-button', {
     getMenuItems: {
       type: Function,
       noGetterFromSetter: true,
-      value() { return []; },
+      // value() { return []; },
       get() {
         if (this.properties.getMenuItems) return this.properties.getMenuItems;
         if (this.parentComponent && this.parentComponent.getMenuItems) return this.parentComponent.getMenuItems;
@@ -130,7 +125,7 @@ registerComponent('layer-menu-button', {
     onButtonClick(evt) {
       evt.preventDefault();
       evt.stopPropagation();
-      const options = this.getMenuItems(this.item);
+      const options = this.getMenuItems ? this.getMenuItems(this.item) : [];
 
       // If there are options, update the menu's items and show it
       if (options) {

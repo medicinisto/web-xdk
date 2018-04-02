@@ -185,7 +185,7 @@ class Client extends ClientAuth {
         }
       }
       return null;
-    });
+    }).filter(identity => identity);
   }
 
 

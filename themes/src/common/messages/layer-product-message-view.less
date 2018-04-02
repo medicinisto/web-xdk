@@ -1,3 +1,9 @@
+layer-message-viewer.layer-root-viewer.layer-product-message-view {
+  max-width: 450px;
+  width: 450px;
+}
+
+
 layer-product-message-view {
   .layer-card-top {
     overflow: hidden; // prevent images from spilling out of bounds
@@ -18,12 +24,12 @@ layer-product-message-view {
   }
 
   .layer-card-body-outer {
-    margin: 10px 0px;
+    margin: 6px 0px;
     text-align: left;
   }
 
   .layer-card-product-header {
-    padding: 4px 18px;
+    padding: 2px 12px;
     color: @color-g6;
     font-size: @font-medium;
     display: flex;
@@ -35,23 +41,24 @@ layer-product-message-view {
   }
 
   .layer-card-product-name, .layer-card-product-price {
-    padding: 4px 18px;
+    padding: 2px 12px;
     color: @color-black;
     font-size: @font-large;
   }
 
   .layer-card-product-description {
-    padding: 4px 18px;
+    padding: 2px 12px;
     color: @color-darknavy;
   }
 
   .layer-card-product-choices {
-    padding: 4px 18px;
+    padding: 12px 12px;
     color: @color-black;
     font-size: @font-large;
 
-    layer-message-viewer + layer-message-viewer {
-      margin-top: 8px;
+    layer-message-viewer {
+      margin-top: 2px;
+      margin-bottom: 2px;
     }
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe("The Throttler Mixin", function() {
   beforeAll(function() {
     Layer.UI.registerComponent('throttler-test', {
@@ -11,8 +12,8 @@ describe("The Throttler Mixin", function() {
     jasmine.clock().install();
     called = false;
     client = Layer.init({
-      appId: 'layer:///apps/staging/Fred'
-    });
+      appId: 'layer:///apps/staging/Fred',
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',

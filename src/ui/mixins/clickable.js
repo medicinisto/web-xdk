@@ -10,11 +10,11 @@
  * @class Layer.UI.mixins.Clickable
  * @protected
  */
-
+import mixins from './index';
 import { isIOS } from '../../utils';
 import { registerComponent } from '../components/component';
 
-module.exports = {
+mixins.Clickable = module.exports = {
   methods: {
     onCreate: {
       mode: registerComponent.MODES.BEFORE,

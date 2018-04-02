@@ -12,9 +12,9 @@ import { animatedScrollTo } from '../ui-utils';
 import { registerComponent } from '../components/component';
 import HasQuery from './has-query';
 import Throttler from './throttler';
+import mixins from './index';
 
-
-module.exports = {
+mixins.List = module.exports = {
   mixins: [HasQuery, Throttler],
   properties: {
     /**
@@ -465,7 +465,7 @@ module.exports = {
       // isTopItemNew is true if there wasn't any prior data... data length == event length
       this._gatherAndProcessAffectedItems(affectedItems, evt.data.length === this.properties.query.data.length);
 
-      CustomElements.takeRecords();
+      if (typeof CustomElements !== 'undefined') CustomElements.takeRecords();
       defer.flush();
 
       this.isDataLoading = this.properties.query.isFiring;

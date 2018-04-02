@@ -3,8 +3,9 @@
  *
  * @class Layer.UI.mixins.ListItemSelection
  */
+import mixins from './index';
 
-module.exports = {
+mixins.ListItemSelection = module.exports = {
   properties: {
 
     /**

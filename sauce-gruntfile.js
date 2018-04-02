@@ -97,8 +97,8 @@ var unsupportedBrowsers = {
   }
 
   var quickTestUrls = [
-    "http://localhost:9999/test/ui_tests.html?stop=true",
-    "http://localhost:9999/test/core_tests.html?stop=true"
+    "http://localhost:9999/test/ui_tests.html?stop=true&failFast=true",
+    "http://localhost:9999/test/core_tests.html?stop=true&failFast=true"
   ];
   var quickTestBrowsers = [
     //supportedBrowsers['android'],
@@ -113,7 +113,7 @@ var unsupportedBrowsers = {
     supportedBrowsers['firefox-0']
   ];
 
-  var smallTestUrls = grunt.file.expand("test/smalltest*.html").map(file => "http://localhost:9999/" + file + "?stop=true");
+  var smallTestUrls = grunt.file.expand("test/smalltest*.html").map(file => "http://localhost:9999/" + file + "?stop=true&failFast=true");
 
 
   var smallTestBrowsers = [

@@ -173,6 +173,7 @@ registerComponent('layer-avatar', {
       }
 
       // Render each user
+      this.properties.firstUserIsAnonymous = false;
       if (users.length === 1) {
         this._renderUser(users[0]);
       } else {
@@ -181,7 +182,7 @@ registerComponent('layer-avatar', {
 
       // Add the "cluster" css if rendering multiple users
       // No classList.toggle due to poor IE11 support
-      this.toggleClass('layer-avatar-cluster', users.length > 1);
+      this.toggleClass('layer-avatar-cluster', users.length > 1 && !this.properties.firstUserIsAnonymous);
       if (users.length === 1 && this.showPresence && Client.isPresenceEnabled) {
         this.createElement('layer-presence', {
           size: this.size === 'larger' ? 'large' : this.size,
@@ -196,10 +197,14 @@ registerComponent('layer-avatar', {
     /**
      * Render each individual user.
      *
-     * @method
+     * @method _renderUser
      * @private
+     * @param {Layer.Core.Identity} user  User to render
+     * @param {Number} index   Index in the users array
+     * @param {Layer.Core.Identity[]} users   All users we are iterating over
      */
-    _renderUser(user, users) {
+    _renderUser(user, index, users) {
+      if (this.properties.firstUserIsAnonymous) return;
       const span = document.createElement('span');
       if (user.avatarUrl && !this.properties.failedToLoadImage) {
         span.classList.remove('layer-text-avatar');
@@ -211,7 +216,7 @@ registerComponent('layer-avatar', {
         };
         img.src = user.avatarUrl;
       } else {
-        this._setupTextAvatar(span, user);
+        this._setupTextAvatar(span, user, index);
       }
       this.appendChild(span);
     },
@@ -223,12 +228,21 @@ registerComponent('layer-avatar', {
      * @method _setupTextAvatar
      * @param {HTMLElement} node    The HTML Element that will get the identity's intials
      * @param {Layer.Core.Identity} user   The Identity to represent with this node
+     * @param {Number} index   Index in the users array
      */
-    _setupTextAvatar(node, user) {
+    _setupTextAvatar(node, user, index) {
       const text = this.onGenerateInitials(user);
       node.innerHTML = text;
-      node.classList[text ? 'add' : 'remove']('layer-text-avatar');
-      node.classList[!text ? 'add' : 'remove']('layer-empty-avatar');
+      if (text) {
+        node.classList.add('layer-text-avatar');
+      } else {
+        if (this.users.length > index + 1) {
+          node.classList.add('layer-empty-group-avatar');
+        } else {
+          node.classList.add('layer-empty-avatar');
+        }
+        if (index === 0) this.properties.firstUserIsAnonymous = true;
+      }
     },
 
     /**

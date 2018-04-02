@@ -46,10 +46,10 @@ registerComponent('layer-feedback-message-view', {
   },
   methods: {
 
-    _getIconClass() {
+    getIconClass() {
       return 'layer-feedback-message-view-icon';
     },
-    _getTitle() {
+    getTitle() {
       return this.model.title;
     },
 

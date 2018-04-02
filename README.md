@@ -48,8 +48,8 @@ It is implemented using the [Webcomponents Polyfill](https://github.com/WebCompo
 ### CDN
 
 ```html
-<script src='https://cdn.layer.com/xdk/1.0.0-pre2/layer-xdk.min.js'></script>
-<link rel='stylesheet' href='https://cdn.layer.com/xdk/1.0.0-pre2/themes/layer-basic-blue.css' />
+<script src='https://cdn.layer.com/xdk/4.0.0/layer-xdk.min.js'></script>
+<link rel='stylesheet' href='https://cdn.layer.com/xdk/4.0.0/themes/layer-basic-blue.css' />
 <script>
 var client = window.Layer.init({
   appId: 'layer:///apps/staging/UUID'

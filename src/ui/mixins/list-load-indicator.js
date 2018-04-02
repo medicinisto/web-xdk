@@ -8,8 +8,9 @@
  * @class Layer.UI.mixins.ListLoadIndicator
  */
 import '../components/layer-loading-indicator';
+import mixins from './index';
 
-module.exports = {
+mixins.ListLoadIndicator = module.exports = {
   properties: {
     isDataLoading: {
       set(value) {

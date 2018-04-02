@@ -10,8 +10,9 @@
  */
 import { client } from '../../settings';
 import Clickable from './clickable';
+import mixins from './index';
 
-module.exports = {
+mixins.ListSelection = module.exports = {
   mixins: [Clickable],
   properties: {
     /**

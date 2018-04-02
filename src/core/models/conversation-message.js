@@ -109,6 +109,27 @@ class ConversationMessage extends Message {
     const isSender = this.sender.isMine;
     const userHasRead = status[id] === Constants.RECEIPT_STATE.READ;
 
+    const triggerChange = (force) => {
+      // Only trigger an event
+      // 1. we're not initializing a new Message
+      // 2. the user's state has been updated to read; we don't care about updates from other users if we aren't the sender.
+      //    We also don't care about state changes to delivered to this user; these do not inform rendering as the fact we are processing it
+      //    proves its delivered.
+      // 3. This user is the sender; in that case we do care about rendering receipts from other users
+      if (!this.isInitializing && oldStatus || force) {
+        if (!oldStatus) oldStatus = {};
+        const usersStateUpdatedToRead = userHasRead && oldStatus[id] !== Constants.RECEIPT_STATE.READ;
+        if (usersStateUpdatedToRead || isSender) {
+          this._triggerAsync('messages:change', {
+            oldValue: oldStatus,
+            newValue: status,
+            property: 'recipientStatus',
+          });
+        }
+      }
+    };
+
+
     try {
       // -1 so we don't count this user
       const userCount = conversation.participants.length - 1;
@@ -118,28 +139,20 @@ class ConversationMessage extends Message {
         this.__isRead = true; // no __updateIsRead event fired
       }
 
-      // Update the readStatus/deliveryStatus properties
-      const { readCount, deliveredCount } = this._getReceiptStatus(status, id);
-      this._setReceiptStatus(readCount, deliveredCount, userCount);
+      if (conversation.isLoading) {
+        conversation.once('conversations:loaded', () => {
+          const { readCount, deliveredCount } = this._getReceiptStatus(status, id);
+          this._setReceiptStatus(readCount, deliveredCount, userCount);
+          triggerChange(true);
+        }, this);
+      } else {
+        // Update the readStatus/deliveryStatus properties
+        const { readCount, deliveredCount } = this._getReceiptStatus(status, id);
+        this._setReceiptStatus(readCount, deliveredCount, userCount);
+        triggerChange(false);
+      }
     } catch (error) {
       // Do nothing
-    }
-
-    // Only trigger an event
-    // 1. we're not initializing a new Message
-    // 2. the user's state has been updated to read; we don't care about updates from other users if we aren't the sender.
-    //    We also don't care about state changes to delivered; these do not inform rendering as the fact we are processing it
-    //    proves its delivered.
-    // 3. The user is the sender; in that case we do care about rendering receipts from other users
-    if (!this.isInitializing && oldStatus) {
-      const usersStateUpdatedToRead = userHasRead && oldStatus[id] !== Constants.RECEIPT_STATE.READ;
-      if (usersStateUpdatedToRead || isSender) {
-        this._triggerAsync('messages:change', {
-          oldValue: oldStatus,
-          newValue: status,
-          property: 'recipientStatus',
-        });
-      }
     }
   }
 
@@ -443,7 +456,7 @@ ConversationMessage.prototype.recipientStatus = null;
  *
  * @property {String}
  */
-ConversationMessage.prototype.readStatus = Constants.RECIPIENT_STATE.NONE;
+ConversationMessage.prototype.readStatus = '';
 
 /**
  * Have the other participants received this Message yet.
@@ -461,7 +474,7 @@ ConversationMessage.prototype.readStatus = Constants.RECIPIENT_STATE.NONE;
  *
  * @property {String}
  */
-ConversationMessage.prototype.deliveryStatus = Constants.RECIPIENT_STATE.NONE;
+ConversationMessage.prototype.deliveryStatus = '';
 
 ConversationMessage.inObjectIgnore = Message.inObjectIgnore;
 ConversationMessage._supportedEvents = [].concat(Message._supportedEvents);

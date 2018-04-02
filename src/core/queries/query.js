@@ -451,7 +451,7 @@ class Query extends Root {
       this.totalSize = Number(results.xhr.getResponseHeader('Layer-Count'));
       if (results.data.length < pageSize || results.data.length === this.totalSize) this.pagedToEnd = true;
       this._appendResults(results, false);
-
+      this._firstRun = false;
     } else if (results.data.getNonce()) {
       client.once('ready', () => {
         this._run();
@@ -960,6 +960,14 @@ Query.prototype._initialPaginationWindow = 100;
  * @readonly
  */
 Query.prototype.predicate = null;
+
+/**
+ * Tracks whether this Query has ever been run
+ *
+ * @property {Boolean}
+ * @private
+ */
+Query.prototype._firstRun = true;
 
 
 /**

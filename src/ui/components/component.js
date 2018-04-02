@@ -396,6 +396,7 @@ import Util from '../../utils';
 import { ComponentsHash, buildAndRegisterTemplate, registerTemplate } from '../component-services';
 import stateManagerMixin from '../mixins/state-manager';
 import Settings from '../../settings';
+import Mixins from '../mixins';
 
 const logger = Util.logger;
 /*
@@ -777,6 +778,9 @@ function _registerComponent(tagName) {
   if (Settings._mixins[tagName]) {
     classDef.mixins = classDef.mixins.concat(Settings._mixins[tagName]);
   }
+  classDef.mixins = classDef.mixins
+    .map(mixin => (typeof mixin === 'string' ? Mixins[mixin] : mixin))
+    .filter(mixin => mixin);
 
   // Setup all events specified in the `events` property.  This adds properties,
   // so must precede setupMixins
@@ -1743,7 +1747,7 @@ const standardClassMethods = {
     if (properties.name) this.nodes[properties.name] = node;
 
     if (!properties.noCreate) {
-      CustomElements.upgradeAll(node);
+      if (typeof CustomElements !== 'undefined') CustomElements.upgradeAll(node);
       if (node._onAfterCreate) node._onAfterCreate();
     }
     return node;

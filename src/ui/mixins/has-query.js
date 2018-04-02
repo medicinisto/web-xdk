@@ -5,8 +5,9 @@
  */
 import { client as Client } from '../../settings';
 import Core from '../../core';
+import mixins from './index';
 
-module.exports = {
+mixins.HasQuery = module.exports = {
   properties: {
 
     /**

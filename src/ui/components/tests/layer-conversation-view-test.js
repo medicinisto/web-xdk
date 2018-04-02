@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('layer-conversation-view', function() {
   var el, testRoot, client, conversation, user1, query;
 
@@ -11,7 +12,7 @@ describe('layer-conversation-view', function() {
 
     client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
-    });
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',

@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('layer-identity-item', function() {
   var el, testRoot, client;
 
@@ -9,7 +10,7 @@ describe('layer-identity-item', function() {
     jasmine.clock().install();
     client = new Layer.init({
       appId: 'Fred'
-    });
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       id: 'layer:///identities/FrodoTheDodo',

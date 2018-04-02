@@ -101,12 +101,8 @@ registerComponent('layer-message-viewer', {
 
       // Get the UI Node's preferred Display Container... unless this component's messageViewContainerTagName has been set
       get() {
-        const result = this.nodes.ui.messageViewContainerTagName;
-        if (result === 'layer-standard-view-container' && this.properties.messageViewContainerTagNameIsSet) {
-          return this.properties.messageViewContainerTagName;
-        } else {
-          return result;
-        }
+        if (this.properties.messageViewContainerTagNameIsSet) return this.properties.messageViewContainerTagName;
+        return this.nodes.ui.messageViewContainerTagName;
       },
     },
 
@@ -215,7 +211,7 @@ registerComponent('layer-message-viewer', {
         this.cardBorderStyle = this.properties.cardBorderStyle || cardUI.cardBorderStyle || 'standard';
       }
 
-      CustomElements.upgradeAll(this);
+      if (typeof CustomElements !== 'undefined') CustomElements.upgradeAll(this);
       if (this.nodes.cardContainer) this.nodes.cardContainer._onAfterCreate();
       if (cardUI._onAfterCreate) cardUI._onAfterCreate();
       if (this.nodes.cardContainer) cardUI._setupContainerClasses();

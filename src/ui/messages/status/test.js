@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('Status Message Components', function() {
   var StatusModel;
   var conversation;
@@ -18,8 +19,8 @@ describe('Status Message Components', function() {
     });
 
     client = new Layer.init({
-      appId: 'layer:///apps/staging/Fred'
-    });
+      appId: 'layer:///apps/staging/Fred',
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',

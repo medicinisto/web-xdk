@@ -409,6 +409,20 @@ class Root extends EventClass {
   }
 
   /**
+   * Test if the specified event name has a handler, and throw an error if it does not.
+   *
+   * @method _requireEvent
+   * @private
+   * @param {String} eventName
+   */
+  _requireEvent(eventName) {
+    if (!this.isDestroyed && !this._events[eventName]) {
+      throw new Error(`${ErrorDictionary.eventHandlerRequired} '${eventName}'`);
+    }
+  }
+
+
+  /**
    * Generates a Layer.Core.LayerEvent from a trigger call's arguments.
    *
    * * If parameter is already a Layer.Core.LayerEvent, we're done.
@@ -465,6 +479,7 @@ class Root extends EventClass {
    * @return {Layer.Core.Root} this
    */
   _triggerAsync(...args) {
+    if (this.isDestroyed) return;
     const computedArgs = this._getTriggerArgs(...args);
     this._delayedTriggers.push(computedArgs);
 

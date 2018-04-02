@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe("Unknown Handler", function() {
 
   var client, message, el;
@@ -7,7 +8,7 @@ describe("Unknown Handler", function() {
 
     client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
-    });
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',

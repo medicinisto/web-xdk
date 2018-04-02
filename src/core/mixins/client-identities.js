@@ -285,6 +285,7 @@ module.exports = {
         operation: 'READ',
         target: null,
         depends: [],
+        isPersistenceDisabled: true,
       }));
     },
 

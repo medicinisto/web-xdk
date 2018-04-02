@@ -352,7 +352,7 @@ describe("The MessageParts class", function() {
           message = client._createObject(responses.message1);
           part = Layer.Core.MessagePart._createFromServer({
               id: message.id + "/parts/3",
-              body: "jane",
+              body: "",
               mime_type: 'dog/food',
               content: {
                   id: "jill",

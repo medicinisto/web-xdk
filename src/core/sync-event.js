@@ -185,6 +185,12 @@ SyncEvent.prototype.depends = null;
 SyncEvent.prototype.data = null;
 
 /**
+ * Disable writing of these requests to the database when offline
+ * @property {Boolean}
+ */
+SyncEvent.prototype.isPersistenceDisabled = false;
+
+/**
  * After firing a request, if that firing state fails to clear after this number of miliseconds,
  * consider it to no longer be firing.  Under normal conditions, firing will be set to false explicitly.
  * This check insures that any failure of that process does not leave us stuck with a firing request

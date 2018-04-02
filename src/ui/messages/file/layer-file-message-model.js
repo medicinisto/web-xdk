@@ -54,7 +54,6 @@ class FileModel extends MessageTypeModel {
    */
   generateParts(callback) {
     const source = this.source;
-    let sourcePart;
 
     // Intialize metadata from the Blob
     if (source) {
@@ -73,12 +72,12 @@ class FileModel extends MessageTypeModel {
 
     // Create the source Message Part
     if (source) {
-      sourcePart = new MessagePart(this.source);
-      this.addChildPart(sourcePart, 'source');
-      this.childParts.push(sourcePart);
+      this.source = new MessagePart(this.source);
+      this.addChildPart(this.source, 'source');
+      this.childParts.push(this.source);
     }
 
-    callback(this.source ? [this.part, sourcePart] : [this.part]);
+    callback(this.source ? [this.part, this.source] : [this.part]);
   }
 
   // See parent class
@@ -131,9 +130,7 @@ class FileModel extends MessageTypeModel {
    * @param {String} callback.body
    */
   getSourceBody(callback) {
-    if (this.source && this.source.body) {
-      callback(this.source.body);
-    } else if (this.source) {
+    if (this.source) {
       this.source.fetchContent(body => callback(body));
     } else if (this.sourceUrl) {
       xhr({

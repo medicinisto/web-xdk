@@ -33,7 +33,7 @@ describe("The Client Authenticator Requests", function() {
             appId: appId,
             reset: true,
             url: "https://duh.com"
-        });
+        }).on('challenge', function() {});
         client.user = new Layer.Core.Identity({
           userId: userId,
           id: "layer:///identities/" + userId,

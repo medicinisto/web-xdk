@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('layer-channel-item', function() {
   var el, testRoot, client, channel, user;
 
@@ -7,7 +8,7 @@ describe('layer-channel-item', function() {
 
     client = new Layer.init({
       appId: 'layer:///apps/staging/Fred'
-    });
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',

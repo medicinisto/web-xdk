@@ -39,6 +39,17 @@ class Logger {
       default:
         op = 'log';
     }
+
+    if (typeof document !== 'undefined') {
+      window.postMessage({
+        type: 'layer-log',
+        level: op,
+        timestamp,
+        text: msg,
+        object: obj && obj.toObject ? obj.toObject() : null,
+      }, '*');
+    }
+
     if (obj) {
       if (supportsConsoleFormatting) {
         console[op](`%cLayer%c ${op.toUpperCase()}%c [${timestamp}]: ${msg}`, LayerCss, `color: ${color}`, Black, obj);

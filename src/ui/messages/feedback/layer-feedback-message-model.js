@@ -10,7 +10,7 @@
     // ${rating} extracts this.rating; ${customer} gets the customer's displayName (but not "You" as all users will see the same message)
     responseMessage: "Rated ${rating} beakers by ${customer}",
     placeholder: "Tell us that you love us", // Optional, defaults to "Add a comment..."
-    enabledFor: ["layer:///identities/user_id"], // Only a single Identity is supported
+    enabledFor: "layer:///identities/user_id", // Only a single Identity is supported
     customResponseData: {hey: "ho"},
    });
    model.send({ conversation });
@@ -30,18 +30,26 @@
  */
 import { client as Client } from '../../../settings';
 import Core, { MessagePart, Root, MessageTypeModel } from '../../../core';
-import ResponseModel from '../response/layer-response-message-model';
+import { CRDT_TYPES } from '../../../constants';
+import { ErrorDictionary } from '../../../core/layer-error';
 
 class FeedbackModel extends MessageTypeModel {
+  registerAllStates() {
+    this.responses.registerState('rating', CRDT_TYPES.FIRST_WRITER_WINS);
+    this.responses.registerState('comment', CRDT_TYPES.FIRST_WRITER_WINS);
+    this.responses.registerState('sent_at', CRDT_TYPES.FIRST_WRITER_WINS);
+    this.responses.registerState('custom_response_data', CRDT_TYPES.FIRST_WRITER_WINS);
+  }
+
   generateParts(callback) {
     const body = this.initBodyWithMetadata([
       'title', 'prompt', 'promptWait', 'responseMessage',
-      'summary', 'placeholder', 'customResponseData',
+      'summary', 'placeholder', 'customResponseData', 'enabledFor',
     ]);
-    if (this.enabledFor && this.enabledFor.length) {
+    if (this.enabledFor) {
       body.enabled_for = this.enabledFor;
     } else {
-      throw new Error('enabled_for is required');
+      throw new Error(ErrorDictionary.enabledForMissing);
     }
 
     this.part = new MessagePart({
@@ -53,7 +61,6 @@ class FeedbackModel extends MessageTypeModel {
 
   // See parent class
   parseModelPart({ payload, isEdit }) {
-    this.enabledFor = payload.enabled_for;// shouldn't be needed; review sequencing of parsing response data vs property data in parent method
     const rating = this.rating;
     const comment = this.comment;
     super.parseModelPart({ payload, isEdit });
@@ -75,48 +82,32 @@ class FeedbackModel extends MessageTypeModel {
   }
 
   parseModelResponses() {
-    const rating = this.responses.getResponse('rating', this.enabledFor[0]);
+    const rating = this.responses.getState('rating', this.enabledFor);
     if (rating) {
       this.rating = rating;
-      this.comment = this.responses.getResponse('comment', this.enabledFor[0]);
-      this.sentAt = new Date(this.responses.getResponse('sent_at', this.enabledFor[0]));
+      this.comment = this.responses.getState('comment', this.enabledFor);
+      this.sentAt = new Date(this.responses.getState('sent_at', this.enabledFor));
     }
   }
 
   isEditable() {
     if (this.sentAt) return false;
-    if (this.enabledFor[0] !== Client.user.id) return false;
+    if (this.enabledFor !== Client.user.id) return false;
     return true;
   }
 
   sendFeedback() {
-    if (this.enabledFor[0] !== Client.user.id) return;
+    if (this.enabledFor !== Client.user.id) return;
 
     const responseText = this.getSummary(this.responseMessage, false);
     this.sentAt = new Date();
 
-    const participantData = {
-      rating: this.rating,
-      comment: this.comment,
-      sent_at: this.sentAt.toISOString(),
-    };
-
-    if (this.customResponseData) {
-      Object.keys(this.customResponseData).forEach(key => (participantData[key] = this.customResponseData[key]));
-    }
-
-    const StatusModel = Core.Client.getMessageTypeModelClass('StatusModel');
-    const responseModel = new ResponseModel({
-      participantData,
-      responseTo: this.message.id,
-      responseToNodeId: this.nodeId,
-      displayModel: new StatusModel({
-        text: responseText,
-      }),
-    });
-    if (!this.message.isNew()) {
-      responseModel.send({ conversation: this.message.getConversation() });
-    }
+    this.responses.addState('rating', this.rating);
+    this.responses.addState('comment', this.comment);
+    this.responses.addState('sent_at', this.sentAt.toISOString());
+    if (this.customResponseData) this.responses.addState('custom_response_data', this.customResponseData);
+    this.responses.setResponseMessageText(responseText);
+    this.responses.sendResponseMessage();
 
     this._triggerAsync('message-type-model:change', {
       property: 'sentAt',
@@ -146,10 +137,10 @@ class FeedbackModel extends MessageTypeModel {
       const key = match.substring(2, match.length - 1);
       switch (key) {
         case 'customer':
-          if (useYou && this.enabledFor[0] === Client.user.userId) {
+          if (useYou && this.enabledFor === Client.user.userId) {
             return 'You';
           } else {
-            return Client.getIdentity(this.enabledFor[0]).displayName || FeedbackModel.anonymousUserName;
+            return Client.getIdentity(this.enabledFor).displayName || FeedbackModel.anonymousUserName;
           }
         default:
           return this[key];
@@ -208,4 +199,3 @@ Root.initClass.apply(FeedbackModel, [FeedbackModel, 'FeedbackModel']);
 Core.Client.registerMessageTypeModelClass(FeedbackModel, 'FeedbackModel');
 
 module.exports = FeedbackModel;
-

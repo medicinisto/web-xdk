@@ -36,6 +36,21 @@ import Clickable from '../mixins/clickable';
 
 registerComponent('layer-file-upload-button', {
   mixins: [Clickable],
+  /**
+   * @inheritdoc #event-layer-files-selected
+   * @property {Function} onFilesSelected
+   * @param {Object} evt
+   * @param {Object} evt.detail
+   * @param {File} evt.detail.files
+   */
+  /**
+   * @inheritdoc #event-layer-models-generated
+   * @property {Function} onModelsGenerated
+   * @param {Object} evt
+   * @param {Object} evt.detail
+   * @param {Layer.Core.MessageTypeModel[]} evt.detail.models
+   */
+  events: ['layer-files-selected', 'layer-models-generated'],
   template: '<label layer-id="label">+</label><input layer-id="input" type="file"></input>',
   style: `
     layer-file-upload-button {
@@ -142,6 +157,12 @@ registerComponent('layer-file-upload-button', {
        * });
        * ```
        *
+       * Also supports:
+       *
+       * ```
+       * widget.onFilesSelected = function(evt) {...}
+       * ```
+       *
        * @event layer-files-selected
        * @param {Object} evt
        * @param {Object} evt.detail
@@ -179,6 +200,12 @@ registerComponent('layer-file-upload-button', {
          *   var model = new CarouselModel({ items: models });
          *   model.send({ conversation });
          * });
+         * ```
+         *
+         * Also supports:
+         *
+         * ```
+         * widget.onModelsGenerated = function(evt) {...}
          * ```
          *
          * @event layer-models-generated

@@ -3,7 +3,9 @@
  *
  * @class Layer.UI.mixins.EmptyList
  */
-module.exports = {
+import mixins from './index';
+
+mixins.EmptyList = module.exports = {
   properties: {
     /**
      * If the query has no data and is not loading data (and has fired successfully!), this should be true.

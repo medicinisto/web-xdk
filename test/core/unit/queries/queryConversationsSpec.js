@@ -17,7 +17,7 @@ describe("The ConversationsQuery Class", function() {
         client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
-        });
+        }).on('challenge', function() {});
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
         client.user = new Layer.Core.Identity({
@@ -1198,6 +1198,43 @@ describe("The ConversationsQuery Class", function() {
 
             // Posttest
             expect(query.totalSize).toEqual(1);
+        });
+    });
+
+    describe("The _appendResults() method", function() {
+        it("Should trigger move events if this is the first run", function() {
+            var conversation2 = client.createConversation({ participants: ["aza"] });
+            var conversation3 = client.createConversation({ participants: ["azab"] });
+            query.data = [conversation2];
+            spyOn(query, 'trigger');
+            query._firstRun = true;
+
+            // Run
+            query._appendResults({data: [conversation, conversation2, conversation3]}, false);
+
+            // Posttest
+            expect(query.trigger).toHaveBeenCalledWith('change:move', {
+                target: conversation2,
+                type: 'move',
+                query: query,
+                isChange: false,
+                fromIndex: 0,
+                toIndex: 1
+            });
+        });
+
+        it("Should not trigger move events if this is not the first run", function() {
+            var conversation2 = client.createConversation({ participants: ["aza"] });
+            var conversation3 = client.createConversation({ participants: ["azab"] });
+            query.data = [conversation2];
+            spyOn(query, 'trigger');
+            query._firstRun = false;
+
+            // Run
+            query._appendResults({data: [conversation, conversation2, conversation3]}, false);
+
+            // Posttest
+            expect(query.trigger).not.toHaveBeenCalledWith('change:move', jasmine.any(Object));
         });
     });
 });

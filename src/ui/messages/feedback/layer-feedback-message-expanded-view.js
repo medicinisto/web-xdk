@@ -88,10 +88,10 @@ registerComponent('layer-feedback-message-expanded-view', {
   },
   methods: {
 
-    _getIconClass() {
+    getIconClass() {
       return 'layer-feedback-message-view-icon';
     },
-    _getTitle() {
+    getTitle() {
       return this.model.title;
     },
 

@@ -11,7 +11,9 @@
  *
  * @class Layer.UI.mixins.Throttler
  */
-module.exports = {
+import mixins from './index';
+
+mixins.Throttler = module.exports = {
   properties: {
     /**
      * A throttler is used to prevent excessive scroll events.

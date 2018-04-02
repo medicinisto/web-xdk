@@ -162,15 +162,10 @@ layer-message-list {
   /* Menu Button in Left/Right Panel; note that this will render within the 12px margin between the Replaceable Content div and the right edge of the Message Item */
   .layer-message-item {
     .layer-message-left-side, .layer-message-right-side {
-      layer-menu-button {
-        display: none;
-        left: 2px;
+      layer-menu-button.layer-has-menu {
         margin-left: 2px;
-        &.layer-has-menu {
-          display: block;
-          span {
-            padding-right: 3px;
-          }
+        span {
+          padding-right: 3px;
         }
       }
     }

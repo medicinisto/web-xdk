@@ -19,7 +19,7 @@ describe("The Message class", function() {
             appId: appId,
             reset: true,
             url: "https://doh.com"
-        });
+        }).on("challenge", function() {});
 
         client.user = new Layer.Core.Identity({
           userId: "999",
@@ -553,6 +553,26 @@ describe("The Message class", function() {
                 newValue: 'howdy',
                 part: part
             });
+            expect(message._triggerAsync).not.toHaveBeenCalledWith('messages:part-removed', jasmine.any(Object));
+            expect(message._triggerAsync).not.toHaveBeenCalledWith('messages:part-added', jasmine.any(Object));
+        });
+
+        it("Should trigger part removed and added events if the mime type changes", function() {
+            var part = message.filterParts()[0];
+            spyOn(message, '_triggerAsync');
+
+            // Run
+            part.mimeType = 'text/csv';
+            jasmine.clock().tick(100);
+            Layer.Utils.defer.flush();
+
+            // Posttest
+            expect(message._triggerAsync).toHaveBeenCalledWith('messages:part-removed', {
+                part: part
+            });
+            expect(message._triggerAsync).toHaveBeenCalledWith('messages:part-added', {
+                part: part
+            });
         });
     });
 
@@ -716,6 +736,28 @@ describe("The Message class", function() {
             // Posttest
             expect(m.isRead).toEqual(true);
             expect(m.isUnread).toEqual(false);
+        });
+
+        it("Should not call _setReceiptStatus and should instead schedule it to be done once the Conversation is loaded", function() {
+            // Pretest
+            m.deliveryStatus = '';
+            m.readStatus = '';
+            conversation.syncState = Layer.Constants.SYNC_STATE.LOADING;
+
+            // Run 1
+            m.recipientStatus = {"layer:///identities/999": "read"};
+
+            // Posttest
+            expect(m.deliveryStatus).toEqual('');
+            expect(m.readStatus).toEqual('');
+
+            // Run 2
+            conversation.trigger('conversations:loaded');
+            Layer.Utils.defer.flush();
+
+            // Posttest
+            expect(m.deliveryStatus).toEqual(Layer.Constants.RECIPIENT_STATE.NONE);
+            expect(m.readStatus).toEqual(Layer.Constants.RECIPIENT_STATE.NONE);
         });
 
         it("Should call _setReceiptStatus", function() {
@@ -1360,6 +1402,13 @@ describe("The Message class", function() {
             }).toThrowError(Layer.Core.LayerError.ErrorDictionary.partsMissing);
         });
 
+        it("Should fail if the parts contain invalid mime types", function() {
+            m.filterParts()[0].mimeType = 'text';
+            expect(function() {
+                m.send();
+            }).toThrowError(Layer.Core.LayerError.ErrorDictionary.invalidMimeType + ': text');
+        });
+
         it("Should call _setSyncing", function() {
             spyOn(m, "_setSyncing");
             m.send();
@@ -1424,7 +1473,7 @@ describe("The Message class", function() {
 
         it("Should trigger messages:sending", function() {
             // Setup
-            spyOn(m, "trigger");
+            spyOn(m, "trigger").and.callThrough();
             spyOn(client, "sendSocketRequest");
 
             // Run
@@ -1434,8 +1483,38 @@ describe("The Message class", function() {
 
             // Posttest
             expect(m.trigger).toHaveBeenCalledWith("messages:sending", {
-                notification: undefined
+                notification: undefined,
+                cancelable: true,
             });
+        });
+
+        it("Should allow canceling sending using messages:sending", function() {
+            // Setup
+            m.on('messages:sending', function(evt) {evt.cancel();});
+            spyOn(client, "sendSocketRequest");
+            spyOn(m, "_preparePartsForSending");
+
+            // Run
+            m.send();
+            jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
+
+            // Posttest
+            expect(m._preparePartsForSending).not.toHaveBeenCalled();
+        });
+
+        it("Should allow uncanceled sending of the message", function() {
+            // Setup
+            spyOn(client, "sendSocketRequest");
+            spyOn(m, "_preparePartsForSending");
+
+            // Run
+            m.send();
+            jasmine.clock().tick(1);
+            Layer.Utils.defer.flush();
+
+            // Posttest
+            expect(m._preparePartsForSending).toHaveBeenCalled();
         });
 
         it("Should call _readAllBlobs and only add the Message after reading is done", function(done) {

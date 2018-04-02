@@ -115,6 +115,17 @@ module.exports = {
      * });
      * ```
      *
+     * You may also use this event to prevent the message from being sent; typically you should destroy the message after.
+     *
+     * ```
+     * client.on('messages:sending', function(evt) {
+     *   if (evt.target.getModelName() === 'ResponseModel') {
+     *     evt.cancel();
+     *     evt.target.destroy();
+     *    }
+     * });
+     * ```
+     *
      * @event
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Message} evt.target

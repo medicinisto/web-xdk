@@ -1,3 +1,4 @@
+/* eslint-disable */
 describe('Product Message Components', function() {
   var ProductModel, ChoiceModel;
   var conversation, message;
@@ -18,8 +19,8 @@ describe('Product Message Components', function() {
     });
 
     client = new Layer.init({
-      appId: 'layer:///apps/staging/Fred'
-    });
+      appId: 'layer:///apps/staging/Fred',
+    }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
       displayName: 'Frodo the Dodo',
@@ -68,8 +69,8 @@ describe('Product Message Components', function() {
         imageUrls: ["c", "d"],
         description: "e",
         options: [
-          new ChoiceModel({choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]}),
-          new ChoiceModel({choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]})
+          new ChoiceModel({enabledFor: client.user.id, choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]}),
+          new ChoiceModel({enabledFor: client.user.id, choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]})
         ],
         currency: "doh",
         price: "f",
@@ -102,11 +103,13 @@ describe('Product Message Components', function() {
 
       expect(choiceParts[0].mimeType).toEqual(ChoiceModel.MIMEType);
       expect(JSON.parse(choiceParts[0].body)).toEqual({
+        enabled_for: client.user.id,
         choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]
       });
 
       expect(choiceParts[1].mimeType).toEqual(ChoiceModel.MIMEType);
       expect(JSON.parse(choiceParts[1].body)).toEqual({
+        enabled_for: client.user.id,
         choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]
       });
     });
@@ -138,12 +141,14 @@ describe('Product Message Components', function() {
           id: 'layer:///messages/' + uuid1 + '/parts/' + uuid3,
           mime_type:  ChoiceModel.MIMEType + "; role=options; parent-node-id=a",
           body: JSON.stringify({
+            enabled_for: client.user.id,
             choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]
           })
         }, {
           id: 'layer:///messages/' + uuid1 + '/parts/' + uuid4,
           mime_type:  ChoiceModel.MIMEType + "; role=options; parent-node-id=a",
           body: JSON.stringify({
+            enabled_for: client.user.id,
             choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]
           })
         }]
@@ -192,8 +197,8 @@ describe('Product Message Components', function() {
         imageUrls: ["https://layer.com/about/c", "https://layer.com/about/d"],
         description: "e",
         options: [
-          new ChoiceModel({type: "Label", choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]}),
-          new ChoiceModel({type: "Label", choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]})
+          new ChoiceModel({type: "Label", enabledFor: client.user.id, choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]}),
+          new ChoiceModel({type: "Label", enabledFor: client.user.id, choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]})
         ],
         currency: "EUR",
         price: 33,
@@ -232,8 +237,8 @@ describe('Product Message Components', function() {
         imageUrls: ["c", "d"],
         description: "e",
         options: [
-          new ChoiceModel({type: "Label", choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]}),
-          new ChoiceModel({type: "Label", choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]})
+          new ChoiceModel({type: "Label", enabledFor: client.user.id, choices: [{text: "c-one", id: "c1"}, {text: "c-two", id: "c2"}]}),
+          new ChoiceModel({type: "Label", enabledFor: client.user.id, choices: [{text: "d-one", id: "d1"}, {text: "d-two", id: "d2"}]})
         ],
         currency: "doh",
         price: "f",

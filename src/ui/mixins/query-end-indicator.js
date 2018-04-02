@@ -12,8 +12,9 @@
  */
 import Util from '../../utils';
 import { registerComponent } from '../components/component';
+import mixins from './index';
 
-module.exports = {
+mixins.QueryEndIndicator = module.exports = {
   properties: {
     /**
      * If the query has no more data to load but is not empty, this should be true.

@@ -14,6 +14,7 @@
  * ```
  * ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
  * model = new ChoiceModel({
+ *    enabledFor: "layer:///identities/frodo-the-dodo",
  *    label: "What is the airspeed velocity of an unladen swallow?",
  *    choices: [
  *      {text:  "Zero, it can not get off the ground!", id: "zero"},
@@ -35,17 +36,35 @@
  *
  * * Prevent the Response Message from being sent
  * * Customize the text of the Response Message
- * * Subscribe to events from either the Layer.Core.Client or via the DOM
- *
- * Typically one would subscribe to these events at the UI level, but they are also exposed at the model _and_ Layer.Core.Client level as well:
  *
  * ```
- * client.on('message-type-model:customization', function(evt) {
- *   if (evt.type === 'layer-choice-model-generate-response-message') {
- *     evt.returnValue(`${evt.name}: ${Client.user.displayName} has ${evt.action} ${evt.choice.text}`);
+ * // Register new states for ALL Message Types:
+ * Layer.Core.MessageTypeModel.customStates['who-is-a-dodo'] = Layer.Constants.CRDT_TYPES.SET;
+ * Layer.Core.MessageTypeModel.customStates['who-is-a-odo'] = Layer.Constants.CRDT_TYPES.FIRST_WRITER_WINS;
+ *
+ * // Listen for all Response Messages and doctor or cancel them as needed
+ * client.on('message-type-model:sending-response-message', function(evt) {
+ *   const { respondingToModel, responseModel } = evt;
+ *   if (respondingToModel.getModelName() === 'ChoiceModel') {
+ *     // Customize the Text displayed in the Response
+ *     responseModel.displayModel.text = "Something important just changed";
+ *
+ *     // Add additional state changes to this Response Message
+ *     respondingToModel.addState('who-is-a-dodo', 'frodo-the-dodo');
+ *     respondingToModel.addState('who-is-a-odo', 'shape-shifter-from-deep-space-9');
+ *   }
+ *
+ *   // Prevent the Response Message from sending
+ *   if (respondingToModel.getModelName() === 'Text') {
+ *     evt.cancel();
  *   }
  * });
  * ```
+ *
+ * > *Note*
+ * >
+ * > While `evt.cancel()` can be used to prevent sending a Response Message, and therefore prevent sharing these state changes with other
+ * > participants, your local user's state *has* been changed, and is not automatically rolled back to its prior state.
  *
  * ### Importing
  *
@@ -60,19 +79,44 @@
  * @extends Layer.Core.MessageTypeModel
  */
 import { client as Client } from '../../../settings';
-import Core, { Identity, MessagePart, Root, MessageTypeModel } from '../../../core';
-import ResponseModel from '../response/layer-response-message-model';
-import StatusModel from '../status/layer-status-message-model';
+import Core, { MessagePart, Root, MessageTypeModel } from '../../../core';
 import ChoiceItem from './layer-choice-message-model-item';
 import { ErrorDictionary } from '../../../core/layer-error';
+import { CRDT_TYPES } from '../../../constants';
 
 class ChoiceModel extends MessageTypeModel {
-  constructor(options = {}) {
-    if (!options.enabledFor) options.enabledFor = [];
-    if (options.preselectedChoice) options.selectedAnswer = options.preselectedChoice;
-    super(options);
+
+  // Message Type Model Lifecycle method that is called by the MessageTypeModel when a new model is instantiated
+  // locally, using properties rather than a Message to initialize it.
+  initializeNewModel() {
+    // Convert the preselectedChoice property to Initial Response State and an initial selectedAnswer.
+    if (this.preselectedChoice) {
+      const choices = this.allowMultiselect ? this.preselectedChoice.split(/\s*,\s*/) : [this.preselectedChoice];
+      choices.forEach(choice => this.responses.addInitialResponseState({
+        name: this.responseName,
+        value: choice,
+        identityId: this.enabledFor,
+      }));
+      this.selectedAnswer = this.preselectedChoice;
+      this.preselectedChoice = null;
+    }
+
+    // Standard Setup
     this._normalizeChoices();
-    this._sanitizeProperties();
+    if (this.allowMultiselect) this.allowDeselect = true;
+    if (this.allowDeselect) this.allowReselect = true;
+  }
+
+  // Message Type Model Lifecycle method that is called by the MessageTypeModel when a new model is instantiated
+  // locally and which will function with a Message but without its own MessagePart.
+  initializeAnonymousModel() {
+    this.initializeNewModel();
+  }
+
+  // Message Type Model Lifecycle method that is called by the MessageTypeModel to insure that all states are registered
+  registerAllStates() {
+    this.responses.registerState('custom_response_data', CRDT_TYPES.LAST_WRITER_WINS_NULLABLE);
+    this.responses.registerState(this.responseName, this._getResponseType());
   }
 
   _normalizeChoices() {
@@ -85,11 +129,6 @@ class ChoiceModel extends MessageTypeModel {
     });
   }
 
-  _sanitizeProperties() {
-
-    if (this.allowMultiselect) this.allowDeselect = true;
-    if (this.allowDeselect) this.allowReselect = true;
-  }
 
   /**
    * Generate the Message Parts representing this model so that the Choice Message can be sent.
@@ -100,17 +139,15 @@ class ChoiceModel extends MessageTypeModel {
    * @param {Layer.Core.MessagePart[]} callback.parts
    */
   generateParts(callback) {
+    if (!this.enabledFor) throw new Error(ErrorDictionary.enabledForMissing);
     const body = this.initBodyWithMetadata([
       'label', 'type', 'responseName', 'name',
       'allowReselect', 'allowDeselect', 'allowMultiselect',
-      'title', 'customResponseData', 'preselectedChoice',
+      'title', 'customResponseData', 'enabledFor',
     ]);
 
     // Convert each choices properties to snake-case
     body.choices = this.choices.map(choice => choice.toSnakeCase());
-
-    // Add enabledFor to the body if its specfied
-    if (this.enabledFor && this.enabledFor.length) body.enabled_for = this.enabledFor;
 
     // Generate the Message Part
     this.part = new MessagePart({
@@ -118,12 +155,32 @@ class ChoiceModel extends MessageTypeModel {
       body: JSON.stringify(body),
     });
     this._buildActionButtonProps();
-
     callback([this.part]);
+  }
+
+  /**
+   * Utility for getting the CRDT Type for a given set of { allowMultiselect, allowDeselect, allowReselect }
+   *
+   * @method _getResponseType
+   * @private
+   * @returns {String}
+   */
+  _getResponseType() {
+    if (this.allowMultiselect) {
+      return CRDT_TYPES.SET;
+    } else if (this.allowDeselect) {
+      return CRDT_TYPES.LAST_WRITER_WINS_NULLABLE;
+    } else if (this.allowReselect) {
+      return CRDT_TYPES.LAST_WRITER_WINS;
+    } else {
+      return CRDT_TYPES.FIRST_WRITER_WINS;
+    }
   }
 
   // See parent class
   parseModelPart({ payload, isEdit }) {
+    if (payload.enabledFor && Array.isArray(payload.enabledFor)) payload.enabledFor = payload.enabledFor[0]; // Backwards compatability with 1.0.0-pre2.7; remove some day.
+
     // Explicitly protect us from this illegal usage.
     delete payload.selectedAnswer;
 
@@ -132,26 +189,11 @@ class ChoiceModel extends MessageTypeModel {
 
     this._normalizeChoices();
 
+    if (this.allowMultiselect) this.allowDeselect = true;
+    if (this.allowDeselect) this.allowReselect = true;
+
     // Generate the data for an Action Button from our Choices
     this._buildActionButtonProps();
-  }
-
-  /**
-   * Initialize or process changes to this Message Type Model's sub-message-parts.
-   *
-   * `parseModelChildParts` is called for intialization, and is also recalled
-   * whenever the sub-parts are added or modified.
-   *
-   * @method parseModelChildParts
-   * @protected
-   * @param {Object} options
-   * @param {Object[]} options.changes
-   * @param {String} options.changes.type  (one of `added`, `removed`, `changed`)
-   * @param {Layer.Core.MessagePart} options.changes.part   The Part that has changed.
-   */
-  parseModelChildParts({ changes, init }) {
-    super.parseModelChildParts({ changes, init });
-    if (this.__selectedAnswer === null && this.preselectedChoice) this.selectedAnswer = this.preselectedChoice;
   }
 
   /**
@@ -187,14 +229,7 @@ class ChoiceModel extends MessageTypeModel {
     if (!this.allowReselect && this.selectedAnswer) return false;
 
     // Disable selection if enabledFor is in use, but this user is not in the list
-    if (this.enabledFor.length > 0 && this.enabledFor.indexOf(Client.user.id) === -1) return false;
-
-    // Disable selection if this user is the sender, and other participants have made selections.
-    // Rationale: This user was requesting feedback, this user's selections do not get priority
-    const data = this.responses.getResponses(this.responseName, this.enabledFor);
-
-    // If someone else has answered, disable this user from answering
-    if (data.filter(item => Identity.prefixUUID + item.identityId !== Client.user.id).length) return false;
+    if (this.enabledFor !== Client.user.id) return false;
 
     return true;
   }
@@ -285,25 +320,41 @@ class ChoiceModel extends MessageTypeModel {
       action = 'selected';
     }
 
-    // Setup the participant data
-    const participantData = {
-      [this.responseName]: selectedAnswers.join(','),
-    };
 
+    const messageText = this._generateResponseMessage({
+      selectedText,
+      action,
+    });
+
+    if (action === 'selected') {
+      this.responses.addState(this.responseName, id);
+    } else {
+      this.responses.removeState(this.responseName, id);
+    }
+
+    const customResponseData = {};
     if (this.customResponseData) {
-      Object.keys(this.customResponseData).forEach((key) => {
-        participantData[key] = this.customResponseData[key];
-      });
+      Object.keys(this.customResponseData).forEach(key => (customResponseData[key] = this.customResponseData[key]));
     }
 
     if (action === 'selected' && choiceItem.customResponseData) {
       Object.keys(choiceItem.customResponseData).forEach((key) => {
-        participantData[key] = choiceItem.customResponseData[key];
+        customResponseData[key] = choiceItem.customResponseData[key];
       });
     }
 
-    // Update the selectedAnswer property
-    this.selectedAnswer = selectedAnswers.join(',');
+    if (Object.keys(customResponseData).length) {
+      this.responses.addState('custom_response_data', customResponseData);
+    }
+
+    this.responses.setResponseMessageText(messageText);
+
+    this.responses.sendResponseMessage();
+
+    // Update the selected answer and update the UI
+    // TODO: Use function to look at all state and get selectedAnswer
+    this.selectedAnswer = this.responses.getState(this.responseName, Client.user.id).join(',');
+
 
     // Tell the UIs to update
     this._triggerAsync('message-type-model:change', {
@@ -311,21 +362,6 @@ class ChoiceModel extends MessageTypeModel {
       newValue: this.selectedAnswer,
       oldValue: initialSelectedAnswer,
     });
-
-    this._generateResponseMessage({
-      action, selectedText, choiceItem, participantData,
-    });
-
-    // We generate local changes, we generate more local changes then the server sends us the first changes
-    // which we need to ignore. Pause 6 seconds and wait for all changes to come in before rendering changes
-    // from the server after a user change.
-    if (this._pauseUpdateTimeout) clearTimeout(this._pauseUpdateTimeout);
-    this._pauseUpdateTimeout = setTimeout(() => {
-      this._pauseUpdateTimeout = 0;
-      if (this.responses.getResponse(this.responseName, Client.user.id) && this.message && !this.message.isNew()) {
-        this.parseModelResponses();
-      }
-    }, 6000);
   }
 
   /**
@@ -337,81 +373,7 @@ class ChoiceModel extends MessageTypeModel {
    */
   _generateResponseMessage({ action, selectedText, choiceItem, participantData }) {
     // Generate the Response Message
-    let text = `${Client.user.displayName} ${action} "${selectedText}"` + (this.name ? ` for "${this.name}"` : '');
-
-    /**
-     * Whenever the Choice Model is about to send a Response Message, this event is triggered.
-     *
-     * Use this event to customize or prevent the Response Message
-     *
-     * ```
-     * client.on('message-type-model:customization', function(evt) {
-     *     if (evt.detail.type === 'generate-response-message') {
-     *         evt.returnValue("I have " + (evt.detail.choice === 'selected' ? "clicked " : "unclicked ") + evt.detail.choice.text);
-     *     }
-     * });
-     * ```
-     *
-     * The value provided to the event via Layer.Core.LayerEvent.returnValue will become the Status Message
-     * used within the Response Message.
-     *
-     * One could also prevent the Response Message from containing a Status Message (sub-model); by returning `null`; this would mean:
-     *
-     * * The Response Message is not rendered
-     * * No notification is presented to recipients
-     *
-     * ```
-     * client.on('message-type-model:customization', function(evt) {
-     *     if (evt.detail.type === 'generate-response-message') {
-     *         evt.returnValue(null);
-     *     }
-     * });
-     * ```
-     *
-     * Alternatively, one could call `evt.preventDefault()`; this will prevent the Response Message from being sent.
-     *
-     * @event message-type-model:customization
-     * @param {CustomEvent} evt
-     * @param {Object} evt.detail
-     * @param {Boolean} evt.detail.cancelable   This event is cancelable and will respond to `evt.preventDefault()`
-     * @param {String} evt.detail.type          "layer-choice-model-generate-response-message" will accompany events for this model
-     * @param {String} evt.detail.text          This is the text that the Choice Model will use for its Response Message
-     * @param {Object} evt.detail.choice        This is the Choice Object that the user selected
-     * @param {String} evt.detail.action        Either "selected" or "deselected"
-     * @param {Layer.UI.messages.ChoiceMessageModel} evt.detail.model  This Choice Model
-     * @param {String} evt.detail.name          Suggested name to describe the choice message the use is responding to; can be used to help your `evt.returnValue()` call.
-     */
-
-    // UI will trigger evt.type (choice-model-generate-response-message)
-    const evt = this.trigger('message-type-model:customization', {
-      cancelable: true,
-      type: 'layer-choice-model-generate-response-message',
-      choice: choiceItem,
-      model: this,
-      text,
-      action,
-      name: this.name,
-    });
-
-    // If evt.cancel() was called (or from the UI event: evt.preventDefault()) do not send the Response Message
-    if (evt.canceled) return;
-
-    // If evt.returnValue(text) was called  (or from the UI event evt.detail.returnValue(text)  ) then use the provided text for the Response Message
-    if (evt.returnedValue !== null) text = evt.returnedValue;
-
-    const responseModel = new ResponseModel({
-      participantData,
-      responseTo: this.message.id,
-      responseToNodeId: this.parentId || this.nodeId,
-      displayModel: text ? new StatusModel({ text }) : null,
-    });
-
-    // Technically, one shouldn't ever perform these actions on a message that hasn't yet been sent.
-    // however rather than reject that entirely, we simply insure that we only send a Response Message
-    // for a Message that is shared among the participants.
-    if (!this.message.isNew()) {
-      responseModel.send({ conversation: this.message.getConversation() });
-    }
+    return `${Client.user.displayName} ${action} "${selectedText}"` + (this.name ? ` for "${this.name}"` : '');
   }
 
   /**
@@ -425,55 +387,57 @@ class ChoiceModel extends MessageTypeModel {
   _selectSingleAnswer(answerData) {
     const initialSelectedAnswer = this.selectedAnswer;
     let action = 'selected';
-    let id = answerData.id;
+    const id = answerData.id;
     const choiceItem = this.getChoiceById(id);
 
     // Get the index and text of the selected answer
-    let selectedIndex = this.getChoiceIndexById(answerData.id);
+    const selectedIndex = this.getChoiceIndexById(answerData.id);
     const selectedText = this.getText(selectedIndex);
 
     // If we are actually deselecting, clear the index, id and action
     if (this.isSelectionEnabledFor(selectedIndex) && this.isSelectedIndex(selectedIndex)) {
-      selectedIndex = -1;
-      id = '';
       action = 'deselected';
     }
 
-    // Setup the participant data for the Response Message
-    const participantData = {
-      [this.responseName]: id,
-    };
+    const messageText = this._generateResponseMessage({
+      selectedText,
+      action,
+    });
 
+    if (action === 'selected') {
+      this.responses.addState(this.responseName, id);
+    } else {
+      this.responses.removeState(this.responseName, id);
+    }
+
+    const customResponseData = {};
     if (this.customResponseData) {
-      Object.keys(this.customResponseData).forEach(key => (participantData[key] = this.customResponseData[key]));
+      Object.keys(this.customResponseData).forEach(key => (customResponseData[key] = this.customResponseData[key]));
     }
 
     if (action === 'selected' && choiceItem.customResponseData) {
       Object.keys(choiceItem.customResponseData).forEach((key) => {
-        participantData[key] = choiceItem.customResponseData[key];
+        customResponseData[key] = choiceItem.customResponseData[key];
       });
     }
 
+    if (Object.keys(customResponseData).length) {
+      this.responses.addState('custom_response_data', customResponseData);
+    }
+
+    this.responses.setResponseMessageText(messageText);
+
+    this.responses.sendResponseMessage();
+
     // Update the selected answer and update the UI
-    this.selectedAnswer = id;
+    // TODO: Use function to look at all state and get selectedAnswer
+    this.selectedAnswer = this.responses.getState(this.responseName, Client.user.id);
+
     this._triggerAsync('message-type-model:change', {
       property: 'selectedAnswer',
       newValue: this.selectedAnswer,
       oldValue: initialSelectedAnswer,
     });
-
-    this._generateResponseMessage({
-      action, selectedText, choiceItem, participantData,
-    });
-
-    // We generate local changes, we generate more local changes then the server sends us the first changes
-    // which we need to ignore. Pause 6 seconds and wait for all changes to come in before rendering changes
-    // from the server after a user change.
-    if (this._pauseUpdateTimeout) clearTimeout(this._pauseUpdateTimeout);
-    this._pauseUpdateTimeout = setTimeout(() => {
-      this._pauseUpdateTimeout = 0;
-      if (this._hasPendingResponse) this.parseModelResponses();
-    }, 6000);
   }
 
 
@@ -488,34 +452,36 @@ class ChoiceModel extends MessageTypeModel {
    * @protected
    */
   parseModelResponses() {
-    // If still within the _pauseUpdateTimeout, simply indicate that we have a pending response
-    if (this._pauseUpdateTimeout) {
-      this._hasPendingResponse = true;
-    } else {
-      const initialSelectedAnswer = this.selectedAnswer;
+    const initialSelectedAnswer = this.selectedAnswer;
+    const selection = this.responses.getState(this.responseName, this.enabledFor);
 
-      this._hasPendingResponse = false;
-      const senderId = this.message.sender.userId;
-      let data = this.responses.getResponses(this.responseName, this.enabledFor);
-
-      // If multiple users have resonded to this Choice Message, ignore any responses from the Choice
-      // Message Sender.
-      if (data.length > 1) data = data.filter(response => response.identityId !== senderId);
-
-      // Assuming we have remaining responses, update selectedAnswer with them.
-      // TODO: Work out some way to aggregate multiple user's responses
-      if (data.length) {
-        this.selectedAnswer = data[0].value;
-
-        // Trigger a change event if there was a prior answer
-        if (this.selectedAnswer !== initialSelectedAnswer) {
-          this._triggerAsync('message-type-model:change', {
-            propertyName: 'selectedAnswer',
-            oldValue: initialSelectedAnswer,
-            newValue: this.selectedAnswer,
-          });
-        }
+    let isEqual;
+    if (Array.isArray(selection)) {
+      if (selection.length === 0 && !initialSelectedAnswer) {
+        isEqual = true;
+      } else {
+        isEqual = JSON.stringify(selection.sort()) === JSON.stringify(initialSelectedAnswer.split(/\s*,\s*/).sort());
       }
+    } else if (initialSelectedAnswer === '' && selection === null) {
+      isEqual = true;
+    } else {
+      isEqual = initialSelectedAnswer === selection;
+    }
+
+
+    // Update selectedAnswer with any selection state in the Response Message
+    if (!isEqual) {
+      if (this.allowMultiselect) {
+        this.selectedAnswer = selection.join(',');
+      } else {
+        this.selectedAnswer = selection;
+      }
+
+      this._triggerAsync('message-type-model:change', {
+        property: 'selectedAnswer',
+        oldValue: initialSelectedAnswer,
+        newValue: this.selectedAnswer,
+      });
     }
   }
 
@@ -695,10 +661,10 @@ class ChoiceModel extends MessageTypeModel {
  * Note that this is enforced at the UI and model level, but should not be treated as a security feature.
  *
  * ```
- * choiceModel.enabledFor = ["layer:///identities/frodo-the-dodo"];
+ * choiceModel.enabledFor = "layer:///identities/frodo-the-dodo";
  * ```
  *
- * @property {String[]}
+ * @property {String}
  */
 ChoiceModel.prototype.enabledFor = null;
 
@@ -843,7 +809,7 @@ ChoiceModel.prototype.selectedChoice = null;
  *
  * @property {String} preselectedChoice
  */
-ChoiceModel.prototype.preselectedChoice = '';
+ChoiceModel.prototype.preselectedChoice = null;
 
 /**
  * Provide Custom Response Data that will be inserted into any Response Message sent on behalf of the User.
