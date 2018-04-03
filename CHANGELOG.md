@@ -5,7 +5,7 @@
 *Breaking Changes*
 
 * WEB-1421: Client now throws errors if a `challenge` event is not registered.  All apps should register this event even if only to handle reauthentication
-* Titled Message View Container now expects the Message Type View to provide `getTitle()` and `getIconClass()` methods rather than `_getTitle()` and `_getIconClass()` methods.
+* Custom Messages using the Titled Message View Container must now provide views with `getTitle()` and `getIconClass()` methods rather than `_getTitle()` and `_getIconClass()` methods.
 * CRDT data structures replacing old Response Message datastructures.
 * Custom Messages must now register any state shared via Response Messages
 * Receipt Message has renamed Message Parts with Product Information from `product-items` to `product-item`

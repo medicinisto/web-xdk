@@ -1,4 +1,4 @@
-"use strict";
+/* eslint-disable */
 /*
  * Copied directly from https://www.npmjs.com/package/content-type-parser so that all arrow functions could be properly run through babeljs.
  * Can resume using the proper npm dependency as soon as IE11 is no longer being supported.
