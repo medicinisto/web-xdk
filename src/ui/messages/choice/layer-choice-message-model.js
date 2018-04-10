@@ -179,7 +179,9 @@ class ChoiceModel extends MessageTypeModel {
 
   // See parent class
   parseModelPart({ payload, isEdit }) {
-    if (payload.enabledFor && Array.isArray(payload.enabledFor)) payload.enabledFor = payload.enabledFor[0]; // Backwards compatability with 1.0.0-pre2.7; remove some day.
+    // These two lines are Backwards compatability with 1.0.0-pre2.7; remove some day please!
+    if (payload.enabled_for && Array.isArray(payload.enabled_for)) payload.enabled_for = payload.enabled_for[0];
+    if (!payload.enabled_for) payload.enabled_for = Client.user.id;
 
     // Explicitly protect us from this illegal usage.
     delete payload.selectedAnswer;

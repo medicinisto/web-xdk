@@ -46,6 +46,9 @@ module.exports = {
      *    message.addPart(new Layer.Core.MessagePart({mimeType: "text/note", body: "This part has been added"}));
      * });
      * ```
+     *
+     * @event
+     * @param {Layer.Core.LayerEvent} evt
      */
     'message-type-model:has-new-message',
 
@@ -208,6 +211,11 @@ module.exports = {
     registerMessageTypeModelClass(messageTypeModelClass, name) {
       MessageTypeModelClasses.push(messageTypeModelClass);
       MessageTypeModelHash[messageTypeModelClass.MIMEType] = messageTypeModelClass;
+
+      // Register any alternative MIME Types as well
+      (messageTypeModelClass.AltMIMETypes || []).forEach(mimeType =>
+        (MessageTypeModelHash[mimeType] = messageTypeModelClass));
+
       if (name) MessageTypeModelNameHash[name] = messageTypeModelClass;
     },
 

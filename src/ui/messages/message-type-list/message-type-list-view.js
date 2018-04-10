@@ -1,4 +1,4 @@
-/**
+/*
  *
  * @class
  * @extends Layer.UI.Component

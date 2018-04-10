@@ -18,3 +18,9 @@
   margin-right: 35px;
   width: auto !important;
 }
+
+.x-css-shadow, .x-component {
+  min-width: 400px;
+  right: 0px;
+  left: inherit !important;
+}

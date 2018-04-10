@@ -1,5 +1,14 @@
 # Web XDK Change Log
 
+## 4.0.1
+
+* WEB-1731: Adds AltMIMETypes
+    * A Model can represent more than one MIME Type
+    * A Model can represent the same MIME Type but with different
+      version numbers in the version string
+* WEB-1731: Adds versioning for the Response Summary class
+* Fixes Toast Notification CSS to prevent overflow
+
 ## 4.0.0
 
 *Breaking Changes*

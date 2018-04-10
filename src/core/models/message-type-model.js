@@ -32,7 +32,8 @@ import Root from '../root';
 import Message from './message';
 import Identity from './identity';
 import { ErrorDictionary } from '../layer-error';
-import MessageTypeResponseSummary from './message-type-response-summary';
+import MessageTypeResponseSummary from './message-type-response-summary/message-type-response-summmary-v2';
+import { get as getResponseSummaryClass } from './message-type-response-summary';
 import { STANDARD_MIME_TYPES } from '../../constants';
 
 class MessageTypeModel extends Root {
@@ -514,7 +515,18 @@ class MessageTypeModel extends Root {
    */
   parseMessage() {
     const responses = this.childParts.filter(part => part.mimeAttributes.role === 'response_summary')[0];
-    this.responses.part = responses;
+
+    // If there is a Responses Message Part, identify the correct Response Summary class to represent it (based on MIME Type/Version),
+    // and if its not our default Response Summary class, replace our default Response Summary instance with suitable Response Summary instance.
+    if (responses) {
+      const ResponseClass = getResponseSummaryClass(responses.mimeType);
+      if (ResponseClass !== this.responses.constructor) {
+        this.responses = new ResponseClass({
+          parentModel: this,
+        });
+      }
+      this.responses.part = responses;
+    }
 
     this.parseModelPart({
       payload: this.part.body ? JSON.parse(this.part.body) : {},
@@ -1317,6 +1329,16 @@ MessageTypeModel.NotificationTitle = 'New Message from ${messageSender}'; // esl
  * @abstract
  */
 MessageTypeModel.MIMEType = '';
+
+/**
+ * Misc MIME Types accepted by this Model
+ *
+ * Typically used when there are MIME Type changes but the rendering of older messages can still be handled by the latest class.
+ *
+ * @static
+ * @property {String[]}
+ */
+MessageTypeModel.AltMIMETypes = [];
 
 /**
  * The UI Component to render this model

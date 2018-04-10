@@ -6,13 +6,14 @@
  * @class  Layer.Core.MessageTypeResponseSummary
  * @extends Layer.Core.Root
  */
-import Core from '../namespace';
-import Syncable from './syncable';
-import Root from '../root';
-import { client } from '../../settings';
-import CRDTMultiIdentityTracker from '../crdt/multi-identity-state-tracker';
-import { logger, randomString } from '../../utils';
-import { ErrorDictionary } from '../layer-error';
+import Core from '../../namespace';
+import Syncable from '../syncable';
+import Root from '../../root';
+import { client } from '../../../settings';
+import CRDTMultiIdentityTracker from '../../crdt/multi-identity-state-tracker';
+import { logger, randomString } from '../../../utils';
+import { ErrorDictionary } from '../../layer-error';
+import { register } from './index';
 
 class MessageTypeResponseSummary extends Root {
   constructor(options) {
@@ -251,16 +252,16 @@ class MessageTypeResponseSummary extends Root {
    *
    * @method getState
    * @param {String} name
-   * @param {Layer.Core.Identity} identity
+   * @param {String} identityId
    * @returns {String | Number | Boolean | String[] | Number[] | Boolean[]}
    */
-  getState(name, identity) {
-    if (!identity) {
+  getState(name, identityId) {
+    if (!identityId) {
       logger.warn(`Identity not found for Model.getState(${name})`);
       return null;
     }
     if (this._trackers[name]) {
-      return this._trackers[name].getValue(identity);
+      return this._trackers[name].getValue(identityId);
     } else {
       throw new Error(ErrorDictionary.modelStateNotRegistered);
     }
@@ -281,19 +282,19 @@ class MessageTypeResponseSummary extends Root {
    *
    * @method getStates
    * @param {String} name
-   * @param {Layer.Core.Identity[]} identities
+   * @param {String[]} identityIds
    * @returns {Object[]}
    * @returns {String} return.identityId
    * @returns {String | Number | Boolean | String[] | Number[] | Boolean[]} return.value
    */
-  getStates(name, identities) {
-    identities = identities.filter((identity) => {
+  getStates(name, identityIds) {
+    identityIds = identityIds.filter((identity) => {
       if (identity) return true;
       logger.warn(`Identity not found for Model.getStates(${name})`);
       return false;
     });
     if (this._trackers[name]) {
-      return this._trackers[name].getValues(identities);
+      return this._trackers[name].getValues(identityIds);
     } else {
       throw new Error(ErrorDictionary.modelStateNotRegistered);
     }
@@ -396,3 +397,4 @@ Root.initClass.apply(MessageTypeResponseSummary,
   [MessageTypeResponseSummary, 'MessageTypeResponseSummary', Core]);
 Syncable.subclasses.push(MessageTypeResponseSummary);
 module.exports = MessageTypeResponseSummary;
+register('application/vnd.layer.responsesummary-v2+json', MessageTypeResponseSummary);

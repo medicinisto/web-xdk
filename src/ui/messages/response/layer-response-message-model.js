@@ -185,6 +185,14 @@ ResponseModel.SummaryTemplate = '${displayModel}'; // eslint-disable-line no-tem
 ResponseModel.MIMEType = 'application/vnd.layer.response-v2+json';
 
 /**
+ * Misc MIME Types accepted by this Model
+ *
+ * @static
+ * @property {String[]}
+ */
+ResponseModel.AltMIMETypes = ['application/vnd.layer.response+json'];
+
+/**
  * The UI Component to render the Response Model.
  *
  * @static

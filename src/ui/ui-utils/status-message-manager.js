@@ -22,7 +22,10 @@ module.exports.statusMimeTypes = [];
  * @method registerStatusModel
  * @param {Function} StatusModel    Pass in the Class Definition for a Layer.Core.MessageTypeModel subclass
  */
-module.exports.registerStatusModel = StatusModel => module.exports.statusMimeTypes.push(StatusModel.MIMEType);
+module.exports.registerStatusModel = (StatusModel) => {
+  module.exports.statusMimeTypes.push(StatusModel.MIMEType);
+  (StatusModel.AltMIMETypes || []).forEach(mimeType => module.exports.statusMimeTypes.push(mimeType));
+};
 
 
 /**
