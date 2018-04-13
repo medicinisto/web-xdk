@@ -6,15 +6,17 @@
 /* eslint-disable no-restricted-properties */
 
 import uuid from 'uuid';
-import defer from './defer';
 import layerParse from './layer-parser';
 import logger from './logger';
 import xhr from './xhr';
+import { getNativeSupport } from '../utils/native-support';
 
-exports.atob = typeof atob === 'undefined' ? global.getNativeSupport('atob') : atob.bind(window);
-exports.btoa = typeof btoa === 'undefined' ? global.getNativeSupport('btoa') : btoa.bind(window);
+const Blob = getNativeSupport('Blob');
+
+exports.atob = getNativeSupport('atob');
+exports.btoa = getNativeSupport('btoa');
 const LocalFileReader = typeof FileReader === 'undefined' ? global.getNativeSupport('FileReader') : FileReader;
-
+exports.defer = getNativeSupport('setImmediate');
 
 /**
  * Generate a random UUID
@@ -346,8 +348,6 @@ exports.fetchTextFromFile = (file, callback) => {
   reader.readAsText(file);
 };
 
-
-exports.defer = defer;
 exports.layerParse = layerParse;
 
 

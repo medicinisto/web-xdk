@@ -29,6 +29,7 @@ import { client } from '../settings';
 import Core from './namespace';
 import Root from './root';
 import Util, { logger, xhr } from '../utils';
+import { getNativeSupport } from '../utils/native-support';
 import { ACCEPT } from '../constants';
 import version from '../version';
 
@@ -56,15 +57,9 @@ class OnlineStateManager extends Root {
     // Any change in online status reported by the browser should result in
     // an immediate update to our online/offline state
     /* istanbul ignore else */
-    if ((typeof window !== 'undefined') && window.addEventListener) {
-      window.addEventListener('online', this._handleOnlineEvent.bind(this));
-      window.addEventListener('offline', this._handleOnlineEvent.bind(this));
-    } else {
-      const OnlineEvents = global.getNativeSupport('OnlineEvents');
-      if (OnlineEvents) {
-        OnlineEvents.addEventListener('change', this._handleOnlineEvent.bind(this));
-      }
-    }
+    const onlineEventListener = getNativeSupport('OnlineEvents');
+    onlineEventListener.addEventListener('online', this._handleOnlineEvent.bind(this));
+    onlineEventListener.addEventListener('offline', this._handleOnlineEvent.bind(this));
   }
 
   /**

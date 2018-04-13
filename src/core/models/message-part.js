@@ -71,7 +71,10 @@ import Root from '../root';
 import Content from './content';
 import LayerError, { ErrorDictionary } from '../layer-error';
 import Util, { logger, xhr } from '../../utils';
+import { getNativeSupport } from '../../utils/native-support';
 import { STANDARD_MIME_TYPES } from '../../constants';
+
+const Blob = getNativeSupport('Blob');
 
 class MessagePart extends Root {
 

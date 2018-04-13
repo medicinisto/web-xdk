@@ -21,6 +21,9 @@ import { client } from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import { xhr } from '../../utils';
+import { getNativeSupport } from '../../utils/native-support';
+
+const Blob = getNativeSupport('Blob');
 
 class Content extends Root {
 

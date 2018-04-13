@@ -63,6 +63,9 @@ import { normalizeSize } from '../../ui-utils';
 import { register } from '../../handlers/message/message-handlers';
 import Core, { Root, MessagePart, MessageTypeModel } from '../../../core';
 import { xhr } from '../../../utils';
+import { getNativeSupport } from '../../../utils/native-support';
+
+const Blob = getNativeSupport('Blob');
 
 class ImageModel extends MessageTypeModel {
   constructor(options = {}) {

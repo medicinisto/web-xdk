@@ -44,6 +44,7 @@
  * 2. Result should be a layer.ServerResponse instance
  * 3. Should only access link headers if requested; annoying having it throw errors every other time.
  */
+import { getNativeSupport } from '../utils/native-support';
 
 function parseLinkHeaders(linkHeader) {
   if (!linkHeader) return {};
@@ -66,7 +67,7 @@ function parseLinkHeaders(linkHeader) {
 
 module.exports = (request, callback) => {
   const startTime = Date.now();
-  const req = new XMLHttpRequest();
+  const req = getNativeSupport('XHR')();
   const method = (request.method || 'GET').toUpperCase();
 
   const onload = function onload() {

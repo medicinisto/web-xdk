@@ -6,7 +6,7 @@
 if (global.Layer) throw new Error('You appear to have multiple copies of the Layer Web XDK loaded at the same time');
 
 import Constants from './constants';
-import Core from './core';
+import Core from './core/index-web';
 import Utils from './utils';
 import UI from './ui';
 import version from './version';
