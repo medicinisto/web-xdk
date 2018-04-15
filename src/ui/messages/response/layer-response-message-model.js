@@ -64,14 +64,19 @@ class ResponseModel extends MessageTypeModel {
     }
   }
 
+  parseModelPart({ payload, isEdit }) {
+    super.parseModelChildParts({ payload, isEdit });
+    this.operations = payload.changes;
+  }
+
   /**
    * On receiving a new Layer.Core.Message, parse it and setup this Model's properties.
    *
    * @method parseModelChildParts
    * @private
    */
-  parseModelChildParts({ parts, init }) {
-    super.parseModelChildParts({ parts, init });
+  parseModelChildParts({ changes, init }) {
+    super.parseModelChildParts({ changes, init });
 
     // Find the displayModel in the MessageParts and create that Model.
     this.displayModel = this.getModelsByRole('status')[0] || null;
