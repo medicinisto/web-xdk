@@ -26,3 +26,4 @@ registerNativeSupport('OnlineEvents', () => {
 
 registerNativeSupport('XHR', options => new XMLHttpRequest(options));
 registerNativeSupport('Blob', Blob); // This needs to be updated to match node-js blob
+registerNativeSupport('FileReader', require('filereader'));

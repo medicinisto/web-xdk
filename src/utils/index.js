@@ -15,7 +15,6 @@ const Blob = getNativeSupport('Blob');
 
 exports.atob = getNativeSupport('atob');
 exports.btoa = getNativeSupport('btoa');
-const LocalFileReader = typeof FileReader === 'undefined' ? global.getNativeSupport('FileReader') : FileReader;
 exports.defer = getNativeSupport('setImmediate');
 
 /**
@@ -35,7 +34,7 @@ exports.generateUUID = uuid.v4;
 exports.generateUUIDBytes = () => {
   const b = new Uint8Array(16);
   uuid.v4(null, b);
-  return btoa(String.fromCharCode.apply(null, b));
+  return exports.btoa(String.fromCharCode.apply(null, b));
 };
 
 /**
@@ -261,9 +260,7 @@ exports.isBlob = value => typeof Blob !== 'undefined' && value instanceof Blob;
  */
 exports.blobToBase64 = (blob, callback) => {
   if (blob instanceof Blob) {
-    const reader = new LocalFileReader();
-    reader.readAsDataURL(blob);
-    reader.onloadend = () => callback(reader.result.replace(/^.*?,/, ''));
+    getNativeSupport('blobToBase64')(blob, callback);
   } else {
     callback('');
   }
@@ -341,11 +338,7 @@ exports.atou = str => decodeURIComponent(escape(exports.atob(str)));
  */
 exports.fetchTextFromFile = (file, callback) => {
   if (typeof file === 'string') return callback(file);
-  const reader = new LocalFileReader();
-  reader.addEventListener('loadend', () => {
-    callback(reader.result);
-  });
-  reader.readAsText(file);
+  getNativeSupport('fetchTextFromFile')(file, callback);
 };
 
 exports.layerParse = layerParse;

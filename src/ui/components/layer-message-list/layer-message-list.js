@@ -121,6 +121,7 @@ import Settings from '../../../settings';
 import StatusMessageManager from '../../ui-utils/status-message-manager';
 import MessageHandlers from '../../handlers/message/message-handlers';
 import UIUtils from '../../ui-utils';
+import { animatedScrollTo } from '../../ui-utils/animated-scroll';
 import { registerComponent } from '../component';
 import List from '../../mixins/list';
 import HasQuery from '../../mixins/has-query';
@@ -416,7 +417,7 @@ registerComponent('layer-message-list', {
         this.properties.isSelfScrolling = true;
         if (this.properties.cancelAnimatedScroll) this.properties.cancelAnimatedScroll();
         const cancel = this.properties.cancelAnimatedScroll =
-          UIUtils.animatedScrollTo(this, position, animateSpeed, () => {
+          animatedScrollTo(this, position, animateSpeed, () => {
             // Wait for any onScroll events to trigger before we clear isSelfScrolling and procede
             setTimeout(() => {
               if (cancel !== this.properties.cancelAnimatedScroll) return;

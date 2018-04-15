@@ -19,6 +19,7 @@
   "dependencies": {
     "backbone-events-standalone": "^0.2.7",
     "base64-js": "^1.2.0",
+    "blob-polyfill": "^2.0.20171115",
     "blueimp-load-image": "^2.9.0",
     "layer-patch": "^1.2.1",
     "notifyjs": "^2.0.3",
@@ -26,6 +27,7 @@
     "twemoji": "^2.5.0",
     "uuid": "^2.0.2",
     "webcomponents.js": "^0.7.22",
+    "websocket": "^1.0.25",
     "xhr2": "^0.1.4"
   },
   "devDependencies": {

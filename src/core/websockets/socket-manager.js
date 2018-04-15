@@ -18,9 +18,12 @@ import { client } from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Util, { logger } from '../../utils';
+import { getNativeSupport } from '../../utils/native-support';
 import { ErrorDictionary } from '../layer-error';
 import { WEBSOCKET_PROTOCOL } from '../../constants';
 import version from '../../version';
+
+let WebSocket;
 
 class SocketManager extends Root {
   /**
@@ -146,10 +149,9 @@ class SocketManager extends Root {
     logger.info('Websocket Connecting');
 
     // Load up our websocket component or shim
-    const WS = WebSocket;
-
+    WebSocket = getNativeSupport('Websocket');
     try {
-      this._socket = new WS(url, WEBSOCKET_PROTOCOL);
+      this._socket = new WebSocket(url, WEBSOCKET_PROTOCOL);
     } catch (err) {
       // Errors at this point tend to show up in IE11 during unit tests;
       // slow things down a bit if this is throwing errors as the assumption is that
@@ -159,22 +161,10 @@ class SocketManager extends Root {
       return;
     }
 
-    // If its the shim, set the event hanlers
-    /* istanbul ignore if */
-    if (typeof WebSocket === 'undefined') {
-      this._socket.onmessage = this._onMessage;
-      this._socket.onclose = this._onSocketClose;
-      this._socket.onopen = this._onOpen;
-      this._socket.onerror = this._onError;
-    }
-
-    // If its a real websocket, add the event handlers
-    else {
-      this._socket.addEventListener('message', this._onMessage);
-      this._socket.addEventListener('close', this._onSocketClose);
-      this._socket.addEventListener('open', this._onOpen);
-      this._socket.addEventListener('error', this._onError);
-    }
+    this._socket.addEventListener('message', this._onMessage);
+    this._socket.addEventListener('close', this._onSocketClose);
+    this._socket.addEventListener('open', this._onOpen);
+    this._socket.addEventListener('error', this._onError);
 
     // Trigger a failure if it takes >= 5 seconds to establish a connection
     this._connectionFailedId = setTimeout(this._connectionFailed.bind(this), 5000);
@@ -256,7 +246,7 @@ class SocketManager extends Root {
   _isOpen() {
     if (!this._socket) return false;
     /* istanbul ignore if */
-    if (typeof WebSocket === 'undefined') return true;
+    // if (typeof WebSocket === 'undefined') return true;
     return this._socket && this._socket.readyState === WebSocket.OPEN;
   }
 

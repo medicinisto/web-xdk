@@ -46,6 +46,8 @@
  */
 import { getNativeSupport } from '../utils/native-support';
 
+const Blob = getNativeSupport('Blob');
+
 function parseLinkHeaders(linkHeader) {
   if (!linkHeader) return {};
 
@@ -176,7 +178,7 @@ module.exports = (request, callback) => {
 
   let data = '';
   if (request.data) {
-    if (typeof Blob !== 'undefined' && request.data instanceof Blob) {
+    if (request.data instanceof Blob || request.data instanceof Uint8Array) {
       data = request.data;
     } else if (request.headers && (
       String(request.headers['content-type']).match(/^application\/json/) ||

@@ -75,6 +75,7 @@ import { getNativeSupport } from '../../utils/native-support';
 import { STANDARD_MIME_TYPES } from '../../constants';
 
 const Blob = getNativeSupport('Blob');
+const URL = getNativeSupport('URL');
 
 class MessagePart extends Root {
 
@@ -461,6 +462,8 @@ class MessagePart extends Root {
   _processContentResponse(response, body, retryCount = 0) {
     this._content = new Content(response.id);
     this.hasContent = true;
+    body = getNativeSupport('GET-PUT-BLOB-DATA')(body);
+
     xhr({
       url: response.upload_url,
       method: 'PUT',
@@ -470,6 +473,7 @@ class MessagePart extends Root {
         'Upload-Content-Type': this.mimeType,
       },
     }, result => this._processContentUploadResponse(result, response, body, retryCount));
+
   }
 
   /**

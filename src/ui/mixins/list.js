@@ -8,7 +8,7 @@
 import { client } from '../../settings';
 import Layer from '../../core';
 import Util, { defer, logger } from '../../utils';
-import { animatedScrollTo } from '../ui-utils';
+import { animatedScrollTo } from '././../ui-utils/animated-scroll';
 import { registerComponent } from '../components/component';
 import HasQuery from './has-query';
 import Throttler from './throttler';
