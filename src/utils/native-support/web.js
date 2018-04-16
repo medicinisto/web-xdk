@@ -10,7 +10,6 @@ registerNativeSupport('XHR', options => new XMLHttpRequest(options));
 registerNativeSupport('Websocket', WebSocket);
 registerNativeSupport('Blob', Blob);
 registerNativeSupport('URL', URL);
-//registerNativeSupport('FileReader', FileReader);
 registerNativeSupport('blobToBase64', (blob, callback) => {
   const reader = new FileReader();
   reader.readAsDataURL(blob);

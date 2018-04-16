@@ -64,5 +64,4 @@ LayerUI.UIUtils.animatedScrollLeftTo = animatedScroll.animatedScrollLeftTo;
 LayerUI.UIUtils.dateSeparator = dateSeparator;
 LayerUI.mixins.MessageHandler = MessageHandler;
 
-// If we don't expose global.layerUI then custom templates can not load and call window.Layer.UI.registerTemplate()
 module.exports = LayerUI;
