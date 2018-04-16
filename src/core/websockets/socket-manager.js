@@ -23,7 +23,7 @@ import { ErrorDictionary } from '../layer-error';
 import { WEBSOCKET_PROTOCOL } from '../../constants';
 import version from '../../version';
 
-let WebSocket;
+let WebSocket = getNativeSupport('Websocket');
 
 class SocketManager extends Root {
   /**
@@ -148,7 +148,8 @@ class SocketManager extends Root {
 
     logger.info('Websocket Connecting');
 
-    // Load up our websocket component or shim
+    // Load up our websocket component or shim. Do it here so that unit tests can easily manipulate this value
+    // which it can't do to module-scoped variables
     WebSocket = getNativeSupport('Websocket');
     try {
       this._socket = new WebSocket(url, WEBSOCKET_PROTOCOL);

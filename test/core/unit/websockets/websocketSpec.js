@@ -4,16 +4,19 @@ describe("The Websocket Socket Manager Class", function() {
     var appId = "Fred's App";
     var nativeWebsocket;
 
+    function TestWebSocket(url) {
+        this.url = url;
+        this.close = function() {};
+        this.send = function() {};
+        this.addEventListener = function() {};
+        this.removeEventListener = function() {};
+    }
+    TestWebSocket.OPEN = 1;
+
     beforeAll(function() {
         // Test for phantomjs websocket handling
         nativeWebsocket = window.WebSocket;
-        window.WebSocket = function WebSocket(url) {
-            this.url = url;
-            this.close = function() {};
-            this.send = function() {};
-            this.addEventListener = function() {};
-            this.removeEventListener = function() {};
-        };
+        Layer.Utils.registerNativeSupport('Websocket', TestWebSocket);
         window.WebSocket.CONNECTING = 0;
         window.WebSocket.OPEN = 1;
         window.WebSocket.CLOSING = 2;
@@ -27,7 +30,7 @@ describe("The Websocket Socket Manager Class", function() {
         client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
-        });
+        }).on('challenge', function() {});
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
         client.user = new Layer.Core.Identity({
@@ -78,8 +81,7 @@ describe("The Websocket Socket Manager Class", function() {
     });
 
     afterAll(function() {
-        window.WebSocket = nativeWebsocket;
-
+        Layer.Utils.registerNativeSupport('Websocket', nativeWebsocket);
     });
 
     describe("The constructor() method", function() {
@@ -220,7 +222,7 @@ describe("The Websocket Socket Manager Class", function() {
         it("Should create a websocket connection", function() {
             websocketManager._socket = null;
             websocketManager.connect();
-            expect(websocketManager._socket).toEqual(jasmine.any(WebSocket));
+            expect(websocketManager._socket).toEqual(jasmine.any(TestWebSocket));
         });
 
         it("Should use the correct default url", function() {
@@ -484,6 +486,10 @@ describe("The Websocket Socket Manager Class", function() {
 
 
     describe("The getCounter() method", function() {
+        beforeEach(function() {
+            spyOn(websocketManager, "_ping");
+        });
+
         it("Should call sendRequest", function() {
             spyOn(client.socketRequestManager, "sendRequest");
             websocketManager.getCounter();
@@ -525,22 +531,24 @@ describe("The Websocket Socket Manager Class", function() {
            websocketManager.getCounter();
 
            // Posttest
-           var presenceSyncCount = client.socketRequestManager.sendRequest.calls.allArgs().filter(function(request) {
-               return request[0].data.method === "Presence.sync";
+           var counterCount = client.socketRequestManager.sendRequest.calls.allArgs().filter(function(request) {
+               return request[0].data.method === "Counter.read";
             }).length;
-           expect(presenceSyncCount).toEqual(0);
+           expect(counterCount).toEqual(1);
+           client.socketRequestManager.sendRequest.calls.reset();
 
            jasmine.clock().tick(1000);
-           presenceSyncCount = client.socketRequestManager.sendRequest.calls.allArgs().filter(function(request) {
-               return request[0].data.method === "Presence.sync";
+           counterCount = client.socketRequestManager.sendRequest.calls.allArgs().filter(function(request) {
+               return request[0].data.method === "Counter.read";
             }).length;
-           expect(presenceSyncCount).toEqual(1);
+           expect(counterCount).toEqual(1);
+           client.socketRequestManager.sendRequest.calls.reset();
 
            jasmine.clock().tick(10000);
-           presenceSyncCount = client.socketRequestManager.sendRequest.calls.allArgs().filter(function(request) {
-               return request[0].data.method === "Presence.sync";
+           counterCount = client.socketRequestManager.sendRequest.calls.allArgs().filter(function(request) {
+               return request[0].data.method === "Counter.read";
             }).length;
-           expect(presenceSyncCount).toEqual(1);
+           expect(counterCount).toEqual(0);
        });
     });
 

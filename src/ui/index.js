@@ -29,6 +29,7 @@ import './handlers/text/autolinker';
 import './handlers/text/emoji';
 import './handlers/text/newline';
 import dateSeparator from './ui-utils/date-separator';
+import animatedScroll from './ui-utils/animated-scroll';
 
 // Load standard cards
 import './messages';
@@ -56,6 +57,9 @@ import mixins from './mixins';
 
 LayerUI.mixins = mixins;
 LayerUI.UIUtils.dateSeparator = dateSeparator;
+
+LayerUI.UIUtils.animatedScrollTo = animatedScroll.animatedScrollTo;
+LayerUI.UIUtils.animatedScrollLeftTo = animatedScroll.animatedScrollLeftTo;
 
 // If we don't expose global.layerUI then custom templates can not load and call window.Layer.UI.registerTemplate()
 module.exports = LayerUI;

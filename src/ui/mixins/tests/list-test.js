@@ -335,7 +335,7 @@ describe("List Mixin", function() {
       var identityWidget = document.getElementById(el._getItemId(identity.id));
 
       expect(el.scrollToItem(identity, 200)).toEqual(true);
-      jasmine.clock().tick(200);
+      jasmine.clock().tick(500);
 
       expect(isCloseEnough(el.scrollTop, identityWidget.offsetTop - el.offsetTop)).toBe(true);
       expect(isCloseEnough(el.scrollTop, 0)).toBe(false);
@@ -346,7 +346,7 @@ describe("List Mixin", function() {
       var spy = jasmine.createSpy('callback');
       el.scrollToItem(identity, 200, spy);
       expect(spy).not.toHaveBeenCalled();
-      jasmine.clock().tick(200);
+      jasmine.clock().tick(500);
       expect(spy).toHaveBeenCalled();
     });
 
@@ -365,7 +365,7 @@ describe("List Mixin", function() {
       el.scrollToItem(identity, 200, spy);
       jasmine.clock().tick(50);
       el.scrollToItem(identity2, 200, spy);
-      jasmine.clock().tick(200);
+      jasmine.clock().tick(500);
       expect(count).toEqual(1);
       expect(isCloseEnough(position, identityWidget.offsetTop - el.offsetTop)).toBe(true);
       expect(isCloseEnough(position, el.scrollTop)).toBe(true);

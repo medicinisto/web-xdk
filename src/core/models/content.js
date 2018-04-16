@@ -64,13 +64,8 @@ class Content extends Root {
       responseType: 'arraybuffer',
     }, (result) => {
       if (result.success) {
-        if (typeof Blob !== 'undefined') {
-          const blob = new Blob([result.data], { type: mimeType });
-          callback(null, blob);
-        } else {
-          // If the blob class isn't defined (nodejs) then just return the result as is
-          callback(null, result.data);
-        }
+        const blob = new Blob([result.data], { type: mimeType });
+        callback(null, blob);
       } else {
         callback(result.data, null);
       }

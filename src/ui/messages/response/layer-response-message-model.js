@@ -65,7 +65,7 @@ class ResponseModel extends MessageTypeModel {
   }
 
   parseModelPart({ payload, isEdit }) {
-    super.parseModelChildParts({ payload, isEdit });
+    super.parseModelPart({ payload, isEdit });
     this.operations = payload.changes;
   }
 

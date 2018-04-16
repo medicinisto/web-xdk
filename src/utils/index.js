@@ -9,7 +9,7 @@ import uuid from 'uuid';
 import layerParse from './layer-parser';
 import logger from './logger';
 import xhr from './xhr';
-import { getNativeSupport } from '../utils/native-support';
+import { getNativeSupport, registerNativeSupport } from '../utils/native-support';
 
 const Blob = getNativeSupport('Blob');
 
@@ -445,3 +445,6 @@ exports.asciiInit = (version) => {
 
 exports.logger = logger;
 exports.xhr = xhr;
+
+exports.registerNativeSupport = registerNativeSupport;
+exports.getNativeSupport = getNativeSupport;

@@ -165,7 +165,7 @@ describe('Response Message Components', function() {
             })
           },
           {
-            mimeType: StatusModel.MIMEType + '; role=message; parent-node-id=' + uuidPart,
+            mimeType: StatusModel.MIMEType + '; role=status; parent-node-id=' + uuidPart,
             body: JSON.stringify({text: "ho hum"})
           }
         ]

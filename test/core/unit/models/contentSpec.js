@@ -102,30 +102,6 @@ describe("The Content class", function() {
             expect(spy).toHaveBeenCalledWith(null, jasmine.any(Blob));
         });
 
-        it("Should call the callback if Blob is undefined", function() {
-            var tmp = window.Blob;
-            window.Blob = undefined;
-
-            var content = new Layer.Core.Content({
-                downloadUrl: "http://hey.com"
-            });
-            var spy = jasmine.createSpy('spy');
-
-            // Run
-            content.loadContent("text/plain", spy);
-
-            requests.mostRecent().response({
-                status: 200,
-                responseText: "abc938a"
-            });
-
-            // Posttest
-            expect(spy).toHaveBeenCalledWith(null, "abc938a");
-
-            // Cleanup
-            window.Blob = tmp;
-        });
-
         it("Should call the callback with an error", function() {
             var tmp = window.Blob;
             window.Blob = undefined;

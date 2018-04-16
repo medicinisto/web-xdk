@@ -313,21 +313,21 @@ describe('layer-message-list', function() {
   describe("The animatedScrollTo() method", function() {
     it("Should scroll to the specified position", function() {
       el.animatedScrollTo(55);
-      jasmine.clock().tick(350);
+      jasmine.clock().tick(600);
       expect(Math.round(el.scrollTop)).toEqual(55);
     });
 
     it("Should check for visibility", function() {
         spyOn(el, "_checkVisibility");
         el.animatedScrollTo(55);
-        jasmine.clock().tick(350);
+        jasmine.clock().tick(600);
         expect(el._checkVisibility).toHaveBeenCalledWith();
     });
 
     it("Should not cause paging of the query", function() {
         spyOn(query, "update");
         el.animatedScrollTo(55);
-        jasmine.clock().tick(350);
+        jasmine.clock().tick(600);
         expect(query.update).not.toHaveBeenCalled();
     });
   });
