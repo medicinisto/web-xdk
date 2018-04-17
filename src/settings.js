@@ -20,11 +20,21 @@
  *
  * @property {String} settings.appId                    Passed into the `Layer.init({ appId })` in order to initialize the Client
  *
+ *
  * @property {Layer.Core.Client} [settings.Client]      Exposes the Client to all UI Components; set automatically by the `Layer.init({ appId })` call
  *
  * @property {Number} [settings.messageGroupTimeSpan=1,800,000]   Messages are grouped based on sender,
  *    as well as time between when Messages are sent
  *    How much time must pass before messages are no longer in the same group? Measured in miliseconds.
+ *
+ * @property {Number} [settings.timeBetweenReauths=30 seconds]  Number of miliseconds delay must
+ * pass before a subsequent challenge is issued. This value is here to insure apps
+ * don't get challenge requests while they are still processing the last challenge
+ * event.
+ *
+ * @property {Number} [settings.resetAfterOfflineDuration=30 hours]  Time to be offline
+ * after which we don't do a WebSocket Events.replay,
+ * but instead just refresh all our Query data.  Defaults to 30 hours.
  *
  * @property {Boolean} [settings.disableTabAsWhiteSpace=false]   By default hitting TAB in the Composer adds space.
  *    Disable this for tab to go to next component.
@@ -53,6 +63,8 @@
 
 module.exports = {
   appId: '',
+  timeBetweenReauths: 30 * 1000,
+  resetAfterOfflineDuration: 1000 * 60 * 60 * 30,
   __client: null,
   get client() {
     return module.exports.__client;

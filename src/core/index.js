@@ -4,6 +4,14 @@
 import Core from './namespace';
 import './root';
 
+import './mixins/client-capi-authentication';
+import './mixins/client-websockets';
+import './mixins/client-online-manager';
+import './mixins/client-capi-requests';
+import './mixins/client-typing-indicators';
+import './mixins/client-cache-cleaner';
+import './mixins/client-user';
+import './mixins/client-telemetry';
 import './mixins/client-queries';
 import './mixins/client-identities';
 import './mixins/client-conversations';
@@ -15,7 +23,6 @@ import './mixins/client-members';
 import './mixins/client-announcements';
 
 import './client';
-import './client-authenticator';
 import './models/syncable';
 import './models/conversation';
 import './models/container';

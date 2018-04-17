@@ -73,7 +73,7 @@
  *     });
  *
  * @class  Layer.Core.Client
- * @extends Layer.Core.ClientAuthenticator
+ * @extends Layer.Core.Root
  * @mixin Layer.Core.mixins.ClientIdentities
  * @mixin Layer.Core.mixins.ClientMembership
  * @mixin Layer.Core.mixins.ClientConversations
@@ -84,50 +84,84 @@
  * @mixin Layer.Core.mixins.ClientMessageTypeModels
  */
 
-import ClientAuth from './client-authenticator';
-import TypingIndicatorListener from './typing-indicators/typing-indicator-listener';
 import Util from '../utils';
 import version from '../version';
 import logger from '../utils/logger';
 import Root from './root';
-import TypingListener from './typing-indicators/typing-listener';
-import TypingPublisher from './typing-indicators/typing-publisher';
-import TelemetryMonitor from './telemetry-monitor';
 import Identity from './models/identity';
 import Core from './namespace';
 import Settings from '../settings';
 
-class Client extends ClientAuth {
+class Client extends Root {
 
-  /*
-   * Adds conversations, messages and websockets on top of the authentication client.
-   * jsdocs on parent class constructor.
+  /**
+   * Create a new Client.
+   *
+   * This should be called via `Layer.init()`:
+   *
+   *      var client = Layer.init({
+   *          appId: "layer:///apps/staging/uuid"
+   *      });
+   *
+   * For trusted devices, you can enable storage of data to indexedDB and localStorage with the `isTrustedDevice` and `isPersistenceEnabled` property:
+   *
+   *      var client = Layer.init({
+   *          appId: "layer:///apps/staging/uuid",
+   *          isTrustedDevice: true,
+   *          isPersistenceEnabled: true
+   *      });
+   *
+   * @method constructor
+   * @param  {Object} options
+   * @param  {string} options.appId           - "layer:///apps/production/uuid"; Identifies what
+   *                                            application we are connecting to.
+   * @param  {string} [options.url=https://api.layer.com] - URL to log into a different REST server
+   * @param {number} [options.logLevel=ERROR] - Provide a log level that is one of Layer.Constants.LOG.NONE, Layer.Constants.LOG.ERROR,
+   *                                            Layer.Constants.LOG.WARN, Layer.Constants.LOG.INFO, Layer.Constants.LOG.DEBUG
+   * @param {boolean} [options.isTrustedDevice=false] - If this is not a trusted device, no data will be written to indexedDB nor localStorage,
+   *                                            regardless of any values in Layer.Core.Client.persistenceFeatures.
+   * @param {Object} [options.isPersistenceEnabled=false] If Layer.Core.Client.isPersistenceEnabled is true, then indexedDB will be used to manage a cache
+   *                                            allowing Query results, messages sent, and all local modifications to be persisted between page reloads.
    */
   constructor(options) {
     super(options);
     Settings.client = this;
+    this._isReadyObj = {};
 
     this._models = {};
     this._runMixins('constructor', [options]);
 
-    // Initialize Properties
-    this._scheduleCheckAndPurgeCacheItems = [];
-
-    this._initComponents();
-
-    this.on('online', this._connectionRestored.bind(this));
-
     logger.info(Util.asciiInit(version));
   }
 
-  /* See parent method docs */
-  _initComponents() {
-    super._initComponents();
+  /**
+   * The client is now authenticated, and doing some setup
+   * before calling _clientReady.
+   *
+   * @method _clientAuthenticated
+   * @private
+   */
+  _clientAuthenticated() {
+    this._isReadyObj = {};
+    this.isAuthenticated = true;
+    this._runMixins('authenticated');
+    this.trigger('authenticated');
+    this._clientReady();
+  }
 
-    this._typingIndicators = new TypingIndicatorListener({});
-    this.telemetryMonitor = new TelemetryMonitor({
-      enabled: this.telemetryEnabled,
-    });
+  /**
+   * Tests to see if the client is _really_ ready, and if so triggers the `ready` event.
+   *
+   * @method _clientReady
+   * @private
+   */
+  _clientReady() {
+    const notReady = Object.keys(this._isReadyObj).filter(keyName => !this._isReadyObj[keyName]);
+    if (notReady.length) return;
+    if (!this.isReady) {
+      this.isReady = true;
+      this.trigger('ready');
+    }
   }
 
   /**
@@ -146,7 +180,6 @@ class Client extends ClientAuth {
       logger.error(e);
     }
 
-    if (this.socketManager) this.socketManager.close();
     this._inCleanup = false;
   }
 
@@ -154,8 +187,11 @@ class Client extends ClientAuth {
     // Cleanup all resources (Conversations, Messages, etc...)
     this._cleanup();
 
-    this._destroyComponents();
-    this.telemetryMonitor.destroy();
+    try {
+      this._runMixins('destroy', []);
+    } catch (e) {
+      logger.error(e);
+    }
 
     super.destroy();
     this._inCleanup = false;
@@ -356,93 +392,8 @@ class Client extends ClientAuth {
     }
   }
 
-  /**
-   * If the session has been reset, dump all data.
-   *
-   * @method _resetSession
-   * @private
-   */
-  _resetSession() {
-    this._cleanup();
-    this._runMixins('reset', []);
-    return super._resetSession();
-  }
-
-
-  /**
-   * Check to see if the specified objects can safely be removed from cache.
-   *
-   * Removes from cache if an object is not part of any Query's result set.
-   *
-   * @method _checkAndPurgeCache
-   * @private
-   * @param  {Layer.Core.Root[]} objects - Array of Messages or Conversations
-   */
-  _checkAndPurgeCache(objects) {
-    this._inCheckAndPurgeCache = true;
-    objects.forEach((obj) => {
-      if (!obj.isDestroyed && !this._isCachedObject(obj)) {
-        if (obj instanceof Root === false) obj = this.getObject(obj.id);
-        if (obj) obj.destroy();
-      }
-    });
-    this._inCheckAndPurgeCache = false;
-  }
-
-  /**
-   * Schedules _runScheduledCheckAndPurgeCache if needed, and adds this object
-   * to the list of objects it will validate for uncaching.
-   *
-   * Note that any object that does not exist on the server (!isSaved()) is an object that the
-   * app created and can only be purged by the app and not by the SDK.  Once its been
-   * saved, and can be reloaded from the server when needed, its subject to standard caching.
-   *
-   * @method _scheduleCheckAndPurgeCache
-   * @private
-   * @param {Layer.Core.Root} object
-   */
-  _scheduleCheckAndPurgeCache(object) {
-    if (object.isSaved()) {
-      if (this._scheduleCheckAndPurgeCacheAt < Date.now()) {
-        this._scheduleCheckAndPurgeCacheAt = Date.now() + Client.CACHE_PURGE_INTERVAL;
-        setTimeout(() => this._runScheduledCheckAndPurgeCache(), Client.CACHE_PURGE_INTERVAL);
-      }
-      this._scheduleCheckAndPurgeCacheItems.push(object);
-    }
-  }
-
-  /**
-   * Calls _checkAndPurgeCache on accumulated objects and resets its state.
-   *
-   * @method _runScheduledCheckAndPurgeCache
-   * @private
-   */
-  _runScheduledCheckAndPurgeCache() {
-    if (this.isDestroyed) return; // Primarily triggers during unit tests
-    const list = this._scheduleCheckAndPurgeCacheItems;
-    this._scheduleCheckAndPurgeCacheItems = [];
-    this._checkAndPurgeCache(list);
-    this._scheduleCheckAndPurgeCacheAt = 0;
-  }
-
-  /**
-   * Returns true if the specified object should continue to be part of the cache.
-   *
-   * Result is based on whether the object is part of the data for a Query.
-   *
-   * @method _isCachedObject
-   * @private
-   * @param  {Layer.Core.Root} obj - A Message or Conversation Instance
-   * @return {Boolean}
-   */
-  _isCachedObject(obj) {
-    const list = Object.keys(this._models.queries);
-    for (let i = 0; i < list.length; i++) {
-      const query = this._models.queries[list[i]];
-      if (query._getItem(obj.id)) return true;
-    }
-    return false;
-  }
+  _checkAndPurgeCache() {} // No-op; see Mixins
+  _scheduleCheckAndPurgeCache() {} // No-op; see Mixins
 
   /**
    * On restoring a connection, determine what steps need to be taken to update our data.
@@ -457,162 +408,43 @@ class Client extends ClientAuth {
    * @param {boolean} reset - Should the session reset/reload all data or attempt to resume where it left off?
    */
   _connectionRestored(evt) {
-    if (evt.reset) {
-      logger.debug('Client Connection Restored; Resetting all Queries');
-      if (this.dbManager) {
-        this.dbManager.deleteTables(() => {
-          this.dbManager._open();
-          Object.keys(this._models.queries).forEach((id) => {
-            const query = this._models.queries[id];
-            if (query) query.reset();
-          });
-        });
-      } else {
-        Object.keys(this._models.queries).forEach((id) => {
-          const query = this._models.queries[id];
-          if (query) query.reset();
-        });
-      }
+    if (evt.reset && !this.dbManager) {
+      this._resetAllQueries();
     }
   }
 
-  /**
-   * Creates a Layer.Core.TypingIndicators.TypingListener instance
-   * bound to the specified dom node.
-   *
-   *      var typingListener = client.createTypingListener(document.getElementById('myTextBox'));
-   *      typingListener.setConversation(mySelectedConversation);
-   *
-   * Use this method to instantiate a listener, and call
-   * Layer.Core.TypingIndicators.TypingListener.setConversation every time you want to change which Conversation
-   * it reports your user is typing into.
-   *
-   * @method createTypingListener
-   * @param  {HTMLElement} inputNode - Text input to watch for keystrokes
-   * @return {Layer.Core.TypingIndicators.TypingListener}
-   */
-  createTypingListener(inputNode) {
-    return new TypingListener({
-      input: inputNode,
+  _resetAllQueries() {
+    logger.debug('Client Connection Restored; Resetting all Queries');
+    Object.keys(this._models.queries).forEach((id) => {
+      const query = this._models.queries[id];
+      if (query) query.reset();
     });
-  }
-
-  /**
-   * Creates a Layer.Core.TypingIndicators.TypingPublisher.
-   *
-   * The TypingPublisher lets you manage your Typing Indicators without using
-   * the Layer.Core.TypingIndicators.TypingListener.
-   *
-   *      var typingPublisher = client.createTypingPublisher();
-   *      typingPublisher.setConversation(mySelectedConversation);
-   *      typingPublisher.setState(Layer.Core.TypingIndicators.STARTED);
-   *
-   * Use this method to instantiate a listener, and call
-   * Layer.Core.TypingIndicators.TypingPublisher.setConversation every time you want to change which Conversation
-   * it reports your user is typing into.
-   *
-   * Use Layer.Core.TypingIndicators.TypingPublisher.setState to inform other users of your current state.
-   * Note that the `STARTED` state only lasts for 2.5 seconds, so you
-   * must repeatedly call setState for as long as this state should continue.
-   * This is typically done by simply calling it every time a user hits
-   * a key.
-   *
-   * @method createTypingPublisher
-   * @return {Layer.Core.TypingIndicators.TypingPublisher}
-   */
-  createTypingPublisher() {
-    return new TypingPublisher({});
-  }
-
-  /**
-   * Get the current typing indicator state of a specified Conversation.
-   *
-   * Typically used to see if anyone is currently typing when first opening a Conversation.
-   *
-   * @method getTypingState
-   * @param {String} conversationId
-   */
-  getTypingState(conversationId) {
-    return this._typingIndicators.getState(conversationId);
   }
 }
 
 /**
- * Array of items to be checked to see if they can be uncached.
+ * Log levels; one of:
  *
- * @private
- * @property {Layer.Core.Root[]}
- */
-Client.prototype._scheduleCheckAndPurgeCacheItems = null;
-
-/**
- * Time that the next call to _runCheckAndPurgeCache() is scheduled for in ms since 1970.
+ *    * Layer.Constants.LOG.NONE
+ *    * Layer.Constants.LOG.ERROR
+ *    * Layer.Constants.LOG.WARN
+ *    * Layer.Constants.LOG.INFO
+ *    * Layer.Constants.LOG.DEBUG
  *
- * @private
  * @property {number}
  */
-Client.prototype._scheduleCheckAndPurgeCacheAt = 0;
-
-
-/**
- * Set to false to disable telemetry gathering.
- *
- * No content nor identifiable information is gathered, only
- * usage and performance metrics.
- *
- * @property {Boolean}
- */
-Client.prototype.telemetryEnabled = true;
-
-/**
- * Gather usage and responsiveness statistics
- *
- * @private
- */
-Client.prototype.telemetryMonitor = null;
-
-/**
- * Any  Message that is part of a Query's results are kept in memory for as long as it
- * remains in that Query.  However, when a websocket event delivers new Messages  that
- * are NOT part of a Query, how long should they stick around in memory?  Why have them stick around?
- * Perhaps an app wants to post a notification of a new Message or Conversation... and wants to keep
- * the object local for a little while.  Default is 2 hours before checking to see if
- * the object is part of a Query or can be uncached.  Value is in miliseconds.
- * @static
- * @property {number}
- */
-
-Client.CACHE_PURGE_INTERVAL = 2 * 60 * 60 * 1000; // 2 hours * 60 minutes per hour * 60 seconds per minute * 1000 miliseconds/second
+Object.defineProperty(Client.prototype, 'logLevel', {
+  enumerable: false,
+  get: function get() { return logger.level; },
+  set: function set(value) { logger.level = value; },
+});
 
 Client._ignoredEvents = [
   'conversations:loaded',
   'conversations:loaded-error',
 ];
 
-Client._supportedEvents = [
-  /**
-   * A Typing Indicator state has changed.
-   *
-   * Either a change has been received
-   * from the server, or a typing indicator state has expired.
-   *
-   *      client.on('typing-indicator-change', function(evt) {
-   *          if (evt.conversationId === myConversationId) {
-   *              alert(evt.typing.join(', ') + ' are typing');
-   *              alert(evt.paused.join(', ') + ' are paused');
-   *          }
-   *      });
-   *
-   * @event
-   * @param {Layer.Core.LayerEvent} evt
-   * @param {string} conversationId - ID of the Conversation users are typing into
-   * @param {string[]} typing - Array of user IDs who are currently typing
-   * @param {string[]} paused - Array of user IDs who are currently paused;
-   *                            A paused user still has text in their text box.
-   */
-  'typing-indicator-change',
-
-].concat(ClientAuth._supportedEvents);
+Client._supportedEvents = [].concat(Root._supportedEvents);
 
 Client.mixins = Core.mixins.Client;
 

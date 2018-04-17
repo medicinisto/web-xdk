@@ -574,9 +574,15 @@ class Root extends EventClass {
 
 
   _runMixins(mixinName, argArray) {
+    let result;
     this.constructor.mixins.forEach((mixin) => {
-      if (mixin.lifecycle && mixin.lifecycle[mixinName]) mixin.lifecycle[mixinName].apply(this, argArray);
+      if (mixin.lifecycle && mixin.lifecycle[mixinName]) {
+        if (mixin.lifecycle[mixinName].apply(this, argArray)) {
+          result = true;
+        }
+      }
     });
+    return result;
   }
 
 
