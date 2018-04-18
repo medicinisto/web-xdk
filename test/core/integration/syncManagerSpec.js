@@ -11,7 +11,7 @@ describe("SyncManager Integration Tests", function() {
             appId: appId,
             url: "https://huh.com",
             isTrustedDevice: false
-        });
+        }).on("challenge", function() {});
         client.sessionToken = "sessionToken";
         client.user = new Layer.Core.Identity({
             userId: "Frodo",

@@ -40,6 +40,10 @@ describe("The Client Conversation Mixin", function() {
         client.isTrustedDevice = true;
 
         client._clientAuthenticated();
+        client._isReadyObj = {};
+        client._clientReady();
+
+        spyOn(client.dbManager, "_loadSyncEventRelatedData").and.callFake(function(syncEvents, callback) {callback([]);});
         spyOn(client.dbManager, "getObjects").and.callFake(function(tableName, ids, callback) {
             callback([]);
         });

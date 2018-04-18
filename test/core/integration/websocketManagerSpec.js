@@ -83,7 +83,7 @@ describe("Websocket tests", function() {
 
         client = new Layer.Core.Client({
             appId: "Client1"
-        });
+        }).on("challenge", function() {});
 
         var identity = new Layer.Core.Identity({
           userId: "c",

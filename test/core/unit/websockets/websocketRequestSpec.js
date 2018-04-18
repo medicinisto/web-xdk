@@ -10,7 +10,7 @@ describe("The Websocket Request Manager Class", function() {
         client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
-        });
+        }).on("challenge", function() {});
         client.sessionToken = "sessionToken";
 
         client.user = new Layer.Core.Identity({
@@ -32,6 +32,8 @@ describe("The Websocket Request Manager Class", function() {
 
         client._clientAuthenticated();
         getObjectsResult = [];
+
+        spyOn(client.dbManager, "_loadSyncEventRelatedData").and.callFake(function(syncEvents, callback) {callback([]);});
         spyOn(client.dbManager, "getObjects").and.callFake(function(tableName, ids, callback) {
             setTimeout(function() {
                 callback(getObjectsResult);

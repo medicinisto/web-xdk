@@ -15,9 +15,9 @@ import Core from '../namespace';
 import DbManager from '../db-manager';
 
 module.exports = {
+  roles: ['handles-load-user'],
   lifecycle: {
     constructor() {
-      this.on('authenticated', () => this._setupDbSettings());
       this.on('online', this._resetDb.bind(this));
 
     },
@@ -29,6 +29,15 @@ module.exports = {
 
     authenticated() {
       if (!this.isTrustedDevice) this.isPersistenceEnabled = false;
+      this._setupDbSettings();
+    },
+
+    'load-users-after-auth': function() {
+      if (this.isPersistenceEnabled && this.dbManager) {
+        this.dbManager.onOpen(() => this._loadUser());
+      } else {
+        this._loadUser();
+      }
     },
     'clear-stored-data': function(callback) {
       if (this.dbManager) {
@@ -45,9 +54,9 @@ module.exports = {
     /**
      * To enable indexedDB storage of query data, set this true.  Experimental.
      *
-     * @property {boolean} [isPersistenceEnabled=true]
+     * @property {boolean} [isPersistenceEnabled=false]
      */
-    isPersistenceEnabled: true,
+    isPersistenceEnabled: false,
 
     /**
      * If this Layer.Core.Client.isTrustedDevice is true, then you can control which types of data are persisted.

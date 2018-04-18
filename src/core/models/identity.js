@@ -80,7 +80,7 @@ class Identity extends Syncable {
   }
 
   destroy() {
-    client._removeIdentity(this);
+    if (client) client._removeIdentity(this);
     super.destroy();
   }
 

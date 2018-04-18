@@ -37,6 +37,8 @@ describe("The Content class", function() {
 
         client._clientAuthenticated();
         getObjectsResult = [];
+
+        spyOn(client.dbManager, "_loadSyncEventRelatedData").and.callFake(function(syncEvents, callback) {callback([]);});
         spyOn(client.dbManager, "getObjects").and.callFake(function(tableName, ids, callback) {
             setTimeout(function() {
                 callback(getObjectsResult);

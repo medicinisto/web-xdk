@@ -66,7 +66,6 @@ describe('Carousel Message Components', function() {
       testRoot.parentNode.removeChild(testRoot);
       if (testRoot.firstChild && testRoot.firstChild.destroy) testRoot.firstChild.destroy();
     }
-    jasmine.clock().uninstall();
   });
 
   describe("Model Tests", function() {

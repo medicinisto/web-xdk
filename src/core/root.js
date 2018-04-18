@@ -573,11 +573,33 @@ class Root extends EventClass {
   }
 
 
-  _runMixins(mixinName, argArray) {
+  /**
+   * Determine if this Class has a Mixin providing the specified lifecycle method
+   *
+   * @method hasLifecycleMethod
+   * @param {String} lifecycleMethodName
+   * @returns {Boolean}
+   * @protected
+   */
+  hasLifecycleMethod(lifecycleMethodName) {
+    return this.constructor.mixins.filter(mixin => mixin.lifecycle && mixin.lifecycle[lifecycleMethodName]).length !== 0;
+  }
+
+  /**
+   * Run all mixins that provide the specified lifecycle method
+   *
+   * TODO: Optimize this so that it doesn't have to iterate over every item in the array to find the few methods that need to be run
+   *       Of course, at that point it looks more like an event mechanism; perhaps we should be using events?  However, events
+   *       are a bit more public...
+   *
+   * @param {String} lifecycleMethodName
+   * @param {Mixed[]} argArray
+   */
+  _runMixins(lifecycleMethodName, argArray) {
     let result;
     this.constructor.mixins.forEach((mixin) => {
-      if (mixin.lifecycle && mixin.lifecycle[mixinName]) {
-        if (mixin.lifecycle[mixinName].apply(this, argArray)) {
+      if (mixin.lifecycle && mixin.lifecycle[lifecycleMethodName]) {
+        if (mixin.lifecycle[lifecycleMethodName].apply(this, argArray)) {
           result = true;
         }
       }
@@ -593,7 +615,7 @@ class Root extends EventClass {
    * @return {String}
    */
   toString() {
-    return '[' + this.internalId + (this.isDestroyed ? ' .destroyed' : '') + ']';
+    return '[' + this.internalId + (this.isDestroyed ? '.destroyed' : '') + ']';
   }
 }
 

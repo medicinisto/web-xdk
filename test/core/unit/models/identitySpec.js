@@ -35,7 +35,7 @@ function deleteTables(done) {
             appId: appId,
             url: "https://huh.com",
             isTrustedDevice: true
-        });
+        }).on('challenge', function() {});
         client.sessionToken = "sessionToken";
         var userId = "Frodo";
         client.user = new Layer.Core.Identity({
@@ -57,6 +57,7 @@ function deleteTables(done) {
 
         client._clientAuthenticated();
         getObjectsResult = [];
+        spyOn(client.dbManager, "_loadSyncEventRelatedData").and.callFake(function(syncEvents, callback) {callback([]);});
         spyOn(client.dbManager, "getObjects").and.callFake(function(tableName, ids, callback) {
             setTimeout(function() {
                 callback(getObjectsResult);

@@ -22,7 +22,7 @@ describe("The Client Identities Mixin", function() {
         client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
-        });
+        }).on("challenge", function() {});
         client.sessionToken = "sessionToken";
 
         client.user = userIdentity = new Layer.Core.Identity({
@@ -45,7 +45,12 @@ describe("The Client Identities Mixin", function() {
 
           });
 
+
           client._clientAuthenticated();
+          client._isReadyObj = {};
+          client._clientReady();
+
+          spyOn(client.dbManager, "_loadSyncEventRelatedData").and.callFake(function(syncEvents, callback) {callback([]);});
           spyOn(client.dbManager, "getObjects").and.callFake(function(tableName, ids, callback) {
               callback([]);
           });

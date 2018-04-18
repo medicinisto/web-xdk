@@ -1,73 +1,60 @@
 /*eslint-disable */
-
-describe("The Client Authenticator Requests", function() {
-    var appId = "layer:///apps/staging/ffffffff-ffff-ffff-ffff-ffffffffffff";
+// TODO: All tests should be run with both isTrustedDevice = true and false
+describe("The Client CAPI Requests Mixin", function() {
+    var appId = "Fred's App";
     var userId = "93c83ec4-b508-4a60-8550-099f9c42ec1a";
     var identityToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImN0eSI6ImxheWVyLWVpdDt2PTEiLCJraWQiOiIyOWUzN2ZhZS02MDdlLTExZTQtYTQ2OS00MTBiMDAwMDAyZjgifQ.eyJpc3MiOiI4YmY1MTQ2MC02MDY5LTExZTQtODhkYi00MTBiMDAwMDAwZTYiLCJwcm4iOiI5M2M4M2VjNC1iNTA4LTRhNjAtODU1MC0wOTlmOWM0MmVjMWEiLCJpYXQiOjE0MTcwMjU0NTQsImV4cCI6MTQxODIzNTA1NCwibmNlIjoiRFZPVFZzcDk0ZU9lNUNzZDdmaWVlWFBvUXB3RDl5SjRpQ0EvVHJSMUVJT25BSEdTcE5Mcno0Yk9YbEN2VDVkWVdEdy9zU1EreVBkZmEydVlBekgrNmc9PSJ9.LlylqnfgK5nhn6KEsitJMsjfayvAJUfAb33wuoCaNChsiRXRtT4Ws_mYHlgwofVGIXKYrRf4be9Cw1qBKNmrxr0er5a8fxIN92kbL-DlRAAg32clfZ_MxOfblze0DHszvjWBrI7F-cqs3irRi5NbrSQxeLZIiGQdBCn8Qn5Zv9s";
-
-    var client, requests, WS;
-
-    beforeAll(function() {
-        jasmine.addCustomEqualityTester(mostRecentEqualityTest);
-        jasmine.addCustomEqualityTester(responseTest);
-        WS = window.WebSocket;
-        window.WebSocket = function() {
-            this.send = function() {};
-            this.addEventListener = function() {};
-            this.removeEventListener = function() {};
-            this.close = function() {};
-            this.readyState = WebSocket.OPEN;
-        };
-    });
-
-    afterAll(function() {
-        window.WebSocket = WS;
-    });
+    var cid1 = "layer:///conversations/test1",
+        cid2 = "layer:///conversations/test2",
+        cid3 = "layer:///conversations/test3",
+        url1 = "https://huh.com/conversations/test1",
+        url2 = "https://huh.com/conversations/test2",
+        url3 = "https://huh.com/conversations/test3";
+    var client, requests, userIdentity2;
 
     beforeEach(function() {
         jasmine.clock().install();
         jasmine.Ajax.install();
         requests = jasmine.Ajax.requests;
+        jasmine.addCustomEqualityTester(mostRecentEqualityTest);
+        jasmine.addCustomEqualityTester(responseTest);
 
         client = new Layer.Core.Client({
             appId: appId,
-            reset: true,
-            url: "https://duh.com"
-        }).on('challenge', function() {});
-        client.user = new Layer.Core.Identity({
-          userId: userId,
-          id: "layer:///identities/" + userId,
-          firstName: "first",
-          lastName: "last",
-          phoneNumber: "phone",
-          emailAddress: "email",
-          metadata: {},
-          publicKey: "public",
-          avatarUrl: "avatar",
-          displayName: "display",
-          syncState: Layer.Constants.SYNC_STATE.SYNCED,
-          isFullIdentity: true,
-          isMine: true
+            url: "https://huh.com",
+        }).on("challenge", function() {});
+        client.sessionToken = "sessionToken";
+
+        client.user = userIdentity = new Layer.Core.Identity({
+            id: "layer:///identities/Frodo",
+            displayName: "Frodo",
+            userId: "Frodo"
         });
 
-        client._initComponents();
+        userIdentity2 = new Layer.Core.Identity({
+            id: "layer:///identities/1",
+            displayName: "UserIdentity",
+            userId: '1'
+        });
+
+        client.isTrustedDevice = true;
+
         client._clientAuthenticated();
+
+        spyOn(client.dbManager, "_loadSyncEventRelatedData").and.callFake(function(syncEvents, callback) {callback([]);});
+        spyOn(client.dbManager, "getObjects").and.callFake(function(tableName, ids, callback) {
+            callback([]);
+        });
+        spyOn(client.dbManager, "getObject").and.callFake(function(tableName, ids, callback) {
+            callback(null);
+        });
         client._clientReady();
-        requests.reset();
     });
 
-    afterEach(function(done) {
-
+    afterEach(function() {
+        client.destroy();
         jasmine.clock().uninstall();
-        setTimeout(function() {
-            jasmine.Ajax.uninstall();
-            client.destroy();
-            done();
-        },1);
-    });
-
-    afterAll(function() {
-
+        jasmine.Ajax.uninstall();
     });
 
     describe("The sendSocketRequest() method", function() {
@@ -805,87 +792,5 @@ describe("The Client Authenticator Requests", function() {
             expect(results.data).toEqual(jasmine.any(Layer.Core.LayerError));
             expect(results.data.id).toEqual("fred");
         });
-    });
-
-    describe("The Push Token Methods", function() {
-      beforeEach(function() {
-        spyOn(client.syncManager, "isOnline").and.returnValue(true);
-      });
-
-      it("Should have a working registerIOSPushToken() method", function() {
-        var callback = jasmine.createSpy('callback');
-        client.registerIOSPushToken({
-          token: "a",
-          deviceId: "b",
-          iosVersion: "c",
-          bundleId: "d"
-        }, callback);
-
-        expect(requests.mostRecent()).toEqual(jasmine.objectContaining({
-          url: client.url + "/push_tokens",
-          method: "POST",
-          params: JSON.stringify({
-           token: "a",
-           type: "apns",
-           device_id: "b",
-           ios_version: "c",
-           apns_bundle_id: "d"
-          })
-        }));
-
-        var response = {
-            status: 200,
-            responseText: JSON.stringify({doh: "a deer"})
-        };
-        requests.mostRecent().response(response);
-        expect(callback).toHaveBeenCalledWith({doh: "a deer"});
-      });
-
-      it("Should have a working registerAndroidPushToken() method", function() {
-        var callback = jasmine.createSpy('callback');
-        client.registerAndroidPushToken({
-          token: "a",
-          deviceId: "b",
-          senderId: "c"
-        }, callback);
-
-        expect(requests.mostRecent()).toEqual(jasmine.objectContaining({
-          url: client.url + "/push_tokens",
-          method: "POST",
-          params: JSON.stringify({
-           token: "a",
-           type: "gcm",
-           device_id: "b",
-           gcm_sender_id: "c"
-          })
-        }));
-
-        var response = {
-            status: 200,
-            responseText: JSON.stringify({doh: "a deer"})
-        };
-        requests.mostRecent().response(response);
-        expect(callback).toHaveBeenCalledWith({doh: "a deer"});
-
-      });
-
-      it("Should have a working unregisterPushToken() method", function() {
-        var callback = jasmine.createSpy('callback');
-        client.unregisterPushToken("a", callback);
-
-        expect(requests.mostRecent()).toEqual(jasmine.objectContaining({
-          url: client.url + "/push_tokens/a",
-          method: "DELETE"
-        }));
-
-        var response = {
-            status: 200,
-            responseText: JSON.stringify({doh: "a deer"})
-        };
-        requests.mostRecent().response(response);
-        expect(callback).toHaveBeenCalledWith({doh: "a deer"});
-
-      });
-
     });
 });

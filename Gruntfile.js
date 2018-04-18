@@ -656,6 +656,7 @@ module.exports = function (grunt) {
         }
 
         var scriptTag = '<script src="../' + file + '" type="text/javascript"></script>';
+        console.log("SRC: " + file);
         if (file.match(/test\/core/)) {
           folderName = "core_tests";
         } else {

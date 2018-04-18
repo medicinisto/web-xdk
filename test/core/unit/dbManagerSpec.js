@@ -35,12 +35,21 @@ var dbIt = it;
 
       function deleteTables(done) {
         var result = indexedDB.deleteDatabase("LayerXDK_" + appId);
+        var isDone = false;
         result.onsuccess = function() {
+          isDone = true;
           setTimeout(done, 150);
         }
         result.onerror = function(err) {
+          isDone = true;
           done(err);
         }
+        setTimeout(() => {
+          if (!isDone) {
+            isDone = true;
+            done();
+          }
+        }, 2500);
       }
 
       /*
@@ -92,6 +101,7 @@ var dbIt = it;
               isPersistenceEnabled: dbIsTestable
           }).on('challenge', function f() {});
           client.sessionToken = "sessionToken";
+          client.connect("Frodo");
 
           identity = new Layer.Core.Identity({
             userId: "Frodo",
@@ -115,7 +125,7 @@ var dbIt = it;
 
           allowWrites = false;
 
-          client.on('authenticated', function() {
+          client.once('authenticated', function() {
             dbManager = client.dbManager;
             var originalWriteObjects = dbManager._writeObjects;
             spyOn(dbManager, "_writeObjects").and.callFake(function() {
@@ -123,7 +133,7 @@ var dbIt = it;
             });
           });
 
-          client.on('ready', function() {
+          client.once('ready', function() {
             client.syncManager.queue = [];
             conversation = client._createObject(responses.conversation1);
             channel = client._createObject(responses.channel1);
@@ -142,12 +152,16 @@ var dbIt = it;
           });
 
           client._clientAuthenticated();
+          client._clientReady();
         });
       });
 
       afterEach(function() {
         Layer.Utils.defer.reset();
-        if (client && !client.isDestroyed) client.destroy();
+        if (client) {
+          client.destroy();
+          client = null;
+        }
       });
 
       describe("The constructor() method", function() {

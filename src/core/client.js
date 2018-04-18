@@ -146,18 +146,29 @@ class Client extends Root {
     this.isAuthenticated = true;
     this._runMixins('authenticated');
     this.trigger('authenticated');
-    this._clientReady();
+    this._clientReadyCheck();
   }
+
+
 
   /**
    * Tests to see if the client is _really_ ready, and if so triggers the `ready` event.
+   *
+   * @method _clientReadyCheck
+   * @private
+   */
+  _clientReadyCheck() {
+    const notReady = Object.keys(this._isReadyObj).filter(keyName => !this._isReadyObj[keyName]);
+    if (!notReady.length) this._clientReady();
+  }
+
+  /**
+   * Sets the client to be ready and triggers the `ready` event
    *
    * @method _clientReady
    * @private
    */
   _clientReady() {
-    const notReady = Object.keys(this._isReadyObj).filter(keyName => !this._isReadyObj[keyName]);
-    if (notReady.length) return;
     if (!this.isReady) {
       this.isReady = true;
       this.trigger('ready');

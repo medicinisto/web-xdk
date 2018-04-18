@@ -20,7 +20,7 @@ describe("The TelemetryMonitor class", function() {
             appId: appId,
             reset: true,
             url: "https://doh.com"
-        });
+        }).on("challenge", function() {});
         client.userId = "999";
 
         client.user = new Layer.Core.Identity({

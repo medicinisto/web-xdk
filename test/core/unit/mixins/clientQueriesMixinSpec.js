@@ -47,6 +47,8 @@ describe("The Client Queries Mixin", function() {
           });
 
           client._clientAuthenticated();
+
+          spyOn(client.dbManager, "_loadSyncEventRelatedData").and.callFake(function(syncEvents, callback) {callback([]);});
           spyOn(client.dbManager, "getObjects").and.callFake(function(tableName, ids, callback) {
               callback([]);
           });

@@ -28,12 +28,16 @@ describe("The Client Message Type Model Mixin", function() {
         client.isTrustedDevice = true;
 
         client._clientAuthenticated();
+
+
+        spyOn(client.dbManager, "_loadSyncEventRelatedData").and.callFake(function(syncEvents, callback) {callback([]);});
         spyOn(client.dbManager, "getObjects").and.callFake(function(tableName, ids, callback) {
             callback([]);
         });
         spyOn(client.dbManager, "getObject").and.callFake(function(tableName, ids, callback) {
             callback(null);
         });
+        client._isReadyObj = {};
         client._clientReady();
         conversation = client.createConversation({
             participants: ["a"]

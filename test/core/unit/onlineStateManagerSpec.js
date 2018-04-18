@@ -10,7 +10,7 @@ describe("The OnlineStateManager Class", function() {
         client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
-        });
+        }).on("challenge", function() {});
         client.sessionToken = "sessionToken";
         client.userId = "Frodo";
         client.user = new Layer.Core.Identity({
@@ -32,6 +32,8 @@ describe("The OnlineStateManager Class", function() {
 
         client._clientAuthenticated();
         getObjectsResult = [];
+
+        spyOn(client.dbManager, "_loadSyncEventRelatedData").and.callFake(function(syncEvents, callback) {callback([]);});
         spyOn(client.dbManager, "getObjects").and.callFake(function(tableName, ids, callback) {
             setTimeout(function() {
                 callback(getObjectsResult);
@@ -471,5 +473,14 @@ describe("The OnlineStateManager Class", function() {
             manager._connectionListener({status: "connection:success"});
             expect(manager._scheduleNextOnlineCheck).toHaveBeenCalledWith(false, jasmine.any(Function));
         });
+    });
+
+    describe("The isOnline property getter", function () {
+
+        it("Should return the onlineState's online state", function () {
+            client.onlineManager.isOnline = "fred";
+            expect(client.isOnline).toEqual("fred");
+        });
+
     });
 });

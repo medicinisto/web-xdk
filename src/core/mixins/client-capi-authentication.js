@@ -131,8 +131,9 @@ module.exports = {
       this._isReadyObj['load-user'] = false;
 
       // Before calling _clientReady, load the session owner's full Identity.
-      if (this.isPersistenceEnabled && this.dbManager) {
-        this.dbManager.onOpen(() => this._loadUser());
+      // Or let the db-manager handle this if its been loaded (yuck, not proud of this part of the architecture)
+      if (this.hasLifecycleMethod('load-users-after-auth')) {
+        this._runMixins('load-users-after-auth');
       } else {
         this._loadUser();
       }
@@ -587,6 +588,7 @@ module.exports = {
      * @fires authenticated
      */
     _authComplete(result, fromPersistence) {
+      if (this.isDestroyed) return;
       if (!result || !result.session_token) {
         throw new Error(ErrorDictionary.sessionTokenMissing);
       }
@@ -654,7 +656,7 @@ module.exports = {
       // We're done if we got the full identity from localStorage.
       if (this.user.isFullIdentity) {
         this._isReadyObj['load-user'] = true;
-        this._clientReady();
+        this._clientReadyCheck();
       } else {
         // load the user's full Identity so we have presence;
         this.user._load();
@@ -665,14 +667,14 @@ module.exports = {
             this.user.on('identities:change', this._writeSessionOwner, this);
           }
           this._isReadyObj['load-user'] = true;
-          this._clientReady();
+          this._clientReadyCheck();
         }, this)
           .once('identities:loaded-error', (evt) => {
             this.user.off('identities:loaded', null, this);
             if (evt.error.id !== 'authentication_required') {
               if (!this.user.displayName) this.user.displayName = this.defaultOwnerDisplayName;
               this._isReadyObj['load-user'] = true;
-              this._clientReady();
+              this._clientReadyCheck();
             }
           }, this);
       }
@@ -792,7 +794,7 @@ module.exports = {
      * @param {string} user - new Identity object
      */
     __adjustUser(user) {
-      if (this.isConnected) {
+      if (this.isConnected && user.id !== this.__user.id) {
         throw new Error(ErrorDictionary.cantChangeIfConnected);
       }
     },
