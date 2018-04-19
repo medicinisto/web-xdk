@@ -42,6 +42,8 @@ new ReceiptModel({
               label: 'Size',
               type: 'Label',
               preselectedChoice: 'small',
+              enabledFor: Layer.client.user.id,
+
               choices: [
                 {text:  "Small", id: "small"},
                 {text:  "Medium", id: "medium"},
@@ -52,6 +54,8 @@ new ReceiptModel({
               label: 'Color',
               type: 'Label',
               preselectedChoice: 'white',
+              enabledFor: Layer.client.user.id,
+
               choices: [
                 {text:  "White", id: "white"},
                 {text:  "Black", id: "black"},
@@ -73,6 +77,7 @@ new ReceiptModel({
             new ChoiceModel({
               label: 'Size',
               type: 'Label',
+              enabledFor: Layer.client.user.id,
               choices: [
                 {text:  "Small", id: "small"},
                 {text:  "Medium", id: "medium"},
@@ -83,6 +88,7 @@ new ReceiptModel({
               label: 'Color',
               type: 'Label',
               preselectedChoice: 'white',
+              enabledFor: Layer.client.user.id,
               choices: [
                 {text:  "White", id: "white"},
                 {text:  "Black", id: "black"},
@@ -104,6 +110,7 @@ new ReceiptModel({
           new ChoiceModel({
             label: 'Size',
             type: 'Label',
+            enabledFor: Layer.client.user.id,
             choices: [
               {text:  "Small", id: "small"},
               {text:  "Medium", id: "medium"},
@@ -113,6 +120,7 @@ new ReceiptModel({
           new ChoiceModel({
             label: 'Color',
             type: 'Label',
+            enabledFor: Layer.client.user.id,
             choices: [
               {text:  "White", id: "white"},
               {text:  "Black", id: "black"},
