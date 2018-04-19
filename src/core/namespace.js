@@ -2,6 +2,10 @@
 module.exports = {
   mixins: {
     Client: [],
+    Message: [],
+    Conversation: [],
+    Identity: [],
+    MessageTypeModel: [],
   },
   Websockets: {},
   MessageTypeModels: {},

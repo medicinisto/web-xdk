@@ -25,9 +25,11 @@ class ConversationMessage extends Message {
     this.isInitializing = false;
     if (options && options.fromServer) {
       Client._addMessage(this);
-      const status = this.recipientStatus[Client.user.id];
-      if (status && status !== Constants.RECEIPT_STATE.READ && status !== Constants.RECEIPT_STATE.DELIVERED) {
-        Util.defer(() => this._sendReceipt('delivery'));
+      if (Client.needsUserContext) {
+        const status = this.recipientStatus[Client.user.id];
+        if (status && status !== Constants.RECEIPT_STATE.READ && status !== Constants.RECEIPT_STATE.DELIVERED) {
+          Util.defer(() => this._sendReceipt('delivery'));
+        }
       }
     } else {
       this.parts.forEach((part) => { part._message = this; });
@@ -72,7 +74,7 @@ class ConversationMessage extends Message {
    */
   __getRecipientStatus(pKey) {
     const value = this[pKey] || {};
-    const id = Client.user.id;
+    const id = Client.needsUserContext ? Client.user.id : '';
     const conversation = this.getConversation(false);
     if (conversation) {
       conversation.participants.forEach((participant) => {
@@ -105,8 +107,8 @@ class ConversationMessage extends Message {
 
     if (!conversation || Util.doesObjectMatch(status, oldStatus)) return;
 
-    const id = Client.user.id;
-    const isSender = this.sender.isMine;
+    const id = Client.needsUserContext ? Client.user.id : '';
+    const isSender = Client.needsUserContext ? this.sender.isMine : false;
     const userHasRead = status[id] === Constants.RECEIPT_STATE.READ;
 
     const triggerChange = (force) => {
@@ -404,7 +406,7 @@ class ConversationMessage extends Message {
       conversationId = message.conversationId;
     }
 
-    const isMine = message.sender.user_id !== Client.user.userId;
+    const isMine = Client.needsUserContext ? message.sender.user_id !== Client.user.userId : false;
     return new ConversationMessage({
       conversationId,
       fromServer: message,

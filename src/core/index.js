@@ -4,6 +4,7 @@
 import Core from './namespace';
 import './root';
 
+import './mixins/message-capi';
 import './mixins/client-capi-authentication';
 import './mixins/client-websockets';
 import './mixins/client-online-manager';
@@ -35,6 +36,7 @@ import './models/message-type-model';
 import './models/channel';
 import './models/channel-message';
 import './models/membership';
+import './models/identity';
 
 import './queries/query';
 import './queries/conversations-query';
@@ -45,7 +47,7 @@ import './queries/channels-query';
 import './queries/members-query';
 import './queries/query-builder';
 
-import './models/identity';
+
 import './layer-error';
 import './layer-event';
 import './sync-manager';

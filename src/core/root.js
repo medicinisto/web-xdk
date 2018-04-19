@@ -253,6 +253,10 @@ class Root extends EventClass {
     return obj;
   }
 
+  supportsEvent(eventName) {
+    return Util.includes(this.constructor._supportedEvents, eventName);
+  }
+
   /**
    * Log a warning for attempts to subscribe to unsupported events.
    *
@@ -566,9 +570,7 @@ class Root extends EventClass {
     if (this.isDestroyed) return;
     this._foldChangeEvents();
 
-    this._delayedTriggers.forEach(function (evt) {
-      this.trigger(...evt);
-    }, this);
+    this._delayedTriggers.forEach(evt => this.trigger(...evt));
     this._delayedTriggers = [];
   }
 
@@ -582,7 +584,8 @@ class Root extends EventClass {
    * @protected
    */
   hasLifecycleMethod(lifecycleMethodName) {
-    return this.constructor.mixins.filter(mixin => mixin.lifecycle && mixin.lifecycle[lifecycleMethodName]).length !== 0;
+    return this.constructor.mixins
+      .filter(mixin => mixin.lifecycle && mixin.lifecycle[lifecycleMethodName]).length !== 0;
   }
 
   /**

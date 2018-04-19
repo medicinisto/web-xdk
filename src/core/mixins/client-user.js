@@ -24,6 +24,13 @@ module.exports = {
     user: null,
 
     /**
+     * Indicates that this Client Instance supports/expects a User property to be populated
+     *
+     * @property {Boolean}
+     */
+    needsUserContext: true,
+
+    /**
      * If presence is enabled, then your presence can be set/restored.
      *
      * @property {Boolean} [isPresenceEnabled=true]

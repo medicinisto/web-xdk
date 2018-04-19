@@ -501,45 +501,6 @@ class Message extends Syncable {
   }
 
   /**
-   * Handle the actual sending.
-   *
-   * Layer.Core.Message.send has some potentially asynchronous
-   * preprocessing to do before sending (Rich Content); actual sending
-   * is done here.
-   *
-   * @method _send
-   * @private
-   */
-  _send(data) {
-    const conversation = this.getConversation(false);
-
-    Client._triggerAsync('state-change', {
-      started: true,
-      type: 'send_' + Util.typeFromID(this.id),
-      telemetryId: 'send_' + Util.typeFromID(this.id) + '_time',
-      id: this.id,
-    });
-    this.sentAt = new Date();
-    Client.sendSocketRequest({
-      method: 'POST',
-      body: {
-        method: 'Message.create',
-        object_id: conversation.id,
-        data,
-      },
-      sync: {
-        depends: [this.conversationId, this.id],
-        target: this.id,
-      },
-    }, (success, socketData) => this._sendResult(success, socketData));
-  }
-
-  _getSendData(data) {
-    data.object_id = this.conversationId;
-    return data;
-  }
-
-  /**
     * Layer.Core.Message.send() Success Callback.
     *
     * If successfully sending the message; triggers a 'sent' event,
@@ -649,7 +610,7 @@ class Message extends Syncable {
    */
   _populateFromServer(message) {
     this._inPopulateFromServer = true;
-
+    this._runMixins('populate-from-server', [message]);
     this.id = message.id;
     this.url = message.url;
     const oldPosition = this.position;
@@ -1271,4 +1232,7 @@ Message._supportedEvents = [
 
 Root.initClass.apply(Message, [Message, 'Message', Core]);
 Syncable.subclasses.push(Message);
+console.log("ADDING MESSAGE MIXIN");
+Message.mixins = Core.mixins.Message;
+
 module.exports = Message;

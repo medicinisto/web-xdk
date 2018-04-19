@@ -315,7 +315,6 @@ class MessageTypeModel extends Root {
       this.trigger('message-type-model:has-new-message'); // do this before the callback so it fires before message.send() is called
       if (callback) callback(this.message);
     });
-    return this;
   }
 
   /**
@@ -1497,4 +1496,7 @@ MessageTypeModel._supportedEvents = [
 ].concat(Root._supportedEvents);
 
 Root.initClass.apply(MessageTypeModel, [MessageTypeModel, 'MessageTypeModel', Core]);
+
+MessageTypeModel.mixins = Core.mixins.MessageTypeModel;
+
 module.exports = MessageTypeModel;

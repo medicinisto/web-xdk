@@ -72,9 +72,11 @@ class Identity extends Syncable {
     }
     client._addIdentity(this);
 
-    client.on('online', (evt) => {
-      if (!evt.isOnline) this._updateValue(['_presence', 'status'], Identity.STATUS.OFFLINE);
-    }, this);
+    if (client.supportsEvent('online')) {
+      client.on('online', (evt) => {
+        if (!evt.isOnline) this._updateValue(['_presence', 'status'], Identity.STATUS.OFFLINE);
+      }, this);
+    }
 
     this.isInitializing = false;
   }
@@ -609,5 +611,7 @@ Identity.enableOpsIfNew = true;
 
 Root.initClass.apply(Identity, [Identity, 'Identity', Core]);
 Syncable.subclasses.push(Identity);
+
+Identity.mixins = Core.mixins.Identity;
 
 module.exports = Identity;

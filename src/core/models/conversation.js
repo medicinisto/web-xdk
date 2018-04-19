@@ -87,7 +87,7 @@ class Conversation extends Container {
     // If the options doesn't contain server object, setup participants.
     if (!options || !options.fromServer) {
       this.participants = client._fixIdentities(this.participants);
-      if (client.user && this.participants.indexOf(client.user) === -1) {
+      if (client.needsUserContext && client.user && this.participants.indexOf(client.user) === -1) {
         this.participants.push(client.user);
       }
     }
@@ -214,7 +214,7 @@ class Conversation extends Container {
     // Make sure this user is a participant (server does this for us, but
     // this insures the local copy is correct until we get a response from
     // the server
-    if (this.participants.indexOf(client.user) === -1) {
+    if (client.userIsSupported && this.participants.indexOf(client.user) === -1) {
       this.participants.push(client.user);
     }
 
@@ -323,7 +323,9 @@ class Conversation extends Container {
     this.distinct = conversation.distinct;
     this.unreadCount = conversation.unread_message_count;
     this.totalMessageCount = conversation.total_message_count;
-    this.isCurrentParticipant = this.participants.indexOf(client.user) !== -1;
+    if (client.userIsSupported) {
+      this.isCurrentParticipant = this.participants.indexOf(client.user) !== -1;
+    }
     super._populateFromServer(conversation);
 
     if (typeof conversation.last_message === 'string') {
@@ -439,7 +441,9 @@ class Conversation extends Container {
    */
   _patchParticipants(change) {
     this._applyParticipantChange(change);
-    this.isCurrentParticipant = this.participants.indexOf(client.user) !== -1;
+    if (client.userIsSupported) {
+      this.isCurrentParticipant = this.participants.indexOf(client.user) !== -1;
+    }
 
     const ops = [];
     change.remove.forEach((participant) => {
@@ -813,7 +817,7 @@ class Conversation extends Container {
    * @return {Layer.Core.Conversation}
    */
   static _createDistinct(options) {
-    if (options.participants.indexOf(client.user) === -1) {
+    if (client.needsUserContext && options.participants.indexOf(client.user) === -1) {
       options.participants.push(client.user);
     }
 
@@ -998,4 +1002,7 @@ Conversation._supportedEvents = [
 
 Root.initClass.apply(Conversation, [Conversation, 'Conversation', Core]);
 Syncable.subclasses.push(Conversation);
+
+Conversation.mixins = Core.mixins.Conversation;
+
 module.exports = Conversation;
