@@ -57,7 +57,7 @@
  * @mixin Layer.UI.mixins.SizeProperty
  * @mixin Layer.UI.mixins.QueryEndIndicator
  */
-import Core from '../../../core';
+import Core from '../../../core/namespace';
 import UIConstants from '../../constants';
 import { registerComponent } from '../component';
 import List from '../../mixins/list';

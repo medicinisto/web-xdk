@@ -24,7 +24,7 @@
  * @class Layer.UI.messages.ResponseMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import Core, { MessagePart, MessageTypeModel } from '../../../core';
+import Core, { MessagePart, MessageTypeModel } from '../../../core/namespace';
 import { registerStatusModel } from '../../ui-utils';
 import { ErrorDictionary } from '../../../core/layer-error';
 

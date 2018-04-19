@@ -30,7 +30,7 @@
  * @mixin Layer.UI.mixins.ListSelection
 */
 import { client } from '../../../settings';
-import Core from '../../../core';
+import Core from '../../../core/namespace';
 import { registerComponent } from '../component';
 import List from '../../mixins/list';
 import ListSelection from '../../mixins/list-selection';

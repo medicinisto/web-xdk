@@ -61,7 +61,7 @@ import 'blueimp-load-image/js/load-image-exif';
 import { normalizeSize } from '../../ui-utils';
 
 import { register } from '../../handlers/message/message-handlers';
-import Core, { Root, MessagePart, MessageTypeModel } from '../../../core';
+import Core, { Root, MessagePart, MessageTypeModel } from '../../../core/namespace';
 import { xhr } from '../../../utils';
 import { getNativeSupport } from '../../../utils/native-support';
 

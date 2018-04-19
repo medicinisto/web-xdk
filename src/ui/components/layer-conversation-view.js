@@ -59,7 +59,7 @@
  * @mixin Layer.UI.mixins.FileDropTarget
  */
 import { client } from '../../settings';
-import Core from '../../core';
+import Core from '../../core/namespace';
 import UIConstants from '../constants';
 import { registerComponent } from './component';
 import HasQuery from '../mixins/has-query';

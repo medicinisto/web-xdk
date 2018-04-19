@@ -29,7 +29,7 @@
  * @extends Layer.Core.MessageTypeModel
  */
 import { client as Client } from '../../../settings';
-import Core, { MessagePart, Root, MessageTypeModel } from '../../../core';
+import Core, { MessagePart, Root, MessageTypeModel } from '../../../core/namespace';
 import { CRDT_TYPES } from '../../../constants';
 import { ErrorDictionary } from '../../../core/layer-error';
 

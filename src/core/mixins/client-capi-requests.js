@@ -101,7 +101,7 @@ module.exports = {
      *                                          If the response was text/empty, this will be text/empty
      * @param  {XMLHttpRequest} callback.result.xhr - Native xhr request object for detailed analysis
      * @param  {Object}         callback.result.Links - Hash of Link headers
-     * @return {Layer.Core.ClientAuthenticator} this
+     * @return {Layer.Core.Client} this
      */
     xhr(options, callback) {
       if (!options.sync || !options.sync.target) {

@@ -319,7 +319,7 @@ module.exports = {
      *
      * @method connect
      * @param {string} userId - User ID of the user you are logging in as
-     * @returns {Layer.Core.ClientAuthenticator} this
+     * @returns {Layer.Core.Client} this
      */
     connect(userId = '') {
       if (!this.appId) throw new Error(ErrorDictionary.appIdMissing);
@@ -384,7 +384,7 @@ module.exports = {
      * @method connectWithSession
      * @param {String} userId
      * @param {String} sessionToken
-     * @returns {Layer.Core.ClientAuthenticator} this
+     * @returns {Layer.Core.Client} this
      */
     connectWithSession(userId, sessionToken) {
       if (!this.appId) throw new Error(ErrorDictionary.appIdMissing);
@@ -712,7 +712,7 @@ module.exports = {
      *
      * @method logout
      * @param {Function} callback
-     * @return {Layer.Core.ClientAuthenticator} this
+     * @return {Layer.Core.Client} this
      */
     logout(callback) {
       this._wantsToBeAuthenticated = false;

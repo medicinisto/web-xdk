@@ -4,7 +4,7 @@
  * @class Layer.UI.mixins.HasQuery
  */
 import { client as Client } from '../../settings';
-import Core from '../../core';
+import Core from '../../core/namespace';
 import mixins from './index';
 
 mixins.HasQuery = module.exports = {

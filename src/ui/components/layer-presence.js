@@ -46,7 +46,7 @@
  * @mixin Layer.UI.mixins.SizeProperty
  */
 import { client as Client } from '../../settings';
-import Core from '../../core';
+import Core from '../../core/namespace';
 import { registerComponent } from './component';
 import SizeProperty from '../mixins/size-property';
 import Clickable from '../mixins/clickable';

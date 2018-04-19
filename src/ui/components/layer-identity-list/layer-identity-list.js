@@ -56,7 +56,7 @@
  * @mixin Layer.UI.mixins.QueryEndIndicator
  */
 import { client } from '../../../settings';
-import Core from '../../../core';
+import Core from '../../../core/namespace';
 import Util from '../../../utils';
 import { registerComponent } from '../component';
 import List from '../../mixins/list';

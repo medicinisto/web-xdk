@@ -13,7 +13,7 @@
  * @extends Layer.Core.Root
  */
 
-import { Root } from '../../../core';
+import { Root } from '../../../core/namespace';
 
 class ChoiceItem extends Root {
   constructor(options) {

@@ -391,7 +391,7 @@
  */
 /* eslint-disable no-use-before-define */
 
-import Layer from '../../core';
+import Layer from '../../core/namespace';
 import Util from '../../utils';
 import { ComponentsHash, buildAndRegisterTemplate, registerTemplate } from '../component-services';
 import stateManagerMixin from '../mixins/state-manager';

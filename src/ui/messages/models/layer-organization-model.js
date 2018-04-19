@@ -3,7 +3,7 @@
  * @ignore
  */
 
-import Core, { MessageTypeModel } from '../../../core';
+import Core, { MessageTypeModel } from '../../../core/namespace';
 
 class OrganizationModel extends MessageTypeModel {
 

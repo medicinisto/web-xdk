@@ -79,7 +79,7 @@
  * @extends Layer.Core.MessageTypeModel
  */
 import { client as Client } from '../../../settings';
-import Core, { MessagePart, Root, MessageTypeModel } from '../../../core';
+import Core, { MessagePart, Root, MessageTypeModel } from '../../../core/namespace';
 import ChoiceItem from './layer-choice-message-model-item';
 import { ErrorDictionary } from '../../../core/layer-error';
 import { CRDT_TYPES } from '../../../constants';

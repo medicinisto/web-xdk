@@ -24,7 +24,7 @@
  * @class Layer.UI.components.ComposeBar
  * @extends Layer.UI.Component
  */
-import Core from '../../core';
+import Core from '../../core/namespace';
 import { registerComponent } from './component';
 import Settings, { client } from '../../settings';
 import { logger } from '../../utils';

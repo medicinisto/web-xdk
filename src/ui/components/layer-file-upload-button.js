@@ -29,7 +29,7 @@
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.Clickable
  */
-import Layer from '../../core';
+import Layer from '../../core/namespace';
 import Util from '../../utils';
 import { registerComponent } from './component';
 import Clickable from '../mixins/clickable';

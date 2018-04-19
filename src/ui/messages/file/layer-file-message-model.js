@@ -39,7 +39,7 @@
  */
 
 
-import Core, { MessagePart, MessageTypeModel, Root } from '../../../core';
+import Core, { MessagePart, MessageTypeModel, Root } from '../../../core/namespace';
 import { xhr } from '../../../utils';
 
 class FileModel extends MessageTypeModel {

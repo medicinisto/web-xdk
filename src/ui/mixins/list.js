@@ -6,7 +6,7 @@
  * @mixin Layer.UI.mixins.Throttler
  */
 import { client } from '../../settings';
-import Layer from '../../core';
+import Layer from '../../core/namespace';
 import Util, { defer, logger } from '../../utils';
 import { animatedScrollTo } from '././../ui-utils/animated-scroll';
 import { registerComponent } from '../components/component';

@@ -47,7 +47,7 @@
  * @class Layer.UI.messages.CarouselMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import Core, { MessagePart, MessageTypeModel, Root } from '../../../core';
+import Core, { MessagePart, MessageTypeModel, Root } from '../../../core/namespace';
 
 class CarouselModel extends MessageTypeModel {
   /**
