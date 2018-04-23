@@ -340,7 +340,12 @@ registerComponent('layer-compose-bar', {
       if (this.nodes.input.value) {
         const TextModel = Core.Client.getMessageTypeModelClass('TextModel');
         const LinkModel = Core.Client.getMessageTypeModelClass('LinkModel');
-        const text = this.nodes.input.value;
+        const textData = {
+          text: this.nodes.input.value,
+        };
+        this.trigger('layer-compose-bar-processing-text', textData);
+        const text = textData.text;
+
         let model;
         if (IsUrl(null, true).test(text)) {
           model = new LinkModel({ url: text });

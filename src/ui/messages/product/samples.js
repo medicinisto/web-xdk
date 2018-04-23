@@ -67,6 +67,7 @@ model = new ProductModel({
    imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
    options: [
      new ChoiceModel({
+       enabledFor: Layer.client.user.id,
        label: 'RAM',
        type: 'label',
        allowReselect: true,
@@ -78,6 +79,7 @@ model = new ProductModel({
        ]
      }),
      new ChoiceModel({
+       enabledFor: Layer.client.user.id,
        label: 'Color',
        type: 'label',
        allowReselect: true,
@@ -93,7 +95,7 @@ model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Choices within Choices: A Button Message with Choice Buttons wrapping a Product Message with Options"}).send({ conversation: $("layer-conversation-view").conversation });
 
-  ProductModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
+ProductModel = Layer.Core.Client.getMessageTypeModelClass('ProductModel')
 ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
 ButtonsModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
 model = new ButtonsModel({
@@ -101,9 +103,9 @@ buttons: [
  {
    "type": "choice",
    "choices": [{"text": "\uD83D\uDC4D", "id": "like", "tooltip": "like", "icon": "custom-like-button"}, {"text": "\uD83D\uDC4E", "id": "dislike", "tooltip": "dislike", "icon": "custom-dislike-button"}],
-   "data": {"responseName": "thumborientation", allowReselect: true, allowDeselect: true}
+   "data": {"enabledFor": Layer.client.user.id, "responseName": "thumborientation", allowReselect: true, allowDeselect: true}
  },
- {"type": "choice", "choices": [{"text": "I want to order one", "id": "buy", "tooltip": "buy"}], "data": {"responseName": "buy", allowReselect: false}}
+ {"type": "choice", "choices": [{"text": "I want to order one", "id": "buy", "tooltip": "buy"}], "data": {"enabledFor": Layer.client.user.id, "responseName": "buy", allowReselect: false}}
 ],
 contentModel: new ProductModel({
  url: "http://www.neimanmarcus.com/Manolo-Blahnik-Fiboslac-Crystal-Embellished-Satin-Halter-Pump/prod200660136_cat13410734__/p.prod?icid=&searchType=EndecaDrivenCat&rte=%252Fcategory.service%253FitemId%253Dcat13410734%2526pageSize%253D30%2526No%253D0%2526Ns%253DPCS_SORT%2526refinements%253D299%252C381%252C4294910321%252C717%252C730&eItemId=prod200660136&xbcpath=cat13410734%2Ccat13030734%2Ccat000141%2Ccat000000&cmCat=product",
@@ -116,6 +118,7 @@ contentModel: new ProductModel({
  imageUrls: [ "http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg" ],
  options: [
    new ChoiceModel({
+     enabledFor: Layer.client.user.id,
      label: 'Size',
      type: 'label',
      preselectedChoice: 'small',
@@ -126,6 +129,7 @@ contentModel: new ProductModel({
      ]
    }),
    new ChoiceModel({
+     enabledFor: Layer.client.user.id,
      label: 'Color',
      type: 'label',
      preselectedChoice: 'white',

@@ -22,7 +22,7 @@ class MessageTypeResponseSummary extends Root {
   }
 
   reset() {
-    this._trackers = {};
+    Object.keys(this._trackers).forEach(stateName => this._trackers[stateName].reset());
     this.part = null;
   }
 

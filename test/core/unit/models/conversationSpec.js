@@ -19,7 +19,7 @@ describe("The Conversation Class", function() {
         client = new Layer.Core.Client({
             appId: appId,
             url: "https://huh.com"
-        });
+        }).on("challenge", function() {});
         client.sessionToken = "sessionToken";
 
         client.user = new Layer.Core.Identity({
@@ -1216,6 +1216,31 @@ describe("The Conversation Class", function() {
             conversation.__updateParticipants([client.user], [userIdentity1, userIdentity2]);
             userIdentity2.trigger('identities:change', {property: 'displayName', oldValue: 'fred', newValue: 'freddy'});
             expect(conversation._handleParticipantChangeEvent).not.toHaveBeenCalled();
+        });
+
+        it("Should update isCurrentParticipant", function() {
+            spyOn(conversation, "_triggerAsync");
+            expect(conversation.isCurrentParticipant).toBe(false);
+            conversation.addParticipants([client.user]);
+            expect(conversation.isCurrentParticipant).toBe(true);
+            conversation._triggerAsync.calls.reset();
+
+            conversation.__updateParticipants([], [client.user, userIdentity3, userIdentity4]);
+            expect(conversation.isCurrentParticipant).toBe(false);
+            expect(conversation._triggerAsync).toHaveBeenCalledWith('conversations:change', {
+                property: "isCurrentParticipant",
+                newValue: false,
+                oldValue: true,
+            });
+            conversation._triggerAsync.calls.reset();
+
+            conversation.__updateParticipants([client.user, userIdentity3, userIdentity4], []);
+            expect(conversation.isCurrentParticipant).toBe(true);
+            expect(conversation._triggerAsync).toHaveBeenCalledWith('conversations:change', {
+                property: "isCurrentParticipant",
+                newValue: true,
+                oldValue: false,
+            });
         });
     });
 

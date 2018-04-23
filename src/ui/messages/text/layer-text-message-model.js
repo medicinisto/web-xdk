@@ -172,7 +172,7 @@ register({
     const isCard = Boolean(message.getPartsMatchingAttribute({ role: 'root' })[0]);
     const textPlainPart = message.filterParts(part => part.mimeType === 'text/plain')[0];
     if (!isCard && textPlainPart) {
-      textPlainPart.body = `{"text": "${textPlainPart.body}"}`;
+      textPlainPart.body = JSON.stringify({ text: textPlainPart.body });
       textPlainPart.mimeType = TextModel.MIMEType + '; role=root';
       message._addToMimeAttributesMap(textPlainPart);
       return true;

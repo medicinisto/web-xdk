@@ -1,5 +1,25 @@
 # Web XDK Change Log
 
+## 4.0.2
+
+* Adds logging mode for doing timing; `Layer.init({ appId, logLevel: Layer.Constants.LOG.TIMING })`
+* Changes message-type-response-summary `reset()` to not unregister registered states
+* Adds better validation of `localStorage` before using it
+* WEB-1755: Refactors Emoji Support:
+    * The Emoji text processor no longer parses for `:smile:` and `:-)`; it is now used solely for those wanting Twemoji's standard emojis
+      that work cross platform and provides consistent emojis across all platforms. This continues to be an optional part of the build; included
+      for those who use `import '@layerhq/web-xdk'` and left out for those who do  `import '@layerhq/web-xdk/index-lite'`.
+    * The Compose Bar now detects `:smile:` and `:-)` and translates them into Emoji characters that can be understood by Android and iOS native apps.  This is currently handled via [remarkable-emoji](https://www.npmjs.com/package/remarkable-emoji).
+* Adds CONTRIBUTING.md guidelines for submitting PRs to this repository.
+* WEB-1756: Google Maps API Key is now an input to `Layer.init({ appId, googleMapsKey: 'my-key' })`;
+  without this, Location Messages will not work. Previously there was an undocumented hack to make this work.
+* WEB-1757: isCurrentParticipant is now recalculated any time the participant list changes, and triggers change events when its value changes
+* Replaceable Content:
+    * on searching child nodes now ignores Text Nodes
+    * now correctly finds `layer-replaceable-name` in browsers that require the Webcomponents Polyfill.
+        * Thanks to [matthieusieben](https://github.com/matthieusieben) for identifying and fixing this.
+* Tweak to button height styling prevents raw JS sample app from having unexpected Button Heights
+
 ## 4.0.1
 
 * WEB-1731: Adds AltMIMETypes
@@ -18,6 +38,7 @@
 * CRDT data structures replacing old Response Message datastructures.
 * Custom Messages must now register any state shared via Response Messages
 * Receipt Message has renamed Message Parts with Product Information from `product-items` to `product-item`
+* `enabledFor` is a required property on all Choice Models
 
 All Changes:
 

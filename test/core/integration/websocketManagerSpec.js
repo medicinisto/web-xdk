@@ -305,6 +305,10 @@ describe("Websocket tests", function() {
                         add:  [fred, joe],
                         remove: initialValue,
                         property: "participants"
+                    },{
+                        property: "isCurrentParticipant",
+                        newValue: false,
+                        oldValue: true,
                     }],
                     target: conv,
                     isChange: true,
@@ -405,6 +409,10 @@ describe("Websocket tests", function() {
                         oldValue: [a, b, c],
                         newValue: [b],
                         property: "participants"
+                    }, {
+                        property: "isCurrentParticipant",
+                        newValue: false,
+                        oldValue: true,
                     }],
                     eventName: "conversations:change",
                     target: conv,

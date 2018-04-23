@@ -106,11 +106,13 @@ registerComponent('layer-replaceable-content', {
       // that matches our name and use it instead.
       else {
         for (let i = 0; i < originalNodes.length; i++) {
-          const matchingNode = this._searchAttributesForLayerReplaceableName(mainComponent, originalNodes[i]);
-          if (matchingNode) {
-            this._insertContent(mainComponent, matchingNode);
-            processed = true;
-            break;
+          if (originalNodes[i] instanceof HTMLElement) {
+            const matchingNode = this._searchAttributesForLayerReplaceableName(mainComponent, originalNodes[i]);
+            if (matchingNode) {
+              this._insertContent(mainComponent, matchingNode);
+              processed = true;
+              break;
+            }
           }
         }
       }
@@ -271,6 +273,9 @@ registerComponent('layer-replaceable-content', {
 
       this._findNodesWithin(node, (currentNode, isComponent) => {
         if (isComponent) {
+          // If using the Webcomponents Polyfill we will need to insure that currentNode has been initialized as a webcomponent
+          if (!currentNode.properties && typeof CustomElements !== 'undefined') CustomElements.upgradeAll(currentNode);
+
           currentNode.properties.parentComponent = this.parentComponent;
           currentNode._onAfterCreate();
         }

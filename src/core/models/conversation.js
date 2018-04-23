@@ -713,6 +713,16 @@ class Conversation extends Container {
       change.newValue = newValue;
       this._triggerAsync('conversations:change', change);
     }
+
+    const isParticipant = newValue.indexOf(client.user) !== -1;
+    if (isParticipant !== this.isCurrentParticipant) {
+      this.isCurrentParticipant = isParticipant;
+      this._triggerAsync('conversations:change', {
+        property: 'isCurrentParticipant',
+        oldValue: !this.isCurrentParticipant,
+        newValue: this.isCurrentParticipant,
+      });
+    }
   }
 
   _handleParticipantChangeEvent(evt) {

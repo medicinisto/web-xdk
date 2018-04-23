@@ -33,7 +33,7 @@ describe("Focus On Keydown Mixin", function() {
     el = document.createElement('focus-on-keydown-test');
     testRoot.appendChild(el);
 
-    CustomElements.takeRecords();
+    if (typeof CustomElements !== 'undefined') CustomElements.takeRecords();
     Layer.Utils.defer.flush();
   });
 

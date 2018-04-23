@@ -520,7 +520,7 @@ class MessageTypeModel extends Root {
     // and if its not our default Response Summary class, replace our default Response Summary instance with suitable Response Summary instance.
     if (responses) {
       const ResponseClass = getResponseSummaryClass(responses.mimeType);
-      if (ResponseClass !== this.responses.constructor) {
+      if (ResponseClass && ResponseClass !== this.responses.constructor) {
         this.responses = new ResponseClass({
           parentModel: this,
         });

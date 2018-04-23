@@ -34,6 +34,16 @@ class CRDTMultiIdentityStateTracker {
   }
 
   /**
+   * If the ResponseSummary MessagePart is removed that contains this data, clear the data.
+   *
+   * @protected
+   * @method reset
+   */
+  reset() {
+    this.users = {};
+  }
+
+  /**
    * Adds tracking for the specified user (no-op if already tracked)
    *
    * @method _addUser

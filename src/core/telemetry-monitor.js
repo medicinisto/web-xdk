@@ -15,7 +15,7 @@
 import { client as Client } from '../settings';
 import Core from './namespace';
 import Root from './root';
-import Util, { xhr } from '../utils';
+import Util, { xhr, hasLocalStorage } from '../utils';
 import version from '../version';
 
 class TelemetryMonitor extends Root {
@@ -38,7 +38,7 @@ class TelemetryMonitor extends Root {
     this.tempState = {};
     this.storageKey = 'layer-telemetry-' + Client.appId;
 
-    if (!global.localStorage) {
+    if (!hasLocalStorage) {
       this.enabled = false;
     } else {
       try {

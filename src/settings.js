@@ -48,6 +48,7 @@
  * @property {Boolean} [settings.useEmojiImages=true]    Currently images are used for Emojis so that all users see the same
  *   graphics no matter what platoform they are on. Also insures that platforms lacking emoji support can still render
  *   emojis.  If your customers are all on platforms that support rendering of emojis you may disable this.
+ * @property {String} [settings.googleMapsKey=]   The google maps key to use with Location Messages.
  */
 
 module.exports = {
@@ -68,5 +69,6 @@ module.exports = {
   textHandlers: ['autolinker', 'newline', 'emoji'],
   destroyAfterDetachDelay: 10000,
   useEmojiImages: true,
+  googleMapsKey: '',
 };
 

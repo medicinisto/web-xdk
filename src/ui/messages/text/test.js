@@ -229,22 +229,12 @@ describe('Text Message Components', function() {
 
     it("Should render emoji characters", function() {
       var model = new TextModel({
-        text: "hello :)"
+        text: "hello 😃"
       });
       el.model = model;
       Layer.Utils.defer.flush();
 
       expect(el.innerHTML).toMatch("<p class=\"layer-line-wrapping-paragraphs\">hello <img");
-    });
-    it("Should render emoji codes", function() {
-      var model = new TextModel({
-        text: "hi :smile:"
-      });
-      el.model = model;
-      Layer.Utils.defer.flush();
-
-      expect(el.innerHTML).toMatch("<p class=\"layer-line-wrapping-paragraphs\">hi <img");
-
     });
   });
 });

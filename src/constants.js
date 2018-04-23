@@ -64,6 +64,7 @@ module.exports = {
   /**
    * Log levels
    * @property {Object} [LOG=]
+   * @property {number} LOG.TIMING    Same as DEBUG level, but outputs time in miliseconds for easier timing calculations
    * @property {number} LOG.DEBUG     Log detailed information about requests, responses, events, state changes, etc...
    * @property {number} LOG.INFO      Log sparse information about requests, responses and events
    * @property {number} LOG.WARN      Log failures that are expected, normal, handled, but suggests that an operation didn't complete as intended
@@ -71,6 +72,7 @@ module.exports = {
    * @property {number} LOG.NONE      Logs? Who needs em?
    */
   LOG: {
+    TIMING: 5,
     DEBUG: 4,
     INFO: 3,
     WARN: 2,

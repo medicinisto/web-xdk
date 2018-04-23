@@ -12,7 +12,7 @@
  * @method defer
  * @param {Function} f
  */
-import { logger } from './index';
+import logger from './logger';
 
 const setImmediate = global.getNativeSupport && global.getNativeSupport('setImmediate');
 if (setImmediate) {

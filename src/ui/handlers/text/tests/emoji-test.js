@@ -1,41 +1,45 @@
+/* eslint-disable */
 describe("Emoji Text Handler", function() {
   var handler;
   beforeEach(function() {
     handler = Layer.UI.handlers.text.handlers.emoji.handler;
   });
 
+  function triggerText(text) {
+    var evt = new CustomEvent('layer-compose-bar-processing-text', {
+      detail: {text: text},
+      bubbles: true,
+      cancelable: true,
+    });
+    document.body.dispatchEvent(evt);
+    return evt.detail.text;
+  }
+
   describe("Twemoji", function() {
     beforeEach(function() {
       Layer.UI.settings.useEmojiImages = true;
     });
     it("Should replace any occurance of :-) with an image", function() {
-      var textData = {
+      var details = {
         text: "hello :-)",
-        afterText: []
       };
-      handler(textData);
-      expect(textData.text).toMatch(/^hello \<img/);
+      expect(triggerText("hello :-)")).toEqual("hello 😃");
     });
 
     it("Should replace any occurance of :grin: with an image", function() {
-      var textData = {
-        text: "hello :grin: I am a :grin: er",
-        afterText: []
-      };
-      handler(textData);
-      expect(textData.text.match(/\<img/g).length).toEqual(2);
+      expect(triggerText("hello :grin: I am a :grin: er")).toEqual("hello 😁 I am a 😁 er");
     });
 
     it("Should use layer-emoji-line class iff only emojis are in the message", function() {
       var textData = {
-        text: "hello :-) there :-(",
+        text: "hello 😃 there 😃",
         afterText: []
       };
       handler(textData);
       expect(textData.text).not.toMatch(/layer-emoji-line/);
 
       textData = {
-        text: ":-) :-(",
+        text: "😃 😃",
         afterText: []
       };
       handler(textData);
@@ -43,8 +47,10 @@ describe("Emoji Text Handler", function() {
     });
 
     it("Should handle newline tags safely", function() {
+      expect(triggerText("\n:-)\n:grin:\n")).toEqual("\n😃\n😁\n");
+
       var textData = {
-        text: "\n:-)\n:grin:\n",
+        text: "\n😃\n😁\n",
         afterText: []
       };
       handler(textData);
@@ -59,34 +65,25 @@ describe("Emoji Text Handler", function() {
     afterEach(function() {
       Layer.UI.settings.useEmojiImages = true;
     });
-    it("Should replace any occurance of :-) with an span", function() {
+    it("Should replace any occurance of 😃 with an span", function() {
       var textData = {
-        text: "hello :-)",
+        text: "hello 😃",
         afterText: []
       };
       handler(textData);
       expect(textData.text).toMatch(/^hello \<span/);
     });
 
-    it("Should replace any occurance of :grin: with an span", function() {
-      var textData = {
-        text: "hello :grin: I am a :grin: er",
-        afterText: []
-      };
-      handler(textData);
-      expect(textData.text.match(/\<span/g).length).toEqual(2);
-    });
-
     it("Should use layer-emoji-line class iff only emojis are in the message", function() {
       var textData = {
-        text: "hello :-) there :-(",
+        text: "hello 😃 there 😃",
         afterText: []
       };
       handler(textData);
       expect(textData.text).not.toMatch(/layer-emoji-line/);
 
       textData = {
-        text: ":-) :-(",
+        text: "😃 😃",
         afterText: []
       };
       handler(textData);
@@ -95,7 +92,7 @@ describe("Emoji Text Handler", function() {
 
     it("Should handle newline tags safely", function() {
       var textData = {
-        text: "\n:-)\n:grin:\n",
+        text: "\n😃\n😃\n",
         afterText: []
       };
       handler(textData);

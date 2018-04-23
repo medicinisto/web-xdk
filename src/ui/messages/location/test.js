@@ -30,6 +30,7 @@ describe('Location Message Components', function() {
 
     client = new Layer.init({
       appId: 'layer:///apps/staging/Fred',
+      googleMapsKey: 'i-am-the-keymaster',
     }).on('challenge', function() {});
     client.user = new Layer.Core.Identity({
       userId: 'FrodoTheDodo',
@@ -280,7 +281,7 @@ describe('Location Message Components', function() {
 
       expect(el.nodes.ui.childNodes.length).toEqual(1);
       expect(el.nodes.ui.firstChild.tagName).toEqual('IMG');
-      expect(el.nodes.ui.firstChild.src).toEqual('http://maps.googleapis.com/maps/api/staticmap?size=300x250&language=en-us&key=undefined&zoom=16&markers=37.7734858,-122.3916087');
+      expect(el.nodes.ui.firstChild.src).toEqual('http://maps.googleapis.com/maps/api/staticmap?size=300x250&language=en-us&key=i-am-the-keymaster&zoom=16&markers=37.7734858,-122.3916087');
    });
 
     it("Should show the top content based on the hideMap property", function() {

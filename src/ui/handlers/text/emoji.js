@@ -5,8 +5,8 @@
  *
  * @class Layer.UI.handlers.text.Emoji
  */
-import Twemoji from 'twemoji';
 import RemarkableParser from 'remarkable-emoji/setEmoji';
+import Twemoji from 'twemoji';
 import Settings from '../../../settings';
 import { register } from './text-handlers';
 
@@ -20,19 +20,15 @@ register({
   order: 400,
   requiresEnable: true,
   handler(textData) {
-    // Bug in RemarkableParser requires extra spacing around html tags to keep them away from the emoticon.
-    let text = textData.text.replace(/\n/g, ' \n ');
-
-    // Parse it
-    const parsed = RemarkableParser(text);
+    let text = textData.text;
 
     if (Settings.useEmojiImages) {
       // See if its an all-emoji line by replacing all emojis with empty strings
       // and seeing if there's anything left when we're done.
-      const allEmojiLine = !Twemoji.replace(parsed, () => '').match(/[\S\n]/);
+      const allEmojiLine = !Twemoji.replace(text, () => '').match(/[\S\n]/);
 
       // Render the emoji images
-      text = Twemoji.parse(RemarkableParser(text), {
+      text = Twemoji.parse(text, {
         folder: 'svg',
         ext: '.svg',
         className: allEmojiLine ? 'layer-emoji layer-emoji-line' : 'layer-emoji',
@@ -40,18 +36,31 @@ register({
     }
 
     else {
-      text = parsed;
-      const allEmojiLine = !replaceEmojis(parsed, '').match(/[\S\n]/);
+      const allEmojiLine = !replaceEmojis(text, '').match(/[\S\n]/);
       if (allEmojiLine) {
         text = '<p class="layer-emoji-line">' + text.replace(/ \n /g, '<br/>') + '</p>';
       } else {
         text = replaceEmojis(text, str => `<span class='layer-emoji-char'>${str}</span>`);
       }
     }
-
-    // Undo the extra spacing we added above
-    text = text.replace(/ \n /g, '\n');
     textData.text = text;
   },
 });
 
+function setupReplaceEmojis() {
+  document.body.addEventListener('layer-compose-bar-processing-text', (evt) => {
+    // Newlines are problematic for the parser; add spacing and then remove it when done.
+    let text = evt.detail.text.replace(/\n/g, ' \n ');
+    text = RemarkableParser(text);
+    text = text.replace(/ \n /g, '\n');
+    evt.detail.text = text;
+  });
+}
+
+if (window.document) {
+  if (window.document.body) {
+    setupReplaceEmojis();
+  } else {
+    window.document.addEventListener('DOMContentLoaded', evt => setupReplaceEmojis());
+  }
+}

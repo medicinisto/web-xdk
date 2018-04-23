@@ -4,7 +4,7 @@
  *
  */
 /* eslint-disable no-console */
-const { DEBUG, INFO, WARN, ERROR, NONE } = require('../constants').LOG;
+const { TIMING, DEBUG, INFO, WARN, ERROR, NONE } = require('../constants').LOG;
 
 // Pretty arbitrary test that IE/edge fails and others don't.  Yes I could do a more direct
 // test for IE/edge but its hoped that MS will fix this around the time they cleanup their internal console object.
@@ -21,7 +21,7 @@ class Logger {
       obj = msg;
       msg = '';
     }
-    const timestamp = new Date().toLocaleTimeString();
+    const timestamp = this.level === TIMING ? Date.now() : new Date().toLocaleTimeString();
     let op;
     switch (type) {
       case DEBUG:

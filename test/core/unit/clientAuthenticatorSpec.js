@@ -128,6 +128,7 @@ describe("The Client Authenticator Class", function() {
 
         describe("The _restoreLastUser() method", function () {
             beforeEach(function() {
+                client.isTrustedDevice = true;
                 client._clientAuthenticated();
             });
            it("Should return null if the localStorage data is removed", function() {

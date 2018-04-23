@@ -694,7 +694,6 @@ function setupProperty(classDef, prop, propertyDefHash) {
   // The property setter will set this.properties[name] and then if there is a custom setter, it will be invoked.
   // This means that the setter does NOT need to write to this.properties, but can handle side effects, transformations, etc...
   newDef.set = function propertySetter(value) {
-    logger.debug(`Set property ${this.tagName}.${name} to `, value);
     if (this.properties._internalState.onDestroyCalled) return;
 
     if (propDef.type) value = castProperty(propDef.type, value);

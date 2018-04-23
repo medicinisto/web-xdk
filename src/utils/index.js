@@ -410,6 +410,7 @@ exports.doesObjectMatch = (requestedData, actualData) => {
 
 exports.isMobile = global.navigator ? Boolean(global.navigator.userAgent.match(/(mobile|android|phone)/i)) : false;
 exports.isIOS = global.navigator ? Boolean(global.navigator.userAgent.match(/(iPhone|iPad)/i)) : false;
+exports.hasLocalStorage = typeof Storage !== 'undefined' && global.localStorage instanceof Storage;
 
 /**
  * Simple array inclusion test

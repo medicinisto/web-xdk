@@ -19,7 +19,8 @@ import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import Constants from '../../constants';
 import './layer-location-message-model';
-import { defer } from '../../../utils';
+import { defer, logger } from '../../../utils';
+import { googleMapsKey } from '../../../settings';
 
 registerComponent('layer-location-message-view', {
   mixins: [MessageViewMixin],
@@ -104,9 +105,10 @@ registerComponent('layer-location-message-view', {
             marker = escape(this.model.street1 + (this.model.street2 ? ` ${this.model.street2}` : '') +
               ` ${this.model.city} ${this.model.administrativeArea}, ${this.model.postalCode} ${this.model.country}`);
           }
+          if (!googleMapsKey) logger.error('No googleMapsKey found in settings; pass into Layer.init()');
           this.nodes.img.src = location.protocol + '//maps.googleapis.com/maps/api/staticmap?' +
             `size=${this.parentNode.clientWidth}x${this.height}&language=${navigator.language.toLowerCase()}` +
-            `&key=${window.googleMapsAPIKey}&zoom=${this.model.zoom}&markers=${marker}`;
+            `&key=${googleMapsKey}&zoom=${this.model.zoom}&markers=${marker}`;
         });
       }
     },

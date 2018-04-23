@@ -137,7 +137,9 @@ var unsupportedBrowsers = {
         name: currentRuns + "/" + totalRuns + ": " + (!result.result || !result.result.errors ? " Failed to Complete" : " Completed") + " Layer Web XDK " + version + " " + testPage,
       }
     }, function (error, response, body) {
-      if (response.statusCode != 200) {
+      if (!response) {
+        console.error('Unexpected error perfoming PUT operation on saucelabs results: ', error);
+      } else if (response.statusCode != 200) {
         console.error("Error updating sauce results: " + body.error  + '/' + response.statusCode);
       }
     });
@@ -181,7 +183,7 @@ var unsupportedBrowsers = {
       // WARNING: If tests are timing out, adjust these values; they are documented in grunt-saucelabs README.md
       pollInterval: 2000, // Check for test results every 5 seconds (miliseconds)
       statusCheckAttempts: 5000,
-      "max-duration": 10000,
+      "maxDuration": 10000,
       maxRetries: 10,
       onTestComplete: onTestComplete
     }

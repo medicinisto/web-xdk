@@ -38,7 +38,7 @@ import SyncManager from './sync-manager';
 import Identity from './models/identity';
 import { XHRSyncEvent, WebsocketSyncEvent } from './sync-event';
 import { LOCALSTORAGE_KEYS, ACCEPT } from '../constants';
-import Util, { xhr, logger, defer } from '../utils';
+import Util, { xhr, logger, defer, hasLocalStorage } from '../utils';
 
 const MAX_XHR_RETRIES = 3;
 
@@ -123,7 +123,6 @@ class ClientAuthenticator extends Root {
     if (this.dbManager) this.dbManager.destroy();
   }
 
-
   /**
    * Is Persisted Session Tokens disabled?
    *
@@ -132,7 +131,7 @@ class ClientAuthenticator extends Root {
    * @private
    */
   _isPersistedSessionsDisabled() {
-    return !global.localStorage || (this.persistenceFeatures && !this.persistenceFeatures.sessionToken);
+    return !hasLocalStorage || (this.persistenceFeatures && !this.persistenceFeatures.sessionToken);
   }
 
   /**
@@ -167,6 +166,7 @@ class ClientAuthenticator extends Root {
    * @return {Layer.Core.Identity}
    */
   _restoreLastUser() {
+    if (this._isPersistedSessionsDisabled()) return null;
     try {
       const sessionData = global.localStorage[LOCALSTORAGE_KEYS.SESSIONDATA + this.appId];
       if (!sessionData) return null;
@@ -730,7 +730,7 @@ class ClientAuthenticator extends Root {
 
 
   _clearStoredData(callback) {
-    if (global.localStorage) localStorage.removeItem(LOCALSTORAGE_KEYS.SESSIONDATA + this.appId);
+    if (hasLocalStorage) localStorage.removeItem(LOCALSTORAGE_KEYS.SESSIONDATA + this.appId);
     if (this.dbManager) {
       this.dbManager.deleteTables(callback);
     } else if (callback) {
@@ -753,7 +753,7 @@ class ClientAuthenticator extends Root {
 
     if (this.sessionToken) {
       this.sessionToken = '';
-      if (global.localStorage) {
+      if (hasLocalStorage) {
         localStorage.removeItem(LOCALSTORAGE_KEYS.SESSIONDATA + this.appId);
       }
     }
@@ -1109,7 +1109,7 @@ class ClientAuthenticator extends Root {
           logger.warn('SESSION EXPIRED!');
           this.isAuthenticated = false;
           this.isReady = false;
-          if (global.localStorage) localStorage.removeItem(LOCALSTORAGE_KEYS.SESSIONDATA + this.appId);
+          if (hasLocalStorage) localStorage.removeItem(LOCALSTORAGE_KEYS.SESSIONDATA + this.appId);
           this.trigger('deauthenticated');
           if (result.data && result.data.getNonce) {
             this._authenticate(result.data.getNonce());
