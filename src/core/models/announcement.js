@@ -133,6 +133,9 @@ Announcement.prefixUUID = 'layer:///announcements/';
 Announcement._supportedEvents = [].concat(ConversationMessage._supportedEvents);
 
 Announcement.inObjectIgnore = ConversationMessage.inObjectIgnore;
+
+Announcement.mixins = Core.mixins.Announcement;
+
 Root.initClass.apply(Announcement, [Announcement, 'Announcement', Core]);
 Syncable.subclasses.push(Announcement);
 module.exports = Announcement;

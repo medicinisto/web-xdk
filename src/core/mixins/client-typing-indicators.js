@@ -1,17 +1,9 @@
 /**
- * Adds handling of custom websocket operations.
- *
- * This is handled by a Client mixin rather than:
- *
- * * The Client itself so we can keep the client simple and clean
- * * The Websocket Change Manager so that the change manager does not need to know
- *   how to handle any operation on any data.  Its primarily aimed at insuring websocket
- *   events get processed, not knowing minute details of the objects.
+ * Adds APIs to the Layer Client for working with Typing Indicators
  *
  * @class Layer.Core.mixins.ClientTypingIndicators
  */
 
-import Util from '../../utils';
 import Core from '../namespace';
 import TypingIndicatorListener from '../typing-indicators/typing-indicator-listener';
 import TypingListener from '../typing-indicators/typing-listener';

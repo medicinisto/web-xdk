@@ -845,7 +845,24 @@ describe("The Conversation Class", function() {
 
         it("Should set isCurrentParticipant to false", function() {
             // Setup
-            c.participants = [userIdentity1, userIdentity2];
+            c.participants = [
+                {
+                    id: "layer:///identities/aa",
+                    user_id: "aa",
+                    display_name: "Frodo The Dodo",
+                    first_name: "Frodo aa",
+                    last_name: "Dodo aa",
+                    metadata: {}
+                },
+                {
+                    id: "layer:///identities/bb",
+                    user_id: "bb",
+                    display_name: "Frodo The Dodo",
+                    first_name: "Frodo bb",
+                    last_name: "Dodo bb",
+                    metadata: {}
+                }
+            ];
 
             // Run
             conversation._populateFromServer(c);

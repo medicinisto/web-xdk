@@ -8,7 +8,7 @@
  *
  * This is currently setup to run once per hour, sending hourly updates to the server.
  *
- * @class layer.TelemetryMonitor
+ * @class Layer.Core.TelemetryMonitor
  * @extends Layer.Core.Root
  * @private
  */

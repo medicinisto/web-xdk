@@ -133,13 +133,13 @@ describe("The Client Message Type Model Mixin", function() {
 
     describe("The message-type-model:notification event", function() {
         it("Should customize the message notification", function() {
-            spyOn(Layer.Core.Message.prototype, "send");
+            spyOn(Layer.Core.Message.ConversationMessage.prototype, "send");
             client.on('message-type-model:notification', function(evt) {
                 evt.notification.title = "t1";
                 evt.notification.text = "t2";
             });
             new TextModel({ text: "Frodo is a Dodo" }).send({ conversation: conversation });
-            expect(Layer.Core.Message.prototype.send).toHaveBeenCalledWith({
+            expect(Layer.Core.Message.ConversationMessage.prototype.send).toHaveBeenCalledWith({
                 title: "t1",
                 text: "t2"
             });

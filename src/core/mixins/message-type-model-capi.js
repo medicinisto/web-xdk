@@ -1,7 +1,7 @@
 /**
- * Adds custom CAPI Message Type Model functionality.
+ * Adds custom CAPI Message Type Model functionality to the Message Type Model class
  *
- * This is handled by a Client mixin so that other uses of Messaging objects (SAPI for example)
+ * This is handled by a mixin so that other uses of Messaging objects (SAPI for example)
  * can have separate implementations of these methods or separate methods and properties as needed.
  *
  * This mixin provides a custom
@@ -10,7 +10,7 @@
  * * `generateMessage()` method which unlike CAPI returns a Promise rather than `this`, and takes a `conversationId` instead of a `conversation`
  * * `_send()` for using websockets to actually send the message
  *
- * @class Layer.Core.mixins.MessageCAPI
+ * @class Layer.Core.mixins.MessageTypeModelCAPI
  */
 
 import Core from '../namespace';
@@ -18,7 +18,6 @@ import { client } from '../../settings';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
 import Message from '../models/message';
-import MessageTypeModel from '../models/message-type-model';
 
 module.exports = {
   methods: {
@@ -119,13 +118,13 @@ module.exports = {
         });
 
         client._removeMessageTypeModel(this);
-        this.id = MessageTypeModel.prefixUUID + this.part.id.replace(/^.*messages\//, '');
+        this.id = Core.MessageTypeModel.prefixUUID + this.part.id.replace(/^.*messages\//, '');
         client._addMessageTypeModel(this);
         this.parseModelChildParts({ changes: this.childParts.map(part => ({ type: 'added', part })), isEdit: false });
         this.trigger('message-type-model:has-new-message'); // do this before the callback so it fires before message.send() is called
         if (callback) callback(this.message);
       });
-    }
+    },
   },
 };
 Core.mixins.MessageTypeModel.push(module.exports);

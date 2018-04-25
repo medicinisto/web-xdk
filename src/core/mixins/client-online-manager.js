@@ -1,14 +1,7 @@
 /**
- * Adds handling of custom websocket operations.
+ * Adds managing an Online Manager to the Client
  *
- * This is handled by a Client mixin rather than:
- *
- * * The Client itself so we can keep the client simple and clean
- * * The Websocket Change Manager so that the change manager does not need to know
- *   how to handle any operation on any data.  Its primarily aimed at insuring websocket
- *   events get processed, not knowing minute details of the objects.
- *
- * @class Layer.Core.mixins.WebsocketManager
+ * @class Layer.Core.mixins.ClientOnlineManager
  */
 
 import Core from '../namespace';
@@ -97,7 +90,7 @@ module.exports = {
         if (!this.isAuthenticated) this._connect();
       }
       this.trigger('online', obj);
-    }
+    },
   },
 };
 

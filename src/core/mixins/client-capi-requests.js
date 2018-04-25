@@ -1,24 +1,16 @@
 /**
- * Adds handling of custom websocket operations.
+ * Adds CAPI REST and Websocket request APIs
  *
- * This is handled by a Client mixin rather than:
- *
- * * The Client itself so we can keep the client simple and clean
- * * The Websocket Change Manager so that the change manager does not need to know
- *   how to handle any operation on any data.  Its primarily aimed at insuring websocket
- *   events get processed, not knowing minute details of the objects.
- *
- * @class Layer.Core.mixins.WebsocketOperations
+ * @class Layer.Core.mixins.ClientCAPIRequests
  */
 
 import { xhr, logger } from '../../utils';
 import Core from '../namespace';
 import SyncManager from '../sync-manager';
-import { ACCEPT } from '../../constants';
 import { XHRSyncEvent, WebsocketSyncEvent } from '../sync-event';
 import { timeBetweenReauths } from '../../settings';
-import LayerError, { ErrorDictionary } from '../layer-error';
-import { LOCALSTORAGE_KEYS } from '../../constants';
+import LayerError from '../layer-error';
+import { LOCALSTORAGE_KEYS, ACCEPT } from '../../constants';
 
 const MAX_XHR_RETRIES = 3;
 
@@ -38,10 +30,10 @@ module.exports = {
     },
   },
   properties: {
-  /**
-   * Service for managing online as well as offline server requests
-   * @property {Layer.Core.SyncManager}
-   */
+    /**
+     * Service for managing online as well as offline server requests
+     * @property {Layer.Core.SyncManager}
+     */
     syncManager: null,
 
     /**
@@ -62,6 +54,14 @@ module.exports = {
 
   },
   methods: {
+    /**
+     * Sends a request via Websocket
+     *
+     * @method sendSocketRequest
+     * @protected
+     * @param {Object} data
+     * @param {Function} callback
+     */
     sendSocketRequest(data, callback) {
       const isChangesArray = Boolean(data.isChangesArray);
       if (this._wantsToBeAuthenticated && !this.isAuthenticated) this._connect();
@@ -305,7 +305,7 @@ module.exports = {
       result.data = new LayerError(result.data);
       if (!result.data.httpStatus) result.data.httpStatus = result.status;
       result.data.log();
-    }
+    },
   },
 };
 

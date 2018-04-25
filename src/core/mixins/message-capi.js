@@ -187,6 +187,17 @@ module.exports = {
         },
       }, (success, socketData) => this._sendResult(success, socketData));
     },
+
+    /**
+     * Add additional data before firing a websocket request.
+     *
+     * Used when we queue up a Message to be sent before we are certain of the Conversation ID
+     * for its Conversation.
+     *
+     * @method _getSendData
+     * @private
+     * @param {Object} data
+     */
     _getSendData(data) {
       data.object_id = this.conversationId;
       return data;

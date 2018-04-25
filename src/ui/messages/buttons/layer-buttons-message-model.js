@@ -114,6 +114,9 @@ class ButtonsModel extends MessageTypeModel {
    */
   generateParts(callback) {
     this._setupButtonModels();
+    this.once('message-type-model:has-new-message', () => {
+      Object.keys(this.choices).forEach(choiceName => (this.choices[choiceName].message = this.message));
+    }, this);
     const buttons = this.buttons.map((button) => {
       if (button.type === 'choice') {
         delete button.data.preselectedChoice; // temporary value to generate the initial response state
@@ -150,15 +153,6 @@ class ButtonsModel extends MessageTypeModel {
     } else {
       callback([this.part]);
     }
-  }
-
-  // Override the parent generateMessage method so that we can insure everything is properly setup
-  // prior to anyone receiving the generated message and trying to send it
-  generateMessage(conversation, callback) {
-    super.generateMessage(conversation, (message) => {
-      this._setupButtonModels();
-      if (callback) callback(message);
-    });
   }
 
   // If this.responses.part is set then _setupButtonModels was already called

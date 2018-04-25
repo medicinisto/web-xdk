@@ -1,17 +1,9 @@
 /**
- * Adds handling of custom websocket operations.
+ * Adds APIs and properties to the Layer Client for accessing/using an authenticated User
  *
- * This is handled by a Client mixin rather than:
- *
- * * The Client itself so we can keep the client simple and clean
- * * The Websocket Change Manager so that the change manager does not need to know
- *   how to handle any operation on any data.  Its primarily aimed at insuring websocket
- *   events get processed, not knowing minute details of the objects.
- *
- * @class Layer.Core.mixins.WebsocketOperations
+ * @class Layer.Core.mixins.ClientUser
  */
 
-import Util from '../../utils';
 import Core from '../namespace';
 
 module.exports = {

@@ -1,4 +1,6 @@
-// TODO: Not updated to work with NodeJS yet
+/*
+ * Import Everything in Layer.Core for running in a nodejs environment
+ */
 import '../utils/native-support/node';
 import Core from './index';
 

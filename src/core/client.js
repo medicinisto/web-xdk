@@ -72,16 +72,27 @@
  *        logLevel: Layer.Constants.LOG.INFO
  *     });
  *
- * @class  Layer.Core.Client
+ * @class Layer.Core.Client
  * @extends Layer.Core.Root
  * @mixin Layer.Core.mixins.ClientIdentities
  * @mixin Layer.Core.mixins.ClientMembership
  * @mixin Layer.Core.mixins.ClientConversations
  * @mixin Layer.Core.mixins.ClientChannels
  * @mixin Layer.Core.mixins.ClientMessages
+ * @mixin Layer.Core.mixins.ClientAnnouncements
  * @mixin Layer.Core.mixins.ClientQueries
- * @mixin Layer.Core.mixins.WebsocketOperations
+ * @mixin Layer.Core.mixins.ClientCAPIRequests
+ * @mixin Layer.Core.mixins.ClientCacheCleaner
+ * @mixin Layer.Core.mixins.ClientUser
+ * @mixin Layer.Core.mixins.ClientTelemetry
+ * @mixin Layer.Core.mixins.ClientTypingIndicators
+ * @mixin Layer.Core.mixins.ClientOnlineManager
+ * @mixin Layer.Core.mixins.ClientWebsockets
+ * @mixin Layer.Core.mixins.ClientWebsocketOperations
  * @mixin Layer.Core.mixins.ClientMessageTypeModels
+ * @mixin Layer.Core.mixins.ClientCAPIAuthentication
+ * @mixin Layer.Core.mixins.ClientPushTokens
+ * @mixin Layer.Core.mixins.ClientDbManager
  */
 
 import Util from '../utils';
@@ -148,8 +159,6 @@ class Client extends Root {
     this.trigger('authenticated');
     this._clientReadyCheck();
   }
-
-
 
   /**
    * Tests to see if the client is _really_ ready, and if so triggers the `ready` event.

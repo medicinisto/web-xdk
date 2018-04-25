@@ -8,12 +8,12 @@
  *   how to handle any operation on any data.  Its primarily aimed at insuring websocket
  *   events get processed, not knowing minute details of the objects.
  *
- * @class Layer.Core.mixins.CAPIAuthentication
+ * @class Layer.Core.mixins.ClientCAPIAuthentication
  */
 
-import Util, { logger, defer } from '../../utils';
+import Util, { logger } from '../../utils';
 import Core from '../namespace';
-import { LOCALSTORAGE_KEYS, ACCEPT } from '../../constants';
+import { LOCALSTORAGE_KEYS } from '../../constants';
 import { ErrorDictionary } from '../layer-error';
 import Identity from '../models/identity';
 
@@ -132,8 +132,8 @@ module.exports = {
 
       // Before calling _clientReady, load the session owner's full Identity.
       // Or let the db-manager handle this if its been loaded (yuck, not proud of this part of the architecture)
-      if (this.hasLifecycleMethod('load-users-after-auth')) {
-        this._runMixins('load-users-after-auth');
+      if (this.hasLifecycleMethod('load-user-after-auth')) {
+        this._runMixins('load-user-after-auth');
       } else {
         this._loadUser();
       }
@@ -358,9 +358,16 @@ module.exports = {
       return this;
     },
 
+    /**
+     * Called when authenticating new user/deauthenticating old user to clear out persistent memory.
+     *
+     * @method _clearStoredData
+     * @private
+     * @param {Function} callback
+     */
     _clearStoredData(callback) {
       if (global.localStorage) localStorage.removeItem(LOCALSTORAGE_KEYS.SESSIONDATA + this.appId);
-      let waitForCallback = this._runMixins('clear-stored-data', [callback]);
+      const waitForCallback = this._runMixins('clear-stored-data', [callback]);
       if (!waitForCallback && callback) callback();
     },
 

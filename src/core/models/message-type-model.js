@@ -24,6 +24,7 @@
  *
  * @class  Layer.Core.MessageTypeModel
  * @extends Layer.Core.Root
+ * @mixin Layer.Core.mixins.MessageTypeModelCAPI
  */
 import { client } from '../../settings';
 import Core from '../namespace';
@@ -1494,8 +1495,8 @@ MessageTypeModel._supportedEvents = [
   'message-type-model:has-new-message',
 ].concat(Root._supportedEvents);
 
-Root.initClass.apply(MessageTypeModel, [MessageTypeModel, 'MessageTypeModel', Core]);
-
 MessageTypeModel.mixins = Core.mixins.MessageTypeModel;
+
+Root.initClass.apply(MessageTypeModel, [MessageTypeModel, 'MessageTypeModel', Core]);
 
 module.exports = MessageTypeModel;

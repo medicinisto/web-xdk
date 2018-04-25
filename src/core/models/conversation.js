@@ -214,7 +214,7 @@ class Conversation extends Container {
     // Make sure this user is a participant (server does this for us, but
     // this insures the local copy is correct until we get a response from
     // the server
-    if (client.userIsSupported && this.participants.indexOf(client.user) === -1) {
+    if (client.needsUserContext && this.participants.indexOf(client.user) === -1) {
       this.participants.push(client.user);
     }
 
@@ -323,7 +323,7 @@ class Conversation extends Container {
     this.distinct = conversation.distinct;
     this.unreadCount = conversation.unread_message_count;
     this.totalMessageCount = conversation.total_message_count;
-    if (client.userIsSupported) {
+    if (client.needsUserContext) {
       this.isCurrentParticipant = this.participants.indexOf(client.user) !== -1;
     }
     super._populateFromServer(conversation);
@@ -441,7 +441,7 @@ class Conversation extends Container {
    */
   _patchParticipants(change) {
     this._applyParticipantChange(change);
-    if (client.userIsSupported) {
+    if (client.needsUserContext) {
       this.isCurrentParticipant = this.participants.indexOf(client.user) !== -1;
     }
 
@@ -1000,9 +1000,9 @@ Conversation._supportedEvents = [
    */
   'conversations:change'].concat(Syncable._supportedEvents);
 
+Conversation.mixins = Core.mixins.Conversation;
+
 Root.initClass.apply(Conversation, [Conversation, 'Conversation', Core]);
 Syncable.subclasses.push(Conversation);
-
-Conversation.mixins = Core.mixins.Conversation;
 
 module.exports = Conversation;

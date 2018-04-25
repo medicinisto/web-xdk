@@ -9,7 +9,6 @@
  * @class Layer.Core.mixins.ClientMessageTypeModels
  */
 import { ErrorDictionary } from '../layer-error';
-import MessageTypeModel from '../models/message-type-model';
 import Core from '../namespace';
 
 const MessageTypeModelClasses = [];
@@ -127,7 +126,7 @@ module.exports = {
      */
     getMessageTypeModel(id) {
       if (typeof id !== 'string') throw new Error(ErrorDictionary.idParamRequired);
-      id = id.replace(/layer:\/\/\/messages\//, MessageTypeModel.prefixUUID);
+      id = id.replace(/layer:\/\/\/messages\//, Core.MessageTypeModel.prefixUUID);
 
       return this._models.messageTypes[id] || null;
     },

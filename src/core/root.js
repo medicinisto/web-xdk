@@ -595,6 +595,8 @@ class Root extends EventClass {
    *       Of course, at that point it looks more like an event mechanism; perhaps we should be using events?  However, events
    *       are a bit more public...
    *
+   * @method _runMixins
+   * @protected
    * @param {String} lifecycleMethodName
    * @param {Mixed[]} argArray
    */

@@ -122,6 +122,7 @@
  *   this event from the Layer.Core.Client which is usually simpler.
  *
  * @class  Layer.Core.Message
+ * @mixin Layer.Core.mixins.MessageCAPI
  * @extends Layer.Core.Syncable
  */
 import { client as Client } from '../../settings';
@@ -1096,9 +1097,9 @@ Message._supportedEvents = [
   'messages:part-removed',
 ].concat(Syncable._supportedEvents);
 
+Message.mixins = Core.mixins.Message;
+
 Root.initClass.apply(Message, [Message, 'Message', Core]);
 Syncable.subclasses.push(Message);
-
-Message.mixins = Core.mixins.Message;
 
 module.exports = Message;

@@ -3,6 +3,7 @@ module.exports = {
   mixins: {
     Client: [],
     Message: [],
+    Announcement: [],
     Conversation: [],
     Identity: [],
     MessageTypeModel: [],

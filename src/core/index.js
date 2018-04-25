@@ -1,10 +1,16 @@
 /**
+ * Do not diretly import this; instead import one of `index-web`, `index-node`, `index-all`, etc...
+ *
  * @class Layer.Core
  */
 import Core from './namespace';
 import './root';
 
+// Message and MessageType Mixins
 import './mixins/message-capi';
+import './mixins/message-type-model-capi';
+
+// Client Mixins
 import './mixins/client-capi-authentication';
 import './mixins/client-websockets';
 import './mixins/client-online-manager';
@@ -17,12 +23,14 @@ import './mixins/client-queries';
 import './mixins/client-identities';
 import './mixins/client-conversations';
 import './mixins/client-messages';
-import './mixins/websocket-operations';
+import './mixins/client-websocket-operations';
 import './mixins/client-message-type-models';
 import './mixins/client-channels';
 import './mixins/client-members';
 import './mixins/client-announcements';
+import './mixins/client-push-tokens';
 
+// Import the Client and models (must happen after loading the mixins!)
 import './client';
 import './models/syncable';
 import './models/conversation';
@@ -38,6 +46,7 @@ import './models/channel-message';
 import './models/membership';
 import './models/identity';
 
+// Import all Queries
 import './queries/query';
 import './queries/conversations-query';
 import './queries/identities-query';
@@ -47,7 +56,7 @@ import './queries/channels-query';
 import './queries/members-query';
 import './queries/query-builder';
 
-
+// Everything else
 import './layer-error';
 import './layer-event';
 import './sync-manager';

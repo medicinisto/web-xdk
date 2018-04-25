@@ -609,9 +609,10 @@ Identity.eventPrefix = 'identities';
 Identity.prefixUUID = 'layer:///identities/';
 Identity.enableOpsIfNew = true;
 
+Identity.mixins = Core.mixins.Identity;
+
 Root.initClass.apply(Identity, [Identity, 'Identity', Core]);
 Syncable.subclasses.push(Identity);
 
-Identity.mixins = Core.mixins.Identity;
 
 module.exports = Identity;

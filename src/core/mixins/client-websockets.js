@@ -1,14 +1,7 @@
 /**
- * Adds handling of custom websocket operations.
+ * Adds use of websocket classes to the Client
  *
- * This is handled by a Client mixin rather than:
- *
- * * The Client itself so we can keep the client simple and clean
- * * The Websocket Change Manager so that the change manager does not need to know
- *   how to handle any operation on any data.  Its primarily aimed at insuring websocket
- *   events get processed, not knowing minute details of the objects.
- *
- * @class Layer.Core.mixins.WebsocketManager
+ * @class Layer.Core.mixins.ClientWebsockets
  */
 
 import Core from '../namespace';
@@ -72,9 +65,6 @@ module.exports = {
      * @property {Layer.Core.Websockets.ChangeManager}
      */
     socketChangeManager: null,
-  },
-  methods: {
-
   },
 };
 

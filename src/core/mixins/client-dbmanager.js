@@ -1,18 +1,11 @@
 /**
- * Adds handling of custom websocket operations.
+ * Adds use of a database to the Client's behaviors and properties
  *
- * This is handled by a Client mixin rather than:
- *
- * * The Client itself so we can keep the client simple and clean
- * * The Websocket Change Manager so that the change manager does not need to know
- *   how to handle any operation on any data.  Its primarily aimed at insuring websocket
- *   events get processed, not knowing minute details of the objects.
- *
- * @class Layer.Core.mixins.WebsocketOperations
+ * @class Layer.Core.mixins.ClientDbManager
  */
 
 import Core from '../namespace';
-import DbManager from '../db-manager';
+import { ErrorDictionary } from '../layer-error';
 
 module.exports = {
   roles: ['handles-load-user'],
@@ -32,14 +25,17 @@ module.exports = {
       this._setupDbSettings();
     },
 
-    'load-users-after-auth': function() {
+    // After authenticating but before declaring ready, fetch the Identity for the current user
+    'load-user-after-auth': function loadMainUser() {
       if (this.isPersistenceEnabled && this.dbManager) {
         this.dbManager.onOpen(() => this._loadUser());
       } else {
         this._loadUser();
       }
     },
-    'clear-stored-data': function(callback) {
+
+    // Clear all database data
+    'clear-stored-data': function clearStoredData(callback) {
       if (this.dbManager) {
         this.dbManager.deleteTables(callback);
         return true;
@@ -95,6 +91,12 @@ module.exports = {
     dbManager: null,
   },
   methods: {
+    /**
+     * Setup which persistence features are enabled/disabled and then instantiate the DbManager.
+     *
+     * @method _setupDbSettings
+     * @private
+     */
     _setupDbSettings() {
       // If no persistenceFeatures are specified, set them all
       // to true or false to match isTrustedDevice.
@@ -117,12 +119,12 @@ module.exports = {
 
       // Setup the Database Manager
       if (!this.dbManager) {
-        if (!DbManager) {
+        if (!Core.DbManager) {
           if (this.isPersistenceEnabled && this.isTrustedDevice) {
             throw new Error(ErrorDictionary.dbManagerNotLoaded);
           }
         } else {
-          this.dbManager = new DbManager({
+          this.dbManager = new Core.DbManager({
             tables: this.persistenceFeatures,
             enabled: this.isPersistenceEnabled,
           });
@@ -130,6 +132,13 @@ module.exports = {
       }
     },
 
+    /**
+     * Deletes all data in the database
+     *
+     * @method _resetDb
+     * @private
+     * @param {Layer.Core.LayerEvent} evt
+     */
     _resetDb(evt) {
       if (evt.reset) {
         if (this.dbManager) {
@@ -139,7 +148,7 @@ module.exports = {
           });
         }
       }
-    }
+    },
   },
 };
 

@@ -1,18 +1,9 @@
 /**
- * Adds handling of custom websocket operations.
+ * Adds APIs to the Layer Client for managing cached Models
  *
- * This is handled by a Client mixin rather than:
- *
- * * The Client itself so we can keep the client simple and clean
- * * The Websocket Change Manager so that the change manager does not need to know
- *   how to handle any operation on any data.  Its primarily aimed at insuring websocket
- *   events get processed, not knowing minute details of the objects.
- *
- * @class Layer.Core.mixins.WebsocketOperations
+ * @class Layer.Core.mixins.ClientCacheCleaner
  */
 
-import Util from '../../utils';
-import { RECEIPT_STATE } from '../../constants';
 import Core from '../namespace';
 import Root from '../root';
 
@@ -20,7 +11,7 @@ module.exports = {
   lifecycle: {
     constructor() {
       this._scheduleCheckAndPurgeCacheItems = [];
-    }
+    },
   },
   properties: {
     /**
@@ -126,7 +117,7 @@ module.exports = {
         if (query._getItem(obj.id)) return true;
       }
       return false;
-    }
+    },
   },
 };
 
