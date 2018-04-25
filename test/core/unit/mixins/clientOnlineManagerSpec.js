@@ -39,7 +39,6 @@ describe("The Client Online Manager Mixin", function() {
     describe("The _handleOnlineChange() method", function () {
         beforeAll(function() {debugger;});
         it("Should trigger online: false if disconnected", function () {
-            debugger;
             client.isAuthenticated = true;
             client._wantsToBeAuthenticated = true;
             spyOn(client, "trigger");

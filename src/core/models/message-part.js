@@ -373,6 +373,13 @@ class MessagePart extends Root {
     if (typeof this.body !== 'string') {
       const err = 'MessagePart.body must be a string in order to send it';
       logger.error(err, { mimeType: this.mimeType, body: this.body });
+      this._getMessage().trigger('messages:sent-error', {
+        error: new LayerError({
+          message: err,
+          code: 0,
+        }),
+        part: this,
+      });
       throw new Error(err);
     }
 
@@ -446,7 +453,20 @@ class MessagePart extends Root {
         'Upload-Origin': typeof location !== 'undefined' ? location.origin : '',
       },
       sync: {},
-    }, result => this._processContentResponse(result.data, body));
+    }, (result) => {
+      if (result.success) {
+        this._processContentResponse(result.data, body);
+      } else {
+        this._getMessage().trigger('messages:sent-error', {
+          error: new LayerError({
+            message: result.message,
+            httpStatus: result.status,
+            data: result.xhr,
+          }),
+          part: this,
+        });
+      }
+    });
   }
 
   /**
