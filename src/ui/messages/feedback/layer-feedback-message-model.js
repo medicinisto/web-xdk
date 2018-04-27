@@ -188,9 +188,9 @@ FeedbackModel.LabelPlural = 'Feedback Requests';
  */
 FeedbackModel.SummaryTemplate = '${prompt}'; // eslint-disable-line no-template-curly-in-string
 
-FeedbackModel.defaultAction = 'layer-open-expanded-view';
+FeedbackModel.defaultAction = 'layer-show-large-message';
 FeedbackModel.messageRenderer = 'layer-feedback-message-view';
-FeedbackModel.messageRendererExpanded = 'layer-feedback-message-expanded-view';
+FeedbackModel.largeMessageRenderer = 'layer-feedback-message-large-view';
 FeedbackModel.MIMEType = 'application/vnd.layer.feedback+json';
 
 Root.initClass.apply(FeedbackModel, [FeedbackModel, 'FeedbackModel']);

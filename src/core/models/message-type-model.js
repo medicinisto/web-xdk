@@ -66,7 +66,7 @@ class MessageTypeModel extends Root {
 
     if (!this.customData) this.customData = {};
     this.currentMessageRenderer = this.constructor.messageRenderer;
-    this.currentMessageRendererExpanded = this.constructor.messageRendererExpanded;
+    this.currentLargeMessageRenderer = this.constructor.largeMessageRenderer;
     this.childParts = [];
     this.childModels = [];
     if (this.message) {
@@ -1267,9 +1267,9 @@ MessageTypeModel.prototype.responses = null;
 MessageTypeModel.prototype.currentMessageRenderer = '';
 
 /**
- * The requested UI Component name for rendering this model in a Layer.UI.messages.MessageViewerExpanded.
+ * The requested UI Component name for rendering this model in a Layer.UI.messages.LargeMessageViewer.
  *
- * This property is set from the static `messageRendererExpanded` property provided by most Models.
+ * This property is set from the static `largeMessageRenderer` property provided by most Models.
  *
  * Some models may need this value to be dynamically looked up instead of static:
  *
@@ -1285,7 +1285,7 @@ MessageTypeModel.prototype.currentMessageRenderer = '';
  *
  * @property {String}
  */
-MessageTypeModel.prototype.currentMessageRendererExpanded = '';
+MessageTypeModel.prototype.currentLargeMessageRenderer = '';
 
 /**
  * Sender of the Message Model
@@ -1383,13 +1383,13 @@ MessageTypeModel.AltMIMETypes = [];
 MessageTypeModel.messageRenderer = '';
 
 /**
- * The UI Component to render this model in a Layer.UI.messages.MessageViewerExpanded
+ * The UI Component to render this model in a Layer.UI.messages.LargeMessageViewer
  *
  * @static
- * @property {String} [messageRendererExpanded=]
+ * @property {String} [largeMessageRenderer=]
  * @abstract
  */
-MessageTypeModel.messageRendererExpanded = '';
+MessageTypeModel.largeMessageRenderer = '';
 
 /**
  * Add Custom States that will be registered and understood across all Message Type Models

@@ -304,10 +304,10 @@ describe('Feedback Message Components', function() {
     });
   });
 
-  describe("Expanded View Tests", function() {
+  describe("Large View Tests", function() {
     var el, ui, message, model;
     beforeEach(function() {
-      el = document.createElement('layer-message-viewer-expanded');
+      el = document.createElement('layer-large-message-viewer');
       testRoot.appendChild(el);
       model = new FeedbackModel({
         title: "mytitle",

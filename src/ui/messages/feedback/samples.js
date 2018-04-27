@@ -32,7 +32,7 @@ model = new ButtonsModel({
       data: {hey: 'ho'}
     }
   }),
-  buttons: [{type: "action", text: "open", event: "layer-open-expanded-view", data: {hey: "there"}}],
+  buttons: [{type: "action", text: "open", event: "layer-show-large-message", data: {hey: "there"}}],
 });
 model.send({ conversation: $("layer-conversation-view").conversation });
 

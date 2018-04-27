@@ -7,17 +7,17 @@ layer-message-viewer.layer-feedback-message-view {
   cursor: pointer;
 }
 
-layer-feedback-message-view, layer-feedback-message-expanded-view {
+layer-feedback-message-view, layer-feedback-message-large-view {
 
 }
 
-layer-feedback-message-expanded-view:not(.layer-feedback-enabled), layer-feedback-message-view:not(.layer-feedback-enabled) {
+layer-feedback-message-large-view:not(.layer-feedback-enabled), layer-feedback-message-view:not(.layer-feedback-enabled) {
   .layer-feedback-message-view-ratings span {
     opacity: 0.4;
   }
 }
 
-layer-feedback-message-expanded-view.layer-feedback-enabled {
+layer-feedback-message-large-view.layer-feedback-enabled {
   .layer-feedback-message-view-ratings {
     span {
       cursor: pointer;
@@ -26,7 +26,7 @@ layer-feedback-message-expanded-view.layer-feedback-enabled {
 }
 
 layer-feedback-message-view.layer-feedback-enabled,
-layer-feedback-message-expanded-view:not(.layer-feedback-enabled) {
+layer-feedback-message-large-view:not(.layer-feedback-enabled) {
   .layer-feedback-message-view-ratings {
     span {
       cursor: default;
@@ -74,7 +74,7 @@ layer-message-viewer.layer-feedback-message-view {
   }
 }
 
-layer-feedback-message-expanded-view {
+layer-feedback-message-large-view {
   background-color: @color-g1;
   &.layer-feedback-enabled {
     .layer-feedback-message-view-ratings {

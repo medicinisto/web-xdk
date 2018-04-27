@@ -635,11 +635,6 @@ class ChoiceModel extends MessageTypeModel {
     }
   }
 
-  // Getter for the expandedType property
-  __getExpandedType() {
-    return this.__expandedType || this.type;
-  }
-
   // Backwards compat but unsupported use links question to label
   __getQuestion() {
     return this.label;
@@ -704,18 +699,6 @@ ChoiceModel.prototype.allowMultiselect = false;
  * @property {String} [type=standard]
  */
 ChoiceModel.prototype.type = 'standard';
-
-/**
- * What type of Choice Model renderer should represent this in an expanded or full-screen view?
- *
- * * `standard`: Use a `<layer-choice-message-view />` to render a choice message for the user to make a selection from.
- * * `label`: Use a `<layer-choice-label-message-view />` to render a label indicating the current value
- *
- * If left unset, the Layer.UI.messages.ChoiceMessageModel.type property value will be used instead.
- *
- * @property {String} [expandedType]
- */
-ChoiceModel.prototype.expandedType = '';
 
 /**
  * Title for the Choice Message; set to empty string to remove the titlebar entirely

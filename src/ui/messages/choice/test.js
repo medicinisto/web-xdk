@@ -1645,35 +1645,6 @@ describe('Choice Message Components', function() {
       });
     });
 
-    describe("The expandedType property", function() {
-      it("Should return its own value or type if no value", function() {
-        var model = new ChoiceModel({
-          enabledFor: client.user.id,
-          label: "hello",
-          choices: [
-            {text: "c", id: "cc"},
-          ],
-          type: 'label',
-          expandedType: 'standard'
-        });
-        expect(model.expandedType).toEqual('standard');
-        model.expandedType = 'label';
-        expect(model.expandedType).toEqual('label');
-        model.expandedType = '';
-        expect(model.expandedType).toEqual('label'); // returns type value
-
-        var model2 = new ChoiceModel({
-          enabledFor: client.user.id,
-          label: "hello",
-          choices: [
-            {text: "c", id: "cc"},
-          ],
-          type: 'label'
-        });
-        expect(model2.expandedType).toEqual('label'); // returns type value
-      });
-    });
-
     describe("The preselectedChoice property", function() {
       it("Should set the selectedAnswer property", function() {
         var model = new ChoiceModel({

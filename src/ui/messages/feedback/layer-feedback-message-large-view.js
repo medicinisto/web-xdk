@@ -1,5 +1,5 @@
 /**
- * Expanded view for the Feedback Message
+ * large view for the Feedback Message
  *
  * ### Importing
  *
@@ -9,7 +9,7 @@
  * import '@layerhq/web-xdk/ui/messages/choice/layer-feedback-message-view';
  * ```
  *
- * @class Layer.UI.messages.FeedbackMessageExpandedView
+ * @class Layer.UI.messages.FeedbackMessagelargeView
  * @mixin Layer.UI.messages.MessageViewMixin
  * @mixin Layer.UI.mixins.Clickable
  * @extends Layer.UI.Component
@@ -43,7 +43,7 @@ function getUTF8Length(s) {
 }
 
 
-registerComponent('layer-feedback-message-expanded-view', {
+registerComponent('layer-feedback-message-large-view', {
   mixins: [MessageViewMixin, Clickable],
   template: `
     <div class='layer-feedback-message-view-label' layer-id='label'></div>
@@ -53,23 +53,23 @@ registerComponent('layer-feedback-message-expanded-view', {
     <layer-action-button layer-id='button' text='Send'></layer-action-button>
   `,
   style: `
-  layer-feedback-message-expanded-view {
+  layer-feedback-message-large-view {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     height: 100%;
     overflow-y: auto;
   }
-  layer-feedback-message-expanded-view .layer-feedback-message-view-input {
+  layer-feedback-message-large-view .layer-feedback-message-view-input {
     flex-grow: 1;
   }
-  layer-feedback-message-expanded-view:not(.layer-feedback-enabled) layer-action-button {
+  layer-feedback-message-large-view:not(.layer-feedback-enabled) layer-action-button {
     display: none;
   }
-  layer-feedback-message-expanded-view:not(.layer-feedback-enabled) .layer-feedback-message-view-input {
+  layer-feedback-message-large-view:not(.layer-feedback-enabled) .layer-feedback-message-view-input {
     display: none;
   }
-  layer-feedback-message-expanded-view.layer-feedback-enabled .layer-feedback-message-view-comment {
+  layer-feedback-message-large-view.layer-feedback-enabled .layer-feedback-message-view-comment {
     display: none;
   }
   `,
@@ -161,3 +161,4 @@ registerComponent('layer-feedback-message-expanded-view', {
     },
   },
 });
+

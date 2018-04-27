@@ -6,6 +6,11 @@
 * Static property `CACHE_PURGE_INTERVAL` is now an instance property settable from `Layer.init()` named `cachePurgeInterval`
 * Rips out Client Authenticator Parent class of the Layer Client; replaces all of its capabilities via Mixins
 * Adds a Manual Query class to which you can add and remove data, and have UI Components render them.  `var query = layerClient.createQuery({model: Layer.Core.Query.Manual}); query.addItem(conversation1);`
+* Large Message View Changes:
+    * Renames `layer-open-expanded-view` action to `layer-show-large-message`
+    * Renames `messageRendererExpanded` to `largeMessageRenderer`
+    * Renames `<layer-message-viewer-expanded/>` to `<layer-large-message-viewer />`
+    * Renames `<layer-feedback-message-expanded-view />` to `<layer-feedback-message-large-view />`
 
 
 ## 4.0.3

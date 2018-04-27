@@ -1,5 +1,5 @@
 .layer-conversation-view-width-large {
-  layer-message-viewer-expanded {
+  layer-large-message-viewer {
     padding: 30px 30px;
 
     .layer-card-title-buttons {
@@ -9,7 +9,7 @@
 }
 
 .layer-conversation-view-width-medium {
-  layer-message-viewer-expanded {
+  layer-large-message-viewer {
     padding: 20px 20px;
 
     .layer-card-title-buttons {
@@ -19,7 +19,7 @@
 }
 
 .layer-conversation-view-width-small {
-  layer-message-viewer-expanded {
+  layer-large-message-viewer {
     padding: 20px 5px;
 
     .layer-card-title-buttons {
@@ -28,13 +28,13 @@
   }
 }
 
-layer-message-viewer-expanded {
+layer-large-message-viewer {
   z-index: 2000;
   background-color: rgba(0, 0, 0, 0.5);
 
-  .layer-message-viewer-expanded-inner {
+  .layer-large-message-viewer-inner {
     background-color: @color-white;
     height: 100%;
-    border-radius: @message-type-expanded-view-radius;
+    border-radius: @message-type-large-message-viewer-radius;
   }
 }

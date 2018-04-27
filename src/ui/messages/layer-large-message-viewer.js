@@ -6,10 +6,10 @@
  * Included with the standard build. For custom build,  import with:
  *
  * ```
- * import '@layerhq/web-xdk/ui/messages/layer-message-viewer-expanded
+ * import '@layerhq/web-xdk/ui/messages/layer-large-message-viewer
  * ```
  *
- * @class Layer.UI.messages.MessageViewerExpanded
+ * @class Layer.UI.messages.LargeMessageViewer
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.Clickable
  */
@@ -17,9 +17,9 @@ import { registerComponent } from '../components/component';
 import Clickable from '../mixins/clickable';
 
 
-registerComponent('layer-message-viewer-expanded', {
+registerComponent('layer-large-message-viewer', {
   mixins: [Clickable],
-  style: `layer-message-viewer-expanded {
+  style: `layer-large-message-viewer {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -27,21 +27,21 @@ registerComponent('layer-message-viewer-expanded', {
     left: 0px;
     box-sizing: border-box;
   }
-  layer-message-viewer-expanded .layer-message-viewer-expanded-inner {
+  layer-large-message-viewer .layer-large-message-viewer-inner {
     display: flex;
     flex-direction: row;
     align-items: stretch;
     justify-content: stretch;
   }
-  layer-message-viewer-expanded .layer-message-viewer-expanded-inner > * {
+  layer-large-message-viewer .layer-large-message-viewer-inner > * {
     flex-grow: 1;
   }
-  layer-message-viewer-expanded .layer-message-viewer-expanded-inner >
+  layer-large-message-viewer .layer-large-message-viewer-inner >
     layer-titled-display-container > .layer-card-top {
     height: 100%;
   }
   `,
-  template: '<div class="layer-message-viewer-expanded-inner" layer-id="inner"></div>',
+  template: '<div class="layer-large-message-viewer-inner" layer-id="inner"></div>',
 
   properties: {
     /**
@@ -52,7 +52,7 @@ registerComponent('layer-message-viewer-expanded', {
     model: {},
 
     /**
-     * The action data of the button or Message that was used to open this expanded viewer.
+     * The action data of the button or Message that was used to open this large viewer.
      *
      * @property {Object}
      */
@@ -180,7 +180,7 @@ registerComponent('layer-message-viewer-expanded', {
 
     // Lifecycle method: roughly identical to <layer-message-viewer />
     onRender() {
-      const cardUIType = this.model.currentMessageRendererExpanded;
+      const cardUIType = this.model.currentLargeMessageRenderer;
       this.classList.add(cardUIType);
       if (this.parentComponent && this.parentComponent.isMessageListItem) {
         this.parentComponent.classList.add('layer-message-item-' + cardUIType);

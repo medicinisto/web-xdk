@@ -37,7 +37,7 @@ import animatedScroll from './ui-utils/animated-scroll';
 import './messages/index-lite';
 
 // Load standard card actions
-import './message-actions/open-expanded-view-action';
+import './message-actions/show-large-message';
 import './message-actions/open-url-action';
 import './message-actions/open-file-action';
 import './message-actions/open-map-action';

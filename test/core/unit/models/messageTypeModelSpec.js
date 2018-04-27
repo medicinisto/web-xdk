@@ -62,11 +62,11 @@ describe("The Message Type Model class", function() {
       expect(model.childModels).toEqual([]);
     });
 
-    it("Should setup currentMessageRenderer and currentMessageRendererExpanded", function() {
+    it("Should setup currentMessageRenderer and currentLargeMessageRenderer", function() {
       var FeedbackModel = Layer.Core.Client.getMessageTypeModelClass('FeedbackModel')
       var model = new FeedbackModel({});
       expect(model.currentMessageRenderer).toEqual('layer-feedback-message-view');
-      expect(model.currentMessageRendererExpanded).toEqual('layer-feedback-message-expanded-view');
+      expect(model.currentLargeMessageRenderer).toEqual('layer-feedback-message-large-view');
     });
 
     it("Should only call _setupMessage if initialized with a message", function() {

@@ -20,7 +20,7 @@ import { registerStatusModel } from '../../ui-utils/';
 import FeedbackModel from './layer-feedback-message-model';
 import MessageViewMixin from '../message-view-mixin';
 import Clickable from '../../mixins/clickable';
-import './layer-feedback-message-expanded-view';
+import './layer-feedback-message-large-view';
 
 registerComponent('layer-feedback-message-view', {
   mixins: [MessageViewMixin, Clickable],
