@@ -1,7 +1,7 @@
 /**
  * Adds Message handling to the Layer.Core.Client.
  *
- * @class Layer.Core.mixins.ClientAnnouncements
+ * @class Layer.Core.Client
  */
 
 import Announcements from '../models/announcement';

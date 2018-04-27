@@ -1,7 +1,7 @@
 /**
  * Adds APIs to the Layer Client for managing cached Models
  *
- * @class Layer.Core.mixins.ClientCacheCleaner
+ * @class Layer.Core.Client
  */
 
 import Core from '../namespace';

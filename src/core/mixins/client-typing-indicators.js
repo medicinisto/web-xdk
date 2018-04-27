@@ -1,7 +1,7 @@
 /**
  * Adds APIs to the Layer Client for working with Typing Indicators
  *
- * @class Layer.Core.mixins.ClientTypingIndicators
+ * @class Layer.Core.Client
  */
 
 import Core from '../namespace';

@@ -10,7 +10,7 @@
  * * `generateMessage()` method which unlike CAPI returns a Promise rather than `this`, and takes a `conversationId` instead of a `conversation`
  * * `_send()` for using websockets to actually send the message
  *
- * @class Layer.Core.mixins.MessageTypeModelCAPI
+ * @class Layer.Core.MessageTypeModel
  */
 
 import Core from '../namespace';

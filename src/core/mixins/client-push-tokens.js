@@ -3,7 +3,7 @@
  *
  * Useful for Hybrid/Cordova/React Native apps
  *
- * @class Layer.Core.mixins.ClientPushTokens
+ * @class Layer.Core.Client
  */
 
 import Core from '../namespace';

@@ -1,7 +1,7 @@
 /**
  * Adds use of websocket classes to the Client
  *
- * @class Layer.Core.mixins.ClientWebsockets
+ * @class Layer.Core.Client
  */
 
 import Core from '../namespace';

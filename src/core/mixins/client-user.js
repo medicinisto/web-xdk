@@ -1,7 +1,7 @@
 /**
  * Adds APIs and properties to the Layer Client for accessing/using an authenticated User
  *
- * @class Layer.Core.mixins.ClientUser
+ * @class Layer.Core.Client
  */
 
 import Core from '../namespace';

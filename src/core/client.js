@@ -1,37 +1,24 @@
 /**
  * The Layer Client; this is the top level component for any Layer based application.
-
-    var client = new Layer.Core.Client({
-      appId: 'layer:///apps/staging/ffffffff-ffff-ffff-ffff-ffffffffffff',
-      challenge: function(evt) {
-        myAuthenticator({
-          nonce: evt.nonce,
-          onSuccess: evt.callback
-        });
-      },
-      ready: function(client) {
-        alert('I am Client; Server: Serve me!');
-      }
-    }).connect('Fred')
  *
- * You can also initialize this as
-
-    var client = new Layer.Core.Client({
-      appId: 'layer:///apps/staging/ffffffff-ffff-ffff-ffff-ffffffffffff'
-    });
-
-    client.on('challenge', function(evt) {
-      myAuthenticator({
-        nonce: evt.nonce,
-        onSuccess: evt.callback
-      });
-    });
-
-    client.on('ready', function(client) {
-      alert('I am Client; Server: Serve me!');
-    });
-
-    client.connect('Fred');
+ * ```
+ * var client = new Layer.Core.Client({
+ *   appId: 'layer:///apps/staging/ffffffff-ffff-ffff-ffff-ffffffffffff'
+ * });
+ *
+ * client.on('challenge', function(evt) {
+ *   myAuthenticator({
+ *     nonce: evt.nonce,
+ *     onSuccess: evt.callback
+ *   });
+ * });
+ *
+ * client.on('ready', function(client) {
+ *   alert('I am Client; Server: Serve me!');
+ * });
+ *
+ * client.connect('Fred');
+ * ```
  *
  * ## API Synopsis:
  *
@@ -63,36 +50,21 @@
  *
  * There are two ways to change the log level for Layer's logger:
  *
- *     Layer.Core.Client.prototype.logLevel = Layer.Constants.LOG.INFO;
+ * ```
+ * Layer.Core.Client.prototype.logLevel = Layer.Constants.LOG.INFO;
+ * ```
  *
  * or
  *
- *     var client = new Layer.Core.Client({
- *        appId: 'layer:///apps/staging/ffffffff-ffff-ffff-ffff-ffffffffffff',
- *        logLevel: Layer.Constants.LOG.INFO
- *     });
+ * ```
+ * var client = new Layer.Core.Client({
+ *   appId: 'layer:///apps/staging/ffffffff-ffff-ffff-ffff-ffffffffffff',
+ *   logLevel: Layer.Constants.LOG.INFO
+ * });
+ * ```
  *
  * @class Layer.Core.Client
  * @extends Layer.Core.Root
- * @mixin Layer.Core.mixins.ClientIdentities
- * @mixin Layer.Core.mixins.ClientMembership
- * @mixin Layer.Core.mixins.ClientConversations
- * @mixin Layer.Core.mixins.ClientChannels
- * @mixin Layer.Core.mixins.ClientMessages
- * @mixin Layer.Core.mixins.ClientAnnouncements
- * @mixin Layer.Core.mixins.ClientQueries
- * @mixin Layer.Core.mixins.ClientCAPIRequests
- * @mixin Layer.Core.mixins.ClientCacheCleaner
- * @mixin Layer.Core.mixins.ClientUser
- * @mixin Layer.Core.mixins.ClientTelemetry
- * @mixin Layer.Core.mixins.ClientTypingIndicators
- * @mixin Layer.Core.mixins.ClientOnlineManager
- * @mixin Layer.Core.mixins.ClientWebsockets
- * @mixin Layer.Core.mixins.ClientWebsocketOperations
- * @mixin Layer.Core.mixins.ClientMessageTypeModels
- * @mixin Layer.Core.mixins.ClientCAPIAuthentication
- * @mixin Layer.Core.mixins.ClientPushTokens
- * @mixin Layer.Core.mixins.ClientDbManager
  */
 
 import Util from '../utils';

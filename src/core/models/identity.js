@@ -399,6 +399,9 @@ Identity.prototype.displayName = '';
  * The Identity matching {@link Layer.Core.Client#user} will have this be true.
  *
  * All other Identities will have this as false.
+ *
+ * Note: This is a CAPI only concept and may get moved to a mixin for the Identity class
+ *
  * @property {boolean}
  */
 Identity.prototype.isMine = false;

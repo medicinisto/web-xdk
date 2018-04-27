@@ -1,7 +1,7 @@
 /**
  * Adds a Telemetry Monitor to the Layer Client
  *
- * @class Layer.Core.mixins.ClientTelemetry
+ * @class Layer.Core.Client
  */
 
 import TelemetryMonitor from '../telemetry-monitor';

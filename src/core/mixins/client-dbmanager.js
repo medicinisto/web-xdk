@@ -1,7 +1,7 @@
 /**
  * Adds use of a database to the Client's behaviors and properties
  *
- * @class Layer.Core.mixins.ClientDbManager
+ * @class Layer.Core.Client
  */
 
 import Core from '../namespace';

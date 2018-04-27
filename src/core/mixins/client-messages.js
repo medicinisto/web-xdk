@@ -1,7 +1,7 @@
 /**
  * Adds Message handling to the Layer.Core.Client.
  *
- * @class Layer.Core.mixins.ClientMessages
+ * @class Layer.Core.Client
  */
 
 import Syncable from '../models/syncable';

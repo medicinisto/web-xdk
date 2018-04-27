@@ -6,7 +6,7 @@
  * 2. If the Message is in use, insure that the Message isn't garbage collected.
  *    Potential definition of in-use: its in the DOM
  *
- * @class Layer.Core.mixins.ClientMessageTypeModels
+ * @class Layer.Core.Client
  */
 import { ErrorDictionary } from '../layer-error';
 import Core from '../namespace';

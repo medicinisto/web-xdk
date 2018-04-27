@@ -1,7 +1,7 @@
 /**
  * Adds managing an Online Manager to the Client
  *
- * @class Layer.Core.mixins.ClientOnlineManager
+ * @class Layer.Core.Client
  */
 
 import Core from '../namespace';

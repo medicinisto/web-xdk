@@ -1,7 +1,7 @@
 /**
  * Adds Channel handling to the Layer.Core.Client.
  *
- * @class Layer.Core.mixins.ClientChannels
+ * @class Layer.Core.Client
  */
 
 import Channel from '../models/channel';

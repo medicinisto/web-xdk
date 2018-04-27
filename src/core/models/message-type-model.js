@@ -24,7 +24,6 @@
  *
  * @class  Layer.Core.MessageTypeModel
  * @extends Layer.Core.Root
- * @mixin Layer.Core.mixins.MessageTypeModelCAPI
  */
 import { client } from '../../settings';
 import Core from '../namespace';
@@ -32,7 +31,8 @@ import Util from '../../utils';
 import Root from '../root';
 import Identity from './identity';
 import Message from './message';
-import MessageTypeResponseSummary from './message-type-response-summary/message-type-response-summmary-v2';
+import { ErrorDictionary } from '../layer-error';
+import MessageTypeResponseSummary from './message-type-response-summary/message-type-response-summary-v2';
 import { get as getResponseSummaryClass } from './message-type-response-summary';
 import { STANDARD_MIME_TYPES } from '../../constants';
 

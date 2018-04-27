@@ -1,7 +1,7 @@
 /**
  * Adds Conversation handling to the Layer.Core.Client.
  *
- * @class Layer.Core.mixins.ClientConversations
+ * @class Layer.Core.Client
  */
 
 import Conversation from '../models/conversation';

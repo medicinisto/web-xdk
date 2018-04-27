@@ -219,7 +219,7 @@ module.exports = function (grunt) {
           'builtin-classes': false,
           'warnings': ['-no_doc', '-dup_member', '-link_ambiguous', '-cat_class_missing'],
           'external': ['HTMLTemplateElement', 'Websocket', 'Blob', 'KeyboardEvent', 'DocumentFragment', 'IDBVersionChangeEvent', 'IDBKeyRange', 'IDBDatabase', 'File', 'Canvas', 'CustomEvent', 'Set', 'Uint8Array'],
-          'title': 'Layer UI for Web - API Documentation',
+          'title': 'Layer Web XDK - API Documentation',
           'categories': ['jsduck-config/categories.json'],
           'head-html': HTML_HEAD,
           'css': [CSS],

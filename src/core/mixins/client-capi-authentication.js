@@ -8,7 +8,7 @@
  *   how to handle any operation on any data.  Its primarily aimed at insuring websocket
  *   events get processed, not knowing minute details of the objects.
  *
- * @class Layer.Core.mixins.ClientCAPIAuthentication
+ * @class Layer.Core.Client
  */
 
 import Util, { logger } from '../../utils';

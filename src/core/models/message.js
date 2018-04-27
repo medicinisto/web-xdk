@@ -122,7 +122,6 @@
  *   this event from the Layer.Core.Client which is usually simpler.
  *
  * @class  Layer.Core.Message
- * @mixin Layer.Core.mixins.MessageCAPI
  * @extends Layer.Core.Syncable
  */
 import { client as Client } from '../../settings';

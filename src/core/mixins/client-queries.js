@@ -2,13 +2,14 @@
  *
  * Adds Query handling to the Layer.Core.Client.
  *
- * @class Layer.Core.mixins.ClientQueries
+ * @class Layer.Core.Client
  */
 
 import Query from '../queries/query';
 import IdentitiesQuery from '../queries/identities-query';
 import ConversationsQuery from '../queries/conversations-query';
 import MessagesQuery from '../queries/messages-query';
+import ManualQuery from '../queries/manual-query';
 import { ErrorDictionary } from '../layer-error';
 import Core from '../namespace';
 
@@ -97,7 +98,9 @@ module.exports = {
         case Query.Announcement:
           query = this._createAnnouncementsQuery(options);
           break;
-
+        case Query.Manual:
+          query = new ManualQuery(options);
+          break;
         default:
           query = new Query(options);
       }

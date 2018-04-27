@@ -1,7 +1,7 @@
 /**
  * Adds Identity handling to the Layer.Core.Client.
  *
- * @class Layer.Core.mixins.ClientIdentities
+ * @class Layer.Core.Client
  */
 
 import Identity from '../models/identity';

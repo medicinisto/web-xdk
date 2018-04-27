@@ -5,6 +5,7 @@
 * Simplistic dependency injection for switching between nodejs, ReactJS, Web, etc... based utilities
 * Static property `CACHE_PURGE_INTERVAL` is now an instance property settable from `Layer.init()` named `cachePurgeInterval`
 * Rips out Client Authenticator Parent class of the Layer Client; replaces all of its capabilities via Mixins
+* Adds a Manual Query class to which you can add and remove data, and have UI Components render them.  `var query = layerClient.createQuery({model: Layer.Core.Query.Manual}); query.addItem(conversation1);`
 
 
 ## 4.0.3

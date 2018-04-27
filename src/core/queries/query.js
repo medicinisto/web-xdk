@@ -781,6 +781,15 @@ Query.Identity = 'Identity';
 Query.Membership = 'Membership';
 
 /**
+ * Query whose data is managed by the app rather than by querying Layer's servers.
+ *
+ * Use this value in the Layer.Core.Query.model property.
+ * @property {String}
+ * @static
+ */
+Query.Manual = 'Manual';
+
+/**
  * Get data as POJOs/immutable objects.
  *
  * This value of Layer.Core.Query.dataType will cause your Query data and events to provide Messages/Conversations as immutable objects.

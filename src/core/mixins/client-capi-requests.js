@@ -1,7 +1,7 @@
 /**
  * Adds CAPI REST and Websocket request APIs
  *
- * @class Layer.Core.mixins.ClientCAPIRequests
+ * @class Layer.Core.Client
  */
 
 import { xhr, logger } from '../../utils';

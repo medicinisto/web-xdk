@@ -1,7 +1,7 @@
 /**
  * Adds Channel Membership handling to the Layer.Core.Client.
  *
- * @class Layer.Core.mixins.ClientMembership
+ * @class Layer.Core.Client
  */
 
 import Syncable from '../models/syncable';

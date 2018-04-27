@@ -10,7 +10,7 @@
  * * `presend()` method for rendering an unsent message in a Message List
  * * `_send()` for using websockets to actually send the message
  *
- * @class Layer.Core.mixins.MessageCAPI
+ * @class Layer.Core.Message
  */
 
 import Core from '../namespace';
