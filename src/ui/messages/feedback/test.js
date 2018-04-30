@@ -330,7 +330,6 @@ describe('Feedback Message Components', function() {
 
     afterEach(function() {
       document.body.removeChild(testRoot);
-debugger;
       if (el) el.destroy();
     });
 

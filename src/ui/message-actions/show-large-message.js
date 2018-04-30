@@ -9,7 +9,6 @@ import { logger } from '../../utils';
 import '../components/layer-dialog';
 
 const showLargeView = ({ messageViewer, model, data }) => {
-  debugger;
   const dialog = document.createElement('layer-dialog');
   dialog.isCloseButtonShowing = true;
 
