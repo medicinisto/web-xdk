@@ -791,7 +791,7 @@ class Conversation extends Container {
   static create(options) {
     const newOptions = {
       distinct: options.distinct,
-      participants: client._fixIdentities(options.participants),
+      participants: client._fixIdentities(options.participants || []),
       metadata: options.metadata,
     };
     if (newOptions.distinct) {

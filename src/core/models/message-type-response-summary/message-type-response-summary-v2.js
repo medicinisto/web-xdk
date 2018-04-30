@@ -125,6 +125,8 @@ class MessageTypeResponseSummary extends Root {
    * model.responses.removeState('selected-color', 'red');
    * ```
    *
+   * Removing state only works for States that are of type `Set` and `LWWN` (Last Writer Wins Nullable)
+   *
    * @method removeState
    * @param {String} name
    * @param {String} value

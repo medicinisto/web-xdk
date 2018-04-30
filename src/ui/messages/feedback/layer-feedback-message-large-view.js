@@ -74,10 +74,6 @@ registerComponent('layer-feedback-message-large-view', {
   }
   `,
   properties: {
-    messageViewContainerTagName: {
-      noGetterFromSetter: true,
-      value: 'layer-dialog-message-view-container',
-    },
     widthType: {
       value: 'flex-width',
     },

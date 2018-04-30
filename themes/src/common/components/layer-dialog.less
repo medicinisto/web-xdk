@@ -1,0 +1,92 @@
+.layer-conversation-view-width-large {
+  layer-dialog {
+    padding: 30px 30px;
+
+    .layer-dialog-title-buttons {
+      right: 40px;
+    }
+  }
+}
+
+.layer-conversation-view-width-medium {
+  layer-dialog {
+    padding: 20px 20px;
+
+    .layer-dialog-title-buttons {
+      right: 30px;
+    }
+  }
+}
+
+.layer-conversation-view-width-small {
+  layer-dialog {
+    padding: 20px 5px;
+
+    .layer-dialog-title-buttons {
+      right: 15px;
+    }
+  }
+}
+
+layer-dialog {
+  z-index: 2000;
+  background-color: rgba(0, 0, 0, 0.5);
+
+  .layer-dialog-inner {
+    background-color: @color-white;
+    height: 100%;
+    border-radius: @message-type-large-message-viewer-radius;
+
+    & > .layer-dialog-content-container {
+      overflow: hidden; // prevent images from spilling out of bounds
+    }
+
+    &.layer-title-icon-empty {
+      .layer-dialog-title-bar-text {
+        text-align: center;
+      }
+      .layer-dialog-title-bar {
+        padding: 4px;
+        line-height: 16px;
+      }
+    }
+
+    .layer-dialog-title-bar {
+      padding: 4px 12px;
+      border-bottom: solid 1px @message-type-inner-border-color;
+      line-height: 24px;
+      min-height: 24px;
+
+      .layer-dialog-title-bar-icon {
+        width: 24px;
+        height: 24px;
+        background-size: 24px;
+        margin-right: 8px;
+        padding: 4px 0px;
+      }
+      .layer-dialog-title-bar-text {
+        color: @color-black;
+        font-size: @font-large;
+        font-weight: normal;
+      }
+
+      .layer-dialog-title-buttons {
+        position: absolute;
+        right: 30px;
+
+        .layer-dialog-title-close-button {
+          cursor: pointer;
+          font-size: 30px;
+          margin-right: 12px;
+          &:hover {
+            font-weight: bold;
+          }
+        }
+      }
+    }
+
+    .layer-dialog-content {
+      border-radius: 0px;
+    }
+  }
+}

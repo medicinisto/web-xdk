@@ -9,8 +9,9 @@
 * Large Message View Changes:
     * Renames `layer-open-expanded-view` action to `layer-show-large-message`
     * Renames `messageRendererExpanded` to `largeMessageRenderer`
-    * Renames `<layer-message-viewer-expanded/>` to `<layer-large-message-viewer />`
-    * Renames `<layer-feedback-message-expanded-view />` to `<layer-feedback-message-large-view />`
+    * Removes `<layer-message-viewer-expanded/>` in favor of `<layer-message-viewer size='large' />`
+        * For the full `<layer-message-viewer-expanded />` put `<layer-message-viewer size='large' />` inside of a `<layer-dialog />`
+    * Renames `<layer-feedback-message-expanded-view />` to `<layer-feedback-message-large-view />` which is now rendered within the `<layer-message-viewer size='large' />`
 
 
 ## 4.0.3

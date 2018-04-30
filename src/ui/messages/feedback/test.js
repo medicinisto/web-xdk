@@ -248,7 +248,7 @@ describe('Feedback Message Components', function() {
     afterEach(function() {
       document.body.removeChild(testRoot);
 
-      if (el) el.onDestroy();
+      if (el) el.destroy();
     });
 
     it("Should be correctly generated", function() {
@@ -307,7 +307,8 @@ describe('Feedback Message Components', function() {
   describe("Large View Tests", function() {
     var el, ui, message, model;
     beforeEach(function() {
-      el = document.createElement('layer-large-message-viewer');
+      el = document.createElement('layer-message-viewer');
+      el.size = 'large';
       testRoot.appendChild(el);
       model = new FeedbackModel({
         title: "mytitle",
@@ -329,13 +330,12 @@ describe('Feedback Message Components', function() {
 
     afterEach(function() {
       document.body.removeChild(testRoot);
-
-      if (el) el.onDestroy();
+debugger;
+      if (el) el.destroy();
     });
 
     it("Should be correctly generated", function() {
-      expect(ui.tagName).toEqual('LAYER-FEEDBACK-MESSAGE-EXPANDED-VIEW');
-      expect(el.nodes.cardContainer.tagName).toEqual('LAYER-DIALOG-MESSAGE-VIEW-CONTAINER');
+      expect(ui.tagName).toEqual('LAYER-FEEDBACK-MESSAGE-LARGE-VIEW');
     });
 
     it("Should show selected stars", function() {

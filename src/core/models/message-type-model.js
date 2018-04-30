@@ -1463,6 +1463,8 @@ MessageTypeModel._supportedEvents = [
    * > While `evt.cancel()` can be used to prevent sending a Response Message, and therefore prevent sharing these state changes with other
    * > participants, your local user's state *has* been changed, and is not automatically rolled back to its prior state.
    *
+   * This event is solely for controlling state. If you want to add Message Parts, or otherwise manipulate message-level data, use the `messages:sending` event instead.
+   *
    * @event
    * @param {Layer.Core.LayerEvent} evt
    * @param {Layer.Core.MessageTypeModel} evt.respondingToModel

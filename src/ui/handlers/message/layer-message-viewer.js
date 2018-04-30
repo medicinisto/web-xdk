@@ -26,12 +26,13 @@
 import { registerComponent } from '../../components/component';
 import MessageHandler from '../../mixins/message-handler';
 import Clickable from '../../mixins/clickable';
+import SizeProperty from '../../mixins/size-property';
 
 import messageActionHandlers from '../../message-actions/index';
 import { register } from './message-handlers';
 
 registerComponent('layer-message-viewer', {
-  mixins: [MessageHandler, Clickable],
+  mixins: [MessageHandler, Clickable, SizeProperty],
   style: `layer-message-viewer {
     display: inline-flex;
     flex-direction: row;
@@ -42,6 +43,12 @@ registerComponent('layer-message-viewer', {
 
   // Note that there is also a message property managed by the MessageHandler mixin
   properties: {
+    size: {
+      value: 'medium',
+    },
+    supportedSizes: {
+      value: ['medium', 'large'],
+    },
 
     /**
      * The model to be rendered by some UI within this Viewer.
@@ -158,7 +165,7 @@ registerComponent('layer-message-viewer', {
   methods: {
     // Standard lifecycle event insures that _handleSelection will be called when clicked
     onCreate() {
-      this.addClickHandler('card-click', this, this._handleSelection.bind(this));
+      this.addClickHandler('message-click', this, this._handleSelection.bind(this), false, true);
     },
 
     // Standard lifecycle event insures that setupMessage is called
@@ -180,7 +187,13 @@ registerComponent('layer-message-viewer', {
       // Clearly differentiate a top level Root Part from subparts using the layer-root-viewer css class
       if (!this.message || this.model.part === this.message.getRootPart()) this.isRootModel = true;
 
-      const cardUIType = this.model.currentMessageRenderer;
+      let cardUIType;
+      if (this.size === 'medium') {
+        cardUIType = this.model.currentMessageRenderer;
+      } else if (this.size === 'large') {
+        cardUIType = this.model.currentLargeMessageRenderer;
+      }
+
       this.classList.add(cardUIType);
       if (this.parentComponent && this.parentComponent.isMessageListItem) {
         this.parentComponent.classList.add('layer-message-item-' + cardUIType);
@@ -245,6 +258,8 @@ registerComponent('layer-message-viewer', {
      * @param {Object} action.data    Data to use when processing the event, in addition to the model's data
      */
     _runAction(action) {
+      if (this.size === 'large') return; // For now, there is no action performed when users tap on a Large Message Viewer
+
       if (this.nodes.ui.runAction && this.nodes.ui.runAction(action)) return;
 
       const event = action && action.event ? action.event : this.model.actionEvent;
@@ -267,6 +282,38 @@ registerComponent('layer-message-viewer', {
       if (actionHandlerAllowed && messageActionHandlers[event]) {
         messageActionHandlers[event].call(null, args);
       }
+    },
+
+    /**
+     * When the Message Viewer is placed within a Dialog or other container that wants icon/title,
+     * this method acts as a proxy for getting that information from the Message Type View.
+     *
+     * @method getIconClass
+     * @returns {String}
+     */
+    getIconClass() {
+      return this.nodes.ui && this.nodes.ui.getIconClass ? this.nodes.ui.getIconClass() : null;
+    },
+
+    /**
+     * When the Message Viewer is placed within a Dialog or other container that wants icon/title,
+     * this method acts as a proxy for getting that information from the Message Type View.
+     *
+     * @method getIconClass
+     * @returns {String}
+     */
+    getTitle() {
+      return this.nodes.ui && this.nodes.ui.getTitle ? this.nodes.ui.getTitle() : null;
+    },
+
+    // As an added behavior, if this Message Viewer is inside of a container that needs to know when
+    // this Message is ready to be dismissed, trigger an event to let it know.
+    destroy: {
+      mode: registerComponent.MODES.BEFORE,
+      value() {
+        // Tells any enclosing container that this item is done
+        this.trigger('layer-container-done');
+      },
     },
   },
 });

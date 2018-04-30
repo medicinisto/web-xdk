@@ -69,8 +69,9 @@ mixins.Clickable = module.exports = {
      * @param {HTMLElement} target  Target of events to listen for
      * @param {Function} fn         Handler to call when the event occurs
      * @param {Boolean} [allowDuplicateEvents=false]  evt.preventDefault is called after a touch event to prevent a click event from also firing. This can mess with other behaviors; so may need to be disabled in some cases.
+     * @param {Boolean} [ignoreInputEvents=false]  Do not call any callbacks if the event target was some form of input
      */
-    addClickHandler(name, target, fn, allowDuplicateEvents = false) {
+    addClickHandler(name, target, fn, allowDuplicateEvents = false, ignoreInputEvents = false) {
       if (!this.properties._clickableState[name]) this.properties._clickableState[name] = {};
       const state = this.properties._clickableState[name];
       state.fn = fn;
@@ -79,6 +80,7 @@ mixins.Clickable = module.exports = {
       state.onTouchEnd = this._onTouchEnd.bind(this, name);
       state.onFire = this._fireClickHandler.bind(this, name);
       state.allowDuplicateEvents = allowDuplicateEvents;
+      state.ignoreInputEvents = ignoreInputEvents;
 
       target.addEventListener('touchstart', state.onTouchStart);
       target.addEventListener('touchmove', state.onTouchMove);
@@ -93,11 +95,14 @@ mixins.Clickable = module.exports = {
       // This is frankly kind of hazardous and we will either need to have a way to add more nodes here or we'll
       // need to rip this out entirely (or allow customers to)
       const clickableTargets = ['A', 'INPUT', 'BUTTON', 'TEXTAREA', 'SELECT'];
-      if (!state.allowDuplicateEvents && clickableTargets.indexOf(evt.target.tagName) === -1) {
+      const isReservedClickableTarget = clickableTargets.indexOf(evt.target.tagName) !== -1;
+      if (!state.allowDuplicateEvents && !isReservedClickableTarget) {
         // if tap event, prevent the click handler from firing causing a double event occurance
         evt.preventDefault();
       }
-      state.fn(evt);
+      if (!state.ignoreInputEvents || !isReservedClickableTarget) {
+        state.fn(evt);
+      }
     },
 
     _onTouchStart(name, evt) {

@@ -6,15 +6,29 @@
 
 import { register } from './index';
 import { logger } from '../../utils';
+import '../components/layer-dialog';
 
 const showLargeView = ({ messageViewer, model, data }) => {
-  const dialog = document.createElement('layer-large-message-viewer');
-  dialog.model = model;
-  dialog.openActionData = data;
+  debugger;
+  const dialog = document.createElement('layer-dialog');
+  dialog.isCloseButtonShowing = true;
+
+  const largeMessageViewer = document.createElement('layer-message-viewer');
+  largeMessageViewer.size = 'large';
+  largeMessageViewer.model = model;
+  largeMessageViewer.openActionData = data;
+  largeMessageViewer.parentComponent = dialog;
+  largeMessageViewer._onAfterCreate();
+
+  dialog.replaceableContent = {
+    content: largeMessageViewer,
+  };
+
   let node = messageViewer;
-  while (node && node.tagName !== 'BODY' && node.tagName !== 'LAYER-CONVERSATION-VIEW') {
+  while (node && node.tagName !== 'BODY' && node.tagName !== 'LAYER-CONVERSATION-VIEW' && node.parentNode) {
     node = node.parentNode;
   }
+
   if (node.tagName === 'LAYER-CONVERSATION-VIEW') {
     dialog.parentComponent = node;
   }
