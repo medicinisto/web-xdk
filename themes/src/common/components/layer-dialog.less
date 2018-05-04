@@ -1,30 +1,30 @@
 .layer-conversation-view-width-large {
   layer-dialog {
-    padding: 30px 30px;
-
-    .layer-dialog-title-buttons {
-      right: 40px;
+    padding: 22px 22px;
+    .layer-dialog-inner {
+      max-width: 535px;
+      max-height: 535px;
+      box-shadow: 2px 2px 8px black;
+      border-radius: @dialog-radius;
     }
   }
 }
 
 .layer-conversation-view-width-medium {
   layer-dialog {
-    padding: 20px 20px;
-
-    .layer-dialog-title-buttons {
-      right: 30px;
+    padding: 22px 22px;
+    .layer-dialog-inner {
+      max-width: 535px;
+      max-height: 535px;
+      box-shadow: 2px 2px 8px black;
+      border-radius: @dialog-radius;
     }
   }
 }
 
 .layer-conversation-view-width-small {
   layer-dialog {
-    padding: 20px 5px;
-
-    .layer-dialog-title-buttons {
-      right: 15px;
-    }
+    padding: 2px 2px;
   }
 }
 
@@ -33,60 +33,27 @@ layer-dialog {
   background-color: rgba(0, 0, 0, 0.5);
 
   .layer-dialog-inner {
-    background-color: @color-white;
+    background-color: @dialog-background-color;
     height: 100%;
-    border-radius: @message-type-large-message-viewer-radius;
+    width: 100%;
+    overflow: hidden;
 
     & > .layer-dialog-content-container {
       overflow: hidden; // prevent images from spilling out of bounds
     }
 
-    &.layer-title-icon-empty {
-      .layer-dialog-title-bar-text {
-        text-align: center;
-      }
-      .layer-dialog-title-bar {
-        padding: 4px;
-        line-height: 16px;
-      }
-    }
-
-    .layer-dialog-title-bar {
-      padding: 4px 12px;
-      border-bottom: solid 1px @message-type-inner-border-color;
-      line-height: 24px;
-      min-height: 24px;
-
-      .layer-dialog-title-bar-icon {
-        width: 24px;
-        height: 24px;
-        background-size: 24px;
-        margin-right: 8px;
-        padding: 4px 0px;
-      }
-      .layer-dialog-title-bar-text {
-        color: @color-black;
-        font-size: @font-large;
-        font-weight: normal;
-      }
-
-      .layer-dialog-title-buttons {
-        position: absolute;
-        right: 30px;
-
-        .layer-dialog-title-close-button {
-          cursor: pointer;
-          font-size: 30px;
-          margin-right: 12px;
-          &:hover {
-            font-weight: bold;
-          }
-        }
-      }
+    layer-title-bar {
+      line-height: 64px;
+      height: 64px;
+      padding: 0px 24px;
     }
 
     .layer-dialog-content {
       border-radius: 0px;
     }
+  }
+
+  .layer-dialog-content-container > .layer-replaceable-inner > layer-message-viewer > layer-title-bar {
+    display: none;
   }
 }

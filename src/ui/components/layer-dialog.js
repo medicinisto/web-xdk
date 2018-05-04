@@ -2,7 +2,7 @@
  * Floating modal dialog for containing arbitrary content.
  *
  * ```
- * var dialog = document.createElement('dialog');
+ * var dialog = document.createElement('layer-dialog');
  * dialog.replaceableContent = {
  *   content: arbitraryDomNodes
  * };
@@ -25,21 +25,19 @@
  * @mixin Layer.UI.mixins.Clickable
  */
 import { registerComponent } from './component';
+import './layer-title-bar';
 import Clickable from '../mixins/clickable';
 import { generateUUID } from '../../utils';
-
 
 registerComponent('layer-dialog', {
   mixins: [Clickable],
   template: `
     <div class="layer-dialog-inner" layer-id="inner">
-      <div layer-id='titleBar' class="layer-dialog-title-bar">
-        <div layer-id='icon' class="layer-dialog-title-bar-icon"></div>
-        <div layer-id='title' class="layer-dialog-title-bar-text"></div>
-        <div layer-id='titleButtons' class="layer-dialog-title-buttons">
-          <div layer-id='close' class="layer-dialog-title-close-button">&times;</div>
+      <layer-title-bar layer-id="titleBar">
+        <div layer-replaceable-name="buttons">
+          <div layer-id='close' class="layer-title-close-button">&times;</div>
         </div>
-      </div>
+      </layer-title-bar>
       <layer-replaceable-content name='content' layer-id='content' class='layer-dialog-content-container'>
       </layer-replaceable-content>
     </div>
@@ -52,6 +50,10 @@ registerComponent('layer-dialog', {
       top: 0px;
       left: 0px;
       box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
     layer-dialog .layer-dialog-inner {
       display: flex;
@@ -60,17 +62,12 @@ registerComponent('layer-dialog', {
       justify-content: stretch;
     }
 
-    layer-dialog.layer-title-icon-empty .layer-dialog-title-bar-icon {
-      display: none;
-    }
-    layer-dialog .layer-dialog-title-bar-text {
-      flex-grow: 1;
-    }
     layer-dialog:not(.layer-show-close-button) .layer-dialog-title-close-button {
       display: none;
     }
     layer-dialog .layer-dialog-content-container {
       flex-grow: 1;
+      height: 100px; /* Flexbox workaround */
       display: flex;
       flex-direction: column;
     }
@@ -81,12 +78,14 @@ registerComponent('layer-dialog', {
       width: 100%;
       max-width: 100%;
     }
-    layer-dialog .layer-dialog-title-bar {
+    layer-dialog > .layer-dialog-inner > layer-title-bar {
       display: none;
     }
-    layer-dialog.layer-dialog-titlebar-showing .layer-dialog-title-bar {
+    layer-dialog.layer-dialog-titlebar-showing > .layer-dialog-inner > layer-title-bar {
       display: flex;
       flex-direction: row;
+      box-sizing: border-box;
+      width: 100%;
     }
   `,
   properties: {
@@ -157,11 +156,13 @@ registerComponent('layer-dialog', {
   },
   methods: {
     onCreate() {
+      // Read in its layer-id nodes such as the close button
+      this.nodes.titleBar._onAfterCreate();
+
       // Last `true` argument prevents `evt.preventDefault()` from being called
       // on touch events that occur within the dialog
       this.addEventListener('layer-container-done', this.destroy.bind(this));
       this.addClickHandler('dialog-click', this, this._onClick.bind(this), true);
-      this.addClickHandler('close-click', this.nodes.close, this.onCloseClick.bind(this));
       this.addEventListener('touchmove', this.onTouchMove.bind(this));
       this.properties.boundPopStateListener = this._popStateListener.bind(this);
       if (!this.id) this.id = generateUUID();
@@ -169,6 +170,8 @@ registerComponent('layer-dialog', {
 
     // Lifecycle method
     onAfterCreate() {
+      this.addClickHandler('close-click', this.nodes.titleBar.nodes.close, this.onCloseClick.bind(this));
+
       // this.replaceableContent is the settings that configures what replaceable content is setup for this
       // dialog's content.  If its been setup, then its either going to be an HTMLElement that we can just use
       // as-is, or a String, which is used to insert something into this.nodes.content.firstChild
@@ -186,6 +189,18 @@ registerComponent('layer-dialog', {
       // Tell the content that its content for a dialog (probably not necessary, but does simplify some CSS rules)
       if (this.properties.content) {
         this.properties.content.classList.add('layer-dialog-content');
+        if (this.content.getDialogClass) {
+          this.classList.add(this.content.getDialogClass());
+        }
+      }
+
+      const content = this.properties.content;
+      if (content.getTitle) {
+        this.nodes.titleBar.title = content.getTitle();
+      }
+
+      if (content.getIconClass) {
+        this.nodes.titleBar.iconClass = content.getIconClass();
       }
 
       // If we are managing pop state, then push our state to the history, and listen for it to be popped.
@@ -290,15 +305,6 @@ registerComponent('layer-dialog', {
     onTouchMove(evt) {
       if (evt.target === this || evt.target === this.firstChild) evt.preventDefault();
       evt.stopPropagation();
-    },
-
-    onRerender() {
-      if (this.content.getIconClass) {
-        this.icon = this.content.getIconClass();
-      }
-      if (this.content.getTitle) {
-        this.title = this.content.getTitle();
-      }
     },
 
     /**

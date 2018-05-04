@@ -883,31 +883,37 @@ class MessageTypeModel extends Root {
    * @returns {String}
    */
   getOneLineSummary(ignoreTitle) {
-    const title = this.getTitle();
-    if (!ignoreTitle && title) {
-      return title;
+    if (!ignoreTitle) {
+      const title = this.getTitle();
+      if (title) {
+        return title;
+      }
     }
 
     if (this.constructor.SummaryTemplate) {
-      const templateStr = this.constructor.SummaryTemplate || '';
-      const result = templateStr.replace(/(\$\{.*?\})/g, (match) => {
-        const value = this[match.substring(2, match.length - 1)];
-        if (value instanceof Identity) {
-          return value.displayName;
-        } else if (value instanceof MessageTypeModel) {
-          return value.getOneLineSummary();
-        } else if (value !== null) {
-          return value;
-        } else {
-          return '';
-        }
-      });
+      const result = this.useOneLineSummaryTemplate();
       if (result) return result;
     }
 
     if (this.constructor.LabelSingular) {
       return this.constructor.LabelSingular;
     }
+  }
+
+  useOneLineSummaryTemplate() {
+    const templateStr = this.constructor.SummaryTemplate || '';
+    return templateStr.replace(/(\$\{.*?\})/g, (match) => {
+      const value = this[match.substring(2, match.length - 1)];
+      if (value instanceof Identity) {
+        return value.displayName;
+      } else if (value instanceof MessageTypeModel) {
+        return value.getOneLineSummary();
+      } else if (value !== null) {
+        return value;
+      } else {
+        return '';
+      }
+    });
   }
 
   /**

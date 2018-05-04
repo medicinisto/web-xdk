@@ -127,7 +127,12 @@ registerComponent('layer-location-message-view', {
      * @protected
      */
     _setupContainerClasses() {
-      this.parentComponent.toggleClass('layer-arrow-next-container', this.hideMap);
+      if (this.hideMap) {
+        const arrow = document.createElement('div');
+        arrow.classList.add('layer-next-icon');
+        this.parentComponent.customControls = arrow;
+      }
+
       this.parentComponent.toggleClass('layer-no-core-ui', this.hideMap);
       this.parentComponent.toggleClass('layer-location-message-show-street-address',
         this.model.street1 && !this.model.description);

@@ -49,7 +49,7 @@ registerComponent('layer-standard-message-view-container', {
       <div layer-id="description" class="layer-standard-card-container-description"></div>
       <div layer-id="footer" class="layer-standard-card-container-footer"></div>
     </div>
-    <span class="layer-next-icon" ></span>
+    <div layer-id="customControls" class="layer-standard-card-container-custom-controls"></div>
   </div>`,
 
   // Note that there is also a message property managed by the MessageHandler mixin
@@ -144,6 +144,13 @@ registerComponent('layer-standard-message-view-container', {
       noGetterFromSetter: true,
       get() {
         return this.properties.cardBorderStyle || this.properties.ui.cardBorderStyle || '';
+      },
+    },
+
+    customControls: {
+      set(newNode, oldNode) {
+        if (oldNode) this.nodes.customControls.removeChild(oldNode);
+        if (newNode) this.nodes.customControls.appendChild(newNode);
       },
     },
   },

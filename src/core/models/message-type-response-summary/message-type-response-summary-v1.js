@@ -6,7 +6,7 @@
  * Note that this is not part of any default build and to have this class available for your application, import with:
  *
  * ```
- * import '@layerhq/web-xdk/core/models/message-type-response-summary/message-type-response-summmary-v1';
+ * import '@layerhq/web-xdk/core/models/message-type-response-summary/message-type-response-summary-v1';
  * ```
  *
  * @class  Layer.Core.MessageTypeResponseSummary-v1

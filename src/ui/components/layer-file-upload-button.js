@@ -101,6 +101,17 @@ registerComponent('layer-file-upload-button', {
     imageTypes: {
       value: ['image/gif', 'image/png', 'image/jpeg', 'image/svg'],
     },
+
+    /**
+     * Any File with one of these MIME Types will have a Layer.UI.messages.AudioMessageModel generated.
+     *
+     * Use this property to customize what MIME Types to watch for and treat Audio Clips.
+     *
+     * @property {String[]}
+     */
+    audioTypes: {
+      value: ['audio/mp3', 'audio/mpeg'],
+    },
   },
   methods: {
 
@@ -171,6 +182,7 @@ registerComponent('layer-file-upload-button', {
       if (this.trigger('layer-files-selected', { files })) {
         const ImageModel = Layer.Client.getMessageTypeModelClass('ImageModel');
         const FileModel = Layer.Client.getMessageTypeModelClass('FileModel');
+        const AudioModel = Layer.Client.getMessageTypeModelClass('AudioModel');
 
         // Generate Message Type Models for each File
         const models = files.map((file) => {
@@ -180,8 +192,10 @@ registerComponent('layer-file-upload-button', {
           }
 
           // Generate either an Image or File Model
-          if (this.imageTypes.indexOf(file.type) !== -1) {
+          if (typeof ImageModel !== 'undefined' && this.imageTypes.indexOf(file.type) !== -1) {
             return new ImageModel(options);
+          } else if (typeof AudioModel !== 'undefined' && this.audioTypes.indexOf(file.type) !== -1) {
+            return new AudioModel(options);
           } else {
             return new FileModel(options);
           }

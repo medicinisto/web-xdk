@@ -7,8 +7,10 @@
  */
 import ImageModel from '../messages/image/layer-image-message-model';
 import FileModel from '../messages/file/layer-file-message-model';
+
 import CarouselModel from '../messages/carousel/layer-carousel-message-model';
 import mixins from './index';
+import { client } from '../../settings';
 
 mixins.FileDropTarget = module.exports = {
   properties: {
@@ -176,15 +178,30 @@ mixins.FileDropTarget = module.exports = {
      * @private
      */
     _processAttachments(files) {
+      const AudioModel = client.constructor.getMessageTypeModelClass('AudioModel');
+
+      const audioTypes = ['audio/mp3', 'audio/mpeg'];
       const imageTypes = ['image/gif', 'image/png', 'image/jpeg', 'image/svg'];
-      const nonImageParts = files.filter(file => imageTypes.indexOf(file.type) === -1);
-      let items;
-      if (nonImageParts.length) {
-        items = files.map(file => new FileModel({ source: file, title: file.name }));
+
+      const nonImageFiles = files.filter(file => imageTypes.indexOf(file.type) === -1);
+
+      // TODO: This is code for testing preview images and should be removed before shipping
+      const imageFiles = files.filter(file => imageTypes.indexOf(file.type) !== -1);
+      const audioFiles = files.filter(file => audioTypes.indexOf(file.type) !== -1);
+      if (AudioModel && files.length === 2 && imageFiles.length && audioFiles.length) {
+        return new AudioModel({
+          source: audioFiles[0],
+          preview: imageFiles[0],
+        });
       } else {
-        items = files.map(file => new ImageModel({ source: file, title: file.name }));
+        let items;
+        if (nonImageFiles.length) {
+          items = files.map(file => new FileModel({ source: file, title: file.name }));
+        } else {
+          items = files.map(file => new ImageModel({ source: file, title: file.name }));
+        }
+        return new CarouselModel({ items });
       }
-      return new CarouselModel({ items });
     },
 
     /**
@@ -198,6 +215,11 @@ mixins.FileDropTarget = module.exports = {
     _processAttachment(file) {
       if (['image/gif', 'image/png', 'image/jpeg', 'image/svg'].indexOf(file.type) !== -1) {
         return new ImageModel({
+          source: file,
+        });
+      } else if (['audio/mp3', 'audio/mpeg'].indexOf(file.type) !== -1) {
+        const AudioModel = client.constructor.getMessageTypeModelClass('AudioModel');
+        return new AudioModel({
           source: file,
         });
       } else {

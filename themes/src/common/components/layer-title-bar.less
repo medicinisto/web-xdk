@@ -1,0 +1,36 @@
+layer-title-bar {
+  background-color: @color-white;
+  border-bottom: solid 1px @message-type-inner-border-color;
+  line-height: 56px;
+  height: 56px;
+  padding: 0px 16px;
+
+
+  .layer-title-bar-icon {
+    width: 24px;
+    height: 24px;
+    background-size: 24px;
+    margin-right: 8px;
+  }
+  .layer-title-bar-text {
+    color: @color-black;
+    font-size: @font-larger;
+    font-weight: bold;
+  }
+
+  .layer-title-buttons {
+    margin-left: 24px;
+  }
+
+  .layer-title-buttons > .layer-replaceable-inner > * + * {
+    margin-left: 12px;
+  }
+
+  .layer-title-close-button {
+    cursor: pointer;
+    font-size: 30px;
+    &:hover {
+      font-weight: bold;
+    }
+  }
+}

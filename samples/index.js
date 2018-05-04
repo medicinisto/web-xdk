@@ -1,7 +1,6 @@
 /* eslint-disable */
 import Layer from '../lib/index-all';
 
-
 var APP_ID = 'layer:///apps/staging/2f1707c0-fd2f-11e6-ae72-c27751092ce1';
 var PROVIDER_URL = 'https://layer-quickstart-michael.herokuapp.com';
 var conversationPanel;

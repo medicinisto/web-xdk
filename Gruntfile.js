@@ -306,9 +306,9 @@ module.exports = function (grunt) {
     watch: {
       js: {
         files: ['package.json', 'Gruntfile.js', 'samples/index-all.js', 'src/**', '!**/test.js', '!src/ui/**/tests/**.js', '!src/version.js'],
-        tasks: ['debug', 'notify:watch', 'eslint:debug'],
+        tasks: ['wait', 'debug', 'notify:watch', 'eslint:debug'],
         options: {
-          interrupt: false
+          interrupt: true
         }
       },
       themes: {
@@ -587,6 +587,7 @@ module.exports = function (grunt) {
         createCombinedComponentFile(file, outputPathES5, outputPathES6);
       });
     });
+    inWebcomponents = false;
   });
 
 
@@ -788,6 +789,15 @@ module.exports = function (grunt) {
     }
   });
 
+  grunt.registerTask('wait', function() {
+    var done = this.async();
+    var waitTime = 4000;
+    setTimeout(function() {
+      console.log("Wait " + waitTime + " completed");
+      done();
+    }, waitTime);
+  });
+
 
   // Building
   grunt.loadNpmTasks('grunt-browserify');
@@ -823,7 +833,9 @@ module.exports = function (grunt) {
   grunt.registerTask('build', ['remove:build', 'eslint:build', 'debug', 'uglify', 'theme', 'cssmin', 'copy:npmthemes']);
   grunt.registerTask('prepublish', ['build', 'refuse-to-publish']);
 
-  grunt.registerTask('samples', ['debug', 'browserify:samples']);
+  grunt.registerTask('samples', ['version', 'remove:libes6', 'webcomponents', 'custom_copy:src', 'remove:libes5',
+  'custom_babel', 'remove:lib', 'move:lib',
+  'browserify:samples',  "generate-quicktests", "generate-smalltests", 'remove:libes6', 'copy:npm', 'copy:npmthemes','fix-npm-package']);
   grunt.registerTask('theme', ['remove:theme', 'less', 'copy:themes', 'copy:npmthemes']),
   grunt.registerTask('default', ['build']);
 

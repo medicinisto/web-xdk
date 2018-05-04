@@ -92,8 +92,14 @@ registerComponent('layer-link-message-view', {
     _setupContainerClasses() {
       if (this.widthType) {
         const isLinkOnly = this.widthType === Constants.WIDTH.ANY;
-        const op = isLinkOnly || this.model.imageUrl ? 'remove' : 'add';
-        this.parentComponent.classList[op]('layer-arrow-next-container');
+        const useArrow = !isLinkOnly && !this.model.imageUrl;
+
+        if (useArrow) {
+          const arrow = document.createElement('div');
+          arrow.classList.add('layer-next-icon');
+          this.parentComponent.customControls = arrow;
+        }
+
         this.parentComponent.classList[this.model.imageUrl || isLinkOnly ? 'remove' : 'add']('layer-no-core-ui');
       }
     },

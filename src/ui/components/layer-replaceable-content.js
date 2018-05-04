@@ -86,7 +86,7 @@ registerComponent('layer-replaceable-content', {
       // Identify any nodes inserted into the top level component's DOM structure via:
       // <some-top-level-component><div class='some-default-stuff>some default stuff</div></some-top-level-component>
       // Note that these nodes are removed by Layer.UI.Component during initialization and cached in originalChildNodes
-      const originalNodes = mainComponent.properties.originalChildNodes || [];
+      const originalNodes = parents.map(parent => parent.properties.originalChildNodes).filter(value => value)[0] || [];
 
       // If a generator was provided via the `replaceableContent` property of any parent, use it
       const { nodeOrGenerator, parent } = this._findNodeOrNodeGenerator(parents);

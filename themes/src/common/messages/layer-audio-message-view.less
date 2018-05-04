@@ -1,0 +1,103 @@
+
+layer-message-viewer.layer-audio-message-view {
+  layer-standard-message-view-container .layer-card-body-outer {
+    align-items: flex-end;
+    margin: 8px 0px;
+    position: relative;
+
+    .layer-card-body {
+      display: flex;
+    }
+  }
+
+  layer-standard-message-view-container .layer-card-top {
+    border-bottom-width: 0px;
+  }
+
+  layer-audio-message-view.layer-audio-poster .layer-audio-images {
+    width: 100%;
+    background-size: 100%;
+    align-self: center;
+  }
+
+  .layer-audio-progress-container {
+    height: 3px;
+    position: relative;
+    background-color: @color-white;
+  }
+
+  .layer-audio-progress-bar {
+    background-color: @color-blue6;
+    height: 3px;
+    width: 0px;
+    position: absolute;
+    z-index: 10;
+  }
+
+  .layer-audio-buffer-bar {
+    background-color: @color-g3;
+    height: 3px;
+    width: 0px;
+    position: absolute;
+    z-index: 9;
+  }
+}
+
+layer-audio-message-large-view {
+  background-color: rgb(242,242,242);
+  display: flex;
+  flex-direction: column;
+
+  .layer-audio-inner {
+    padding: 12px 32px;
+    text-align: center;
+
+    .layer-audio-poster {
+      background-size: 100%;
+      margin-bottom: 12px;
+    }
+
+    .layer-card-body > * {
+      margin-bottom: 4px;
+    }
+
+    .layer-card-body > * + * {
+      margin-bottom: 0px;
+    }
+
+    &.show-audio-file-icon .layer-file-audio {
+      height: 100px;
+      width: 100px;
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+    }
+
+    .layer-standard-card-container-title {
+      color: @message-type-container-title-color;
+      font-size: @font-large;
+    }
+
+    .layer-standard-card-container-description {
+      color: @message-type-container-description-color;
+      font-size: @font-large;
+    }
+
+    .layer-standard-card-container-footer {
+      color: @message-type-container-footer-color;
+      font-size: @font-medium;
+    }
+  }
+
+  .layer-vertical-spacer {
+    flex-grow: 1;
+  }
+
+  audio::-webkit-media-controls-panel {
+    background-color: transparent;
+  }
+  audio {
+    min-height: 32px;
+    background-color: @color-white;
+    border-top: solid 1px @color-role-heavy-border;
+  }
+}

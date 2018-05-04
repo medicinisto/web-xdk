@@ -38,5 +38,6 @@ import './messages/location/layer-location-message-view';
 import './messages/product/layer-product-message-view';
 import './messages/feedback/layer-feedback-message-view';
 import './messages/receipt/layer-receipt-message-view';
+import './messages/audio/layer-audio-message-view';
 
 module.exports = LayerUI;

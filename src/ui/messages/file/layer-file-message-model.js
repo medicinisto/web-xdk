@@ -58,7 +58,6 @@ class FileModel extends MessageTypeModel {
     // Intialize metadata from the Blob
     if (source) {
       if (!this.title && source.name) this.title = source.name;
-      if (!this.size) this.size = source.size;
       if (!this.mimeType) this.mimeType = source.type;
       this.size = source.size;
     }

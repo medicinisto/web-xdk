@@ -191,6 +191,7 @@ registerComponent('layer-message-viewer', {
       if (this.size === 'medium') {
         cardUIType = this.model.currentMessageRenderer;
       } else if (this.size === 'large') {
+
         cardUIType = this.model.currentLargeMessageRenderer;
       }
 
@@ -198,12 +199,24 @@ registerComponent('layer-message-viewer', {
       if (this.parentComponent && this.parentComponent.isMessageListItem) {
         this.parentComponent.classList.add('layer-message-item-' + cardUIType);
       }
+      let titleBar;
+      if (this.size === 'large') {
+        titleBar = document.createElement('layer-title-bar');
+        this.nodes.titlebar = titleBar;
+        this.appendChild(titleBar);
+      }
+
       const cardUI = this.createElement(cardUIType, {
         model: this.model,
         messageViewer: this,
         noCreate: true,
       });
       this.nodes.ui = cardUI;
+      if (titleBar) {
+        titleBar.view = cardUI;
+        if (cardUI.getIconClass) titleBar.iconClass = cardUI.getIconClass();
+        if (cardUI.getTitle) titleBar.title = cardUI.getTitle();
+      }
 
       const cardContainerClass = this.messageViewContainerTagName;
       if (this.messageViewContainerTagName) this.classList.add(this.messageViewContainerTagName);
@@ -304,6 +317,17 @@ registerComponent('layer-message-viewer', {
      */
     getTitle() {
       return this.nodes.ui && this.nodes.ui.getTitle ? this.nodes.ui.getTitle() : null;
+    },
+
+    /**
+     * When the Message Viewer is placed within a Dialog we may add CSS classes to the dialog itself
+     * to influence its sizing/styling
+     *
+     * @method getDialogClass
+     * @returns {String}
+     */
+    getDialogClass() {
+      return this.nodes.ui.tagName.toLowerCase();
     },
 
     // As an added behavior, if this Message Viewer is inside of a container that needs to know when
