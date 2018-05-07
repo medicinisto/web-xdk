@@ -12,7 +12,7 @@
     * Removes `<layer-message-viewer-expanded/>` in favor of `<layer-message-viewer size='large' />`
         * For the full `<layer-message-viewer-expanded />` put `<layer-message-viewer size='large' />` inside of a `<layer-dialog />`
     * Renames `<layer-feedback-message-expanded-view />` to `<layer-feedback-message-large-view />` which is now rendered within the `<layer-message-viewer size='large' />`
-
+* Adds Audio Message
 
 ## 4.0.3
 
