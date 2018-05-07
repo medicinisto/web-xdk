@@ -7,6 +7,9 @@
 * `replaceableContent` can now be set as an attribute and will be converted to Object.
 * WEB-1765: Adds `presend()` method to all Message Type Models so that messages created from Models can be previewed in the Message List.
 * Fixes rendering of Date Sent for messages that were `presend()` before they were `send()`
+* Backwards compatability for the Preview Release Choice Messages which used `questions` instead of `label`
+* Refactors imports for Messaging Models/Components into `src/ui/messages/index` and `src/ui/messages/index-lite`
+  (for internal use)
 
 ## 4.0.2
 

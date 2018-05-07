@@ -33,22 +33,7 @@ import './components/layer-conversation-view';
 import './handlers/text/newline';
 import dateSeparator from './ui-utils/date-separator';
 
-// Card Viewers
-import './handlers/message/layer-message-viewer';
-import './messages/layer-message-viewer-expanded';
-
-// Load standard cards
-import './messages/status/layer-status-message-view';
-import './messages/response/layer-response-message-view';
-import './messages/text/layer-text-message-view';
-import './messages/link/layer-link-message-view';
-import './messages/image/layer-image-message-view';
-import './messages/buttons/layer-buttons-message-view';
-
-// Load standard card containers
-import './messages/layer-standard-message-view-container';
-import './messages/layer-titled-message-view-container';
-import './messages/layer-dialog-message-view-container';
+import './messages/index-lite';
 
 // Load standard card actions
 import './message-actions/open-expanded-view-action';
