@@ -76,7 +76,7 @@ class OnlineStateManager extends Root {
     this.isClientReady = true;
     this.isOnline = true;
 
-    this.checkOnlineStatus();
+    this._scheduleNextOnlineCheck();
   }
 
   /**
@@ -183,20 +183,21 @@ class OnlineStateManager extends Root {
    */
   checkOnlineStatus(callback) {
     this._clearCheck();
-
-    logger.info('OnlineStateManager: Firing XHR for online check');
-    this._lastCheckOnlineStatus = new Date();
-    // Ping the server and see if we're connected.
-    xhr({
-      url: `${client.url}/ping?client=${version}`,
-      method: 'HEAD',
-      headers: {
-        accept: ACCEPT,
-      },
-    }, ({ status }) => {
-      // this.isOnline will be updated via _connectionListener prior to this line executing
-      if (callback) callback(status !== 408);
-    });
+    if (client.isReady) {
+      logger.info('OnlineStateManager: Firing XHR for online check');
+      this._lastCheckOnlineStatus = new Date();
+      // Ping the server and see if we're connected.
+      xhr({
+        url: `${client.url}/ping?client=${version}`,
+        method: 'HEAD',
+        headers: {
+          accept: ACCEPT,
+        },
+      }, ({ status }) => {
+        // this.isOnline will be updated via _connectionListener prior to this line executing
+        if (callback) callback(status !== 408);
+      });
+    }
   }
 
 

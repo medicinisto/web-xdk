@@ -24,6 +24,8 @@
 * Backwards compatability for the Preview Release Choice Messages which used `questions` instead of `label`
 * Refactors imports for Messaging Models/Components into `src/ui/messages/index` and `src/ui/messages/index-lite`
   (for internal use)
+* WEB-1772: No longer pings to check if server is available unless client is ready and authenticated
+
 
 ## 4.0.2
 
