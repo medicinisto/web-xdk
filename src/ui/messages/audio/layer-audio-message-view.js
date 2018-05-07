@@ -1,9 +1,6 @@
 /**
  * UI for an Audio Message
  *
- * > TODO: Progress Bars
- * > TODO: Broken Play Button
- *
  * ### Importing
  *
  * Not included with the standard build. Import using:
@@ -36,7 +33,7 @@ registerComponent('layer-audio-message-view', {
     }
   `,
   template: `
-    <div layer-id="poster" class="layer-audio-images"></div>
+    <div layer-id="preview" class="layer-audio-images"></div>
     <div class="layer-audio-progress-container">
     <div layer-id="bufferBar" class="layer-audio-buffer-bar"></div>
     <div layer-id="progressBar" class="layer-audio-progress-bar"></div>
@@ -49,7 +46,7 @@ registerComponent('layer-audio-message-view', {
     },
 
     /**
-     * Use a Standard Display Container to render this UI.
+     * Use a Standard Message Container to render this UI.
      *
      * @property {String} [messageViewContainerTagName=layer-standard-message-view-container]
      */
@@ -58,7 +55,23 @@ registerComponent('layer-audio-message-view', {
       value: 'layer-standard-message-view-container',
     },
 
+    /**
+     * An `<audio />` node that is used to play the content but which is not inserted into the DOM
+     *
+     * @property {HTMLElement} audio
+     */
     audio: {},
+
+    /**
+     * Get/Set whether the player is playing its content.
+     *
+     * You can toggle playback on/off with:
+     * ```
+     * view.playing = !view.playing;
+     * ```
+     *
+     * @property {Boolean} playing
+     */
     playing: {
       noGetterFromSetter: true,
       set(value) {
@@ -83,22 +96,39 @@ registerComponent('layer-audio-message-view', {
         return !this.properties.audio.paused;
       },
     },
+
+    /**
+     * Maximum width allowed for a preview image in px.
+     *
+     * @property {Number} [maxWidth=450]
+     */
     maxWidth: {
       value: 450,
     },
-    // for poster, not inclusive of the progress bars
+
+    /**
+     * Maximum height allowed for a preview image in px.
+     *
+     * @property {Number} [maxHeight=250]
+     */
     maxHeight: {
       value: 250,
     },
   },
   methods: {
-
+    /**
+     * Reset the audio player.
+     *
+     * This is typically needed after it has finished playing to the end.
+     *
+     * @method resetAudio
+     */
     resetAudio() {
       this.properties.audio.pause();
       this.properties.audio.currentTime = 0;
       this.properties.audio.load(); // chrome needs this for ogg; safari needs this for mp3. Wierd.
       this.playing = false;
-      this.renderCurrentTime();
+      this.renderProgressBar();
       this.renderBufferBar();
     },
     onCreate() {
@@ -106,24 +136,41 @@ registerComponent('layer-audio-message-view', {
       this.properties.audio.preload = 'metadata';
       this.properties.audio.addEventListener('ended', this.resetAudio.bind(this));
       this.properties.audio.addEventListener('error', this.handleError.bind(this));
-      this.properties.audio.addEventListener('timeupdate', this.renderCurrentTime.bind(this));
+      this.properties.audio.addEventListener('timeupdate', this.renderProgressBar.bind(this));
       this.properties.audio.addEventListener('timeupdate', this.renderBufferBar.bind(this));
       this.properties.audio.addEventListener('progress', this.renderBufferBar.bind(this));
     },
-    _setupPoster() {
+
+    /**
+     * Setup the preview image or the file icon if there is no preview image.
+     *
+     * @method _setupPreview
+     * @private
+     */
+    _setupPreview() {
       if ((this.model.preview || this.model.previewUrl) && (this.model.previewWidth && this.model.previewHeight)) {
-        this.classList.add('layer-audio-poster');
-        this.model.getPreviewUrl(url => (this.nodes.poster.style.backgroundImage = 'url(' + url + ')'));
+        this.classList.add('layer-audio-preview');
+        this.model.getPreviewUrl(url => (this.nodes.preview.style.backgroundImage = 'url(' + url + ')'));
+
+        // Setup sizes for this node and the parent node
         const sizes = this._getBestDimensions();
-        this.nodes.poster.style.width = sizes.width + 'px';
-        this.nodes.poster.style.height = sizes.height + 'px';
+        this.nodes.preview.style.width = sizes.width + 'px';
+        this.nodes.preview.style.height = sizes.height + 'px';
         if (sizes.width >= this.preferredMinWidth) {
           this.parentComponent.style.width = this.style.width;
         }
       } else {
+        // Use the file icon instead of a preview image
         this.classList.add('layer-file-audio');
       }
     },
+
+    /**
+     * Setup the play button that will play/pause the audio player.
+     *
+     * @method _setupPlayButton
+     * @private
+     */
     _setupPlayButton() {
       const playButton = this.properties.playButton = document.createElement('div');
       playButton.classList.add('layer-play-button');
@@ -132,32 +179,73 @@ registerComponent('layer-audio-message-view', {
     },
     onAfterCreate() {
       this.model.getSourceUrl(url => (this.properties.audio.src = url));
-
       this._setupPlayButton();
-      this._setupPoster();
+      this._setupPreview();
     },
 
+    /**
+     * When the play button is clicked, toggle playback... and make sure that the Action Handler is not triggered.
+     *
+     * You may add a mixin to customize this behavior.
+     *
+     * @method onPlayClick
+     * @param {Event} evt
+     * @protected
+     */
     onPlayClick(evt) {
       evt.preventDefault();
       evt.stopPropagation();
       this.playing = !this.playing;
     },
 
-    // User has tapped on the message rather than the play button
+    /**
+     * When the user clicks on the Message (but not the Play Button), do some setup before running the default action.
+     *
+     * Preparation for opening the Large Message View includes:
+     *
+     * 1. Stop playing the audio (further playing will be handled by the large message view)
+     * 2. Report what time we have played up to so that the Large Message View can resume from there.
+     *
+     * @method runAction
+     * @protected
+     */
     runAction() {
       this.playing = false;
       this.model.currentTime = this.properties.audio.currentTime;
     },
 
+    /**
+     * If the Audio File has problems loading (or is not a proper audio file) render the playButton as an unplayable button.
+     *
+     * @method handleError
+     * @param {Event} evt
+     * @protected
+     */
     handleError(evt) {
       logger.error(evt);
       this.properties.playButton.className = 'layer-not-playable-button';
     },
 
-    renderCurrentTime() {
-      this.nodes.progressBar.style.width = (100 * this.properties.audio.currentTime / this.properties.audio.duration) + '%';
+    /**
+     * Render our current progress in the playback.
+     *
+     * Add mixins to customize this rendering.
+     *
+     * @method renderProgressBar
+     * @protected
+     */
+    renderProgressBar() {
+      this.nodes.progressBar.style.width = Math.round(100 * this.properties.audio.currentTime / this.properties.audio.duration) + '%';
     },
 
+    /**
+     * Render to indicate how much of the audio file has been buffered.
+     *
+     * Add mixins to customize this rendering.
+     *
+     * @method renderBufferBar
+     * @protected
+     */
     renderBufferBar() {
       const buffered = this.properties.audio.buffered;
       const bufferBar = this.nodes.bufferBar;
@@ -167,11 +255,15 @@ registerComponent('layer-audio-message-view', {
         const duration = this.properties.audio.duration;
         let sum = 0;
         for (let i = 0; i < buffered.length; i++) sum = sum + buffered.end(i) - buffered.start(i) ;
-        bufferBar.style.width = (100 * sum / duration) + '%';
+        bufferBar.style.width = Math.round(100 * sum / duration) + '%';
       }
     },
 
     /**
+     * Any time the model changes with a new `currentTime` property, rerender and update the progress/buffered bars.
+     *
+     * Also resume playback on the assumption that this value has been shared so that other players may pick up where the
+     * viewer that is dismissed left off.
      *
      * @method onRerender
      */
@@ -179,16 +271,25 @@ registerComponent('layer-audio-message-view', {
       if (evt && evt.hasProperty('currentTime') && this.properties.audio.currentTime !== this.model.currentTime) {
         this.properties.audio.currentTime = this.model.currentTime;
         this.renderBufferBar();
+        this.renderProgressBar();
         this.playing = true;
       }
     },
 
-
+    /**
+     * Calculate best width and height for the preview image given the previewWidth/height and the maxWidth/height.
+     *
+     * @method _getBestDimensions
+     * @private
+     * @return {Object}
+     * @return {Number} return.width
+     * @return {Number} return.height
+     */
     _getBestDimensions() {
       let height = this.model.previewHeight;
       let width = this.model.previewWidth;
 
-      const maxWidthAvailable = this.getMessageListWidth() * 0.85;
+      const maxWidthAvailable = this.getMessageListWidth() * 0.85 || (this.parentNode ? this.parentNode.clientWidth : 200);
       const maxWidth = Math.min(this.maxWidth, maxWidthAvailable);
       let ratio;
 
@@ -210,11 +311,21 @@ registerComponent('layer-audio-message-view', {
       return { width, height };
     },
 
+    /**
+     * When this view is removed from the DOM, pause the playback.
+     *
+     * This should never be called directly.
+     *
+     * @method onDetach
+     * @protected
+     */
     onDetach() {
       if (this.properties.audio) {
         this.properties.audio.pause();
       }
     },
+
+
     onDestroy() {
       if (this.properties.audio) {
         this.properties.audio.pause();

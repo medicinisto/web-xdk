@@ -1,37 +1,37 @@
 /**
- * The File Message is used to share files such as PDF or other documents.
+ * The Audio Message is used to share Audio Files.
  *
- * A basic File Message can be created with:
+ * A basic Audio Message can be created with:
  *
  * ```
  * AudioModel = Layer.Core.Client.getMessageTypeModelClass('AudioModel')
  * model = new AudioModel({
- *    sourceUrl: "http://l7.alamy.com/zooms/e33f19042cbe4ec1807bba7f3720ba62/executive-in-a-strait-jacket-aakafp.jpg",
- *    title: "My new jacket",
- *    author: "Anonymous"
+ *    sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
+ *    title: "Out of Tunes",
+ *    artist: "Bad Intonation",
+ *    duration: 500,
  * });
  * model.send({ conversation });
  * ```
  *
  *
  * A File Model can also be created with a message from your local file system using the
- * Layer.UI.messages.FileMessageModel.source property:
+ * {@link #source} property:
  *
  * ```
  * AudioModel = Layer.Core.Client.getMessageTypeModelClass('AudioModel')
  * model = new AudioModel({
- *    source: FileBlob
+ *    source: FileBlob,
  * });
  * model.send({ conversation });
  * ```
  *
  * ### Importing
  *
- * Not included with the standard build. Import using either:
+ * Not included with the standard build. Import using:
  *
  * ```
  * import '@layerhq/web-xdk/ui/messages/audio/layer-audio-message-view';
- * import '@layerhq/web-xdk/ui/messages/audio/layer-audio-message-model';
  * ```
  *
  * @class Layer.UI.messages.AudioMessageModel
@@ -45,7 +45,7 @@ import { xhr, logger } from '../../../utils';
 class AudioModel extends MessageTypeModel {
 
   /**
-   * Generate the Message Parts representing this model so that the File Message can be sent.
+   * Generate the Message Parts representing this model so that the Audio Message can be sent.
    *
    * @method generateParts
    * @protected
@@ -57,12 +57,14 @@ class AudioModel extends MessageTypeModel {
     const preview = this.preview;
     let sourcePart;
 
-    // Intialize metadata from the Blob
+    // Intialize metadata and source MesssgePart from the Blob
     if (source) {
       if (!this.title && source.name) this.title = source.name;
       if (!this.mimeType) this.mimeType = source.type;
       sourcePart = new MessagePart(source);
       this.size = source.size;
+
+      // Instantiate an audio player so we can examine the audio file; call continueFn1 when done
       const tmpAudio = new Audio(sourcePart.url);
       tmpAudio.addEventListener('durationchange', () => {
         this.duration = tmpAudio.duration;
@@ -76,6 +78,8 @@ class AudioModel extends MessageTypeModel {
       continueFn1.bind(this)();
     }
 
+    // TODO: Promisify this stuff
+    // If a Preview blob is provided, examine it to get our previewWidth and height, and call continueFn2 when done
     function continueFn1() {
       if (preview) {
         const img = new Image();
@@ -94,6 +98,7 @@ class AudioModel extends MessageTypeModel {
       }
     }
 
+    // Create the root message part for this model and connect the sourcePart and previewPart to it
     function continueFn2() {
       if (this.isDestroyed) return;
 
@@ -137,6 +142,7 @@ class AudioModel extends MessageTypeModel {
     if (!this.mimeType && this.source) this.mimeType = this.source.mimeType;
   }
 
+  // See parent class
   parseModelChildParts({ changes = [], isEdit = false }) {
     super.parseModelChildParts({ changes, isEdit });
     this.source = this.childParts.filter(part => part.role === 'source')[0] || null;
@@ -145,10 +151,11 @@ class AudioModel extends MessageTypeModel {
   }
 
   /**
-   * Get the sourceUrl to use for fetching the File.
+   * Get the sourceUrl to use for fetching the Audio File.
    *
    * ```
-   * AudioModel.getSourceUrl(url => window.open(url));
+   * var player = new Audio();
+   * AudioModel.getSourceUrl(url => player.src = url);
    * ```
    *
    * @method getSourceUrl
@@ -170,34 +177,11 @@ class AudioModel extends MessageTypeModel {
   }
 
   /**
-   * Get the raw file data in a non-expiring form; this does involve download costs not paid using {@link #getSourceUrl}
+   * Get the preview url to use for fetching the preview image... returns '' if there is no preview image.
    *
    * ```
-   * AudioModel.getSourceBody(body => (this.innerHTML = body));
-   * ```
-   *
-   * @method getSourceBody
-   * @param {Function} callback
-   * @param {String} callback.body
-   */
-  getSourceBody(callback) {
-    if (this.source) {
-      this.source.fetchContent(body => callback(body));
-    } else if (this.sourceUrl) {
-      xhr({
-        method: 'GET',
-        url: this.sourceUrl,
-      }, body => callback(body));
-    } else {
-      callback('');
-    }
-  }
-
-  /**
-   * Get the sourceUrl to use for fetching the File.
-   *
-   * ```
-   * AudioModel.getPreviewUrl(url => window.open(url));
+   * var img = document.createElement('img');
+   * AudioModel.getPreviewUrl(url => img.src = url);
    * ```
    *
    * @method getPreviewUrl
@@ -219,30 +203,13 @@ class AudioModel extends MessageTypeModel {
   }
 
   /**
-   * Get the raw file data in a non-expiring form; this does involve download costs not paid using {@link #getSourceUrl}
+   * Get the title for the Standard Message Container.
    *
-   * ```
-   * AudioModel.getPreviewBody(body => (this.innerHTML = body));
-   * ```
+   * Title is either the title property, a file name within the sourceUrl or whatever is returned by the getOneLineSummary method.
    *
-   * @method getPreviewBody
-   * @param {Function} callback
-   * @param {String} callback.body
+   * @method getTitle
+   * @returns {String}
    */
-  getPreviewBody(callback) {
-    if (this.source) {
-      this.source.fetchContent(body => callback(body));
-    } else if (this.sourceUrl) {
-      xhr({
-        method: 'GET',
-        url: this.sourceUrl,
-      }, body => callback(body));
-    } else {
-      callback('');
-    }
-  }
-
-  // Used by Layer.UI.messages.StandardMessageViewContainer
   getTitle() {
     if (this.title) {
       return this.title;
@@ -261,6 +228,12 @@ class AudioModel extends MessageTypeModel {
     return this.getSize();
   }
 
+  /**
+   * Gets the duration as a formatted string; to get just the raw number use the {@link #duration} property
+   *
+   * @method getDuration
+   * @returns {String}
+   */
   getDuration() {
     let str = '';
 
@@ -282,10 +255,24 @@ class AudioModel extends MessageTypeModel {
     return str;
   }
 
+  /**
+   * Gets the size as a formatted string; to get just the raw number use the {@link #size} property
+   *
+   * @method getSize
+   * @returns {String}
+   */
   getSize() {
     return (Math.floor(this.size / 1000)).toLocaleString() + 'K';
   }
 
+  /**
+   * Whenever any view sets the model's currentTime property, notify all other views of this change.
+   *
+   * currentTime is number of seconds into the playback as reported by `audioPlayer.currentTime`
+   *
+   * @param {Number} newValue
+   * @param {Number} oldValue
+   */
   __updateCurrentTime(newValue, oldValue) {
     this._triggerAsync('message-type-model:change', {
       property: 'currentTime',
@@ -296,40 +283,36 @@ class AudioModel extends MessageTypeModel {
 }
 
 /**
- * MessagePart with the file to be shared.
+ * MessagePart with the Audio File to be shared.
  *
- * The File Model may instead use `sourceUrl`; use the `getSourceUrl()` method
- * to abstract these concepts.
+ * Use {@link #getSourceUrl} method rather than the `source` property to access this content.
  *
  * @property {Layer.Core.MessagePart} source
  */
 AudioModel.prototype.source = null;
 
 /**
- * URL to the file to be shared
+ * URL to the Audio File to be shared
  *
- * The File Model may instead use `source`; use the `getSourceUrl()` method
- * to abstract these concepts.
+ * Use {@link #getSourceUrl} method rather than the `sourceUrl` property to access this content.
  *
  * @property {String} sourceUrl
  */
 AudioModel.prototype.sourceUrl = '';
 
 /**
- * MessagePart with the file to be shared.
+ * MessagePart with the Preview Image to be shared.
  *
- * The File Model may instead use `sourceUrl`; use the `getSourceUrl()` method
- * to abstract these concepts.
+ * Use {@link #getPreviewUrl} method rather than the `preview` property to access this content.
  *
  * @property {Layer.Core.MessagePart} source
  */
 AudioModel.prototype.preview = null;
 
 /**
- * URL to the file to be shared
+ * URL to the Preview Image to be shared
  *
- * The File Model may instead use `preview`; use the `getPreviewUrl()` method
- * to abstract these concepts.
+ * Use {@link #getPreviewUrl} method rather than the `previewUrl` property to access this content.
  *
  * @property {String} previewUrl
  */
@@ -387,7 +370,7 @@ AudioModel.prototype.previewWidth = 0;
 AudioModel.prototype.previewHeight = 0;
 
 /**
- * Duration of the audio in the duration format as specified in ISO 8601
+ * Duration of the audio in the duration format in seconds
  *
  * @property {String} duration
  */
@@ -432,7 +415,7 @@ AudioModel.LabelPlural = 'Audio Messages';
 AudioModel.SummaryTemplate = '';
 
 /**
- * The default action when selecting this Message is to trigger an `layer-show-large-message` and view the File.
+ * The default action when selecting this Message is to trigger an `layer-show-large-message` and show Large Message for Audio
  *
  * @static
  * @property {String} [defaultAction=layer-show-large-message]

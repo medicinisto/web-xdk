@@ -1,7 +1,5 @@
 /**
- * UI for an Audio Message
- *
- * > TODO: Progress Bars
+ * UI for a Large Audio Message
  *
  * ### Importing
  *
@@ -11,14 +9,14 @@
  * import '@layerhq/web-xdk/ui/messages/audio/layer-audio-message-view';
  * ```
  *
- * @class Layer.UI.messages.AudioMessageView
+ * @class Layer.UI.messages.AudioMessageLargeView
  * @mixin Layer.UI.messages.MessageViewMixin
  * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import Constants from '../../constants';
-import './layer-audio-message-model';
+import AudioModel from './layer-audio-message-model';
 import Clickable from '../../mixins/clickable';
 
 registerComponent('layer-audio-message-large-view', {
@@ -35,22 +33,22 @@ registerComponent('layer-audio-message-large-view', {
     layer-audio-message-large-view .layer-audio-inner {
       overflow-y: auto;
     }
-    layer-audio-message-large-view .layer-audio-poster {
+    layer-audio-message-large-view .layer-audio-preview {
       display: inline-block;
     }
   `,
   template: `
     <div class='layer-vertical-spacer'></div>
     <div class="layer-audio-inner">
-      <div layer-id="poster" class="layer-audio-poster"></div>
+      <div layer-id="preview" class="layer-audio-preview"></div>
       <div layer-id="fileIcon" class="layer-file-audio"></div>
       <div class="layer-card-body">
         <div layer-id="title" class="layer-standard-card-container-title"></div>
-        <div layer-id="description1" class="layer-standard-card-container-description"></div>
-        <div layer-id="description2" class="layer-standard-card-container-description"></div>
-        <div layer-id="description3" class="layer-standard-card-container-description"></div>
-        <div layer-id="footer1" class="layer-standard-card-container-footer"></div>
-        <div layer-id="footer2" class="layer-standard-card-container-footer"></div>
+        <div layer-id="description1" class="layer-standard-card-container-description layer-audio-message-large-view-artist"></div>
+        <div layer-id="description2" class="layer-standard-card-container-description layer-audio-message-large-view-album"></div>
+        <div layer-id="description3" class="layer-standard-card-container-description layer-audio-message-large-view-genre"></div>
+        <div layer-id="footer1" class="layer-standard-card-container-footer layer-audio-message-large-view-duration"></div>
+        <div layer-id="footer2" class="layer-standard-card-container-footer layer-audio-message-large-view-size"></div>
       </div>
     </div>
     <div class='layer-vertical-spacer'></div>
@@ -62,45 +60,76 @@ registerComponent('layer-audio-message-large-view', {
     widthType: {
       value: Constants.WIDTH.FLEX,
     },
+
+    /**
+     * Maximum width allowed for a preview image in px.
+     *
+     * @property {Number} [maxWidth=250]
+     */
     maxWidth: {
       value: 250,
     },
+
+    /**
+     * Maximum height allowed for a preview image in px.
+     *
+     * @property {Number} [maxHeight=250]
+     */
     maxHeight: {
       value: 250,
     },
+
+    /**
+     * Specifiees whether the player should automatically play or not when this view is shown
+     *
+     * @property {Boolean} [autoplay=true]
+     */
     autoplay: {
       value: true,
       type: Boolean,
     },
   },
   methods: {
+
+    /**
+     * Returns a title for use in a titlebar.
+     *
+     * @method getTitle
+     * @return {String}
+     */
     getTitle() {
-      return 'Audio Message';
+      return AudioModel.LabelSingular;
     },
+
+    // Setup the player and poster once properties are available.
     onAfterCreate() {
       this.nodes.player.autoplay = this.autoplay;
 
-      this.nodes.player.addEventListener('play', () => (this.properties.playing = true));
-      this.nodes.player.addEventListener('pause', () => (this.properties.playing = false));
-
+      // If the model indicates we left off somewhere when previously playing this,
+      // resume playback once the data is loaded.
       this.nodes.player.addEventListener('loadeddata', () => {
         if (this.model.currentTime) {
           this.nodes.player.currentTime = this.model.currentTime;
         }
       });
+
+      // Setup the player's source url
       this.model.getSourceUrl(url => (this.nodes.player.src = url));
 
+      // Setup the player's preview/file icon
       if (this.model.preview || this.model.previewUrl) {
-        this.model.getPreviewUrl(url => (this.nodes.poster.style.backgroundImage = 'url(' + url + ')'));
+        this.model.getPreviewUrl(url => (this.nodes.preview.style.backgroundImage = 'url(' + url + ')'));
       } else {
         this.classList.add('show-audio-file-icon');
       }
     },
+
+    // Setup the preview image sizing once the view is in the DOM
     onAttach() {
       if (this.model.preview || this.model.previewUrl) {
         const sizes = this._getBestDimensions();
-        this.nodes.poster.style.width = sizes.width + 'px';
-        this.nodes.poster.style.height = sizes.height + 'px';
+        this.nodes.preview.style.width = sizes.width + 'px';
+        this.nodes.preview.style.height = sizes.height + 'px';
       }
     },
 
@@ -111,10 +140,11 @@ registerComponent('layer-audio-message-large-view', {
     },
 
     /**
+     * Render all of the metadata
      *
-     * @method onRerender
+     * @method onRender
      */
-    onRerender() {
+    onRender() {
       this.nodes.title.innerHTML = this.model.getTitle();
       this.nodes.description1.innerHTML = this.model.artist;
       this.nodes.description2.innerHTML = this.model.album;
@@ -123,6 +153,15 @@ registerComponent('layer-audio-message-large-view', {
       if (this.model.size) this.nodes.footer2.innerHTML = this.model.getSize();
     },
 
+    /**
+     * Calculate best width and height for the preview image given the previewWidth/height and the maxWidth/height.
+     *
+     * @method _getBestDimensions
+     * @private
+     * @return {Object}
+     * @return {Number} return.width
+     * @return {Number} return.height
+     */
     _getBestDimensions() {
       let height = this.model.previewHeight;
       let width = this.model.previewWidth;

@@ -253,7 +253,7 @@ describe('Link Message Components', function() {
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(true);
 
       // Container: Metadata is showing so show arrow in the container
-      expect(el.nodes.cardContainer.classList.contains('layer-arrow-next-container')).toEqual(true);
+      expect(el.nodes.cardContainer.querySelector('.layer-next-icon')).not.toBe(null);
 
       // Message Viewer:: Render as a card
       expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
@@ -310,7 +310,7 @@ describe('Link Message Components', function() {
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(true);
 
       // Container: Core UI is hidden so show the arrow in the container
-      expect(el.nodes.cardContainer.classList.contains('layer-arrow-next-container')).toEqual(true);
+      expect(el.nodes.cardContainer.querySelector('.layer-next-icon')).not.toBe(null);
 
       // Message Viewer:: Render as a card
       expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);

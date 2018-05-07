@@ -73,15 +73,15 @@ describe('layer-dialog', function() {
         Layer.Utils.defer.flush();
       }).not.toThrow();
 
-      expect(el.nodes.title.innerHTML).toEqual('');
-      expect(el.nodes.icon.className).toEqual('layer-dialog-title-bar-icon');
+      expect(el.nodes.titleBar.nodes.title.innerHTML).toEqual('');
+      expect(el.nodes.titleBar.nodes.icon.className).toEqual('layer-title-bar-icon');
     });
 
     it("Should use its contents getTitle and getIconClass", function() {
       el = document.createElement('layer-dialog');
       var div = document.createElement('div');
       div.getTitle = function() {return "Hello Title"}
-      div.getIconClass = function() {return 'i-got-no-class'}
+      div.getIconClass = function() {debugger;return 'i-got-no-class'}
       div.innerHTML = 'hello world';
       el.replaceableContent = {
         content: div
@@ -90,8 +90,8 @@ describe('layer-dialog', function() {
       testRoot.appendChild(el);
       Layer.Utils.defer.flush();
 
-      expect(el.nodes.title.innerHTML).toEqual('Hello Title');
-      expect(el.nodes.icon.classList.contains('i-got-no-class')).toBe(true);
+      expect(el.nodes.titleBar.nodes.title.innerHTML).toEqual('Hello Title');
+      expect(el.nodes.titleBar.nodes.icon.classList.contains('i-got-no-class')).toBe(true);
       expect(el.nodes.titleBar.clientHeight).not.toEqual(0);
     });
 
@@ -106,8 +106,8 @@ describe('layer-dialog', function() {
       testRoot.appendChild(el);
       Layer.Utils.defer.flush();
 
-      expect(el.nodes.icon.clientHeight).toEqual(0);
-      expect(el.nodes.icon.clientWidth).toEqual(0);
+      expect(el.nodes.titleBar.nodes.icon.clientHeight).toEqual(0);
+      expect(el.nodes.titleBar.nodes.icon.clientWidth).toEqual(0);
     });
 
     it("Should hide the titlebar if no title provided", function() {
@@ -120,10 +120,12 @@ describe('layer-dialog', function() {
       CustomElements.upgradeAll(el);
       testRoot.appendChild(el);
       Layer.Utils.defer.flush();
+      el.nodes.titleBar.nodes.icon.style.height = '24px';
 
       expect(el.nodes.titleBar.clientHeight).toEqual(0);
 
       el.icon = "hey";
+
       expect(el.nodes.titleBar.clientHeight).not.toEqual(0);
       el.icon = "";
       expect(el.nodes.titleBar.clientHeight).toEqual(0);
@@ -152,11 +154,11 @@ describe('layer-dialog', function() {
     it("Should show the closeButton iff isCloseButtonShowing is true", function() {
       el.title = "hey ho";
 
-      expect(el.nodes.close.clientHeight).toEqual(0);
+      expect(el.nodes.titleBar.nodes.close.clientHeight).toEqual(0);
       el.isCloseButtonShowing = true;
-      expect(el.nodes.close.clientHeight).not.toEqual(0);
+      expect(el.nodes.titleBar.nodes.close.clientHeight).not.toEqual(0);
       el.isCloseButtonShowing = false;
-      expect(el.nodes.close.clientHeight).toEqual(0);
+      expect(el.nodes.titleBar.nodes.close.clientHeight).toEqual(0);
     });
 
     it("Should dismiss the dialog if clicking on the dialog background but not on the dialog foreground", function() {
@@ -185,7 +187,7 @@ describe('layer-dialog', function() {
 
     it("Should close on clicking the close button", function() {
       expect(el.parentNode).toBe(testRoot);
-      el.nodes.close.click();
+      el.nodes.titleBar.nodes.close.click();
       expect(el.parentNode).not.toBe(testRoot);
     });
 

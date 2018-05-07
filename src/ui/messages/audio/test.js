@@ -222,10 +222,12 @@ describe('Audio Message Components', function() {
       }).getTitle()).toEqual("e");
 
       var audioBlob = generateBlob(mp3Base64, "audio/mp3");
-      expect(new AudioModel({
+      var model = new AudioModel({
         source: audioBlob,
         mimeType: "audio/mp3",
-      }).getTitle()).toEqual("Audio Message");
+      });
+      expect(model.getTitle()).toEqual("Audio Message");
+      model.destroy();
     });
 
     it("Should return title artist album or genre to getDescription() call", function() {
@@ -303,6 +305,7 @@ describe('Audio Message Components', function() {
       expect(model1.getOneLineSummary()).toEqual("b");
       expect(model2.getOneLineSummary()).toEqual("e");
       expect(model3.getOneLineSummary()).toEqual("Audio Message");
+      model3.destroy();
     });
   });
 
@@ -313,8 +316,6 @@ describe('Audio Message Components', function() {
       testRoot.appendChild(el);
     });
     afterEach(function() {
-      document.body.removeChild(testRoot);
-
       if (el) el.onDestroy();
     });
 
@@ -331,8 +332,8 @@ describe('Audio Message Components', function() {
 
       Layer.Utils.defer.flush();
 
-      expect(el.properties.audio).toEqual(jasmine.any(window.Audio));
-      expect(el.properties.audio.src).toEqual("http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3");
+      expect(el.nodes.ui.properties.audio).toEqual(jasmine.any(window.Audio));
+      expect(el.nodes.ui.properties.audio.src).toEqual("http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3");
     });
 
 
@@ -351,17 +352,20 @@ describe('Audio Message Components', function() {
       el.message = message;
 
       Layer.Utils.defer.flush();
+      el.nodes.ui.style.height = '200px';
+      el.nodes.ui.parentNode.parentNode.style.width = '300px';
+      el.nodes.ui._setupPreview();
 
       // Message Viewer: gets the layer-card-width-any-width class
-      expect(el.nodes.poster.style.backgroundImage).toEqual('url(https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg)');
-      expect(el.nodes.poster.style.height).toEqual(el.maxHeight + 'px');
-      expect(el.nodes.poster.style.width).toEqual((100 * el.maxHeight / 1000) + 'px');
+      expect(el.nodes.ui.nodes.preview.style.backgroundImage.indexOf("https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg")).not.toEqual("-1");
+      expect(el.nodes.ui.nodes.preview.style.height).toEqual(el.nodes.ui.maxHeight + 'px');
+      expect(el.nodes.ui.nodes.preview.style.width).toEqual((100 * el.nodes.ui.maxHeight / 1000) + 'px');
 
-      expect(el.classList.contains('layer-audio-poster')).toBe(true);
-      expect(el.classList.contains('layer-file-audio')).toBe(false);
+      expect(el.nodes.ui.classList.contains('layer-audio-preview')).toBe(true);
+      expect(el.nodes.ui.classList.contains('layer-file-audio')).toBe(false);
     });
 
-    it("Should render preview as a wide image", function() {
+    it("Should render preview as a wide image", function(done) {
       var imageBlob = generateBlob(imgBase64, "image/jpeg");
       var model = new AudioModel({
         sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
@@ -371,23 +375,34 @@ describe('Audio Message Components', function() {
         mimeType: "audio/mp3"
       });
       model.generateMessage(conversation, function(m) {
-        message = m;
+        try {
+          model.previewWidth = 1000; // these values get blown away by imageBlob's dimensions
+          model.previewHeight = 100;
+          message = m;
+
+          el.message = message;
+
+          Layer.Utils.defer.flush();
+
+          el.nodes.ui.style.height = '200px';
+          el.nodes.ui.parentNode.parentNode.style.width = '300px';
+          el.nodes.ui._setupPreview();
+
+          var sizes = el.nodes.ui._getBestDimensions();
+          expect(sizes.height * 10).toEqual(sizes.width);
+
+          // Message Viewer: gets the layer-card-width-any-width class
+          expect(el.nodes.ui.nodes.preview.style.backgroundImage).not.toEqual('');
+          expect(el.nodes.ui.nodes.preview.style.height).toEqual(sizes.height + 'px');
+          expect(el.nodes.ui.nodes.preview.style.width).toEqual(sizes.width + 'px');
+
+          expect(el.nodes.ui.classList.contains('layer-audio-preview')).toBe(true);
+          expect(el.nodes.ui.classList.contains('layer-file-audio')).toBe(false);
+          done();
+        } catch(e) {
+          done(e);
+        }
       });
-
-      expect(el.nodes.poster.style.backgroundImage).toEqual('');
-      el.message = message;
-
-      Layer.Utils.defer.flush();
-      var sizes = el._getBestDimensions();
-      expect(sizes.height * 10).toEqual(sizes.width);
-
-      // Message Viewer: gets the layer-card-width-any-width class
-      expect(el.nodes.poster.style.backgroundImage).not.toEqual('');
-      expect(el.nodes.poster.style.height).toEqual(sizes.height + 'px');
-      expect(el.nodes.poster.style.width).toEqual(sizes.width + 'px');
-
-      expect(el.classList.contains('layer-audio-poster')).toBe(true);
-      expect(el.classList.contains('layer-file-audio')).toBe(false);
     });
 
     it("Should render file icon if no preview", function() {
@@ -400,18 +415,17 @@ describe('Audio Message Components', function() {
         message = m;
       });
 
-      expect(el.nodes.poster.style.backgroundImage).toEqual('');
       el.message = message;
 
       Layer.Utils.defer.flush();
 
-      expect(el.classList.contains('layer-audio-poster')).toBe(false);
-      expect(el.classList.contains('layer-file-audio')).toBe(true);
+      expect(el.nodes.ui.classList.contains('layer-audio-preview')).toBe(false);
+      expect(el.nodes.ui.classList.contains('layer-file-audio')).toBe(true);
     });
 
-    describe("Standard Audio Tests", function() {
-      var model;
-      beforeEach(function() {
+    describe("Standard Audio View Tests", function() {
+      var model, ui, el, message;
+      beforeEach(function(done) {
         model = new AudioModel({
           sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
           mimeType: "audio/mp3"
@@ -420,54 +434,186 @@ describe('Audio Message Components', function() {
           message = m;
         });
 
-        el.client = client;
+        el = document.createElement('layer-message-viewer');
+        testRoot.appendChild(el);
+
         el.message = message;
 
         Layer.Utils.defer.flush();
+        ui = el.nodes.ui;
+        ui.style.height = '200px';
+        ui.parentNode.parentNode.style.width = '300px';
+        var triggered = false;
+        ui.properties.audio.addEventListener('canplay', function(evt) {
+          if (!triggered) {
+            triggered = true;
+            done();
+          }
+        });
+      });
+      afterEach(function() {
+        if (el) el.onDestroy();
       });
 
       it("The play button should toggle the playing property", function() {
         // Pretest
-        expect(el.contains(el.nodes.ui.properties.playButton)).toBe(true);
-        expect(el.nodes.ui.properties.playButton).toEqual(jasmine.any(HTMLElement));
-        expect(el.nodes.ui.properties.playing).toBe(false);
+        expect(el.contains(ui.properties.playButton)).toBe(true);
+        expect(ui.properties.playButton).toEqual(jasmine.any(HTMLElement));
+        expect(ui.playing).toBe(false);
 
         // Run
-        click(el.nodes.ui.properties.playButton);
+        click(ui.properties.playButton);
 
         // Posttest
-        expect(el.nodes.ui.properties.playing).toBe(true);
+        expect(ui.playing).toBe(true);
       });
 
       it("The play button should prevent runAction from being called", function() {
-        spyOn(el.properties.ui, "runAction");
-        click(el.nodes.ui.properties.playButton);
-        expect(el.properties.ui.runAction).not.toHaveBeenCalled();
+        spyOn(ui, "runAction");
+        click(ui.properties.playButton);
+        expect(ui.runAction).not.toHaveBeenCalled();
       });
 
       it("Should show the broken play button if content is not playable", function(done) {
-
+        ui.properties.audio.src = 'https://google.com';
+        setTimeout(function() {
+          try {
+            expect(ui.properties.playButton.classList.contains('layer-not-playable-button')).toBe(true);
+            done();
+          } catch(e) {
+            done(e);
+          }
+        }, 2000);
       });
 
       it("Should render progress", function() {
+        var audio = ui.properties.audio;
+        ui.properties.audio = {currentTime: 2, duration: 5};
+        ui.renderProgressBar();
+        expect(ui.nodes.progressBar.style.width).toEqual(Math.round(100 * 2 / 5) + '%');
+        ui.properties.audio = audio;
 
       });
 
-      it("Should render buffering", function() {
+      xit("Should render buffering", function() {
 
       });
 
-      it("Should handle setting playing to true", function() {
+      it("Should handle setting playing to true and false", function() {
+        // Pretest
+        expect(ui.playing).toBe(false);
+        expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(true);
+        expect(ui.properties.audio.paused).toBe(true);
 
-      });
+        // Run 1
+        ui.playing = true;
 
-      it("Should handle setting playing to false", function() {
+        // Posttest 1
+        expect(ui.playing).toBe(true);
+        expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(false);
+        expect(ui.properties.playButton.classList.contains('layer-pause-button')).toBe(true);
+        expect(ui.properties.audio.paused).toBe(false);
 
+        // Run 2
+        ui.playing = false;
+
+        // Posttest 2
+        expect(ui.playing).toBe(false);
+        expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(true);
+        expect(ui.properties.playButton.classList.contains('layer-pause-button')).toBe(false);
+        expect(ui.properties.audio.paused).toBe(true);
       });
 
       it("Should pause playback and open Large Message View on tap", function() {
-
-
+        ui.playing = true;
+        expect(ui.playing).toBe(true);
+        click(el);
+        expect(ui.playing).toBe(false);
+        expect(document.querySelector('layer-dialog')).not.toBe(null);
+        document.querySelector('layer-dialog').destroy();
       });
+    });
+  });
+
+  describe("Large Message View", function() {
+    var model, ui, el, message;
+    beforeEach(function() {
+      model = new AudioModel({
+        sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
+        mimeType: "audio/mp3",
+        artist: "artist",
+        album: "album",
+        genre: "genre",
+        duration: 5,
+        size: 5000
+      });
+      model.generateMessage(conversation, function(m) {
+        message = m;
+      });
+
+      el = document.createElement('layer-message-viewer');
+      testRoot.appendChild(el);
+      CustomElements.upgradeAll(ui);
+
+      el.size = "large"
+      el.message = message;
+    });
+
+    it("Should render all sorts of metadata", function() {
+      Layer.Utils.defer.flush();
+      ui = el.nodes.ui;
+      ui.style.height = '200px';
+      ui.parentNode.parentNode.style.width = '300px';
+
+      CustomElements.upgradeAll(ui);
+      expect(el.querySelector('.layer-audio-message-large-view-artist').innerHTML).toEqual('artist');
+      expect(el.querySelector('.layer-audio-message-large-view-album').innerHTML).toEqual('album');
+      expect(el.querySelector('.layer-audio-message-large-view-genre').innerHTML).toEqual('genre');
+      expect(el.querySelector('.layer-audio-message-large-view-duration').innerHTML).toEqual('00:00:05');
+      expect(el.querySelector('.layer-audio-message-large-view-size').innerHTML).toEqual('5K');
+    });
+
+    it("Should render file icon", function() {
+      // Setup
+      Layer.Utils.defer.flush();
+      ui = el.nodes.ui;
+      ui.style.height = '200px';
+      ui.parentNode.parentNode.style.width = '300px';
+
+      // Posttest
+      expect(ui.classList.contains('show-audio-file-icon')).toBe(true);
+    });
+
+    it("Should render tall preview", function() {
+      // Setup
+      model.previewUrl = "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg";
+      model.previewWidth = 100;
+      model.previewHeight = 1000;
+      Layer.Utils.defer.flush();
+      ui = el.nodes.ui;
+      ui.style.height = '200px';
+      ui.parentNode.parentNode.style.width = '300px';
+
+      // Posttest
+      expect(ui.nodes.preview.style.height).toEqual(ui.maxHeight + 'px');
+      expect(ui.nodes.preview.style.width).toEqual((ui.maxHeight / 10) + 'px');
+      expect(ui.classList.contains('show-audio-file-icon')).toBe(false);
+    });
+
+    it("Should render wide preview", function() {
+      // Setup
+      model.previewUrl = "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg";
+      model.previewWidth = 1000;
+      model.previewHeight = 100;
+      Layer.Utils.defer.flush();
+      ui = el.nodes.ui;
+      ui.style.height = '200px';
+      ui.parentNode.parentNode.style.width = '300px';
+
+      // Posttest
+      expect(ui.nodes.preview.style.width).toEqual(ui.maxWidth + 'px');
+      expect(ui.nodes.preview.style.height).toEqual((ui.maxWidth / 10) + 'px');
+      expect(ui.classList.contains('show-audio-file-icon')).toBe(false);
+    });
   });
 });

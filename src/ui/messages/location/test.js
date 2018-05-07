@@ -274,7 +274,6 @@ describe('Location Message Components', function() {
       model.generateMessage(conversation, function(m) {
         message = m;
       });
-      el.client = client;
       el.message = message;
 
       Layer.Utils.defer.flush();
@@ -292,14 +291,13 @@ describe('Location Message Components', function() {
       model.generateMessage(conversation, function(m) {
         message = m;
       });
-      el.client = client;
       el.message = message;
 
       Layer.Utils.defer.flush();
 
       el.nodes.ui.hideMap = false;
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(false);
-      expect(el.nodes.cardContainer.classList.contains('layer-arrow-next-container')).toEqual(false);
+      expect(el.nodes.cardContainer.querySelector('.layer-next-icon')).toBe(null);
     });
 
     it("Should hide the top content based on the hideMap property", function() {
@@ -310,14 +308,13 @@ describe('Location Message Components', function() {
       model.generateMessage(conversation, function(m) {
         message = m;
       });
-      el.client = client;
       el.message = message;
       Layer.Utils.defer.flush();
 
       el.nodes.ui.hideMap = true;
       expect(el.classList.contains('layer-location-message-view-address-only')).toEqual(true);
       expect(el.nodes.cardContainer.classList.contains('layer-no-core-ui')).toEqual(true);
-      expect(el.nodes.cardContainer.classList.contains('layer-arrow-next-container')).toEqual(true);
+      expect(el.nodes.cardContainer.querySelector('.layer-next-icon')).not.toBe(null);
     });
 
     it("Should open the map using lat/lon", function() {
@@ -331,7 +328,6 @@ describe('Location Message Components', function() {
       model.generateMessage(conversation, function(m) {
         message = m;
       });
-      el.client = client;
       el.message = message;
       Layer.Utils.defer.flush();
 
@@ -360,7 +356,6 @@ describe('Location Message Components', function() {
       model.generateMessage(conversation, function(m) {
         message = m;
       });
-      el.client = client;
       el.message = message;
       Layer.Utils.defer.flush();
 

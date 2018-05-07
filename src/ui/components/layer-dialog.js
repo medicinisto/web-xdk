@@ -35,7 +35,7 @@ registerComponent('layer-dialog', {
     <div class="layer-dialog-inner" layer-id="inner">
       <layer-title-bar layer-id="titleBar">
         <div layer-replaceable-name="buttons">
-          <div layer-id='close' class="layer-title-close-button">&times;</div>
+          <div layer-id='close' class="layer-dialog-title-close-button">&times;</div>
         </div>
       </layer-title-bar>
       <layer-replaceable-content name='content' layer-id='content' class='layer-dialog-content-container'>
@@ -112,7 +112,7 @@ registerComponent('layer-dialog', {
      */
     title: {
       set(title) {
-        this.nodes.title.innerHTML = title;
+        this.nodes.titleBar.title = title;
         this._updateTitlebarShowing();
       },
     },
@@ -125,9 +125,7 @@ registerComponent('layer-dialog', {
     icon: {
       value: '',
       set(icon, oldIcon) {
-        if (oldIcon) this.nodes.icon.classList.remove(oldIcon);
-        if (icon) this.nodes.icon.classList.add(icon);
-        this.toggleClass('layer-title-icon-empty', !(icon));
+        if (icon) this.nodes.titleBar.icon = icon;
         this._updateTitlebarShowing();
       },
     },
@@ -200,7 +198,7 @@ registerComponent('layer-dialog', {
       }
 
       if (content.getIconClass) {
-        this.nodes.titleBar.iconClass = content.getIconClass();
+        this.icon = content.getIconClass();
       }
 
       // If we are managing pop state, then push our state to the history, and listen for it to be popped.
