@@ -1,6 +1,5 @@
 // Card Viewers
 import '../handlers/message/layer-message-viewer';
-import './layer-message-viewer-expanded';
 
 // Import default message types
 import './status/layer-status-message-view';
@@ -15,4 +14,4 @@ import './choice/layer-choice-message-view';
 // Load standard card containers
 import './layer-standard-message-view-container';
 import './layer-titled-message-view-container';
-import './layer-dialog-message-view-container';
+import '../components/layer-dialog';
