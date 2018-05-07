@@ -5,6 +5,8 @@
 * Fixes identity metadata so that it is always an Object even when there is no value in the object
 * Adds Property Type for UI Components of `type: Object`
 * `replaceableContent` can now be set as an attribute and will be converted to Object.
+* WEB-1765: Adds `presend()` method to all Message Type Models so that messages created from Models can be previewed in the Message List.
+* Fixes rendering of Date Sent for messages that were `presend()` before they were `send()`
 
 ## 4.0.2
 

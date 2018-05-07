@@ -239,6 +239,40 @@ class MessageTypeModel extends Root {
   }
 
   /**
+   * Generate a message for this Message Type Model and call {@link Layer.Core.Message#presend} on it so it can be previewed in the Message List.
+   *
+   * ```
+   * model.presend({
+   *    conversation: myConversation
+   * });
+   * ```
+   *
+   * The full API?
+   *
+   * ```
+   * model.presend({
+   *    conversation: myConversation,
+   *    callback(message) {
+   *       console.log("Generated and previewing " + message.id);
+   *    }
+   * });
+   * ```
+   *
+   * @method presend
+   * @param {Object} options
+   * @param {Layer.Core.Container} options.conversation   The Conversation/Channel to send this message on
+   * @param {Function} [options.callback]                 Function to call with generated Message;
+   * @param {Layer.Core.Message} [options.callback.message]
+   * @return {Layer.Core.MessageTypeModel} this
+   */
+  presend({ conversation, callback }) {
+    return this.generateMessage(conversation, (message) => {
+      if (message.isNew()) message.presend();
+      if (callback) callback(message);
+    });
+  }
+
+  /**
    * Generate a Layer.Core.Message from this Model.
    *
    * This method returns the Layer.Core.Message asynchronously as some models

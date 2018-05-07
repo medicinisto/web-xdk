@@ -181,6 +181,41 @@ describe("The Message Type Model class", function() {
       // Posttest
       expect(model.generateMessage).toHaveBeenCalledWith(conversation, jasmine.any(Function));
     });
+
+    it("Should call callback", function() {
+      var model = new TextModel({});
+      var spy = jasmine.createSpy('myspy');
+
+      // Run
+      model.send({ conversation: conversation, callback: spy });
+
+      // Posttest
+      expect(spy).toHaveBeenCalledWith(jasmine.any(Layer.Core.Message));
+    });
+  });
+
+  describe("The presend() method", function() {
+    it("Should call generateMessage", function() {
+      var model = new TextModel({});
+      spyOn(model, "generateMessage");
+
+      // Run
+      model.presend({ conversation: conversation });
+
+      // Posttest
+      expect(model.generateMessage).toHaveBeenCalledWith(conversation, jasmine.any(Function));
+    });
+
+    it("Should call callback", function() {
+      var model = new TextModel({});
+      var spy = jasmine.createSpy('myspy');
+
+      // Run
+      model.presend({ conversation: conversation, callback: spy });
+
+      // Posttest
+      expect(spy).toHaveBeenCalledWith(jasmine.any(Layer.Core.Message));
+    });
   });
 
   describe("The generateMessage() method", function() {
