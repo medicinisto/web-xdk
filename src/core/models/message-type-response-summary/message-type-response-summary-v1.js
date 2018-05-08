@@ -318,7 +318,7 @@ MessageTypeResponseSummary._supportedEvents = [
 
 MessageTypeResponseSummary.inObjectIgnore = Root.inObjectIgnore;
 Root.initClass.apply(MessageTypeResponseSummary,
-  [MessageTypeResponseSummary, 'MessageTypeResponseSummary', Core]);
+  [MessageTypeResponseSummary, 'MessageTypeResponseSummary-v1', Core]);
 Syncable.subclasses.push(MessageTypeResponseSummary);
 module.exports = MessageTypeResponseSummary;
 register('application/vnd.layer.responsesummary+json', MessageTypeResponseSummary);

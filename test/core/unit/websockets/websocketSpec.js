@@ -1205,7 +1205,7 @@ describe("The Websocket Socket Manager Class", function() {
 
           websocketManager._validateSessionBeforeReconnect();
           expect(client.xhr).toHaveBeenCalledWith({
-              url: "/?action=validateConnectionForWebsocket&client=" + Layer.version,
+              url: "/?action=validateConnectionForWebsocket&client=" + Layer.version.replace(/-all/,''),
               sync: false,
               method: "GET"
             }, jasmine.any(Function));

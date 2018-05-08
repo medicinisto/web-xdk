@@ -13,6 +13,7 @@
         * For the full `<layer-message-viewer-expanded />` put `<layer-message-viewer size='large' />` inside of a `<layer-dialog />`
     * Renames `<layer-feedback-message-expanded-view />` to `<layer-feedback-message-large-view />` which is now rendered within the `<layer-message-viewer size='large' />`
 * Adds Audio Message
+* WEB-1763: Refactoring to simplify imports of `@layerhq/webxdk` and  `@layerhq/webxdk/index-lite` without generating conflicts or duplication
 
 ## 4.0.3
 
@@ -25,6 +26,8 @@
 * Refactors imports for Messaging Models/Components into `src/ui/messages/index` and `src/ui/messages/index-lite`
   (for internal use)
 * WEB-1772: No longer pings to check if server is available unless client is ready and authenticated
+* WEB-1763: No longer requires all imports follow the same path; one component may import `@layerhq/webxdk` and another  `@layerhq/webxdk/index-lite` without generating conflicts or duplication
+
 
 
 ## 4.0.2

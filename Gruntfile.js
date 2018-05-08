@@ -305,10 +305,10 @@ module.exports = function (grunt) {
     },
     watch: {
       js: {
-        files: ['package.json', 'Gruntfile.js', 'samples/index-all.js', 'src/**', '!**/test.js', '!src/ui/**/tests/**.js', '!src/version.js'],
+        files: ['package.json', 'Gruntfile.js', 'src/**', '!src/**/test.js', '!src/ui/**/tests/**.js', '!src/version.js'],
         tasks: ['wait', 'debug', 'notify:watch', 'eslint:debug'],
         options: {
-          interrupt: true
+          interrupt: false
         }
       },
       themes: {
@@ -828,7 +828,7 @@ module.exports = function (grunt) {
   grunt.registerTask('debug', [
     'version', 'remove:libes6', 'webcomponents', 'custom_copy:src', 'remove:libes5',
     'custom_babel', 'remove:lib', 'move:lib',
-    'browserify:build',  "generate-quicktests", "generate-smalltests", 'remove:libes6', 'copy:npm', 'copy:npmthemes','fix-npm-package']);
+    'browserify:build',  "generate-quicktests", "generate-smalltests", 'copy:npm', 'copy:npmthemes','fix-npm-package']);
 
   grunt.registerTask('build', ['remove:build', 'eslint:build', 'debug', 'uglify', 'theme', 'cssmin', 'copy:npmthemes']);
   grunt.registerTask('prepublish', ['build', 'refuse-to-publish']);

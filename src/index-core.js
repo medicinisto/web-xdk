@@ -1,13 +1,14 @@
 /* eslint-disable import/first */
-if (global.Layer) throw new Error('You appear to have multiple copies of the Layer Web XDK loaded at the same time');
-
 import Constants from './constants';
-import Core from './core/index-web';
+import Core from './core/index';
 import Utils from './utils';
 import version from './version';
 import Settings from './settings';
 
 Settings.client = new Core.Client({});
+
+const onInitItems = [];
+
 function init(options) {
   let client = Settings.client;
   if (!client || client.isDestroyed) client = Settings.client = new Core.Client({});
@@ -16,8 +17,18 @@ function init(options) {
     if (client[name] !== undefined) client[name] = options[name];
   });
 
+  onInitItems.forEach(itemDef => itemDef.item.apply(itemDef.context));
   return client;
 }
 
-module.exports = { Core, Utils, Constants, init, version, get client() { return Settings.client; }, Settings };
-if (typeof global !== 'undefined') global.Layer = global.layer = module.exports;
+function onInit(item, context) {
+  let found = false;
+  onInitItems.forEach((itemDef) => {
+    if (itemDef.item === item) found = true;
+  });
+
+  if (!found) onInitItems.push({ item, context });
+}
+
+
+module.exports = { Core, Utils, Constants, init, onInit, version, get client() { return Settings.client; }, Settings };

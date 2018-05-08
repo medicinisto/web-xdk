@@ -3,28 +3,28 @@
  * @static
  */
 
-/* eslint-disable import/first */
-if (global.Layer) throw new Error('You appear to have multiple copies of the Layer Web XDK loaded at the same time');
-
-import Constants from './constants';
-import Core from './core/index-all';
-import Utils from './utils';
+ /* eslint-disable import/first */
+import './utils/native-support/web';
+import './core/mixins/client-dbmanager';
+import { Core, Utils, Constants, init, onInit, version, client, Settings } from './index-core';
+import './core/db-manager';
+import './core/models/message-type-response-summary/message-type-response-summary-v1';
 import UI from './ui/index-all';
-import version from './version';
-import Settings from './settings';
 
-Settings.client = new Core.Client({});
-function init(options) {
-  let client = Settings.client;
-  if (!client || client.isDestroyed) client = Settings.client = new Core.Client({});
-  Object.keys(options).forEach((name) => {
-    Settings[name] = options[name];
-    if (client[name] !== undefined) client[name] = options[name];
-  });
+onInit(UI.init, UI);
 
-  UI.init();
-  return client;
-}
+module.exports = {
+  UI,
+  Core,
+  Utils,
+  Constants,
+  init,
+  onInit,
+  version: version + '-all',
+  client,
+  Settings,
+};
+if (typeof global !== 'undefined') global.Layer = global.layer = module.exports;
 
 /**
  * Access the XDK-UI Library
@@ -68,6 +68,25 @@ function init(options) {
  */
 
 /**
+ * Callback to use once {@link #init} is called and initialization of Layer.Core is completed.
+ *
+ * ```
+ * Layer.onInit(myfunc, mycontext)
+ * ```
+ *
+ * It is recommended that anonymous functions not be used as `onInit` insures that if a function is passed multiple times,
+ * it will only get called once.  This pattern generates a new function each call and should not be used:
+ *
+ * ```
+ * Layer.onInit(() => myfunc());
+ * ```
+ *
+ * @method onInit
+ * @param {Function} callback
+ * @param {Object} context
+ */
+
+/**
  * XDK Version
  *
  * ```
@@ -84,5 +103,3 @@ function init(options) {
  * @property {Layer.Core.Client} client
  * @readonly
  */
-module.exports = { UI, Core, Utils, Constants, init, version, get client() { return Settings.client; }, Settings };
-if (typeof global !== 'undefined') global.Layer = global.layer = module.exports;

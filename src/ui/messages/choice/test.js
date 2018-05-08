@@ -1660,6 +1660,43 @@ describe('Choice Message Components', function() {
       });
     });
 
+    describe("The enabledFor property", function() {
+      it("Should support backwards compatability for when this value accepted an array", function() {
+        var uuid1 = Layer.Utils.generateUUID();
+        var m = conversation.createMessage({
+          id: 'layer:///messages/' + uuid1,
+          parts: [{
+            id: 'layer:///messages/' + uuid1 + '/parts/' + Layer.Utils.generateUUID(),
+            mime_type: ChoiceModel.MIMEType + '; role=root; node-id=a',
+            body: JSON.stringify({
+              enabled_for: [client.user.id],
+              label: "hello",
+              choices: [
+                {text: "a", id: "aa"},
+                {text: "b", id: "bb"},
+                {text: "c", id: "cc"},
+              ]
+            })
+          }]
+        });
+        m.addPart({
+          mimeType: 'application/vnd.layer.responsesummary+json; role=response_summary;parent-node-id=' + m.findPart().nodeId,
+          body: JSON.stringify({
+            participant_data: {
+              'FrodoTheDodo': {
+                selection: 'bb'
+              }
+            }
+          })
+        });
+        var model = m.createModel();
+
+        // It should respect the old enabled_for array for determining where to get the selected value
+        expect(model.selectedAnswer).toEqual('bb');
+      });
+    });
+
+
     describe("The parseModelResponses method", function() {
       it("Should compare arrays", function() {
         var model = new ChoiceModel({
