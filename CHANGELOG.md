@@ -35,7 +35,7 @@ _All Changes_:
   (for internal use)
 * WEB-1772: No longer pings to check if server is available unless client is ready and authenticated
 * WEB-1763: No longer requires all imports follow the same path; one component may import `@layerhq/webxdk` and another  `@layerhq/webxdk/index-lite` without generating conflicts or duplication
-
+* WEB-1762: Use passive scroll listeners
 
 
 ## 4.0.2
