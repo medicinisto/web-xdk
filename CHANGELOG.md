@@ -21,6 +21,7 @@ _All Changes_:
 * Adds Audio Message
 * WEB-1763: Refactoring to simplify imports of `@layerhq/webxdk` and  `@layerhq/webxdk/index-lite` without generating conflicts or duplication
 * WEB-1779: Now throws error if calling `Layer.UI.setupMixins({...})` after calling `Layer.init()`
+* Increases priority of DOM nodes with `layer-replaceable-name="foo"` within your HTML over `widget.replaceableContent = {foo: nodes}` within your Javascript
 
 ## 4.0.3
 

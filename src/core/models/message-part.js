@@ -963,7 +963,7 @@ MessagePart.prototype._message = null;
  * @static
  * @property {Mixed[]}
  */
-MessagePart.TextualMimeTypes = [/^text\/.+$/, /^application\/json(\+.+)?$/, /\+json$/, /-json$/];
+MessagePart.TextualMimeTypes = [/^text\/.+$/, /^application\/json(\+.+)?$/, /\+json$/, /-json$/, /^application\/xml/, /\+xml$/];
 
 /**
  * Number of retry attempts to make before giving up on uploading Rich Content to Google Cloud Storage.
