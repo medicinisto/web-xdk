@@ -2,6 +2,12 @@
 
 ## 4.1.0
 
+_Breaking Changes_:
+
+* WEB-1779: Now throws error if calling `Layer.UI.setupMixins({...})` after calling `Layer.init()`
+
+_All Changes_:
+
 * Simplistic dependency injection for switching between nodejs, ReactJS, Web, etc... based utilities
 * Static property `CACHE_PURGE_INTERVAL` is now an instance property settable from `Layer.init()` named `cachePurgeInterval`
 * Rips out Client Authenticator Parent class of the Layer Client; replaces all of its capabilities via Mixins
@@ -14,6 +20,7 @@
     * Renames `<layer-feedback-message-expanded-view />` to `<layer-feedback-message-large-view />` which is now rendered within the `<layer-message-viewer size='large' />`
 * Adds Audio Message
 * WEB-1763: Refactoring to simplify imports of `@layerhq/webxdk` and  `@layerhq/webxdk/index-lite` without generating conflicts or duplication
+* WEB-1779: Now throws error if calling `Layer.UI.setupMixins({...})` after calling `Layer.init()`
 
 ## 4.0.3
 

@@ -184,6 +184,7 @@ LayerError.ErrorDictionary = {
   useBeforeMessageCreation: 'Must be done before creating a Message',
   enabledForMissing: 'enabledFor is a required property',
   invalidMimeType: 'MIME Type is invalid',
+  initAlreadyCalled: 'Must be called before init()',
 };
 
 module.exports = Core.LayerError = LayerError;

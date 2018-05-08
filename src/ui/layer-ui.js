@@ -38,6 +38,7 @@ import ListSeparatorManager from './ui-utils/list-separator-manager';
 import Adapters from './adapters';
 import MessageActions from './message-actions';
 import UIUtils from './ui-utils/index';
+import { ErrorDictionary } from '../core/layer-error';
 
 const LayerUI = {
   Constants,
@@ -79,7 +80,9 @@ const LayerUI = {
  * @method init
  * @static
  */
+let initRun = false;
 LayerUI.init = function init() {
+  if (initRun) return;
   LayerUI.setupMixins(Settings.mixins || {});
 
   // Register all widgets
@@ -89,6 +92,7 @@ LayerUI.init = function init() {
   Settings.textHandlers.forEach((handlerName) => {
     TextHandlers.register({ name: handlerName });
   });
+  initRun = true;
 };
 
 /**
@@ -142,6 +146,7 @@ LayerUI.init = function init() {
  * @param {Object} mixins
  */
 LayerUI.setupMixins = function setupMixins(mixins) {
+  if (initRun) throw new Error(ErrorDictionary.initAlreadyCalled);
   if (!LayerUI.settings._mixins) LayerUI.settings._mixins = {};
   Object.keys(mixins).forEach((componentName) => {
     if (!LayerUI.settings._mixins[componentName]) {
