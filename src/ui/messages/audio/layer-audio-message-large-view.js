@@ -37,6 +37,7 @@ registerComponent('layer-audio-message-large-view', {
       display: inline-block;
     }
   `,
+  /* eslint-disable */
   template: `
     <div class='layer-vertical-spacer'></div>
     <div class="layer-audio-inner">
@@ -54,7 +55,7 @@ registerComponent('layer-audio-message-large-view', {
     <div class='layer-vertical-spacer'></div>
     <audio layer-id="player" preload="auto" controls="controls"></audio>
   `,
-
+  /* eslint-enable */
   properties: {
     // See parent class
     widthType: {

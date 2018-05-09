@@ -2,8 +2,6 @@
  * @class Layer
  * @static
  */
-
- /* eslint-disable import/first */
 import './utils/native-support/web';
 import './core/mixins/client-dbmanager';
 import { Core, Utils, Constants, init, onInit, version, client, Settings } from './index-core';

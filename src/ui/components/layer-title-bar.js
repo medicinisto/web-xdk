@@ -24,7 +24,8 @@ registerComponent('layer-title-bar', {
   template: `
     <div layer-id='icon' class="layer-title-bar-icon"></div>
     <div layer-id='title' class="layer-title-bar-text"></div>
-    <layer-replaceable-content class="layer-title-buttons" layer-id="buttons" name="buttons"></layer-replaceable-content>
+    <layer-replaceable-content class="layer-title-buttons" layer-id="buttons" name="buttons">
+    </layer-replaceable-content>
   `,
   style: `
     layer-title-bar {

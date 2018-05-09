@@ -40,7 +40,7 @@
 
 
 import Core, { MessagePart, MessageTypeModel, Root } from '../../../core/namespace';
-import { xhr, logger } from '../../../utils';
+import { logger } from '../../../utils';
 
 class AudioModel extends MessageTypeModel {
 

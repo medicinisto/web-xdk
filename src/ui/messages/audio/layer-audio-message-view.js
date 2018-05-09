@@ -235,7 +235,8 @@ registerComponent('layer-audio-message-view', {
      * @protected
      */
     renderProgressBar() {
-      this.nodes.progressBar.style.width = Math.round(100 * this.properties.audio.currentTime / this.properties.audio.duration) + '%';
+      this.nodes.progressBar.style.width =
+        Math.round(100 * this.properties.audio.currentTime / this.properties.audio.duration) + '%';
     },
 
     /**
@@ -254,7 +255,7 @@ registerComponent('layer-audio-message-view', {
       } else {
         const duration = this.properties.audio.duration;
         let sum = 0;
-        for (let i = 0; i < buffered.length; i++) sum = sum + buffered.end(i) - buffered.start(i) ;
+        for (let i = 0; i < buffered.length; i++) sum = sum + buffered.end(i) - buffered.start(i);
         bufferBar.style.width = Math.round(100 * sum / duration) + '%';
       }
     },
@@ -289,7 +290,8 @@ registerComponent('layer-audio-message-view', {
       let height = this.model.previewHeight;
       let width = this.model.previewWidth;
 
-      const maxWidthAvailable = this.getMessageListWidth() * 0.85 || (this.parentNode ? this.parentNode.clientWidth : 200);
+      const maxWidthAvailable = this.getMessageListWidth() * 0.85 ||
+        (this.parentNode ? this.parentNode.clientWidth : 200);
       const maxWidth = Math.min(this.maxWidth, maxWidthAvailable);
       let ratio;
 
@@ -324,7 +326,6 @@ registerComponent('layer-audio-message-view', {
         this.properties.audio.pause();
       }
     },
-
 
     onDestroy() {
       if (this.properties.audio) {
