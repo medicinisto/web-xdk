@@ -329,16 +329,6 @@ registerComponent('layer-message-viewer', {
     getDialogClass() {
       return this.nodes.ui.tagName.toLowerCase();
     },
-
-    // As an added behavior, if this Message Viewer is inside of a container that needs to know when
-    // this Message is ready to be dismissed, trigger an event to let it know.
-    destroy: {
-      mode: registerComponent.MODES.BEFORE,
-      value() {
-        // Tells any enclosing container that this item is done
-        this.trigger('layer-container-done');
-      },
-    },
   },
 });
 

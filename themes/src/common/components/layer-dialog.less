@@ -1,3 +1,38 @@
+layer-dialog.layer-dialog-showing {
+  animation-name: layer-dialog-fade-in;
+  animation-duration: 0.4s;
+}
+
+layer-dialog.layer-dialog-showing .layer-dialog-inner {
+  animation-name: layer-dialog-fade-in;
+  animation-duration: 1.2s;
+}
+
+layer-dialog.layer-dialog-hiding {
+  animation-name: layer-dialog-fade-out;
+  animation-duration: 0.4;
+}
+
+
+@keyframes layer-dialog-fade-in {
+  from {
+    opacity: 0.1;
+  }
+  to {
+    opacity: 1.0;
+  }
+}
+
+@keyframes layer-dialog-fade-out {
+  from {
+    opacity: 1.0;
+  }
+  to {
+    opacity: 0.01;
+  }
+}
+
+
 .layer-conversation-view-width-large {
   layer-dialog {
     padding: 22px 22px;

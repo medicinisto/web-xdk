@@ -153,8 +153,7 @@ registerComponent('layer-feedback-message-large-view', {
     onSend() {
       this.model.comment = this.nodes.input.value;
       this.model.sendFeedback();
-      this.messageViewer.destroy();
+      this.trigger('layer-container-done');
     },
   },
 });
-

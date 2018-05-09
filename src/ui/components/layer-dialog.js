@@ -45,15 +45,15 @@ registerComponent('layer-dialog', {
   style: `
     layer-dialog {
       position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0px;
-      left: 0px;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      width: 100%;
+      height: 100%;
+      top: 0px;
+      left: 0px;
     }
     layer-dialog .layer-dialog-inner {
       display: flex;
@@ -151,19 +151,53 @@ registerComponent('layer-dialog', {
      * @property {HTMLElment} content
      */
     content: {},
+
+    /**
+     * Are animations enabled.
+     *
+     * Set to `false` to disable animations:
+     *
+     * ```
+     * Layer.init({
+     *   mixins: {
+     *     'layer-dialog': {
+     *       properties: {
+     *         animationEnabled: {
+     *           value: true,
+     *         }
+     *       }
+     *     }
+     *   }
+     * });
+     * ```
+     *
+     * @property {Boolean} [isAnimationEnabled=true]
+     */
+    isAnimationEnabled: {
+      value: true,
+    },
   },
   methods: {
     onCreate() {
       // Read in its layer-id nodes such as the close button
       this.nodes.titleBar._onAfterCreate();
 
+      if (this.isAnimationEnabled) {
+        this.classList.add('layer-dialog-showing');
+      }
+
       // Last `true` argument prevents `evt.preventDefault()` from being called
       // on touch events that occur within the dialog
-      this.addEventListener('layer-container-done', this.destroy.bind(this));
+      this.addEventListener('layer-container-done', this.hideAndDestroy.bind(this));
       this.addClickHandler('dialog-click', this, this._onClick.bind(this), true);
       this.addEventListener('touchmove', this.onTouchMove.bind(this));
+      this.addEventListener('animationend', this._onAnimationEnd.bind(this), false);
       this.properties.boundPopStateListener = this._popStateListener.bind(this);
       if (!this.id) this.id = generateUUID();
+    },
+
+    _onAnimationEnd(evt) {
+      if (evt.animationName === 'layer-dialog-fade-out') this.destroy();
     },
 
     // Lifecycle method
@@ -291,7 +325,7 @@ registerComponent('layer-dialog', {
      * @method onClose
      */
     onClose() {
-      this.destroy();
+      this.hideAndDestroy();
     },
 
     /**
@@ -311,7 +345,15 @@ registerComponent('layer-dialog', {
      * @method onCloseClick
      */
     onCloseClick() {
-      this.destroy();
+      this.hideAndDestroy();
+    },
+
+    hideAndDestroy() {
+      if (this.isAnimationEnabled) {
+        this.classList.add('layer-dialog-hiding');
+      } else  {
+        this.destroy();
+      }
     },
   },
 });
