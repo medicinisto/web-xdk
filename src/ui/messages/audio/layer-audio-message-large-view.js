@@ -113,6 +113,10 @@ registerComponent('layer-audio-message-large-view', {
         }
       });
 
+      this.nodes.player.addEventListener('playing', () => (this.properties.playing = true));
+      this.nodes.player.addEventListener('pause', () => (this.properties.playing = false));
+      this.nodes.player.addEventListener('ended', () => (this.properties.playing = false));
+
       // Setup the player's source url
       this.model.getSourceUrl(url => (this.nodes.player.src = url));
 

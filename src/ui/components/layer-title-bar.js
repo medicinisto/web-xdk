@@ -30,6 +30,7 @@ registerComponent('layer-title-bar', {
     layer-title-bar {
       display: flex;
       flex-direction: row;
+      align-items: center;
     }
     layer-title-bar.layer-title-icon-empty .layer-title-bar-icon {
       display: none;
