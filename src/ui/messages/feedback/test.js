@@ -403,12 +403,13 @@ describe('Feedback Message Components', function() {
     it("Should send the feedback", function() {
       spyOn(el, "onDestroy").and.callThrough();
       spyOn(model, "sendFeedback");
+      spyOn(ui, "trigger");
 
       // Run
       click(ui.nodes.button);
 
       // Posttest
-      expect(el.onDestroy).toHaveBeenCalledWith();
+      expect(ui.trigger).toHaveBeenCalledWith('layer-container-done');
       expect(model.sendFeedback).toHaveBeenCalledWith();
 
     });

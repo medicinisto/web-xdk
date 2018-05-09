@@ -32,6 +32,9 @@ describe('layer-dialog', function() {
   describe("Working with Dialog Content", function() {
     it("Should render its string content", function() {
       el = document.createElement('layer-dialog');
+      el.isAnimationEnabled = false;
+
+      el.isAnimationEnabled = false;
       el.replaceableContent = {
         content: "<div>hello world</div>"
       };
@@ -46,6 +49,8 @@ describe('layer-dialog', function() {
 
     it("Should render its node content", function() {
       el = document.createElement('layer-dialog');
+      el.isAnimationEnabled = false;
+
       var div = document.createElement('div');
       div.innerHTML = 'hello world';
       el.replaceableContent = {
@@ -63,6 +68,8 @@ describe('layer-dialog', function() {
     it("Should not require its content to have getTitle or getIconClass", function() {
       expect(function() {
         el = document.createElement('layer-dialog');
+        el.isAnimationEnabled = false;
+
         var div = document.createElement('div');
         div.innerHTML = 'hello world';
         el.replaceableContent = {
@@ -79,6 +86,8 @@ describe('layer-dialog', function() {
 
     it("Should use its contents getTitle and getIconClass", function() {
       el = document.createElement('layer-dialog');
+      el.isAnimationEnabled = false;
+
       var div = document.createElement('div');
       div.getTitle = function() {return "Hello Title"}
       div.getIconClass = function() {debugger;return 'i-got-no-class'}
@@ -97,6 +106,8 @@ describe('layer-dialog', function() {
 
     it("Should hide the icon if no icon provided", function() {
       el = document.createElement('layer-dialog');
+      el.isAnimationEnabled = false;
+
       var div = document.createElement('div');
       div.innerHTML = 'hello world';
       el.replaceableContent = {
@@ -112,6 +123,8 @@ describe('layer-dialog', function() {
 
     it("Should hide the titlebar if no title provided", function() {
       el = document.createElement('layer-dialog');
+      el.isAnimationEnabled = false;
+
       var div = document.createElement('div');
       div.innerHTML = 'hello world';
       el.replaceableContent = {
@@ -141,6 +154,8 @@ describe('layer-dialog', function() {
   describe("Showing and dismissing dialogs", function() {
     beforeEach(function() {
       el = document.createElement('layer-dialog');
+      el.isAnimationEnabled = false;
+
       var div = document.createElement('div');
       div.innerHTML = 'hello world';
       el.replaceableContent = {
@@ -209,6 +224,7 @@ describe('layer-dialog', function() {
 
       el = document.createElement('layer-conversation-view');
       var dialog = document.createElement('layer-dialog');
+      dialog.isAnimationEnabled = false;
       dialog.replaceableContent = { content: "hello" };
       el.appendChild(dialog);
       dialog.parentComponent = el;

@@ -351,7 +351,7 @@ registerComponent('layer-dialog', {
     hideAndDestroy() {
       if (this.isAnimationEnabled) {
         this.classList.add('layer-dialog-hiding');
-      } else  {
+      } else {
         this.destroy();
       }
     },

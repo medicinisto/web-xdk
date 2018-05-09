@@ -207,19 +207,6 @@ describe("List Mixin", function() {
   });
 
   describe("The _onScroll() method", function() {
-    it("Should call evt.preventDefault if selfScrolling", function() {
-      var evt = {
-        preventDefault: jasmine.createSpy('preventDefault')
-      };
-
-      el.properties.isSelfScrolling = false;
-      el._onScroll(evt);
-      expect(evt.preventDefault).not.toHaveBeenCalled();
-
-      el.properties.isSelfScrolling = true;
-      el._onScroll(evt);
-      expect(evt.preventDefault).toHaveBeenCalledWith();
-    });
 
     it("Should call _throttler with _handleScroll if not selfScrolling", function() {
       spyOn(el, "_throttler");
