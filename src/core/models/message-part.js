@@ -301,7 +301,12 @@ class MessagePart extends Root {
    */
   fetchStream(callback) {
     // Locally generate External Content
-    if (this.__url) this._fetchStreamComplete(this.__url, callback);
+    if (this.__url) return callback(this.__url, callback);
+
+    if (this.body) {
+      this.url = typeof this.body === 'string' ? `data:${this.mimeType};utf8,${escape(this.body)}` : URL.createObjectURL(this.body);
+      return this._fetchStreamComplete(this.__url, callback);
+    }
 
     // No external content
     if (!this._content) throw new Error(ErrorDictionary.contentRequired);
@@ -317,7 +322,7 @@ class MessagePart extends Root {
 
   // Does not set this.url; instead relies on fact that this._content.downloadUrl has been updated
   _fetchStreamComplete(url, callback) {
-    this.trigger('url-loaded');
+    this._triggerAsync('url-loaded');
 
     this._triggerAsync('messageparts:change', {
       oldValue: '',
