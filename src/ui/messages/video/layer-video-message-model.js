@@ -1,11 +1,11 @@
 /**
- * The Audio Message is used to share Audio Files.
+ * The Video Message is used to share Video Files.
  *
- * A basic Audio Message can be created with:
+ * A basic Video Message can be created with:
  *
  * ```
- * AudioModel = Layer.Core.Client.getMessageTypeModelClass('AudioModel')
- * model = new AudioModel({
+ * VideoModel = Layer.Core.Client.getMessageTypeModelClass('VideoModel')
+ * model = new VideoModel({
  *    sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
  *    title: "Out of Tunes",
  *    artist: "Bad Intonation",
@@ -19,8 +19,8 @@
  * {@link #source} property:
  *
  * ```
- * AudioModel = Layer.Core.Client.getMessageTypeModelClass('AudioModel')
- * model = new AudioModel({
+ * VideoModel = Layer.Core.Client.getMessageTypeModelClass('VideoModel')
+ * model = new VideoModel({
  *    source: FileBlob,
  * });
  * model.send({ conversation });
@@ -31,10 +31,10 @@
  * Not included with the standard build. Import using:
  *
  * ```
- * import '@layerhq/web-xdk/ui/messages/audio/layer-audio-message-view';
+ * import '@layerhq/web-xdk/ui/messages/video/layer-video-message-view';
  * ```
  *
- * @class Layer.UI.messages.AudioMessageModel
+ * @class Layer.UI.messages.VideoMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
 
@@ -42,10 +42,11 @@
 import Core, { MessagePart, MessageTypeModel, Root } from '../../../core/namespace';
 import { logger } from '../../../utils';
 
-class AudioModel extends MessageTypeModel {
+class VideoModel extends MessageTypeModel {
+
 
   /**
-   * Generate the Message Parts representing this model so that the Audio Message can be sent.
+   * Generate the Message Parts representing this model so that the Video Message can be sent.
    *
    * @method generateParts
    * @protected
@@ -60,20 +61,24 @@ class AudioModel extends MessageTypeModel {
     // Intialize metadata and source MesssgePart from the Blob
     if (source) {
       if (!this.title && source.name) this.title = source.name.replace(/(.*\/)?(.*?)(\..*)?$/, '$2');
+
       if (!this.mimeType) this.mimeType = source.type;
       sourcePart = new MessagePart(source);
       this.size = source.size;
 
-      // Instantiate an audio player so we can examine the audio file; call continueFn1 when done
-      const tmpAudio = new Audio(sourcePart.url);
-      tmpAudio.addEventListener('durationchange', () => {
-        this.duration = tmpAudio.duration;
+      // Instantiate an video player so we can examine the video file; call continueFn1 when done
+      const tmpVideo = document.createElement('video');
+      tmpVideo.addEventListener('durationchange', () => {
+        this.duration = tmpVideo.duration;
+        this.width = tmpVideo.videoWidth;
+        this.height = tmpVideo.videoHeight;
         continueFn1.bind(this)();
       });
-      tmpAudio.addEventListener('error', (err) => {
-        logger.error('Failed to read audio file: ', err);
+      tmpVideo.addEventListener('error', (err) => {
+        logger.error('Failed to read video file: ', err);
         continueFn1.bind(this)();
       });
+      tmpVideo.src = sourcePart.url;
     } else {
       continueFn1.bind(this)();
     }
@@ -89,7 +94,7 @@ class AudioModel extends MessageTypeModel {
           continueFn2.bind(this)();
         });
         img.addEventListener('error', (err) => {
-          logger.error('Failed to read audio file: ', err);
+          logger.error('Failed to read video file: ', err);
           continueFn2.bind(this)();
         });
         img.src = URL.createObjectURL(preview);
@@ -104,8 +109,8 @@ class AudioModel extends MessageTypeModel {
 
       // Setup the MessagePart
       const body = this.initBodyWithMetadata([
-        'sourceUrl', 'previewUrl', 'album', 'artist', 'duration',
-        'genre', 'title', 'mimeType', 'previewWidth', 'previewHeight',
+        'sourceUrl', 'previewUrl', 'width', 'height', 'aspectRatio', 'previewWidth',
+        'previewHeight', 'title', 'subtitle', 'artist', 'mimeType', 'createdAt',
         'duration', 'size',
       ]);
       this.part = new MessagePart({
@@ -141,6 +146,7 @@ class AudioModel extends MessageTypeModel {
 
     // Initialize the mimeType property if available
     if (!this.mimeType && this.source) this.mimeType = this.source.mimeType;
+    if (this.createdAt) this.createdAt = new Date(this.createdAt);
     this._setupSlots();
   }
 
@@ -157,7 +163,7 @@ class AudioModel extends MessageTypeModel {
    *
    * ```
    * var player = new Audio();
-   * AudioModel.getSourceUrl(url => player.src = url);
+   * VideoModel.getSourceUrl(url => player.src = url);
    * ```
    *
    * @method getSourceUrl
@@ -183,7 +189,7 @@ class AudioModel extends MessageTypeModel {
    *
    * ```
    * var img = document.createElement('img');
-   * AudioModel.getPreviewUrl(url => img.src = url);
+   * VideoModel.getPreviewUrl(url => img.src = url);
    * ```
    *
    * @method getPreviewUrl
@@ -208,19 +214,14 @@ class AudioModel extends MessageTypeModel {
     this._simpleMetadataSlots = [];
     this._allMetadataSlots = [];
 
+    if (this.subtitle) {
+      this._simpleMetadataSlots.push(this.subtitle);
+      this._allMetadataSlots.push(this.subtitle);
+    }
+
     if (this.artist) {
-      this._simpleMetadataSlots.push(this.artist);
+      if (!this.subtitle) this._simpleMetadataSlots.push(this.artist);
       this._allMetadataSlots.push(this.artist);
-    }
-
-    if (this.album) {
-      if (!this._simpleMetadataSlots.length) this._simpleMetadataSlots.push(this.album);
-      this._allMetadataSlots.push(this.album);
-    }
-
-    if (this.genre) {
-      if (!this._simpleMetadataSlots.length) this._simpleMetadataSlots.push(this.genre);
-      this._allMetadataSlots.push(this.genre);
     }
 
     if (this.duration) {
@@ -231,8 +232,14 @@ class AudioModel extends MessageTypeModel {
 
     if (this.size) {
       const size = this.getSize();
-      if (this._simpleMetadataSlots.length <= 1) this._simpleMetadataSlots.push(size);
+      if (!this.duration) this._simpleMetadataSlots.push(size);
       this._allMetadataSlots.push(size);
+    }
+
+    if (this.createdAt) {
+      const createdAt = this.createdAt.toLocaleString();
+      if (!this.duration && !this.size) this._simpleMetadataSlots.push(createdAt);
+      this._allMetadataSlots.push(createdAt);
     }
   }
 
@@ -253,10 +260,11 @@ class AudioModel extends MessageTypeModel {
       return this.getOneLineSummary(true);
     }
   }
+
   getDescription() {
     return this._simpleMetadataSlots[0] || '';
-
   }
+
   getFooter() {
     return this._simpleMetadataSlots[1] || '';
   }
@@ -317,25 +325,39 @@ class AudioModel extends MessageTypeModel {
       newValue,
     });
   }
+
+  __updateHeight(newValue) {
+    if (this.width) this.aspectRatio = this.width / newValue;
+  }
+
+  __updateWidth(newValue) {
+    if (this.height) this.aspectRatio = newValue / this.height;
+  }
+
+  __getAspectRatio() {
+    if (this.__aspectRatio) return this.__aspectRatio;
+    if (this.height && this.width) return this.width / this.height;
+    return 0;
+  }
 }
 
 /**
- * MessagePart with the Audio File to be shared.
+ * MessagePart with the Video File to be shared.
  *
  * Use {@link #getSourceUrl} method rather than the `source` property to access this content.
  *
  * @property {Layer.Core.MessagePart} source
  */
-AudioModel.prototype.source = null;
+VideoModel.prototype.source = null;
 
 /**
- * URL to the Audio File to be shared
+ * URL to the Video File to be shared
  *
  * Use {@link #getSourceUrl} method rather than the `sourceUrl` property to access this content.
  *
  * @property {String} sourceUrl
  */
-AudioModel.prototype.sourceUrl = '';
+VideoModel.prototype.sourceUrl = '';
 
 /**
  * MessagePart with the Preview Image to be shared.
@@ -344,7 +366,7 @@ AudioModel.prototype.sourceUrl = '';
  *
  * @property {Layer.Core.MessagePart} source
  */
-AudioModel.prototype.preview = null;
+VideoModel.prototype.preview = null;
 
 /**
  * URL to the Preview Image to be shared
@@ -353,79 +375,7 @@ AudioModel.prototype.preview = null;
  *
  * @property {String} previewUrl
  */
-AudioModel.prototype.previewUrl = '';
-
-/**
- * Album this sound file comes from
- *
- * @property {String} album
- */
-AudioModel.prototype.album = '';
-
-/**
- * Artist of the sound file; typically shown as the Message description.
- *
- * @property {String} artist
- */
-AudioModel.prototype.artist = '';
-
-/**
- * Genre of the sound file; typically shown as the Message description.
- *
- * @property {String} genre
- */
-AudioModel.prototype.genre = '';
-
-/**
- * Title/file-name of the file; typically shown as the Message Title.
- *
- * @property {String} title
- */
-AudioModel.prototype.title = '';
-
-/**
- * MIME Type of the file.
- *
- * @property {String} mimeType
- */
-AudioModel.prototype.mimeType = '';
-
-/**
- * If a preview image is provided, provide a width and height property
- * to get the best results (least jitter) when rendering
- *
- * @property {Number} previewWidth
- */
-AudioModel.prototype.previewWidth = 0;
-
-/**
- * If a preview image is provided, provide a width and height property
- * to get the best results (least jitter) when rendering
- *
- * @property {Number} previewHeight
- */
-AudioModel.prototype.previewHeight = 0;
-
-/**
- * Duration of the audio in the duration format in seconds
- *
- * @property {String} duration
- */
-AudioModel.prototype.duration = '';
-
-/**
- * Size of the file in bytes
- *
- * @property {Number} size
- */
-AudioModel.prototype.size = null;
-
-/**
- * This property is used by different Views to share the time they have played up to.
- *
- * @property {Number} currentTime
- */
-AudioModel.prototype.currentTime = null;
+VideoModel.prototype.previewUrl = '';
 
 /**
  * If a Message Part with role of `transcript` is part of the Message, this will point to that Message Part.
@@ -435,23 +385,120 @@ AudioModel.prototype.currentTime = null;
  * @property {Layer.Core.MessagePart} transcript
  * @protected
  */
-AudioModel.prototype.transcript = null;
+VideoModel.prototype.transcript = null;
+
+
+/**
+ * Title/file-name of the file; typically shown as the Message Title.
+ *
+ * @property {String} [title]
+ */
+VideoModel.prototype.title = '';
+
+/**
+ * Subtitle to show with this message
+ *
+ * @property {String} [subtitle]
+ */
+VideoModel.prototype.subtitle = '';
+
+/**
+ * Artist who created the video
+ *
+ * @property {String} [artist]
+ */
+VideoModel.prototype.artist = '';
+
+/**
+ * MIME Type of the file.
+ *
+ * @property {String} [mimeType]
+ */
+VideoModel.prototype.mimeType = '';
+
+/**
+ * Video file creation time
+ *
+ * @property {String} [createdAt]
+ */
+VideoModel.prototype.createdAt = '';
+
+/**
+ * Video width
+ *
+ * @property {Number} [width]
+ */
+VideoModel.prototype.width = 0;
+
+/**
+ * Video height
+ *
+ * @property {Number} [height]
+ */
+VideoModel.prototype.height = 0;
+
+/**
+ * Video aspect ratio
+ *
+ * @property {Number} [aspectRatio]
+ */
+VideoModel.prototype.aspectRatio = 0;
+
+/**
+ * If a preview image is provided, provide a width and height property
+ * to get the best results (least jitter) when rendering
+ *
+ * @property {Number} previewWidth
+ */
+VideoModel.prototype.previewWidth = 0;
+
+/**
+ * If a preview image is provided, provide a width and height property
+ * to get the best results (least jitter) when rendering
+ *
+ * @property {Number} previewHeight
+ */
+VideoModel.prototype.previewHeight = 0;
+
+/**
+ * Duration of the vide in the duration format in seconds
+ *
+ * @property {String} duration
+ */
+VideoModel.prototype.duration = '';
+
+/**
+ * Size of the file in bytes
+ *
+ * @property {Number} size
+ */
+VideoModel.prototype.size = null;
+
+/**
+ * This property is used by different Views to share the time they have played up to.
+ *
+ * @property {Number} currentTime
+ */
+VideoModel.prototype.currentTime = null;
+
+VideoModel.prototype._simpleMetadataSlots = null;
+VideoModel.prototype._allMetadataSlots = null;
 
 /**
  * One instance of this type
  *
  * @static
- * @property {String} [LabelSingular=Audio Message]
+ * @property {String} [LabelSingular=Video]
  */
-AudioModel.LabelSingular = 'Audio Message';
+VideoModel.LabelSingular = 'Video';
 
 /**
  * One instance of this type
  *
  * @static
- * @property {String} [LabelPlural=Audio Messages]
+ * @property {String} [LabelPlural=Videos]
  */
-AudioModel.LabelPlural = 'Audio Messages';
+VideoModel.LabelPlural = 'Videos';
 
 /**
  * Standard concise representation of this Message Type
@@ -459,44 +506,44 @@ AudioModel.LabelPlural = 'Audio Messages';
  * @static
  * @property {String} [SummaryTemplate=]
  */
-AudioModel.SummaryTemplate = '';
+VideoModel.SummaryTemplate = '';
 
 /**
- * The default action when selecting this Message is to trigger an `layer-show-large-message` and show Large Message for Audio
+ * The default action when selecting this Message is to trigger an `layer-show-large-message` and show Large Message for Video
  *
  * @static
  * @property {String} [defaultAction=layer-show-large-message]
  */
-AudioModel.defaultAction = 'layer-show-large-message';
+VideoModel.defaultAction = 'layer-show-large-message';
 
 /**
- * The MIME Type recognized by and used by the Audio Model.
+ * The MIME Type recognized by and used by the Video Model.
  *
  * @static
- * @property {String} [MIMEType=application/vnd.layer.audio+json]
+ * @property {String} [MIMEType=application/vnd.layer.video+json]
  */
-AudioModel.MIMEType = 'application/vnd.layer.audio+json';
+VideoModel.MIMEType = 'application/vnd.layer.video+json';
 
 /**
- * The UI Component to render the Audio Model.
+ * The UI Component to render the Video Model.
  *
  * @static
- * @property {String} [messageRenderer=layer-audio-message-view]
+ * @property {String} [messageRenderer=layer-video-message-view]
  */
-AudioModel.messageRenderer = 'layer-audio-message-view';
+VideoModel.messageRenderer = 'layer-video-message-view';
 
 /**
- * The UI Component to render the Large Message Audio Model.
+ * The UI Component to render the Large Message Video Model.
  *
  * @static
- * @property {String} [messageRenderer=layer-audio-message-large-view]
+ * @property {String} [messageRenderer=layer-video-message-large-view]
  */
-AudioModel.largeMessageRenderer = 'layer-audio-message-large-view';
+VideoModel.largeMessageRenderer = 'layer-video-message-large-view';
 
 // Init the class
-Root.initClass.apply(AudioModel, [AudioModel, 'AudioModel']);
+Root.initClass.apply(VideoModel, [VideoModel, 'VideoModel']);
 
 // Register the Message Model Class with the Client
-Core.Client.registerMessageTypeModelClass(AudioModel, 'AudioModel');
+Core.Client.registerMessageTypeModelClass(VideoModel, 'VideoModel');
 
-module.exports = AudioModel;
+module.exports = VideoModel;

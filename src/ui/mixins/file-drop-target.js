@@ -180,28 +180,18 @@ mixins.FileDropTarget = module.exports = {
     _processAttachments(files) {
       const AudioModel = client.constructor.getMessageTypeModelClass('AudioModel');
 
-      const audioTypes = ['audio/mp3', 'audio/mpeg'];
       const imageTypes = ['image/gif', 'image/png', 'image/jpeg', 'image/svg'];
 
       const nonImageFiles = files.filter(file => imageTypes.indexOf(file.type) === -1);
 
-      // TODO: This is code for testing preview images and should be removed before shipping
-      const imageFiles = files.filter(file => imageTypes.indexOf(file.type) !== -1);
-      const audioFiles = files.filter(file => audioTypes.indexOf(file.type) !== -1);
-      if (AudioModel && files.length === 2 && imageFiles.length && audioFiles.length) {
-        return new AudioModel({
-          source: audioFiles[0],
-          preview: imageFiles[0],
-        });
+      let items;
+      if (nonImageFiles.length) {
+        items = files.map(file => new FileModel({ source: file, title: file.name }));
       } else {
-        let items;
-        if (nonImageFiles.length) {
-          items = files.map(file => new FileModel({ source: file, title: file.name }));
-        } else {
-          items = files.map(file => new ImageModel({ source: file, title: file.name }));
-        }
-        return new CarouselModel({ items });
+        items = files.map(file => new ImageModel({ source: file, title: file.name }));
       }
+      return new CarouselModel({ items });
+
     },
 
     /**
@@ -217,16 +207,26 @@ mixins.FileDropTarget = module.exports = {
         return new ImageModel({
           source: file,
         });
-      } else if (['audio/mp3', 'audio/mpeg'].indexOf(file.type) !== -1) {
-        const AudioModel = client.constructor.getMessageTypeModelClass('AudioModel');
-        return new AudioModel({
-          source: file,
-        });
-      } else {
-        return new FileModel({
-          source: file,
-        });
       }
+      if (['audio/mp3', 'audio/mpeg'].indexOf(file.type) !== -1) {
+        const AudioModel = client.constructor.getMessageTypeModelClass('AudioModel');
+        if (AudioModel) {
+          return new AudioModel({
+            source: file,
+          });
+        }
+      }
+      if (['video/mp4'].indexOf(file.type) !== -1) {
+        const VideoModel = client.constructor.getMessageTypeModelClass('VideoModel');
+        if (VideoModel) {
+          return new VideoModel({
+            source: file,
+          });
+        }
+      }
+      return new FileModel({
+        source: file,
+      });
     },
   },
 };

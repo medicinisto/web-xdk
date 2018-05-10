@@ -57,10 +57,6 @@ registerComponent('layer-audio-message-large-view', {
   `,
   /* eslint-enable */
   properties: {
-    // See parent class
-    widthType: {
-      value: Constants.WIDTH.FLEX,
-    },
 
     /**
      * Maximum width allowed for a preview image in px.
@@ -151,11 +147,15 @@ registerComponent('layer-audio-message-large-view', {
      */
     onRender() {
       this.nodes.title.innerHTML = this.model.getTitle();
-      this.nodes.description1.innerHTML = this.model.artist;
-      this.nodes.description2.innerHTML = this.model.album;
-      this.nodes.description3.innerHTML = this.model.genre;
-      if (this.model.duration) this.nodes.footer1.innerHTML = this.model.getDuration();
-      if (this.model.size) this.nodes.footer2.innerHTML = this.model.getSize();
+
+      const nodes = [
+        this.nodes.description1,
+        this.nodes.description2,
+        this.nodes.footer1,
+        this.nodes.footer2,
+      ];
+
+      nodes.forEach((node, index) => (node.innerHTML = this.model.getMetadataAtIndex(index)));
     },
 
     /**

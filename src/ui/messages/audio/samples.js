@@ -9,6 +9,11 @@ imgBase64 = "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAECElEQVR4Xu2ZO44TURR
   AudioModel = Layer.Core.Client.getMessageTypeModelClass('AudioModel');
   TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
 
+  new TextModel({text: "Uses sourceUrl, no metadata; mp3"}).send({ conversation: $("layer-conversation-view").conversation });
+  new AudioModel({
+    sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
+  }).send({ conversation: $("layer-conversation-view").conversation })
+
   new TextModel({text: "Uses sourceUrl, no poster; mp3"}).send({ conversation: $("layer-conversation-view").conversation });
   new AudioModel({
     sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
@@ -186,5 +191,22 @@ imgBase64 = "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAECElEQVR4Xu2ZO44TURR
     album: "Album Foo",
     genre: "Foo Mastery",
     mimeType: "audio/mpeg",
+    size: 12345,
+  }).send({ conversation: $("layer-conversation-view").conversation })
+
+  new TextModel({text: "Renders size instead of artist/genre/album"}).send({ conversation: $("layer-conversation-view").conversation });
+  new AudioModel({
+    sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
+    title: "Sample mp3",
+    mimeType: "audio/mpeg",
+    size: 12345,
+  }).send({ conversation: $("layer-conversation-view").conversation })
+
+  new TextModel({text: "Renders duration and size instead of artist/genre/album"}).send({ conversation: $("layer-conversation-view").conversation });
+  new AudioModel({
+    sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
+    title: "Sample mp3",
+    mimeType: "audio/mpeg",
+    duration: 12345678,
     size: 12345,
   }).send({ conversation: $("layer-conversation-view").conversation })

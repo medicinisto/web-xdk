@@ -213,12 +213,39 @@ mixins.MessageViewMixin = module.exports = {
      */
     getMessageListWidth() {
       let parent = this.parentComponent;
-      while (parent !== null && parent.tagName !== 'BODY' && parent.tagName !== 'LAYER-MESSAGE-LIST') {
+
+      // If we hit a <div/> then we didn't have a proper parentComponent; treat that as
+      // the wrapper that provides us our size
+      while (parent !== null && parent.tagName !== 'BODY' && parent.tagName !== 'DIV' && parent.tagName !== 'LAYER-MESSAGE-LIST') {
         parent = parent.parentComponent || parent.parentNode;
       }
 
       if (parent.tagName === 'LAYER-MESSAGE-LIST') return parent.clientWidth;
       return 0;
+    },
+
+    /**
+     * Returns the maximum number of pixels width allowed for a message given the current Message Width List.
+     *
+     * Messages may violate this (Carousel does), but should only be violated under special conditions.
+     *
+     * @method getMaxMessageWidth
+     * @returns {Number}
+     */
+    getMaxMessageWidth() {
+      const messageListWidth = this.getMessageListWidth();
+      let adjustedListWidth;
+      if (messageListWidth) {
+        if (messageListWidth >= 600) {
+          adjustedListWidth = Math.round(messageListWidth * 0.6);
+        } else {
+          adjustedListWidth = Math.round(messageListWidth * 0.9);
+        }
+
+        return Math.min(adjustedListWidth, this.preferredMaxWidth);
+      } else {
+        return this.preferredMaxWidth;
+      }
     },
 
     onDestroy() {

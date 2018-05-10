@@ -15,3 +15,4 @@ import './location/layer-location-message-model';
 import './product/layer-product-message-model';
 import './feedback/layer-feedback-message-model';
 import './audio/layer-audio-message-model';
+import './video/layer-video-message-model';

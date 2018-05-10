@@ -74,9 +74,6 @@ registerComponent('layer-feedback-message-large-view', {
   }
   `,
   properties: {
-    widthType: {
-      value: 'flex-width',
-    },
     maxByteLength: {
       value: 1500,
     },

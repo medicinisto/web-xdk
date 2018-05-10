@@ -35,8 +35,8 @@ registerComponent('layer-audio-message-view', {
   template: `
     <div layer-id="preview" class="layer-audio-images"></div>
     <div class="layer-audio-progress-container">
-    <div layer-id="bufferBar" class="layer-audio-buffer-bar"></div>
-    <div layer-id="progressBar" class="layer-audio-progress-bar"></div>
+      <div layer-id="bufferBar" class="layer-audio-buffer-bar"></div>
+      <div layer-id="progressBar" class="layer-audio-progress-bar"></div>
     </div>
   `,
   properties: {
@@ -151,14 +151,6 @@ registerComponent('layer-audio-message-view', {
       if ((this.model.preview || this.model.previewUrl) && (this.model.previewWidth && this.model.previewHeight)) {
         this.classList.add('layer-audio-preview');
         this.model.getPreviewUrl(url => (this.nodes.preview.style.backgroundImage = 'url(' + url + ')'));
-
-        // Setup sizes for this node and the parent node
-        const sizes = this._getBestDimensions();
-        this.nodes.preview.style.width = sizes.width + 'px';
-        this.nodes.preview.style.height = sizes.height + 'px';
-        if (sizes.width >= this.preferredMinWidth) {
-          this.parentComponent.style.width = this.style.width;
-        }
       } else {
         // Use the file icon instead of a preview image
         this.classList.add('layer-file-audio');
@@ -181,6 +173,18 @@ registerComponent('layer-audio-message-view', {
       this.model.getSourceUrl(url => (this.properties.audio.src = url));
       this._setupPlayButton();
       this._setupPreview();
+    },
+
+    onAttach() {
+      if ((this.model.preview || this.model.previewUrl) && (this.model.previewWidth && this.model.previewHeight)) {
+        // Setup sizes for this node and the parent node
+        const sizes = this._getBestDimensions();
+        this.nodes.preview.style.width = sizes.width + 'px';
+        this.nodes.preview.style.height = sizes.height + 'px';
+        if (sizes.width >= this.preferredMinWidth) {
+          this.messageViewer.style.width = this.nodes.preview.style.width;
+        }
+      }
     },
 
     /**
@@ -290,9 +294,8 @@ registerComponent('layer-audio-message-view', {
       let height = this.model.previewHeight;
       let width = this.model.previewWidth;
 
-      const maxWidthAvailable = this.getMessageListWidth() * 0.85 ||
-        (this.parentNode ? this.parentNode.clientWidth : 200);
-      const maxWidth = Math.min(this.maxWidth, maxWidthAvailable);
+      const maxWidthAvailable = this.getMaxMessageWidth();
+      const maxWidth = Math.max(this.preferredMinWidth, Math.min(this.maxWidth, maxWidthAvailable));
       let ratio;
 
       if (width && height) {

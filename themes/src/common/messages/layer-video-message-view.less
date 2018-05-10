@@ -1,0 +1,32 @@
+layer-video-message-view {
+  background-color: @color-black;
+}
+
+layer-video-message-large-view {
+  .layer-card-body {
+    margin: 12px 32px;
+
+    & > *:not(:empty) {
+      margin-bottom: 4px;
+    }
+
+    & > *:last-child {
+      margin-bottom: 0px;
+    }
+
+    .layer-standard-card-container-title {
+      color: @message-type-container-title-color;
+      font-size: @font-larger;
+    }
+
+    .layer-standard-card-container-description {
+      color: @message-type-container-description-color;
+      font-size: @font-large;
+    }
+
+    .layer-standard-card-container-footer {
+      color: @message-type-container-footer-color;
+      font-size: @font-medium;
+    }
+  }
+}

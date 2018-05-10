@@ -35,7 +35,7 @@ registerComponent('layer-dialog', {
     <div class="layer-dialog-inner" layer-id="inner">
       <layer-title-bar layer-id="titleBar">
         <div layer-replaceable-name="buttons">
-          <div layer-id='close' class="layer-dialog-title-close-button">&times;</div>
+          <div layer-id='close' class="layer-title-close-button">&times;</div>
         </div>
       </layer-title-bar>
       <layer-replaceable-content name='content' layer-id='content' class='layer-dialog-content-container'>
@@ -62,7 +62,7 @@ registerComponent('layer-dialog', {
       justify-content: stretch;
     }
 
-    layer-dialog:not(.layer-show-close-button) .layer-dialog-title-close-button {
+    layer-dialog:not(.layer-show-close-button) .layer-title-close-button {
       display: none;
     }
     layer-dialog .layer-dialog-content-container {
@@ -189,6 +189,7 @@ registerComponent('layer-dialog', {
       // Last `true` argument prevents `evt.preventDefault()` from being called
       // on touch events that occur within the dialog
       this.addEventListener('layer-container-done', this.hideAndDestroy.bind(this));
+      this.addEventListener('layer-container-reduce-height', this._reduceMaxHeightTo.bind(this));
       this.addClickHandler('dialog-click', this, this._onClick.bind(this), true);
       this.addEventListener('touchmove', this.onTouchMove.bind(this));
       this.addEventListener('animationend', this._onAnimationEnd.bind(this), false);
@@ -354,6 +355,28 @@ registerComponent('layer-dialog', {
       } else {
         this.destroy();
       }
+    },
+
+    onAttach() {
+      if (this.properties.requestedAltMaxHeight) {
+        this.reduceMaxHeightTo(this.properties.requestedAltMaxHeight);
+        this.properties.requestedAltMaxHeight = null;
+      }
+    },
+
+    _reduceMaxHeightTo(evt) {
+      this.reduceMaxHeightTo(evt.detail.height);
+    },
+
+    reduceMaxHeightTo(altMaxHeight) {
+      if (!this.properties._internalState.onAttachCalled) {
+        this.properties.requestedAltMaxHeight = altMaxHeight;
+        return;
+      }
+      altMaxHeight += this.nodes.titleBar.clientHeight;
+      const styles = getComputedStyle(this.nodes.inner);
+      const maxHeight = parseInt(styles.getPropertyValue('max-height'), 10);
+      if (altMaxHeight < maxHeight) this.nodes.inner.style.maxHeight = altMaxHeight + 'px';
     },
   },
 });

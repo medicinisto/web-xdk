@@ -105,12 +105,23 @@ registerComponent('layer-file-upload-button', {
     /**
      * Any File with one of these MIME Types will have a Layer.UI.messages.AudioMessageModel generated.
      *
-     * Use this property to customize what MIME Types to watch for and treat Audio Clips.
+     * Use this property to customize what MIME Types to watch for and treat as Audio Clips.
      *
      * @property {String[]}
      */
     audioTypes: {
       value: ['audio/mp3', 'audio/mpeg'],
+    },
+
+    /**
+     * Any File with one of these MIME Types will have a Layer.UI.messages.VideoMessageModel generated.
+     *
+     * Use this property to customize what MIME Types to watch for and treat as Videos.
+     *
+     * @property {String[]}
+     */
+    videoTypes: {
+      value: ['video/mp4'],
     },
   },
   methods: {
@@ -183,6 +194,7 @@ registerComponent('layer-file-upload-button', {
         const ImageModel = Layer.Client.getMessageTypeModelClass('ImageModel');
         const FileModel = Layer.Client.getMessageTypeModelClass('FileModel');
         const AudioModel = Layer.Client.getMessageTypeModelClass('AudioModel');
+        const VideoModel = Layer.Client.getMessageTypeModelClass('VideoModel');
 
         // Generate Message Type Models for each File
         const models = files.map((file) => {
@@ -196,6 +208,8 @@ registerComponent('layer-file-upload-button', {
             return new ImageModel(options);
           } else if (typeof AudioModel !== 'undefined' && this.audioTypes.indexOf(file.type) !== -1) {
             return new AudioModel(options);
+          } else if (typeof VideoModel !== 'undefined' && this.videoTypes.indexOf(file.type) !== -1) {
+            return new VideoModel(options);
           } else {
             return new FileModel(options);
           }
