@@ -350,7 +350,7 @@ describe('Image Message Components', function() {
           expect(el.classList.contains('layer-card-width-any-width')).toBe(true);
 
           // Container: hide metadata
-          expect(el.nodes.cardContainer.classList.contains('layer-card-no-metadata')).toEqual(true);
+          expect(el.nodes.cardContainer.classList.contains('layer-standard-message-view-no-metadata')).toEqual(true);
 
           // Message UI: contains anchor tag
           expect(el.nodes.ui.firstChild.tagName).toEqual('IMG');
@@ -382,7 +382,7 @@ describe('Image Message Components', function() {
               expect(el.classList.contains('layer-card-width-any-width')).toBe(true);
 
               // Container: hide metadata
-              expect(el.nodes.cardContainer.classList.contains('layer-card-no-metadata')).toEqual(true);
+              expect(el.nodes.cardContainer.classList.contains('layer-standard-message-view-no-metadata')).toEqual(true);
 
               // Message UI: contains IMG tag
               expect(el.nodes.ui.firstChild.tagName).toEqual('IMG');
@@ -416,7 +416,7 @@ describe('Image Message Components', function() {
       expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
 
       // Container: show metadata
-      expect(el.nodes.cardContainer.classList.contains('layer-card-no-metadata')).toEqual(false);
+      expect(el.nodes.cardContainer.classList.contains('layer-standard-message-view-no-metadata')).toEqual(false);
       expect(el.querySelector(' .layer-standard-card-container-title').innerText.trim()).toEqual('Picture here');
 
       // Message UI: contains image tag
@@ -446,7 +446,7 @@ describe('Image Message Components', function() {
                 expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
 
                 // Container: show metadata
-                expect(el.nodes.cardContainer.classList.contains('layer-card-no-metadata')).toEqual(false);
+                expect(el.nodes.cardContainer.classList.contains('layer-standard-message-view-no-metadata')).toEqual(false);
                 expect(el.querySelector(' .layer-standard-card-container-title').innerText.trim()).toEqual('Picture here');
 
                 // Message UI: contains anchor tag

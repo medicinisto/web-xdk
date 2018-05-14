@@ -22,7 +22,7 @@ registerComponent('layer-standard-message-view-container', {
       flex-direction: column;
       align-items: stretch;
     }
-    layer-standard-message-view-container.layer-card-no-metadata .layer-card-body {
+    layer-standard-message-view-container.layer-standard-message-view-no-metadata .layer-card-body {
       display: none;
     }
     layer-standard-message-view-container .layer-card-top {
@@ -173,7 +173,8 @@ registerComponent('layer-standard-message-view-container', {
       this.footer = model.getFooter();
 
       if (this.ui.parentComponent === this) this.ui._setupContainerClasses();
-      this.toggleClass('layer-card-no-metadata', !this.isShowingMetadata);
+      this.toggleClass('layer-standard-message-view-no-metadata', !this.isShowingMetadata);
+      this.parentComponent.toggleClass('layer-standard-message-view-no-metadata', !this.isShowingMetadata);
     },
 
     /**

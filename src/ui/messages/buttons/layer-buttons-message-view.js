@@ -46,32 +46,38 @@ registerComponent('layer-buttons-message-view', {
   properties: {
 
     /**
-     * Button Message has a widthType that is whatever its child has, or if its just buttons, use Layer.UI.Constants.WIDTH.FLEX.
+     * Button Messages use whatever its content view's preferred max width is... or 350.
      *
-     * @property {String} [widthType=Layer.UI.Constants.WIDTH.FLEX]
+     * @property {Number} [maxWidth=350]
      */
-    widthType: {
+    maxWidth: {
       get() {
-        if (this.properties.contentView && this.properties.contentView.widthType !== Constants.WIDTH.ANY) {
-          return this.properties.contentView.widthType;
+        if (this.properties.contentView) {
+          return this.properties.contentView.nodes.ui.maxWidth; // may not have a value
         } else {
-          return Constants.WIDTH.FLEX;
+          return this.properties.maxWidth || 350;
         }
       },
     },
-
-    /**
-     * Button Messages use whatever its content view's preferred max width is... or 350.
-     *
-     * @property {Number} [preferredMaxWidth=350]
-     */
-    preferredMaxWidth: {
+    minWidth: {
       get() {
-        return this.properties.contentView ? this.properties.contentView.nodes.ui.preferredMaxWidth : 350;
+        if (this.properties.contentView) {
+          return this.properties.contentView.nodes.ui.minWidth; // may not have a value
+        } else {
+          return this.properties.maxWidth || 192;
+        }
+      },
+      set(value) {
+        if (this.properties.contentView) {
+          this.properties.contentView.minWidth = value;
+        }
       },
     },
   },
   methods: {
+    onCreate() {
+      this.addEventListener('message-width-change', this._handleContentWidthChange.bind(this));
+    },
 
     /**
      * After creating the component (Lifecycle method) initialize the sub-model if present.
@@ -88,6 +94,10 @@ registerComponent('layer-buttons-message-view', {
           parentNode: this.nodes.content,
           name: 'subviewer',
         });
+        if (this.properties.contentView.style.width) {
+          this.messageViewer.width = parseInt(this.properties.contentView.style.width, 10);
+          this.style.width = this.properties.contentView.style.width;
+        }
       } else {
         this.classList.add('layer-button-card-no-content');
       }
@@ -128,6 +138,15 @@ registerComponent('layer-buttons-message-view', {
         }
         this.nodes.buttons.appendChild(widget);
       });
+    },
+
+    _handleContentWidthChange() {
+      if (this.properties.contentView) {
+        if (this.properties.contentView.style.width) {
+          this.messageViewer.width = parseInt(this.properties.contentView.style.width, 10);
+          this.style.width = this.properties.contentView.style.width;
+        }
+      }
     },
 
     /**

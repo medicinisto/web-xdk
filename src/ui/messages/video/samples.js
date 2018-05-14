@@ -8,8 +8,8 @@ imgBase64 = "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAECElEQVR4Xu2ZO44TURR
   VideoModel = Layer.Core.Client.getMessageTypeModelClass('VideoModel');
   TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
 
-  new TextModel({text: "Uses sourceUrl, previewUrl; mp4"}).send({ conversation: $("layer-conversation-view").conversation });
-  new VideoModel({
+new TextModel({text: "Uses sourceUrl, previewUrl; mp4"}).send({ conversation: $("layer-conversation-view").conversation });
+new VideoModel({
     sourceUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
     previewUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
     title: "Elephant Dream",
@@ -21,6 +21,34 @@ imgBase64 = "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAECElEQVR4Xu2ZO44TURR
     previewHeight: 360,
     width: 1280,
     height: 720,
+  }).send({ conversation: $("layer-conversation-view").conversation })
+
+new TextModel({text: "Height, previewHeight and aspectRatio; mp4"}).send({ conversation: $("layer-conversation-view").conversation });
+new VideoModel({
+    sourceUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    previewUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
+    title: "Elephant Dream",
+    subtitle: "By Blender Foundation",
+    artist: "Ton Roosendaal",
+    mimeType: "audio/mpeg",
+    duration: 653.804263,
+    previewHeight: 360,
+    aspectRatio: 1.778,
+    height: 720,
+  }).send({ conversation: $("layer-conversation-view").conversation })
+
+  new TextModel({text: "width, previewwidth and aspectRatio; mp4"}).send({ conversation: $("layer-conversation-view").conversation });
+new VideoModel({
+    sourceUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    previewUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
+    title: "Elephant Dream",
+    subtitle: "By Blender Foundation",
+    artist: "Ton Roosendaal",
+    mimeType: "audio/mpeg",
+    duration: 653.804263,
+    previewWidth: 480,
+    aspectRatio: 1.778,
+    width: 1280,
   }).send({ conversation: $("layer-conversation-view").conversation })
 
   new TextModel({text: "Uses sourceUrl, previewUrl, previewWidth and height; mp3"}).send({ conversation: $("layer-conversation-view").conversation });

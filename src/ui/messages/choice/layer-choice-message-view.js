@@ -75,11 +75,6 @@ registerComponent('layer-choice-message-view', {
       noGetterFromSetter: true,
       value: 'layer-titled-message-view-container',
     },
-
-    // See parent definition
-    widthType: {
-      value: Constants.WIDTH.FLEX,
-    },
   },
   methods: {
     /**

@@ -468,7 +468,9 @@ function setupMixin(classDef, mixin) {
         classDef.properties[name].order = mixin.properties[name].order;
       }
       if ('value' in mixin.properties[name]) {
-        classDef.properties[name].value = mixin.properties[name].value;
+        if (!('value' in classDef.properties[name]) || !mixin.properties[name].valueLowPriority) {
+          classDef.properties[name].value = mixin.properties[name].value;
+        }
       }
 
       if ('type' in mixin.properties[name]) {

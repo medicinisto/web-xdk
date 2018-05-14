@@ -15,7 +15,6 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import Constants from '../../constants';
 import AudioModel from './layer-audio-message-model';
 import Clickable from '../../mixins/clickable';
 
@@ -35,6 +34,7 @@ registerComponent('layer-audio-message-large-view', {
     }
     layer-audio-message-large-view .layer-audio-preview {
       display: inline-block;
+      background-repeat: no-repeat;
     }
   `,
   /* eslint-disable */
@@ -61,18 +61,18 @@ registerComponent('layer-audio-message-large-view', {
     /**
      * Maximum width allowed for a preview image in px.
      *
-     * @property {Number} [maxWidth=250]
+     * @property {Number} [maxPreviewWidth=250]
      */
-    maxWidth: {
+    maxPreviewWidth: {
       value: 250,
     },
 
     /**
      * Maximum height allowed for a preview image in px.
      *
-     * @property {Number} [maxHeight=250]
+     * @property {Number} [maxPreviewHeight=250]
      */
-    maxHeight: {
+    maxPreviewHeight: {
       value: 250,
     },
 
@@ -87,6 +87,9 @@ registerComponent('layer-audio-message-large-view', {
     },
   },
   methods: {
+    onCreate() {
+      this.isHeightAllocated = false;
+    },
 
     /**
      * Returns a title for use in a titlebar.
@@ -110,7 +113,7 @@ registerComponent('layer-audio-message-large-view', {
         }
       });
 
-      this.nodes.player.addEventListener('playing', () => (this.properties.playing = true));
+      this.nodes.player.addEventListener('playing', this.onPlay.bind(this));
       this.nodes.player.addEventListener('pause', () => (this.properties.playing = false));
       this.nodes.player.addEventListener('ended', () => (this.properties.playing = false));
 
@@ -123,15 +126,50 @@ registerComponent('layer-audio-message-large-view', {
       } else {
         this.classList.add('show-audio-file-icon');
       }
+      this._resizeContent();
     },
 
     // Setup the preview image sizing once the view is in the DOM
-    onAttach() {
-      if (this.model.preview || this.model.previewUrl) {
-        const sizes = this._getBestDimensions();
-        this.nodes.preview.style.width = sizes.width + 'px';
-        this.nodes.preview.style.height = sizes.height + 'px';
+    _resizeContent() {
+      const { width } = this.getAvailableWidthAndNode();
+      if (width) {
+        if (this.model.preview || this.model.previewUrl) {
+          const sizes = this.getBestDimensions({
+            contentWidth: this.model.previewWidth,
+            contentHeight: this.model.previewHeight,
+            maxHeight: this.maxPreviewHeight,
+            maxWidth: this.maxPreviewWidth,
+          });
+
+          this.nodes.preview.style.width = sizes.width + 'px';
+          this.nodes.preview.style.height = (sizes.height || sizes.width) + 'px';
+        }
+        // If it needed to be allocated, its now allocated
+        this.isHeightAllocated = true;
       }
+    },
+
+    /**
+     * Any time playback starts, insure that any other audio playing elsewhere has stopped.
+     *
+     * @method onPlay
+     */
+    onPlay() {
+      this.properties.playing = true;
+      const players = document.querySelectorAll('audio');
+      for (let i = 0; i < players.length; i++) {
+        if (players[i] !== this.nodes.player) players[i].pause();
+      }
+      const audioMessages = document.querySelectorAll('layer-audio-message-view');
+      for (let i = 0; i < audioMessages.length; i++) {
+        if (audioMessages[i] !== this) audioMessages[i].playing = false;
+      }
+    },
+
+    onAttach() {
+      // resizeContent should already have triggered, but if onAfterCreate was called when the parent
+      // was not yet added to the DOM, then it will need to be resolved here.
+      if (!this.isHeightAllocated) this._resizeContent();
     },
 
     onDetach() {
@@ -156,41 +194,6 @@ registerComponent('layer-audio-message-large-view', {
       ];
 
       nodes.forEach((node, index) => (node.innerHTML = this.model.getMetadataAtIndex(index)));
-    },
-
-    /**
-     * Calculate best width and height for the preview image given the previewWidth/height and the maxWidth/height.
-     *
-     * @method _getBestDimensions
-     * @private
-     * @return {Object}
-     * @return {Number} return.width
-     * @return {Number} return.height
-     */
-    _getBestDimensions() {
-      let height = this.model.previewHeight;
-      let width = this.model.previewWidth;
-
-      const maxWidthAvailable = this.parentNode.clientWidth;
-      const maxWidth = Math.min(this.maxWidth, maxWidthAvailable);
-      let ratio;
-
-      if (width && height) {
-        ratio = width / height;
-      } else {
-        ratio = 1;
-      }
-
-      if (width > maxWidth) {
-        width = maxWidth;
-        height = width / ratio;
-      }
-      if (height > this.maxHeight) {
-        height = this.maxHeight;
-        width = height * ratio;
-      }
-
-      return { width, height };
     },
   },
 });

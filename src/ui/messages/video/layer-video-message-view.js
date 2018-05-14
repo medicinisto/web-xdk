@@ -35,10 +35,6 @@ registerComponent('layer-video-message-view', {
     <div layer-id="playIcon" class="layer-play-button"></div>
   `,
   properties: {
-    // See parent class
-    widthType: {
-      value: Constants.WIDTH.FLEX,
-    },
 
     /**
      * Use a Standard Message Container to render this UI.
@@ -87,6 +83,10 @@ registerComponent('layer-video-message-view', {
     },
   },
   methods: {
+    onCreate() {
+      this.isHeightAllocated = false;
+    },
+
     onAfterCreate() {
       const video = document.createElement('video');
       if (!video.canPlayType(this.model.mimeType)) {
@@ -95,8 +95,30 @@ registerComponent('layer-video-message-view', {
       if (this.model.preview || this.model.previewUrl) {
         this.model.getPreviewUrl(url => (this.style.backgroundImage = 'url(' + url + ')'));
       }
+      this._resizeContent();
     },
 
+    _resizeContent() {
+      const { width } = this.getAvailableWidthAndNode();
+      if (width) {
+        // Setup sizes for this node and the parent node
+        const sizes = this.getBestDimensions({
+          contentWidth: this.model.previewWidth,
+          contentHeight: this.model.previewHeight,
+          maxHeight: this.maxHeight,
+          maxWidth: this.maxWidth,
+          minHeight: this.minHeight,
+          minWidth: this.minWidth,
+        });
+        this.style.width = sizes.width + 'px';
+        this.style.height = sizes.height + 'px';
+        if (sizes.width >= this.minWidth) {
+          this.messageViewer.width = sizes.width;
+        }
+
+        this.isHeightAllocated = true;
+      }
+    },
 
     /**
      * After we have a parent node and some clue as to our width/height, setup the preview display.
@@ -105,70 +127,9 @@ registerComponent('layer-video-message-view', {
      * @private
      */
     onAttach() {
-      // Setup sizes for this node and the parent node
-      const sizes = this._getBestDimensions();
-      this.style.width = sizes.width + 'px';
-      this.style.height = sizes.height + 'px';
-      if (sizes.width >= this.preferredMinWidth) {
-        this.messageViewer.style.width = this.style.width;
-      }
-    },
-
-    /**
-     * Calculate best width and height for the preview image given the previewWidth/height and the maxWidth/height.
-     *
-     * TODO: Reusable code should be moved to Message View Mixin
-     *
-     * @method _getBestDimensions
-     * @private
-     * @return {Object}
-     * @return {Number} return.width
-     * @return {Number} return.height
-     */
-    _getBestDimensions() {
-      let height = this.model.previewHeight;
-      let width = this.model.previewWidth;
-
-      if (!height && !width) {
-        height = this.model.height;
-        width = this.model.width;
-      }
-      if (!width) width = this.model.aspectRatio * height;
-      if (!height) height = this.model.aspectRatio / width;
-
-      const maxWidthAvailable = this.getMaxMessageWidth();
-      const maxWidth = Math.min(this.maxWidth, maxWidthAvailable);
-      let ratio;
-
-      if (width && height) {
-        ratio = width / height;
-      } else {
-        ratio = 1;
-      }
-
-      if (width > maxWidth) {
-        width = maxWidth;
-        height = width / ratio;
-      }
-      if (height > this.maxHeight) {
-        height = this.maxHeight;
-        width = height * ratio;
-      }
-
-      if (width < this.minWidth) {
-        width = this.minWidth;
-        height = width / ratio;
-      }
-
-      if (height < this.minHeight) {
-        height = this.minHeight;
-        width = height * ratio;
-      }
-
-      return {
-        width: Math.round(width),
-        height: Math.round(height),
-      };
+      // resizeContent should already have triggered, but if onAfterCreate was called when the parent
+      // was not yet added to the DOM, then it will need to be resolved here.
+      if (!this.isHeightAllocated) this._resizeContent();
     },
   },
 });

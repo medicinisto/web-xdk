@@ -37,9 +37,6 @@ registerComponent('layer-feedback-message-view', {
       noGetterFromSetter: true,
       value: 'layer-titled-message-view-container',
     },
-    widthType: {
-      value: 'flex-width',
-    },
     cssClassList: {
       value: ['layer-feedback-message-view-ratings'],
     },

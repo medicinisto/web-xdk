@@ -30,21 +30,6 @@ registerComponent('layer-file-message-view', {
 `,
 
   properties: {
-    // See parent class
-    widthType: {
-      value: Constants.WIDTH.FLEX,
-    },
-
-    /**
-     * Currently used only by the Carousel, establishes how much the Carousel can compress this width down to.
-     *
-     * @property {Number} [preferredMinWidth=250]
-     */
-    preferredMinWidth: {
-      type: Number,
-      value: 250,
-    },
-
     /**
      * Use a Standard Display Container to render this UI.
      *

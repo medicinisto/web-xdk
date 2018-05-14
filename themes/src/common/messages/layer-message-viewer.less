@@ -1,58 +1,20 @@
-layer-message-item-status layer-message-viewer:not(.layer-card-width-any-width) {
+.layer-conversation-view-width-medium, .layer-conversation-view-width-small {
+  layer-message-viewer.layer-root-viewer:not(.layer-dialog-content) {
+    max-width: 90%;
+  }
+}
+.layer-conversation-view-width-large {
+  layer-message-viewer.layer-root-viewer:not(.layer-dialog-content) {
+    max-width: 60%;
+  }
+}
+
+layer-message-viewer.layer-root-viewer.layer-dialog-content {
+  width: 100%;
   max-width: 100%;
 }
 
-layer-message-viewer:not(.layer-card-width-any-width) {
-  min-width: 192px;
-}
-
-.layer-conversation-view-width-medium, .layer-conversation-view-width-small {
-  layer-message-viewer.layer-root-viewer.layer-card-width-full-width:not(.layer-dialog-content) {
-    width: 90%;
-  }
-}
-.layer-conversation-view-width-large {
-  layer-message-viewer.layer-root-viewer.layer-card-width-full-width:not(.layer-dialog-content) {
-    width: 60%;
-  }
-}
-
-.layer-conversation-view-width-medium, .layer-conversation-view-width-small {
-  layer-message-viewer.layer-root-viewer.layer-card-width-flex-width:not(.layer-dialog-content) {
-    max-width: 90%;
-  }
-}
-.layer-conversation-view-width-large {
-  layer-message-viewer.layer-root-viewer.layer-card-width-flex-width:not(.layer-dialog-content) {
-    max-width: 60%;
-  }
-}
-
-.layer-conversation-view-width-medium, .layer-conversation-view-width-small {
-  layer-message-viewer.layer-root-viewer.layer-card-width-any-width:not(.layer-dialog-content) {
-    max-width: 90%;
-  }
-}
-.layer-conversation-view-width-large {
-  layer-message-viewer.layer-root-viewer.layer-card-width-any-width:not(.layer-dialog-content) {
-    max-width: 60%;
-  }
-}
-
-
-layer-message-viewer.layer-root-viewer.layer-dialog-content {
-  &.layer-card-width-flex-width, &.layer-card-width-any-width, &.layer-card-width-full-width {
-    width: 100%;
-    max-width: 100%;
-  }
-}
-
-
-.layer-root-viewer.layer-card-width-any-width > layer-standard-message-view-container {
-  padding-bottom: 0px;
-}
-
-layer-message-item-received .layer-root-viewer.layer-card-width-any-width > layer-standard-message-view-container > .layer-card-top {
+layer-message-item-received layer-standard-message-view-container.layer-standard-message-view-no-metadata > .layer-card-top {
   background-color: @message-item-bubble-received-background-color;
   color: @message-item-bubble-received-color;
   flex-grow: 1;
@@ -63,7 +25,7 @@ layer-message-item-received .layer-root-viewer.layer-card-width-any-width > laye
   }
 }
 
-layer-message-item-sent .layer-root-viewer.layer-card-width-any-width > layer-standard-message-view-container > .layer-card-top {
+layer-message-item-sent .layer-root-viewer > layer-standard-message-view-container.layer-standard-message-view-no-metadata > .layer-card-top {
   background-color: @message-item-bubble-sent-background-color;
   color: @message-item-bubble-text-sent-color;
   flex-grow: 1;
@@ -74,7 +36,7 @@ layer-message-item-sent .layer-root-viewer.layer-card-width-any-width > layer-st
   }
 }
 
-.layer-root-viewer.layer-card-width-any-width {
+.layer-root-viewer.layer-standard-message-view-no-metadata {
   border-width: 0px;
 }
 
@@ -113,7 +75,6 @@ layer-message-viewer {
   &.layer-card-border-rounded-bottom {
     border-radius: 0px 0px 18px 18px;
   }
-
 
   & > layer-standard-message-view-container, & > layer-titled-message-view-container {
     max-width: 100%;

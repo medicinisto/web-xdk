@@ -16,7 +16,6 @@
 
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import Constants from '../../constants';
 import './layer-link-message-model';
 
 registerComponent('layer-link-message-view', {
@@ -37,9 +36,10 @@ registerComponent('layer-link-message-view', {
     width: 100%;
     display: block;
   }
-  .layer-card-width-flex-width layer-link-message-view a {
+  layer-message-viewer.layer-link-message-view:not(.layer-standard-message-view-no-metadata) layer-link-message-view a {
     display: none;
   }
+
   layer-message-viewer.layer-link-message-view  .layer-standard-card-container-footer a,
   layer-message-viewer.layer-link-message-view  .layer-standard-card-container-footer a:visited,
   layer-message-viewer.layer-link-message-view  .layer-standard-card-container-footer a:hover {
@@ -49,11 +49,11 @@ registerComponent('layer-link-message-view', {
 
   template: '<div layer-id="image" class="layer-link-message-view-image"></div><a target="_blank" layer-id="link"></a>',
   properties: {
-    widthType: {
+    minWidth: {
+      noGetterFromSetter: true,
+      value: 0,
       get() {
-        // Use a chat bubble if there is no metadata nor image to show, else render this as a normal card-like message
-        return this.model.imageUrl || this.parentComponent.isShowingMetadata ?
-          Constants.WIDTH.FLEX : Constants.WIDTH.ANY;
+        return this.isPlainLink() ? 0 : 192;
       },
     },
 
@@ -90,18 +90,19 @@ registerComponent('layer-link-message-view', {
      * @protected
      */
     _setupContainerClasses() {
-      if (this.widthType) {
-        const isLinkOnly = this.widthType === Constants.WIDTH.ANY;
-        const useArrow = !isLinkOnly && !this.model.imageUrl;
+      const useArrow = !this.isPlainLink() && !this.model.imageUrl;
 
-        if (useArrow) {
-          const arrow = document.createElement('div');
-          arrow.classList.add('layer-next-icon');
-          this.parentComponent.customControls = arrow;
-        }
-
-        this.parentComponent.classList[this.model.imageUrl || isLinkOnly ? 'remove' : 'add']('layer-no-core-ui');
+      if (useArrow) {
+        const arrow = document.createElement('div');
+        arrow.classList.add('layer-next-icon');
+        this.parentComponent.customControls = arrow;
       }
+
+      this.parentComponent.classList[!useArrow ? 'remove' : 'add']('layer-no-core-ui');
+    },
+
+    isPlainLink() {
+      return !this.model.imageUrl && !this.parentComponent.isShowingMetadata;
     },
   },
 });

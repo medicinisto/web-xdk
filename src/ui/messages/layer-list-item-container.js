@@ -11,7 +11,7 @@ registerComponent('layer-list-item-container', {
     flex-direction: row;
     flex-grow: 1;
   }
-  layer-list-item-container.layer-card-no-metadata .layer-card-body {
+  layer-list-item-container.layer-standard-message-view-no-metadata .layer-card-body {
     display: none;
   }
   layer-list-item-container .layer-card-body {
@@ -67,7 +67,7 @@ registerComponent('layer-list-item-container', {
       this.title = model.getTitle();
       this.description = model.getDescription();
       this.footer = model.getFooter();
-      this.toggleClass('layer-card-no-metadata', !this.title && !this.description && !this.footer);
+      this.toggleClass('layer-standard-message-view-no-metadata', !this.title && !this.description && !this.footer);
     },
   },
 });

@@ -1,7 +1,14 @@
 /**
  * UI for a Location Message
  *
- * You must set your Google Maps API key in `window.googleMapsAPIKey`
+ * You must set your Google Maps API key using:
+ *
+ * ```
+ * Layer.init({
+ *   googleMapsKey: myKey,
+ *   appId: myAppId
+ * });
+ * ```
  *
  * ### Importing
  *
@@ -19,7 +26,7 @@ import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import Constants from '../../constants';
 import './layer-location-message-model';
-import { defer, logger } from '../../../utils';
+import { logger } from '../../../utils';
 import { googleMapsKey } from '../../../settings';
 
 registerComponent('layer-location-message-view', {
@@ -29,9 +36,7 @@ registerComponent('layer-location-message-view', {
   layer-message-viewer.layer-location-message-view {
     cursor: pointer;
   }
-  layer-message-viewer.layer-location-message-view:not(.layer-location-message-view-address-only) {
-    max-width: 640px;
-  }
+
   .layer-location-message-view-address-only layer-location-message-view {
     display: none;
   }
@@ -62,12 +67,7 @@ registerComponent('layer-location-message-view', {
       },
     },
 
-    // See parent class
-    widthType: {
-      value: Constants.WIDTH.FULL,
-    },
-
-    preferredMaxWidth: {
+    maxWidth: {
       value: 640,
     },
 
@@ -82,11 +82,28 @@ registerComponent('layer-location-message-view', {
     },
   },
   methods: {
+    onCreate() {
+      this.properties._onResizeBound = this._onResize.bind(this);
+      window.addEventListener('resize', this.properties._onResizeBound);
+    },
+
+    onAfterCreate() {
+      this._resizeContent();
+    },
 
     // See parent class for definition
     onAttach() {
       // Once added to the DOM structure, we should be able to determine an optimal width for the map.
-      if (!this.hideMap) this._updateImageSrc();
+      this._resizeContent();
+    },
+
+    onDestroy() {
+      window.removeEventListener('resize', this.properties._onResizeBound);
+    },
+
+    _onResize() {
+      if (this.properties._onResizeTimeout) clearTimeout(this.properties._onResizeTimeout);
+      this.properties._onResizeTimeout = setTimeout(() => this._resizeContent(), 1000);
     },
 
     /**
@@ -95,27 +112,34 @@ registerComponent('layer-location-message-view', {
      * @method
      * @private
      */
-    _updateImageSrc() {
-      if (this.parentNode && this.parentNode.clientWidth) {
-        defer(() => {
-          let marker;
-          if (this.model.latitude) {
-            marker = `${this.model.latitude},${this.model.longitude}`;
-          } else {
-            marker = escape(this.model.street1 + (this.model.street2 ? ` ${this.model.street2}` : '') +
-              ` ${this.model.city} ${this.model.administrativeArea}, ${this.model.postalCode} ${this.model.country}`);
-          }
-          if (!googleMapsKey) logger.error('No googleMapsKey found in settings; pass into Layer.init()');
-          this.nodes.img.src = location.protocol + '//maps.googleapis.com/maps/api/staticmap?' +
-            `size=${this.parentNode.clientWidth}x${this.height}&language=${navigator.language.toLowerCase()}` +
-            `&key=${googleMapsKey}&zoom=${this.model.zoom}&markers=${marker}`;
-        });
+    _resizeContent() {
+      if (this.hideMap) return;
+      let width = this.getMaxMessageWidth();
+      if (width) {
+        width = Math.min(width, this.maxWidth);
+        if (width === this.properties.lastWidth) return;
+        this.properties.lastWidth = width;
+
+        let marker;
+        if (this.model.latitude) {
+          marker = `${this.model.latitude},${this.model.longitude}`;
+        } else {
+          marker = escape(this.model.street1 + (this.model.street2 ? ` ${this.model.street2}` : '') +
+            ` ${this.model.city} ${this.model.administrativeArea}, ${this.model.postalCode} ${this.model.country}`);
+        }
+        if (!googleMapsKey) logger.error('No googleMapsKey found in settings; pass into Layer.init()');
+        this.nodes.img.src = location.protocol + '//maps.googleapis.com/maps/api/staticmap?' +
+          `size=${width}x${this.height}&language=${navigator.language.toLowerCase()}` +
+          `&key=${googleMapsKey}&zoom=${this.model.zoom}&markers=${marker}`;
+        this.style.width = width + 'px';
+        this.messageViewer.width = width;
       }
     },
 
     // See parent class definition
+    // Note that onRerender is not yet called when resizing the window, but it should eventually be
     onRerender() {
-      this._updateImageSrc();
+      this._resizeContent();
     },
 
     /**

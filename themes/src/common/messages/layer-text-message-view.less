@@ -1,5 +1,5 @@
 /* TODO: Refactor this so that group theme doesnt have chat bubbles */
-layer-standard-message-view-container.layer-card-no-metadata > .layer-card-top > layer-text-message-view {
+layer-standard-message-view-container.layer-standard-message-view-no-metadata > .layer-card-top > layer-text-message-view {
   padding: @text-chat-padding;
 
   p.layer-line-wrapping-paragraph {
@@ -7,7 +7,7 @@ layer-standard-message-view-container.layer-card-no-metadata > .layer-card-top >
   }
 }
 
-layer-standard-message-view-container:not(.layer-card-no-metadata) > .layer-card-top > layer-text-message-view {
+layer-standard-message-view-container:not(.layer-standard-message-view-no-metadata) > .layer-card-top > layer-text-message-view {
   padding: @text-core-ui-padding;
   overflow-y: auto;
 
@@ -29,10 +29,10 @@ layer-message-item-status layer-text-message-view p {
 }
 
 layer-message-viewer.layer-text-message-view {
-  &.layer-card-width-any-width {
+  &.layer-standard-message-view-no-metadata {
     border-radius: @text-chat-viewer-radius;
   }
-  &:not(.layer-card-width-any-width) {
+  &:not(.layer-standard-message-view-no-metadata) {
     border-radius: @text-viewer-radius;
   }
 }

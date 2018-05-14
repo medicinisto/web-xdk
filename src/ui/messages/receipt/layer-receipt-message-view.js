@@ -61,8 +61,8 @@ registerComponent('layer-receipt-message-view', {
       noGetterFromSetter: true,
       value: 'layer-titled-message-view-container',
     },
-    widthType: {
-      value: Constants.WIDTH.FULL,
+    maxWidth: {
+      value: 500,
     },
   },
   methods: {

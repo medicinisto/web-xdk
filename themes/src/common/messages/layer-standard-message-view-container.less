@@ -1,7 +1,7 @@
 
 
-layer-message-viewer.layer-card-width-flex-width, layer-message-viewer.layer-card-width-full-width {
-  & > layer-standard-message-view-container:not(.layer-card-no-metadata) > .layer-card-body-outer {
+layer-message-viewer {
+  & > layer-standard-message-view-container:not(.layer-standard-message-view-no-metadata) > .layer-card-body-outer {
     margin: 8px 0px;
 
     .layer-standard-card-container-title, .layer-standard-card-container-description, .layer-standard-card-container-footer {
@@ -27,9 +27,23 @@ layer-standard-message-view-container {
     flex-direction: column;
     justify-content: center;
   }
+
+  & > .layer-card-top > .layer-message-type-view {
+    box-sizing: border-box;
+  }
 }
 
-layer-message-viewer:not(.layer-card-width-any-width) > layer-standard-message-view-container > .layer-card-top {
+
+.layer-root-viewer > layer-standard-message-view-container {
+  .layer-card-body-outer {
+    margin: 8px 0px;
+  }
+  &.layer-standard-message-view-no-metadata .layer-card-body-outer {
+    margin: 0px 0px;
+  }
+}
+
+layer-message-viewer > layer-standard-message-view-container:not(.layer-standard-message-view-no-metadata) > .layer-card-top {
   overflow: hidden; // prevent images from spilling out of bounds
   border-radius: 16px 16px 0px 0px;
   max-height: 450px;

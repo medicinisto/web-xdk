@@ -82,11 +82,6 @@ registerComponent('layer-carousel-message-view', {
       },
     },
 
-    // See parent class
-    widthType: {
-      value: Constants.WIDTH.FLEX,
-    },
-
     hideMessageItemRightAndLeftContent: {
       value: true,
     },
@@ -160,7 +155,7 @@ registerComponent('layer-carousel-message-view', {
       this.nodes.items.innerHTML = '';
 
       // Calculate a maximum allowed Carousel Item Width
-      const maxCardWidth = this._getMaxMessageWidth();
+      const maxCardWidth = this.getMaxMessageWidth();
 
       // Generate/reuse each Carousel Item
       this.model.items.forEach((item) => {
@@ -187,19 +182,12 @@ registerComponent('layer-carousel-message-view', {
 
         // Apply some appropiate widths based on the cards preferences and behaviors and our Maximum
         // Carousel Item Width calculated above.
-        const preferedMinWidth = card.nodes.ui.preferredMinWidth;
-        const preferedMaxWidth = Math.min(maxCardWidth, card.nodes.ui.preferredMaxWidth);
-        switch (card.widthType) {
-          case Constants.WIDTH.FULL:
-            card.style.width = card.style.minWidth = preferedMaxWidth + 'px';
-            break;
-          case Constants.WIDTH.FLEX:
-            if (preferedMaxWidth < preferedMinWidth) {
-              card.style.maxWidth = card.style.minWidth = card.style.width = preferedMaxWidth + 'px';
-            } else {
-              card.style.maxWidth = card.style.minWidth = card.style.width = preferedMinWidth + 'px';
-            }
-            break;
+        const minWidth = Math.min(maxCardWidth, card.nodes.ui.minWidth);
+        const maxWidth = card.nodes.ui.maxWidth ? Math.min(maxCardWidth, card.nodes.ui.maxWidth) : maxCardWidth;
+        if (maxWidth < minWidth) {
+          card.style.maxWidth = card.style.minWidth = card.style.width = maxWidth + 'px';
+        } else {
+          card.style.maxWidth = card.style.minWidth = card.style.width = minWidth + 'px';
         }
       });
 
@@ -239,28 +227,9 @@ registerComponent('layer-carousel-message-view', {
      * @private
      */
     _adjustCarouselWidth() {
-      const parent = this.parentComponent.parentNode;
-      if (!parent || !parent.clientWidth) return 0;
-      const carouselWidth = parent.clientWidth ? Math.floor(parent.clientWidth - 2) : 0;
-      if (carouselWidth) this.messageViewer.style.maxWidth = carouselWidth + 'px';
-    },
-
-    /**
-     * Get the maximum allowed width for individual (generic) Carousel Items.
-     *
-     * Individual Carousel Items may have their own preferences, but they should not excede this value.
-     *
-     * @method _getMaxMessageWidth
-     * @returns {Number}
-     * @private
-     */
-    _getMaxMessageWidth() {
-      const parent = this.parentComponent.parentNode;
-      if (!parent || !parent.clientWidth) return 350;
-      let width = parent.clientWidth;
-      if (width > 600) width = width * 0.6;
-      else width = width * 0.8;
-      return Math.floor(width);
+      const { width } = this.getAvailableWidthAndNode();
+      if (!width) return;
+      this.messageViewer.style.maxWidth = (width - 2) + 'px';
     },
 
     /**

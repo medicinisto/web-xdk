@@ -67,6 +67,10 @@ registerComponent('layer-video-message-large-view', {
       return VideoModel.LabelSingular;
     },
 
+    onCreate() {
+      this.isHeightAllocated = false;
+    },
+
     // Setup the player and poster once properties are available.
     onAfterCreate() {
       this.nodes.player.autoplay = this.autoplay;
@@ -86,22 +90,37 @@ registerComponent('layer-video-message-large-view', {
       if (this.model.preview || this.model.previewUrl) {
         this.model.getPreviewUrl(url => (this.nodes.player.poster = url));
       }
+
+      this._resizeContent();
     },
 
     // Setup the preview image sizing once the view is in the DOM
+    _resizeContent() {
+      const { width } = this.getAvailableWidthAndNode();
+      if (width) {
+        const sizes = this.getBestDimensions({
+          contentWidth: this.model.width,
+          contentHeight: this.model.height,
+        });
+        this.nodes.player.style.width = sizes.width + 'px';
+        this.nodes.player.style.height = sizes.height + 'px';
+
+        const styles = getComputedStyle(this.lastChild);
+        const margins = parseInt(styles.getPropertyValue('margin-top'), 10) +
+          parseInt(styles.getPropertyValue('margin-bottom'), 10);
+        const requiredHeight = this.lastChild.clientHeight + this.lastChild.offsetTop + margins;
+
+        this.trigger('layer-container-reduce-height', {
+          height: requiredHeight,
+        });
+        this.isHeightAllocated = true;
+      }
+    },
+
     onAttach() {
-      const sizes = this._getBestDimensions();
-      this.nodes.player.style.width = sizes.width + 'px';
-      this.nodes.player.style.height = sizes.height + 'px';
-
-      const styles = getComputedStyle(this.lastChild);
-      const margins = parseInt(styles.getPropertyValue('margin-top'), 10) +
-        parseInt(styles.getPropertyValue('margin-bottom'), 10);
-      const requiredHeight = this.lastChild.clientHeight + this.lastChild.offsetTop + margins;
-
-      this.trigger('layer-container-reduce-height', {
-        height: requiredHeight,
-      });
+      // resizeContent should already have triggered, but if onAfterCreate was called when the parent
+      // was not yet added to the DOM, then it will need to be resolved here.
+      if (!this.isHeightAllocated) this._resizeContent();
     },
 
     onDetach() {
@@ -128,45 +147,6 @@ registerComponent('layer-video-message-large-view', {
       ];
 
       nodes.forEach((node, index) => (node.innerHTML = this.model.getMetadataAtIndex(index)));
-    },
-
-    /**
-     * Calculate best width and height for the preview image given the previewWidth/height and the maxWidth/height.
-     *
-     * @method _getBestDimensions
-     * @private
-     * @return {Object}
-     * @return {Number} return.width
-     * @return {Number} return.height
-     */
-    _getBestDimensions() {
-      let height = this.model.height;
-      let width = this.model.width;
-
-      if (!width) width = this.model.aspectRatio * height;
-      if (!height) height = this.model.aspectRatio / width;
-
-
-      const maxWidth = this.messageViewer.parentNode.clientWidth;
-      const maxHeight = this.messageViewer.parentNode.clientHeight;
-      let ratio;
-
-      if (width && height) {
-        ratio = width / height;
-      } else {
-        ratio = 1;
-      }
-
-      if (width > maxWidth) {
-        width = maxWidth;
-        height = width / ratio;
-      }
-      if (height > maxHeight) {
-        height = maxHeight;
-        width = height * ratio;
-      }
-
-      return { width, height };
     },
   },
 });

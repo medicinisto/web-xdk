@@ -108,11 +108,16 @@ class VideoModel extends MessageTypeModel {
       if (this.isDestroyed) return;
 
       // Setup the MessagePart
-      const body = this.initBodyWithMetadata([
-        'sourceUrl', 'previewUrl', 'width', 'height', 'aspectRatio', 'previewWidth',
-        'previewHeight', 'title', 'subtitle', 'artist', 'mimeType', 'createdAt',
+      const props = [
+        'sourceUrl', 'previewUrl', 'title', 'subtitle', 'artist', 'mimeType', 'createdAt',
         'duration', 'size',
-      ]);
+      ];
+
+      // Use of getters for these means that these may return values even when they were never provided with values
+      ['width', 'height', 'aspectRatio', 'previewWidth', 'previewHeight'].forEach((propName) => {
+        if (this['__' + propName]) props.push(propName);
+      });
+      const body = this.initBodyWithMetadata(props);
       this.part = new MessagePart({
         mimeType: this.constructor.MIMEType,
         body: JSON.stringify(body),
@@ -337,6 +342,30 @@ class VideoModel extends MessageTypeModel {
   __getAspectRatio() {
     if (this.__aspectRatio) return this.__aspectRatio;
     if (this.height && this.width) return this.width / this.height;
+    return 0;
+  }
+
+  __getPreviewWidth() {
+    if (this.__previewWidth) return this.__previewWidth;
+    if (this.__previewHeight && this.__aspectRatio) return this.__previewHeight * this.__aspectRatio;
+    return this.width;
+  }
+
+  __getPreviewHeight() {
+    if (this.__previewHeight) return this.__previewHeight;
+    if (this.__previewWidth && this.__aspectRatio) return this.__previewWidth / this.__aspectRatio;
+    return this.height;
+  }
+
+  __getWidth() {
+    if (this.__width) return this.__width;
+    if (this.__height && this.__aspectRatio) return this.__height * this.__aspectRatio;
+    return 0;
+  }
+
+  __getHeight() {
+    if (this.__height) return this.__height;
+    if (this.__width && this.__aspectRatio) return this.__width / this.__aspectRatio;
     return 0;
   }
 }

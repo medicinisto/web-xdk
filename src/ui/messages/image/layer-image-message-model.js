@@ -86,8 +86,14 @@ class ImageModel extends MessageTypeModel {
    */
   _generateParts2() {
     // Generate the MessagePart body
-    const body = this.initBodyWithMetadata(['sourceUrl', 'previewUrl', 'artist', 'fileName', 'orientation',
-      'width', 'height', 'previewWidth', 'previewHeight', 'title', 'subtitle']);
+    const props = ['sourceUrl', 'previewUrl', 'artist', 'fileName', 'orientation',
+      'title', 'subtitle'];
+
+    // Use of getters for these means that these may return values even when they were never provided with values
+    ['width', 'height', 'aspectRatio', 'previewWidth', 'previewHeight'].forEach((propName) => {
+      if (this['__' + propName]) props.push(propName);
+    });
+    const body = this.initBodyWithMetadata(props);
 
     // Generate the MessagePart with the body
     this.part = new MessagePart({
@@ -337,6 +343,36 @@ class ImageModel extends MessageTypeModel {
       return this.previewUrl;
     }
   }
+
+  __getAspectRatio() {
+    if (this.__aspectRatio) return this.__aspectRatio;
+    if (this.height && this.width) return this.width / this.height;
+    return 0;
+  }
+
+  __getPreviewWidth() {
+    if (this.__previewWidth) return this.__previewWidth;
+    if (this.__previewHeight && this.__aspectRatio) return this.__previewHeight * this.__aspectRatio;
+    return this.width;
+  }
+
+  __getPreviewHeight() {
+    if (this.__previewHeight) return this.__previewHeight;
+    if (this.__previewWidth && this.__aspectRatio) return this.__previewWidth / this.__aspectRatio;
+    return this.height;
+  }
+
+  __getWidth() {
+    if (this.__width) return this.__width;
+    if (this.__height && this.__aspectRatio) return this.__height * this.__aspectRatio;
+    return 0;
+  }
+
+  __getHeight() {
+    if (this.__height) return this.__height;
+    if (this.__width && this.__aspectRatio) return this.__width / this.__aspectRatio;
+    return 0;
+  }
 }
 
 /**
@@ -471,6 +507,13 @@ ImageModel.prototype.previewWidth = null;
  * @property {Number} previewHeight
  */
 ImageModel.prototype.previewHeight = null;
+
+/**
+ * Aspect ratio is width / height
+ *
+ * @property {Number} aspectRatio
+ */
+ImageModel.prototype.aspectRatio = null;
 
 /**
  * The `open-url` action needs a url property in order to determine what to open.

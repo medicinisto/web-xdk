@@ -27,9 +27,6 @@ registerComponent('layer-message-type-list-view', {
     messageViewContainerTagName: {
       value: null,
     },
-    widthType: {
-      value: Constants.WIDTH.FLEX,
-    },
     cardBorderStyle: {
       value: 'none',
     },

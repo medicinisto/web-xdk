@@ -35,13 +35,6 @@ registerComponent('layer-response-message-view', {
     }
   `,
   properties: {
-
-    // widthType is derived from the Response's contentView if there is one
-    widthType: {
-      get() {
-        return this.properties.contentView ? this.properties.contentView.widthType : Constants.WIDTH.FLEX;
-      },
-    },
   },
   methods: {
 

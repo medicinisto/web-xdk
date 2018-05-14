@@ -40,11 +40,6 @@ registerComponent('layer-audio-message-view', {
     </div>
   `,
   properties: {
-    // See parent class
-    widthType: {
-      value: Constants.WIDTH.FLEX,
-    },
-
     /**
      * Use a Standard Message Container to render this UI.
      *
@@ -132,6 +127,7 @@ registerComponent('layer-audio-message-view', {
       this.renderBufferBar();
     },
     onCreate() {
+      this.isHeightAllocated = false;
       this.properties.audio = new Audio();
       this.properties.audio.preload = 'metadata';
       this.properties.audio.addEventListener('ended', this.resetAudio.bind(this));
@@ -173,22 +169,42 @@ registerComponent('layer-audio-message-view', {
       this.model.getSourceUrl(url => (this.properties.audio.src = url));
       this._setupPlayButton();
       this._setupPreview();
+      this._resizeContent();
+    },
+
+    _resizeContent() {
+      const { width } = this.getAvailableWidthAndNode();
+      if (width) {
+        if ((this.model.preview || this.model.previewUrl) && (this.model.previewWidth && this.model.previewHeight)) {
+          // Setup sizes for this node and the parent node
+          const sizes = this.getBestDimensions({
+            contentWidth: this.model.previewWidth,
+            contentHeight: this.model.previewHeight,
+            maxHeight: this.maxHeight,
+            maxWidth: this.maxWidth,
+          });
+
+          this.nodes.preview.style.width = sizes.width + 'px';
+          this.nodes.preview.style.height = sizes.height + 'px';
+          if (sizes.width >= this.minWidth) {
+            this.messageViewer.style.width = this.nodes.preview.style.width;
+          }
+        }
+        // If it needed to be allocated, its now allocated
+        this.isHeightAllocated = true;
+      }
     },
 
     onAttach() {
-      if ((this.model.preview || this.model.previewUrl) && (this.model.previewWidth && this.model.previewHeight)) {
-        // Setup sizes for this node and the parent node
-        const sizes = this._getBestDimensions();
-        this.nodes.preview.style.width = sizes.width + 'px';
-        this.nodes.preview.style.height = sizes.height + 'px';
-        if (sizes.width >= this.preferredMinWidth) {
-          this.messageViewer.style.width = this.nodes.preview.style.width;
-        }
-      }
+      // resizeContent should already have triggered, but if onAfterCreate was called when the parent
+      // was not yet added to the DOM, then it will need to be resolved here.
+      if (!this.isHeightAllocated) this._resizeContent();
     },
 
     /**
      * When the play button is clicked, toggle playback... and make sure that the Action Handler is not triggered.
+     *
+     * Insure that any other audio players have stopped
      *
      * You may add a mixin to customize this behavior.
      *
@@ -200,6 +216,14 @@ registerComponent('layer-audio-message-view', {
       evt.preventDefault();
       evt.stopPropagation();
       this.playing = !this.playing;
+      if (this.playing) {
+        const players = document.querySelectorAll('audio');
+        for (let i = 0; i < players.length; i++) players[i].pause();
+        const audioMessages = document.querySelectorAll('layer-audio-message-view');
+        for (let i = 0; i < audioMessages.length; i++) {
+          if (audioMessages[i] !== this) audioMessages[i].playing = false;
+        }
+      }
     },
 
     /**
@@ -279,41 +303,6 @@ registerComponent('layer-audio-message-view', {
         this.renderProgressBar();
         this.playing = true;
       }
-    },
-
-    /**
-     * Calculate best width and height for the preview image given the previewWidth/height and the maxWidth/height.
-     *
-     * @method _getBestDimensions
-     * @private
-     * @return {Object}
-     * @return {Number} return.width
-     * @return {Number} return.height
-     */
-    _getBestDimensions() {
-      let height = this.model.previewHeight;
-      let width = this.model.previewWidth;
-
-      const maxWidthAvailable = this.getMaxMessageWidth();
-      const maxWidth = Math.max(this.preferredMinWidth, Math.min(this.maxWidth, maxWidthAvailable));
-      let ratio;
-
-      if (width && height) {
-        ratio = width / height;
-      } else {
-        ratio = 1;
-      }
-
-      if (width > maxWidth) {
-        width = maxWidth;
-        height = width / ratio;
-      }
-      if (height > this.maxHeight) {
-        height = this.maxHeight;
-        width = height * ratio;
-      }
-
-      return { width, height };
     },
 
     /**

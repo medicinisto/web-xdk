@@ -293,7 +293,9 @@ registerComponent('layer-message-list', {
       this.properties._checkVisibilityBound = this._checkVisibility.bind(this);
 
       window.addEventListener('focus', this.properties._checkVisibilityBound);
+      this.addEventListener('message-width-change', this.onMessageWidthChange.bind(this));
     },
+
 
     /**
      * Cleanup all pointers to self created by registering event handlers.
@@ -898,8 +900,10 @@ registerComponent('layer-message-list', {
 
           // Function determines if everything is resolved, and if so, calls onPagedDataDone(true)
           const onCardFinished = () => {
+            if (needsPagedDataDone) return;
             unfinishedUIs = unfinishedUIs.filter(card => !card.isHeightAllocated);
             if (unfinishedUIs.length === 0) {
+              needsPagedDataDone = true;
               this.removeEventListener('message-height-change', onCardFinished);
               setTimeout(() => this.onPagedDataDone(true), 10);
             }
@@ -921,6 +925,12 @@ registerComponent('layer-message-list', {
       if (needsPagedDataDone) {
         this.onPagedDataDone(true);
         this.properties.inPagedData = false;
+      }
+    },
+
+    onMessageWidthChange() {
+      if (this.properties.stuckToBottom && !this.properties.inPagedData) {
+        this.scrollToBottom();
       }
     },
 

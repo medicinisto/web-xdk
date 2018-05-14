@@ -136,20 +136,14 @@ registerComponent('layer-message-viewer', {
     },
 
     /**
-     * Describes how the width of this Message Type will be managed.
+     * Width of the View in pixels; leave unset to let it adjust its size to its content.
      *
-     * One of:
-     *
-     * * Layer.UI.Constants.WIDTH.FULL: Uses all available width
-     * * Layer.UI.Constants.WIDTH.ANY: No minimum, maximum is all available width; generallay does not look like a card
-     * * Layer.UI.Constants.WIDTH.FLEX: card that has a minimum and a maximum but tries for an optimal size for its contents
-     *
-     * @property {String} widthType
+     * @property {Number} [type=]
      */
-    widthType: {
-      set(newValue, oldValue) {
-        if (oldValue) this.classList.remove('layer-card-width-' + oldValue);
-        if (newValue) this.classList.add('layer-card-width-' + newValue);
+    width: {
+      set(value) {
+        this.style.width = value + 'px';
+        this.trigger('message-width-change');
       },
     },
 

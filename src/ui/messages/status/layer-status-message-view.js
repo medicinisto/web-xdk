@@ -35,9 +35,6 @@ registerComponent('layer-status-message-view', {
   `,
   mixins: [MessageViewMixin],
   properties: {
-    widthType: {
-      value: Constants.WIDTH.ANY,
-    },
     messageViewContainerTagName: {
       value: '',
     },

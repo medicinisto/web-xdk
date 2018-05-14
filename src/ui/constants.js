@@ -1,9 +1,4 @@
 module.exports = {
-  WIDTH: {
-    FULL: 'full-width',
-    FLEX: 'flex-width',
-    ANY: 'any-width',
-  },
   FOCUS: {
     NEVER: 0,
     ALWAYS: 1,

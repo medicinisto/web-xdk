@@ -65,13 +65,11 @@ registerComponent('layer-product-message-view', {
   mixins: [MessageViewMixin],
 
   properties: {
-    widthType: {
-      value: Constants.WIDTH.FULL,
-    },
-
-    // Carousels of these things should not fill _any_ sized screen; put a max.
-    preferredMaxWidth: {
+    maxWidth: {
       value: 500,
+    },
+    minWidth: {
+      value: 350,
     },
   },
   methods: {

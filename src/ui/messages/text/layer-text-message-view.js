@@ -30,9 +30,11 @@ registerComponent('layer-text-message-view', {
   mixins: [MessageViewMixin],
   // Note that there is also a message property managed by the MessageHandler mixin
   properties: {
-    widthType: {
+    minWidth: {
+      noGetterFromSetter: true,
+      value: 0,
       get() {
-        return this.parentComponent.isShowingMetadata ? Constants.WIDTH.FLEX : Constants.WIDTH.ANY;
+        return this.parentComponent.isShowingMetadata ? 192 : 0;
       },
     },
     messageViewContainerTagName: {

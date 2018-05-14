@@ -387,7 +387,12 @@ describe('Video Message Components', function() {
           el.nodes.ui.parentNode.parentNode.style.width = '300px';
           el.nodes.ui._setupPreview();
 
-          var sizes = el.nodes.ui._getBestDimensions();
+          var sizes = el.nodes.ui.getBestDimensions({
+            contentWidth: model.previewWidth,
+            contentHeight: model.previewHeight,
+            maxWidth: ui.maxWidth,
+            maxHeight: ui.maxHeight
+          });
           expect(sizes.height * 10).toEqual(sizes.width);
 
           // Message Viewer: gets the layer-card-width-any-width class

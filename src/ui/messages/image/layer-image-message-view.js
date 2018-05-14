@@ -44,10 +44,11 @@ registerComponent('layer-image-message-view', {
   template: '<img layer-id="image" />',
   properties: {
 
-    // See parent class; uses an any-width style width if there is no metadata.
-    widthType: {
+    minWidth: {
+      noGetterFromSetter: true,
+      value: 0,
       get() {
-        return this.parentComponent.isShowingMetadata ? Constants.WIDTH.FLEX : Constants.WIDTH.ANY;
+        return this.parentComponent.isShowingMetadata ? 192 : 0;
       },
     },
 
@@ -88,68 +89,44 @@ registerComponent('layer-image-message-view', {
   methods: {
     onCreate() {
       this.nodes.image.addEventListener('load', evt => this._imageLoaded(evt.target));
+
+      // Image Message heights aren't known until the metadata has been parsed; and cannot be scaled
+      // unless we know how much space is available in the Message List
+      this.isHeightAllocated = false;
     },
 
     // See parent component for definition
     onAfterCreate() {
-      // Image Message heights aren't known until the metadata has been parsed; default to false.
-      if (this.model.part.body) {
-        this._initializeHeight();
-      } else {
-        this.model.once('message-type-model:change', () => {
-          this._initializeHeight();
-          this.onRender();
+      this._resizeContent();
+    },
+
+    onAttach() {
+      // resizeContent should already have triggered, but if onAfterCreate was called when the parent
+      // was not yet added to the DOM, then it will need to be resolved here.
+      if (!this.isHeightAllocated) this._resizeContent();
+    },
+
+    _resizeContent() {
+      const { width } = this.getAvailableWidthAndNode();
+      if (width) {
+        const hasMetadata = this.parentComponent.isShowingMetadata;
+        // Setup sizes for this node and the parent node
+        const sizes = this.getBestDimensions({
+          contentWidth: this.model.previewWidth,
+          contentHeight: this.model.previewHeight,
+          maxHeight: hasMetadata ? this.heightWithMetadata : this.maxHeightWithoutMetadata,
+          maxWidth: this.maxWidth,
         });
+
+        this.style.width = sizes.width + 'px';
+        this.style.height = sizes.height + 'px';
+        if (sizes.width >= this.minWidth) {
+          this.messageViewer.width = sizes.width;
+        }
+
+        // If it needed to be allocated, its now allocated
+        this.isHeightAllocated = true;
       }
-    },
-
-    _initializeHeight() {
-      this.properties.sizes = this._getBestDimensions({});
-      if (this.properties.sizes.height) {
-        this.height = this.properties.sizes.height;
-      } else {
-        this.isHeightAllocated = false;
-      }
-    },
-
-    // TODO: Allow this to be recalculated using the available width on the screen. For now this simplifies things greatly.
-    _getBestDimensions({
-      height = this.model.previewHeight || this.model.height,
-      width = this.model.previewWidth || this.model.width,
-    }) {
-      const maxWidthAvailable = this.getMessageListWidth() * 0.85;
-      const maxWidth = this.parentComponent.isShowingMetadata ? this.maxWidth : maxWidthAvailable;
-      let ratio;
-      let newWidth;
-      let newHeight;
-
-      if (width && height) {
-        ratio = width / height;
-      }
-
-      if (this.parentComponent && this.parentComponent.isShowingMetadata) {
-        newHeight = this.heightWithMetadata;
-        if (ratio) newWidth = newHeight * ratio;
-      } else if (height) {
-        newHeight = Math.min(this.maxHeightWithoutMetadata, height);
-        newWidth = newHeight * ratio;
-      }
-
-      if (newWidth && newWidth > maxWidth) {
-        newWidth = maxWidth;
-        newHeight = newWidth / ratio;
-      }
-
-      return { width: newWidth, height: newHeight };
-    },
-
-    // See parent component for definition
-    onAttach: {
-      mode: registerComponent.MODES.AFTER,
-      value() {
-        // Any time the widget is re-added to the DOM, update its dimensions and rerender
-        this.onRerender();
-      },
     },
 
     /**
@@ -161,8 +138,6 @@ registerComponent('layer-image-message-view', {
      * @method onRerender
      */
     onRender() {
-      // wait until the parentComponent is a Message Display Container
-      // if (!this.properties._internalState.onAttachCalled) return;
 
       // Get the blob and render as a canvas
       if (this.model.source || this.model.preview) {
@@ -172,25 +147,6 @@ registerComponent('layer-image-message-view', {
         // Else get the imageUrl/previewUrl and stick it in the image src property.
         const img = this.nodes.image;
         img.src = this.model.previewUrl || this.model.sourceUrl;
-        if (this.properties.sizes) {
-          if (this.properties.sizes.height) {
-            this.height = this.properties.sizes.height;
-          } else {
-            img.style.display = 'none';
-          }
-          if (this.properties.sizes.width) img.style.width = this.properties.sizes.width + 'px';
-        }
-      }
-    },
-
-    onRerender() {
-      if (this.nodes.image.naturalWidth && this.model.part.body &&
-        this.parentComponent && this.parentComponent.isShowingMetadata) {
-
-        // 10 margin for error in case custom stylesheets add margins borders and padding to skew results
-        if (this.nodes.image.naturalWidth + 10 < this.parentComponent.clientWidth) {
-          this.nodes.image.style.width = 'inherit';
-        }
       }
     },
 
@@ -206,52 +162,10 @@ registerComponent('layer-image-message-view', {
     _imageLoaded() {
       if (this.properties._internalState.onDestroyCalled) return;
       const img = this.nodes.image;
-      if (!this.properties.sizes.height) {
-        this.properties.sizes = this._getBestDimensions({ width: img.naturalWidth, height: img.naturalHeight });
-        if (this.properties.sizes.height) {
-          this.height = this.properties.sizes.height;
-          img.style.display = '';
-          this.isHeightAllocated = true;
-        }
-      }
-
-      const minWidth = this.parentComponent ? this.parentComponent.getPreferredMinWidth() : 292;
-      const width = this.properties.sizes.width;
-      // maxWidth has already been used to constrain img.width and can be ignored for this calculation
-      if (width > minWidth) this.messageViewer.style.width = (width + 2) + 'px';
-      this.onRerender();
+      this.model.previewWidth = img.naturalWidth;
+      this.model.previewHeight = img.naturalHeight;
+      this._resizeContent();
     },
-
-    /**
-     * Lookup the maximum allowed width for this Image.
-     *
-     * If its NOT a Root Model, then its width should fill all available space in the parent.
-     *
-     * If it IS a Root Model, then we execute upon rules that use 60% of available width or 80% of width
-     * based on the total available width.
-     *
-     * Note that even if there is a large amount of available width, there is still a maximum allowed height
-     * that may prevent us from using the full width.
-     *
-     * @method _getMaxMessageWidth
-     * @private
-     * @removed
-     */
-    /* _getMaxMessageWidth() {
-      if (this.messageViewer.classList.contains('layer-root-viewer')) {
-        const parent = this.messageViewer.parentNode;
-        if (!parent || !parent.clientWidth) return 0;
-
-        // Enforcing the 60%/80% rules is pretty arbitrary; alternate calculations should be looked at;
-        // Location View may have implemented improvements on this
-        let width = parent.clientWidth;
-        if (width > 600) width = width * 0.6;
-        else width = width * 0.8;
-        return width;
-      } else {
-        return this.messageViewer.parentNode.clientWidth;
-      }
-    },*/
 
 
     /**
@@ -278,17 +192,7 @@ registerComponent('layer-image-message-view', {
           // Write the image to a canvas with the specified orientation
           ImageManager(blob, (canvas) => {
             if (canvas instanceof HTMLElement) {
-            /*  if (width < minWidth && height < minHeight) {
-                if (width > height) {
-                  canvas = ImageManager.scale(canvas, { minWidth });
-                } else {
-                  canvas = ImageManager.scale(canvas, { minHeight });
-                }
-              }
-*/
-
               this.nodes.image.src = canvas.toDataURL();
-              // if (canvas.width >= this.minWidth) this.parentComponent.style.width = canvas.width + 'px';
               this.isHeightAllocated = true;
             } else {
               logger.error(canvas);
