@@ -346,9 +346,6 @@ describe('Image Message Components', function() {
       CustomElements.takeRecords();
       setTimeout(function() {
         try {
-          // Message Viewer: gets the layer-card-width-any-width class
-          expect(el.classList.contains('layer-card-width-any-width')).toBe(true);
-
           // Container: hide metadata
           expect(el.nodes.cardContainer.classList.contains('layer-standard-message-view-no-metadata')).toEqual(true);
 
@@ -378,9 +375,6 @@ describe('Image Message Components', function() {
           Layer.Utils.defer.flush();
           setTimeout(function() {
             try {
-              // Message Viewer: gets the layer-card-width-any-width class
-              expect(el.classList.contains('layer-card-width-any-width')).toBe(true);
-
               // Container: hide metadata
               expect(el.nodes.cardContainer.classList.contains('layer-standard-message-view-no-metadata')).toEqual(true);
 
@@ -412,9 +406,6 @@ describe('Image Message Components', function() {
       Layer.Utils.defer.flush();
       CustomElements.takeRecords()
 
-      // Message Viewer: gets the layer-card-width-flex-width class
-      expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
-
       // Container: show metadata
       expect(el.nodes.cardContainer.classList.contains('layer-standard-message-view-no-metadata')).toEqual(false);
       expect(el.querySelector(' .layer-standard-card-container-title').innerText.trim()).toEqual('Picture here');
@@ -442,9 +433,6 @@ describe('Image Message Components', function() {
 
             setTimeout(function() {
               try {
-                // Message Viewer: gets the layer-card-width-flex-width class
-                expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
-
                 // Container: show metadata
                 expect(el.nodes.cardContainer.classList.contains('layer-standard-message-view-no-metadata')).toEqual(false);
                 expect(el.querySelector(' .layer-standard-card-container-title').innerText.trim()).toEqual('Picture here');

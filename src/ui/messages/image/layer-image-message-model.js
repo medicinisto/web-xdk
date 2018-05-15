@@ -365,13 +365,13 @@ class ImageModel extends MessageTypeModel {
   __getWidth() {
     if (this.__width) return this.__width;
     if (this.__height && this.__aspectRatio) return this.__height * this.__aspectRatio;
-    return 0;
+    return null;
   }
 
   __getHeight() {
     if (this.__height) return this.__height;
     if (this.__width && this.__aspectRatio) return this.__width / this.__aspectRatio;
-    return 0;
+    return null;
   }
 }
 

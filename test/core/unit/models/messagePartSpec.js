@@ -307,9 +307,9 @@ describe("The MessageParts class", function() {
         });
 
         it("Should trigger a content-loaded event", function() {
-            spyOn(part, "trigger");
+            spyOn(part, "_triggerAsync");
             part._fetchContentComplete("Hey Ho");
-            expect(part.trigger).toHaveBeenCalledWith("content-loaded");
+            expect(part._triggerAsync).toHaveBeenCalledWith("content-loaded");
         });
 
         it("Should trigger messages:change event", function(done) {
@@ -413,9 +413,9 @@ describe("The MessageParts class", function() {
       });
 
       it("Should trigger url-loaded", function() {
-        spyOn(part, "trigger");
+        spyOn(part, "_triggerAsync");
         part._fetchStreamComplete("hey");
-        expect(part.trigger).toHaveBeenCalledWith("url-loaded");
+        expect(part._triggerAsync).toHaveBeenCalledWith("url-loaded");
       });
 
       it("Should trigger messages:change", function(done) {

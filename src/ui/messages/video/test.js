@@ -1,9 +1,12 @@
 /* eslint-disable */
+// NOTE: For simplicity we use an audioBlob instead of a much larger videoBlob for these tests
 describe('Video Message Components', function() {
   var VideoModel;
   var conversation;
   var testRoot;
   var client;
+  var sourceUrl = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4";
+  var previewUrl = "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg";
 
   function click(el) {
     if (Layer.Utils.isIOS) {
@@ -18,6 +21,8 @@ describe('Video Message Components', function() {
       el.click();
     }
   }
+
+  var mp3Base64 = "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";
 
 
   var imgBase64 = "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAECElEQVR4Xu2ZO44TURREa0SAWBASKST8xCdDQMAq+OyAzw4ISfmLDBASISERi2ADEICEWrKlkYWny6+77fuqalJfz0zVOXNfv/ER8mXdwJF1+oRHBDCXIAJEAPMGzONnA0QA8wbM42cDRADzBszjZwNEAPMGzONnA0QA8wbM42cDRADzBszjZwNEAPMGzONnA0QA8wbM42cDRADzBszjZwNEAPMGzONnA0QA8wbM42cDRADzBszjZwNEAPMGzONnA0QA8wbM42cDRADzBszjZwNEAPMGzONnA0QA8wbM42cDRADzBszjZwNEAPMGzONnA0QA8waWjX8OwHcAv5f9Me3fPRugvbuxd14C8B7AVwA3q0oQAcYwtr2+hn969faPVSWIAG2AT3rXJvz17CcAN6ptgggwrwDb4JeVIALMJ8AY/JISRIB5BGDhr3/aZwDXKxwHEWC6AJcBvAOwfuBjvuNfABcBfGGGl5yJANPabYV/B8DLaT96nndHgPYeu4c/RI8AbQJIwO9FgDMAfrVxWuRdMvB7EOA+gHsALgD4uQjO3b6pFPzqAjwA8HTF5weA8weWQA5+ZQGOw1//jR5SAkn4VQV4CODJls18CAmuAHjbcM8vc9U76ZSrdgt4BODxyLG8Twla4P8BcLfKPX/sEaeSAAz8fR4H8vArHQHXAHwYs3Xj9SU3gQX8SgKcAvBitTp38WAJCWzgVxJg+F0qSGAFv5oAh5bADn5FAQ4lwVUAb3a86nX1tL/tXK10Czj+O+7zOLCFX3UDrEXYhwTW8KsLsPRx0Ap/+A/fq12uKpVnqx4BSx8Hgb9quAcB5t4EgX/sz6sXAeaSIPA3zqOeBJgqwTMAzxuuelJn/ubzSG8CTJFg12ex4Z4vDb+HW8A2aK1XRFYCC/g9C7DkJrCB37sAS0hgBV9BgDklGODfBvCaPScU5np8CPxf71OfCSzhq2yAqZ8d2MJXE6DlOLCGryjALhLYw1cVgJEg8Dv7MKjlgXvbg2Hgd/ph0BwSBH7nHwZNkeCW4z1/rDCV/wOM5RyOg7MAvo0Nur3uIoAbVzpvBKCr0hyMAJpc6VQRgK5KczACaHKlU0UAuirNwQigyZVOFQHoqjQHI4AmVzpVBKCr0hyMAJpc6VQRgK5KczACaHKlU0UAuirNwQigyZVOFQHoqjQHI4AmVzpVBKCr0hyMAJpc6VQRgK5KczACaHKlU0UAuirNwQigyZVOFQHoqjQHI4AmVzpVBKCr0hyMAJpc6VQRgK5KczACaHKlU0UAuirNwQigyZVOFQHoqjQHI4AmVzpVBKCr0hyMAJpc6VQRgK5KczACaHKlU0UAuirNwQigyZVOFQHoqjQHI4AmVzpVBKCr0hz8BzIXtYE3VcPnAAAAAElFTkSuQmCC";
@@ -84,31 +89,36 @@ describe('Video Message Components', function() {
 
   describe("Model Tests", function() {
     it("Should create an appropriate Message with metadata", function() {
+      var d = new Date().toISOString();
       var model = new VideoModel({
-        title: "b",
-        artist: "c",
-        sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
+        title: "title",
+        subtitle: "subtitle",
+        artist: "artist",
+        sourceUrl: sourceUrl,
         size: 55,
         duration: 66,
-        mimeType: "audio/mp3",
-        previewUrl: "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg",
+        mimeType: "video/mp4",
+        previewUrl: previewUrl,
         previewWidth: 77,
-        previewHeight: 88
+        previewHeight: 88,
+        createdAt: d,
       });
       model.generateMessage(conversation, function(message) {
         expect(message.parts.size).toEqual(1);
         var rootPart = message.getRootPart();
         expect(rootPart.mimeType).toEqual(VideoModel.MIMEType);
         expect(JSON.parse(rootPart.body)).toEqual({
-          title: "b",
-          artist: "c",
-          source_url: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
+          title: "title",
+          subtitle: "subtitle",
+          artist: "artist",
+          source_url: sourceUrl,
           size: 55,
           duration: 66,
-          mime_type: "audio/mp3",
-          preview_url: "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg",
+          mime_type: "video/mp4",
+          preview_url: previewUrl,
           preview_width: 77,
-          preview_height: 88
+          preview_height: 88,
+          created_at: d,
         });
       });
     });
@@ -144,7 +154,7 @@ describe('Video Message Components', function() {
           var sourcePart = message.getPartsMatchingAttribute({'role': 'source'})[0];
           var previewPart = message.getPartsMatchingAttribute({'role': 'preview'})[0];
 
-          expect(rootPart.mimeType).toEqual('application/vnd.layer.audio+json');
+          expect(rootPart.mimeType).toEqual('application/vnd.layer.video+json');
           expect(JSON.parse(rootPart.body)).toEqual({
             size: audioBlob.size,
             title: "title",
@@ -208,7 +218,7 @@ describe('Video Message Components', function() {
       expect(m.preview.body).toBe(imageBlob);
     });
 
-    it("Should return title sourceUrl or Audio Message to getTitle() call", function() {
+    it("Should return title sourceUrl or Video to getTitle() call", function() {
       expect(new VideoModel({
         title: "b",
         sourceUrl: "a/b/c/e.mp3",
@@ -225,57 +235,84 @@ describe('Video Message Components', function() {
         source: audioBlob,
         mimeType: "audio/mp3",
       });
-      expect(model.getTitle()).toEqual("Audio Message");
+      expect(model.getTitle()).toEqual("Video");
       model.destroy();
     });
 
-    it("Should return title artist album or genre to getDescription() call", function() {
+    it("Should return subtitle, artist, duration, size or createdAt to getDescription() call", function() {
       expect(new VideoModel({
         artist: "a",
-        album: "b",
-        genre: "c",
+        subtitle: "subtitle",
+        duration: 50,
+        size: 60000,
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
-      }).getDescription()).toEqual("a");
+      }).getDescription()).toEqual("subtitle");
 
       expect(new VideoModel({
-        album: "b",
-        genre: "c",
+        artist: "artist",
+        duration: 50,
+        size: 60000,
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
-      }).getDescription()).toEqual("b");
+      }).getDescription()).toEqual("artist");
 
       expect(new VideoModel({
-        genre: "c",
+        duration: 50,
+        size: 60000,
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
-      }).getDescription()).toEqual("c");
+      }).getDescription()).toEqual("00:00:50");
 
       expect(new VideoModel({
+        size: 60000,
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
-      }).getDescription()).toEqual("");
+      }).getDescription()).toEqual("60K");
     });
 
-    it("Should return duration or size to a getFooter() call", function() {
+    it("Should return duration or size or empty string to a getFooter() call", function() {
       var duration = 500000;
       var hours = duration / 60 / 60;
       expect(Math.floor(hours)).toEqual(138);
 
       expect(new VideoModel({
-        duration: duration,
         size: 60000,
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
-      }).getFooter()).toMatch(/138.*:\d\d:\d\d/);
+      }).getFooter()).toEqual("");
 
       expect(new VideoModel({
+        duration: 50,
         size: 60000,
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
       }).getFooter()).toEqual("60K");
 
       expect(new VideoModel({
+        subtitle: 'subtitle',
+        duration: 50,
+        size: 60000,
+        sourceUrl: "a/b/c/e.mp3",
+        mimeType: "audio/mp3",
+      }).getFooter()).toEqual("00:00:50");
+
+
+      expect(new VideoModel({
+        subtitle: 'subtitle',
+        size: 60000,
+        sourceUrl: "a/b/c/e.mp3",
+        mimeType: "audio/mp3",
+      }).getFooter()).toEqual("60K");
+
+      expect(new VideoModel({
+        subtitle: 'subtitle',
+        sourceUrl: "a/b/c/e.mp3",
+        mimeType: "audio/mp3",
+      }).getFooter()).toEqual("");
+
+      expect(new VideoModel({
+        size: 60000,
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
       }).getFooter()).toEqual("");
@@ -303,12 +340,12 @@ describe('Video Message Components', function() {
 
       expect(model1.getOneLineSummary()).toEqual("b");
       expect(model2.getOneLineSummary()).toEqual("e");
-      expect(model3.getOneLineSummary()).toEqual("Audio Message");
+      expect(model3.getOneLineSummary()).toEqual("Video");
       model3.destroy();
     });
   });
 
-  describe("Audio View Tests", function() {
+  describe("Video View Tests", function() {
     var el, message;
     beforeEach(function() {
       el = document.createElement('layer-message-viewer');
@@ -318,9 +355,12 @@ describe('Video Message Components', function() {
       if (el) el.onDestroy();
     });
 
-    it("Should setup an audio object", function() {
+    it("Should show tall preview", function() {
       var model = new VideoModel({
-        sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
+        sourceUrl: sourceUrl,
+        previewUrl: previewUrl,
+        previewWidth: 1000,
+        previewHeight: 2000,
         mimeType: "audio/mp3"
       });
       model.generateMessage(conversation, function(m) {
@@ -330,16 +370,21 @@ describe('Video Message Components', function() {
       el.message = message;
 
       Layer.Utils.defer.flush();
+      expect(el.nodes.ui.maxHeight).toEqual(250);
+      testRoot.style.width = '300px';
+      el.nodes.ui._resizeContent();
 
-      expect(el.nodes.ui.properties.audio).toEqual(jasmine.any(window.Audio));
-      expect(el.nodes.ui.properties.audio.src).toEqual("http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3");
+      expect(el.nodes.ui.style.backgroundImage.indexOf(previewUrl)).not.toEqual("-1");
+      expect(el.nodes.ui.maxHeight > 0).toBe(true);
+      expect(el.nodes.ui.minWidth).toEqual(48);
+      expect(el.nodes.ui.style.height).toEqual('250px')
+      expect(el.nodes.ui.style.width).toEqual('125px');
     });
 
-
-    it("Should render previewUrl as a tall image", function() {
+    it("Should show very tall but cropped preview", function() {
       var model = new VideoModel({
-        sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
-        previewUrl: "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg",
+        sourceUrl: sourceUrl,
+        previewUrl: previewUrl,
         previewWidth: 100,
         previewHeight: 1000,
         mimeType: "audio/mp3"
@@ -351,191 +396,148 @@ describe('Video Message Components', function() {
       el.message = message;
 
       Layer.Utils.defer.flush();
-      el.nodes.ui.style.height = '200px';
-      el.nodes.ui.parentNode.parentNode.style.width = '300px';
-      el.nodes.ui._setupPreview();
+      testRoot.style.width = '300px';
+      el.nodes.ui._resizeContent();
 
-      // Message Viewer: gets the layer-card-width-any-width class
-      expect(el.nodes.ui.nodes.preview.style.backgroundImage.indexOf("https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg")).not.toEqual("-1");
-      expect(el.nodes.ui.nodes.preview.style.height).toEqual(el.nodes.ui.maxHeight + 'px');
-      expect(el.nodes.ui.nodes.preview.style.width).toEqual((100 * el.nodes.ui.maxHeight / 1000) + 'px');
-
-      expect(el.nodes.ui.classList.contains('layer-audio-preview')).toBe(true);
-      expect(el.nodes.ui.classList.contains('layer-file-audio')).toBe(false);
+      expect(el.nodes.ui.style.backgroundImage.indexOf(previewUrl)).not.toEqual("-1");
+      expect(el.nodes.ui.maxHeight > 0).toBe(true);
+      expect(el.nodes.ui.minWidth).toEqual(48);
+      expect(el.nodes.ui.style.height).toEqual('250px')
+      expect(el.nodes.ui.style.width).toEqual('48px');
     });
 
-    it("Should render preview as a wide image", function(done) {
-      var imageBlob = generateBlob(imgBase64, "image/jpeg");
+    it("Should show wide preview", function() {
       var model = new VideoModel({
-        sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
-        preview: imageBlob,
-        previewWidth: 1000,
-        previewHeight: 100,
-        mimeType: "audio/mp3"
-      });
-      model.generateMessage(conversation, function(m) {
-        try {
-          model.previewWidth = 1000; // these values get blown away by imageBlob's dimensions
-          model.previewHeight = 100;
-          message = m;
-
-          el.message = message;
-
-          Layer.Utils.defer.flush();
-
-          el.nodes.ui.style.height = '200px';
-          el.nodes.ui.parentNode.parentNode.style.width = '300px';
-          el.nodes.ui._setupPreview();
-
-          var sizes = el.nodes.ui.getBestDimensions({
-            contentWidth: model.previewWidth,
-            contentHeight: model.previewHeight,
-            maxWidth: ui.maxWidth,
-            maxHeight: ui.maxHeight
-          });
-          expect(sizes.height * 10).toEqual(sizes.width);
-
-          // Message Viewer: gets the layer-card-width-any-width class
-          expect(el.nodes.ui.nodes.preview.style.backgroundImage).not.toEqual('');
-          expect(el.nodes.ui.nodes.preview.style.height).toEqual(sizes.height + 'px');
-          expect(el.nodes.ui.nodes.preview.style.width).toEqual(sizes.width + 'px');
-
-          expect(el.nodes.ui.classList.contains('layer-audio-preview')).toBe(true);
-          expect(el.nodes.ui.classList.contains('layer-file-audio')).toBe(false);
-          done();
-        } catch(e) {
-          done(e);
-        }
-      });
-    });
-
-    it("Should render file icon if no preview", function() {
-      var imageBlob = generateBlob(imgBase64, "image/jpeg");
-      var model = new VideoModel({
-        sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
+        sourceUrl: sourceUrl,
+        previewUrl: previewUrl,
+        previewWidth: 2000,
+        previewHeight: 1000,
         mimeType: "audio/mp3"
       });
       model.generateMessage(conversation, function(m) {
         message = m;
       });
+      el.client = client;
+      el.message = message;
 
+      Layer.Utils.defer.flush();
+      el.nodes.ui.style.height = '200px'; // Comes from style sheets not loaded
+      testRoot.style.width = '300px';
+      el.nodes.ui._resizeContent();
+
+      expect(el.nodes.ui.style.backgroundImage.indexOf(previewUrl)).not.toEqual("-1");
+      expect(el.nodes.ui.maxHeight > 0).toBe(true);
+
+      expect(el.nodes.ui.style.height).toEqual('150px')
+      expect(el.nodes.ui.style.width).toEqual('300px');
+    });
+
+    it("Should show very wide preview", function() {
+      var model = new VideoModel({
+        sourceUrl: sourceUrl,
+        previewUrl: previewUrl,
+        previewWidth: 2000,
+        previewHeight: 100,
+        mimeType: "audio/mp3"
+      });
+      model.generateMessage(conversation, function(m) {
+        message = m;
+      });
+      el.client = client;
+      el.message = message;
+
+      Layer.Utils.defer.flush();
+      el.nodes.ui.style.height = '200px'; // Comes from style sheets not loaded
+      testRoot.style.width = '300px';
+      el.nodes.ui._resizeContent();
+
+      expect(el.nodes.ui.style.backgroundImage.indexOf(previewUrl)).not.toEqual("-1");
+      expect(el.nodes.ui.maxHeight > 0).toBe(true);
+
+      expect(el.nodes.ui.style.height).toEqual('48px')
+      expect(el.nodes.ui.style.width).toEqual('300px');
+    });
+
+    it("Should show black background", function() {
+      var model = new VideoModel({
+        sourceUrl: sourceUrl,
+        previewWidth: 2000,
+        previewHeight: 1000,
+        mimeType: "audio/mp3"
+      });
+      model.generateMessage(conversation, function(m) {
+        message = m;
+      });
+      el.client = client;
+      el.message = message;
+
+      Layer.Utils.defer.flush();
+      el.nodes.ui.style.height = '200px'; // Comes from style sheets not loaded
+      testRoot.style.width = '300px';
+      el.nodes.ui._resizeContent();
+
+      expect(el.nodes.ui.style.backgroundImage.indexOf(previewUrl)).not.toEqual("-1");
+      expect(el.nodes.ui.maxHeight > 0).toBe(true);
+
+      var styles = window.getComputedStyle(el.nodes.ui);
+      expect(styles.getPropertyValue('background-image')).toEqual('none');
+    });
+
+    it("Should show metadata", function() {
+      var model = new VideoModel({
+        title: "title",
+        artist: "artist",
+        duration: 50,
+        sourceUrl: sourceUrl,
+        previewUrl: previewUrl,
+        previewWidth: 1000,
+        previewHeight: 2000,
+        mimeType: "audio/mp3"
+      });
+      model.generateMessage(conversation, function(m) {
+        message = m;
+      });
+      el.client = client;
       el.message = message;
 
       Layer.Utils.defer.flush();
 
-      expect(el.nodes.ui.classList.contains('layer-audio-preview')).toBe(false);
-      expect(el.nodes.ui.classList.contains('layer-file-audio')).toBe(true);
+      // Posttest
+      expect(el.querySelector('.layer-standard-card-container-title').innerText.trim()).toEqual('title');
+      expect(el.querySelector('.layer-standard-card-container-description').innerText.trim()).toEqual('artist');
+      expect(el.querySelector('.layer-standard-card-container-footer').innerText.trim()).toEqual('00:00:50');
     });
 
-    describe("Standard Audio View Tests", function() {
-      var model, ui, el, message;
-      beforeEach(function(done) {
-        model = new VideoModel({
-          sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
-          mimeType: "audio/mp3"
-        });
-        model.generateMessage(conversation, function(m) {
-          message = m;
-        });
-
-        el = document.createElement('layer-message-viewer');
-        testRoot.appendChild(el);
-
-        el.message = message;
-
-        Layer.Utils.defer.flush();
-        ui = el.nodes.ui;
-        ui.style.height = '200px';
-        ui.parentNode.parentNode.style.width = '300px';
-        var triggered = false;
-        ui.properties.audio.addEventListener('canplay', function(evt) {
-          if (!triggered) {
-            triggered = true;
-            done();
-          }
-        });
+    it("Should open large video message", function() {
+      var model = new VideoModel({
+        title: "title",
+        artist: "artist",
+        duration: 50,
+        sourceUrl: sourceUrl,
+        previewUrl: previewUrl,
+        previewWidth: 1000,
+        previewHeight: 2000,
+        mimeType: "audio/mp3"
       });
-      afterEach(function() {
-        if (el) el.onDestroy();
+      model.generateMessage(conversation, function(m) {
+        message = m;
       });
+      el.client = client;
+      el.message = message;
 
-      it("The play button should toggle the playing property", function() {
-        // Pretest
-        expect(el.contains(ui.properties.playButton)).toBe(true);
-        expect(ui.properties.playButton).toEqual(jasmine.any(HTMLElement));
-        expect(ui.playing).toBe(false);
+      Layer.Utils.defer.flush();
 
-        // Run
-        click(ui.properties.playButton);
+      // Run test
+      click(el);
+      Layer.Utils.defer.flush();
 
-        // Posttest
-        expect(ui.playing).toBe(true);
-      });
+      // Posttest
+      expect(document.querySelector('layer-dialog')).not.toBe(null);
+      expect(document.querySelector('layer-dialog').content.tagName).toEqual('LAYER-MESSAGE-VIEWER');
+      expect(document.querySelector('layer-dialog').content.model).toBe(model);
 
-      it("The play button should prevent runAction from being called", function() {
-        spyOn(ui, "runAction");
-        click(ui.properties.playButton);
-        expect(ui.runAction).not.toHaveBeenCalled();
-      });
-
-      it("Should show the broken play button if content is not playable", function(done) {
-        ui.properties.audio.src = 'https://google.com';
-        setTimeout(function() {
-          try {
-            expect(ui.properties.playButton.classList.contains('layer-not-playable-button')).toBe(true);
-            done();
-          } catch(e) {
-            done(e);
-          }
-        }, 2000);
-      });
-
-      it("Should render progress", function() {
-        var audio = ui.properties.audio;
-        ui.properties.audio = {currentTime: 2, duration: 5};
-        ui.renderProgressBar();
-        expect(ui.nodes.progressBar.style.width).toEqual(Math.round(100 * 2 / 5) + '%');
-        ui.properties.audio = audio;
-
-      });
-
-      xit("Should render buffering", function() {
-
-      });
-
-      it("Should handle setting playing to true and false", function() {
-        // Pretest
-        expect(ui.playing).toBe(false);
-        expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(true);
-        expect(ui.properties.audio.paused).toBe(true);
-
-        // Run 1
-        ui.playing = true;
-
-        // Posttest 1
-        expect(ui.playing).toBe(true);
-        expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(false);
-        expect(ui.properties.playButton.classList.contains('layer-pause-button')).toBe(true);
-        expect(ui.properties.audio.paused).toBe(false);
-
-        // Run 2
-        ui.playing = false;
-
-        // Posttest 2
-        expect(ui.playing).toBe(false);
-        expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(true);
-        expect(ui.properties.playButton.classList.contains('layer-pause-button')).toBe(false);
-        expect(ui.properties.audio.paused).toBe(true);
-      });
-
-      it("Should pause playback and open Large Message View on tap", function() {
-        ui.playing = true;
-        expect(ui.playing).toBe(true);
-        click(el);
-        expect(ui.playing).toBe(false);
-        expect(document.querySelector('layer-dialog')).not.toBe(null);
-        document.querySelector('layer-dialog').destroy();
-      });
+      // Cleanup
+      document.querySelector('layer-dialog').destroy();
     });
   });
 
@@ -543,13 +545,13 @@ describe('Video Message Components', function() {
     var model, ui, el, message;
     beforeEach(function() {
       model = new VideoModel({
-        sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
+        sourceUrl: sourceUrl,
         mimeType: "audio/mp3",
         artist: "artist",
-        album: "album",
-        genre: "genre",
+        subtitle: "subtitle",
         duration: 5,
-        size: 5000
+        size: 5000,
+        createdAt: new Date('2010-10-10T00:00:00'),
       });
       model.generateMessage(conversation, function(m) {
         message = m;
@@ -561,63 +563,26 @@ describe('Video Message Components', function() {
 
       el.size = "large"
       el.message = message;
+      Layer.Utils.defer.flush();
+      ui = el.nodes.ui;
+      CustomElements.upgradeAll(ui);
     });
 
     it("Should render all sorts of metadata", function() {
-      Layer.Utils.defer.flush();
-      ui = el.nodes.ui;
       ui.style.height = '200px';
       ui.parentNode.parentNode.style.width = '300px';
 
-      CustomElements.upgradeAll(ui);
-      expect(el.querySelector('.layer-audio-message-large-view-artist').innerHTML).toEqual('artist');
-      expect(el.querySelector('.layer-audio-message-large-view-album').innerHTML).toEqual('album');
-      expect(el.querySelector('.layer-audio-message-large-view-genre').innerHTML).toEqual('genre');
-      expect(el.querySelector('.layer-audio-message-large-view-duration').innerHTML).toEqual('00:00:05');
-      expect(el.querySelector('.layer-audio-message-large-view-size').innerHTML).toEqual('5K');
+      expect(ui.nodes.title.innerText.trim()).toEqual('ElephantsDream');
+      expect(ui.nodes.description1.innerText.trim()).toEqual('subtitle');
+      expect(ui.nodes.description2.innerText.trim()).toEqual('artist');
+      expect(ui.nodes.footer1.innerText.trim()).toEqual('00:00:05');
+      expect(ui.nodes.footer2.innerText.trim()).toEqual('5K');
+      expect(ui.nodes.footer3.innerText.trim()).toEqual(new Date('2010-10-10T00:00:00').toLocaleString());
     });
 
-    it("Should render file icon", function() {
-      // Setup
-      Layer.Utils.defer.flush();
-      ui = el.nodes.ui;
-      ui.style.height = '200px';
-      ui.parentNode.parentNode.style.width = '300px';
-
-      // Posttest
-      expect(ui.classList.contains('show-audio-file-icon')).toBe(true);
-    });
-
-    it("Should render tall preview", function() {
-      // Setup
-      model.previewUrl = "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg";
-      model.previewWidth = 100;
-      model.previewHeight = 1000;
-      Layer.Utils.defer.flush();
-      ui = el.nodes.ui;
-      ui.style.height = '200px';
-      ui.parentNode.parentNode.style.width = '300px';
-
-      // Posttest
-      expect(ui.nodes.preview.style.height).toEqual(ui.maxHeight + 'px');
-      expect(ui.nodes.preview.style.width).toEqual((ui.maxHeight / 10) + 'px');
-      expect(ui.classList.contains('show-audio-file-icon')).toBe(false);
-    });
-
-    it("Should render wide preview", function() {
-      // Setup
-      model.previewUrl = "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg";
-      model.previewWidth = 1000;
-      model.previewHeight = 100;
-      Layer.Utils.defer.flush();
-      ui = el.nodes.ui;
-      ui.style.height = '200px';
-      ui.parentNode.parentNode.style.width = '300px';
-
-      // Posttest
-      expect(ui.nodes.preview.style.width).toEqual(ui.maxWidth + 'px');
-      expect(ui.nodes.preview.style.height).toEqual((ui.maxWidth / 10) + 'px');
-      expect(ui.classList.contains('show-audio-file-icon')).toBe(false);
+    it("Should setup a video player", function() {
+      expect(ui.nodes.player.src).toEqual(sourceUrl);
+      expect(ui.nodes.player.tagName).toEqual('VIDEO');
     });
   });
 });

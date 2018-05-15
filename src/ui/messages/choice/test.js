@@ -1824,9 +1824,6 @@ describe('Choice Message Components', function() {
 
       Layer.Utils.defer.flush();
 
-      // Message Viewer: gets the layer-card-width-any-width class
-      expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
-
       // Message UI:
       expect(el.nodes.ui.nodes.label.innerHTML).toEqual("hello");
       expect(el.nodes.ui.nodes.choices.childNodes[0].tagName).toEqual('LAYER-ACTION-BUTTON');

@@ -263,9 +263,6 @@ describe('File Message Components', function() {
 
       Layer.Utils.defer.flush();
 
-      // Message Viewer: gets the layer-card-width-any-width class
-      expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
-
       // Container: hide metadata
       expect(el.nodes.cardContainer.classList.contains('layer-standard-message-view-no-metadata')).toEqual(true);
 
@@ -289,9 +286,6 @@ describe('File Message Components', function() {
 
       Layer.Utils.defer.flush();
 
-      // Message Viewer: gets the layer-card-width-any-width class
-      expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
-
       // Message UI: contains anchor tag
       expect(el.nodes.ui.classList.contains('layer-file-image-png')).toBe(true);
     });
@@ -309,9 +303,6 @@ describe('File Message Components', function() {
       el.message = message;
 
       Layer.Utils.defer.flush();
-
-      // Message Viewer: gets the layer-card-width-flex-width class
-      expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
 
       // Container: show metadata
       expect(el.nodes.cardContainer.classList.contains('layer-standard-message-view-no-metadata')).toEqual(false);

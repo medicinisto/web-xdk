@@ -361,9 +361,6 @@ describe('Receipt Message Components', function() {
 
     it("Should render some properties directly", function() {
 
-      // Message Viewer: gets the layer-card-width-full-width class
-      expect(el.classList.contains('layer-card-width-full-width')).toBe(true);
-
       // Message UI: contains simple properties
       expect(el.nodes.ui.nodes.products.childNodes[0].item).toBe(model.items[0]);
       expect(el.nodes.ui.nodes.products.childNodes[0].nodes.name.innerHTML).toEqual("a");

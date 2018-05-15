@@ -204,9 +204,6 @@ describe('Link Message Components', function() {
       // Container: Metadata is hidden so no arrow in the container
       expect(el.nodes.cardContainer.classList.contains('layer-arrow-next-container')).toEqual(false);
 
-      // Message Viewer: Render as a chat bubble
-      expect(el.classList.contains('layer-card-width-any-width')).toEqual(true);
-
       // Message UI: contains anchor tag
       expect(el.querySelector('a').src).toEqual("http://layer.com/about");
       expect(el.querySelector('a').innerHTML).toEqual("http://layer.com/about");
@@ -230,9 +227,6 @@ describe('Link Message Components', function() {
       // Container: Metadata is hidden so no arrow in the container
       expect(el.nodes.cardContainer.classList.contains('layer-arrow-next-container')).toEqual(false);
 
-      // Message Viewer:: Render as a card
-      expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
-
       // Message UI: contains image tag
       expect(el.nodes.ui.nodes.image.style.backgroundImage).toMatch(/data\:image\/png/);
     });
@@ -254,9 +248,6 @@ describe('Link Message Components', function() {
 
       // Container: Metadata is showing so show arrow in the container
       expect(el.nodes.cardContainer.querySelector('.layer-next-icon')).not.toBe(null);
-
-      // Message Viewer:: Render as a card
-      expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
 
       // Title is rendered
       expect(el.querySelector(' .layer-standard-card-container-title').innerText.trim()).toEqual('hello');
@@ -281,9 +272,6 @@ describe('Link Message Components', function() {
 
       // Container: Core UI is showing so don't bother showing the arrow in the container
       expect(el.nodes.cardContainer.classList.contains('layer-arrow-next-container')).toEqual(false);
-
-      // Message Viewer:: Render as a card
-      expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
 
       // Message UI: contains image tag
       expect(el.nodes.ui.nodes.image.style.backgroundImage).toMatch(/data\:image\/png/);
@@ -312,9 +300,6 @@ describe('Link Message Components', function() {
       // Container: Core UI is hidden so show the arrow in the container
       expect(el.nodes.cardContainer.querySelector('.layer-next-icon')).not.toBe(null);
 
-      // Message Viewer:: Render as a card
-      expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
-
       // Title, description and author are rendered
       expect(el.querySelector('.layer-standard-card-container-title').innerText.trim()).toEqual('hello');
       expect(el.querySelector('.layer-standard-card-container-description').innerText.trim()).toEqual('there');
@@ -341,9 +326,6 @@ describe('Link Message Components', function() {
 
       // Container: Core UI is showing so hide the arrow in the container
       expect(el.nodes.cardContainer.classList.contains('layer-arrow-next-container')).toEqual(false);
-
-      // Message Viewer:: Render as a card
-      expect(el.classList.contains('layer-card-width-flex-width')).toEqual(true);
 
       // Title, description and author are rendered
       expect(el.querySelector(' .layer-standard-card-container-title').innerText.trim()).toEqual('hello');

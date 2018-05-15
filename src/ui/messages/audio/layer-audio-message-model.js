@@ -130,7 +130,6 @@ class AudioModel extends MessageTypeModel {
         parts.push(this.preview);
       }
 
-      this._setupSlots();
       callback(parts);
     }
   }
@@ -141,7 +140,6 @@ class AudioModel extends MessageTypeModel {
 
     // Initialize the mimeType property if available
     if (!this.mimeType && this.source) this.mimeType = this.source.mimeType;
-    this._setupSlots();
   }
 
   // See parent class
@@ -204,36 +202,22 @@ class AudioModel extends MessageTypeModel {
     }
   }
 
-  _setupSlots() {
-    this._simpleMetadataSlots = [];
-    this._allMetadataSlots = [];
 
-    if (this.artist) {
-      this._simpleMetadataSlots.push(this.artist);
-      this._allMetadataSlots.push(this.artist);
-    }
-
-    if (this.album) {
-      if (!this._simpleMetadataSlots.length) this._simpleMetadataSlots.push(this.album);
-      this._allMetadataSlots.push(this.album);
-    }
-
-    if (this.genre) {
-      if (!this._simpleMetadataSlots.length) this._simpleMetadataSlots.push(this.genre);
-      this._allMetadataSlots.push(this.genre);
-    }
-
-    if (this.duration) {
-      const duration = this.getDuration();
-      this._simpleMetadataSlots.push(duration);
-      this._allMetadataSlots.push(duration);
-    }
-
-    if (this.size) {
-      const size = this.getSize();
-      if (this._simpleMetadataSlots.length <= 1) this._simpleMetadataSlots.push(size);
-      this._allMetadataSlots.push(size);
-    }
+  setupSlots() {
+    const slots = [
+      [
+        this.title, this.sourceUrl.replace(/(.*\/)?(.*?)(\..*)?$/, '$2'), this.getOneLineSummary(true),
+      ].filter(value => value),
+      [
+        this.artist, this.album, this.genre,
+      ].filter(value => value),
+      [
+        this.duration ? this.getDuration() : null,
+        this.size ? this.getSize() : null,
+      ].filter(value => value),
+    ];
+    while (slots[0].length > 1) slots[0].pop();
+    return slots;
   }
 
   /**
@@ -245,24 +229,7 @@ class AudioModel extends MessageTypeModel {
    * @returns {String}
    */
   getTitle() {
-    if (this.title) {
-      return this.title;
-    } else if (this.sourceUrl) {
-      return this.sourceUrl.replace(/(.*\/)?(.*?)(\..*)?$/, '$2');
-    } else {
-      return this.getOneLineSummary(true);
-    }
-  }
-  getDescription() {
-    return this._simpleMetadataSlots[0] || '';
-
-  }
-  getFooter() {
-    return this._simpleMetadataSlots[1] || '';
-  }
-
-  getMetadataAtIndex(index) {
-    return this._allMetadataSlots[index] || '';
+    return this._metadataSlots[0][0];
   }
 
   /**

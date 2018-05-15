@@ -140,7 +140,6 @@ class VideoModel extends MessageTypeModel {
         parts.push(this.preview);
       }
 
-      this._setupSlots();
       callback(parts);
     }
   }
@@ -152,7 +151,6 @@ class VideoModel extends MessageTypeModel {
     // Initialize the mimeType property if available
     if (!this.mimeType && this.source) this.mimeType = this.source.mimeType;
     if (this.createdAt) this.createdAt = new Date(this.createdAt);
-    this._setupSlots();
   }
 
   // See parent class
@@ -215,37 +213,22 @@ class VideoModel extends MessageTypeModel {
     }
   }
 
-  _setupSlots() {
-    this._simpleMetadataSlots = [];
-    this._allMetadataSlots = [];
-
-    if (this.subtitle) {
-      this._simpleMetadataSlots.push(this.subtitle);
-      this._allMetadataSlots.push(this.subtitle);
-    }
-
-    if (this.artist) {
-      if (!this.subtitle) this._simpleMetadataSlots.push(this.artist);
-      this._allMetadataSlots.push(this.artist);
-    }
-
-    if (this.duration) {
-      const duration = this.getDuration();
-      this._simpleMetadataSlots.push(duration);
-      this._allMetadataSlots.push(duration);
-    }
-
-    if (this.size) {
-      const size = this.getSize();
-      if (!this.duration) this._simpleMetadataSlots.push(size);
-      this._allMetadataSlots.push(size);
-    }
-
-    if (this.createdAt) {
-      const createdAt = this.createdAt.toLocaleString();
-      if (!this.duration && !this.size) this._simpleMetadataSlots.push(createdAt);
-      this._allMetadataSlots.push(createdAt);
-    }
+  setupSlots() {
+    const slots = [
+      [
+        this.title, this.sourceUrl.replace(/(.*\/)?(.*?)(\..*)?$/, '$2'), this.getOneLineSummary(true),
+      ].filter(value => value),
+      [
+        this.subtitle, this.artist,
+      ].filter(value => value),
+      [
+        this.duration ? this.getDuration() : null,
+        this.size ? this.getSize() : null,
+        this.createdAt ? this.createdAt.toLocaleString() : null,
+      ].filter(value => value),
+    ];
+    while (slots[0].length > 1) slots[0].pop();
+    return slots;
   }
 
   /**
@@ -257,25 +240,7 @@ class VideoModel extends MessageTypeModel {
    * @returns {String}
    */
   getTitle() {
-    if (this.title) {
-      return this.title;
-    } else if (this.sourceUrl) {
-      return this.sourceUrl.replace(/(.*\/)?(.*?)(\..*)?$/, '$2');
-    } else {
-      return this.getOneLineSummary(true);
-    }
-  }
-
-  getDescription() {
-    return this._simpleMetadataSlots[0] || '';
-  }
-
-  getFooter() {
-    return this._simpleMetadataSlots[1] || '';
-  }
-
-  getMetadataAtIndex(index) {
-    return this._allMetadataSlots[index] || '';
+    return this._metadataSlots[0][0];
   }
 
   /**

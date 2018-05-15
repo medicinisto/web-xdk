@@ -216,9 +216,6 @@ describe('Product Message Components', function() {
 
       Layer.Utils.defer.flush();
 
-      // Message Viewer: gets the layer-card-width-full-width class
-      expect(el.classList.contains('layer-card-width-full-width')).toBe(true);
-
       // Message UI: contains simple properties
       expect(el.nodes.ui.nodes.name.innerText.trim()).toEqual("a");
       expect(el.nodes.ui.nodes.brand.innerText.trim()).toEqual("b");

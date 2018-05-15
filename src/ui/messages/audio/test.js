@@ -264,6 +264,7 @@ describe('Audio Message Components', function() {
       expect(Math.floor(hours)).toEqual(138);
 
       expect(new AudioModel({
+        artist: "artist",
         duration: duration,
         size: 60000,
         sourceUrl: "a/b/c/e.mp3",
@@ -271,15 +272,32 @@ describe('Audio Message Components', function() {
       }).getFooter()).toMatch(/138.*:\d\d:\d\d/);
 
       expect(new AudioModel({
+        artist: "artist",
         size: 60000,
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
       }).getFooter()).toEqual("60K");
 
       expect(new AudioModel({
+        artist: "artist",
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
       }).getFooter()).toEqual("");
+
+      // Special case where duration is promoted up to description
+      expect(new AudioModel({
+        duration: duration,
+        size: 60000,
+        sourceUrl: "a/b/c/e.mp3",
+        mimeType: "audio/mp3",
+      }).getFooter()).toEqual("60K");
+
+      expect(new AudioModel({
+        duration: duration,
+        size: 60000,
+        sourceUrl: "a/b/c/e.mp3",
+        mimeType: "audio/mp3",
+      }).getDescription()).toMatch(/138.*:\d\d:\d\d/);
     });
 
 
@@ -356,7 +374,6 @@ describe('Audio Message Components', function() {
       el.nodes.ui.parentNode.parentNode.style.width = '300px';
       el.nodes.ui._setupPreview();
 
-      // Message Viewer: gets the layer-card-width-any-width class
       expect(el.nodes.ui.nodes.preview.style.backgroundImage.indexOf("https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg")).not.toEqual("-1");
       expect(el.nodes.ui.nodes.preview.style.height).toEqual(el.nodes.ui.maxHeight + 'px');
       expect(el.nodes.ui.nodes.preview.style.width).toEqual((100 * el.nodes.ui.maxHeight / 1000) + 'px');
@@ -391,12 +408,11 @@ describe('Audio Message Components', function() {
           var sizes = el.nodes.ui.getBestDimensions({
             contentWidth: model.previewWidth,
             contentHeight: model.previewHeight,
-            maxWidth: ui.maxWidth,
-            maxHeight: ui.maxHeight
+            maxWidth: el.nodes.ui.maxWidth,
+            maxHeight: el.nodes.ui.maxHeight
           });
           expect(sizes.height * 10).toEqual(sizes.width);
 
-          // Message Viewer: gets the layer-card-width-any-width class
           expect(el.nodes.ui.nodes.preview.style.backgroundImage).not.toEqual('');
           expect(el.nodes.ui.nodes.preview.style.height).toEqual(sizes.height + 'px');
           expect(el.nodes.ui.nodes.preview.style.width).toEqual(sizes.width + 'px');
@@ -504,7 +520,7 @@ describe('Audio Message Components', function() {
 
       });
 
-      it("Should handle setting playing to true and false", function() {
+      it("Should handle setting playing to true and false", function(done) {
         // Pretest
         expect(ui.playing).toBe(false);
         expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(true);
@@ -514,28 +530,55 @@ describe('Audio Message Components', function() {
         ui.playing = true;
 
         // Posttest 1
-        expect(ui.playing).toBe(true);
-        expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(false);
-        expect(ui.properties.playButton.classList.contains('layer-pause-button')).toBe(true);
-        expect(ui.properties.audio.paused).toBe(false);
+        setTimeout(function() {
+          try {
+            expect(ui.playing).toBe(true);
+            expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(false);
+            expect(ui.properties.playButton.classList.contains('layer-pause-button')).toBe(true);
+            expect(ui.properties.audio.paused).toBe(false);
 
-        // Run 2
-        ui.playing = false;
+            // Run 2
+            ui.playing = false;
 
-        // Posttest 2
-        expect(ui.playing).toBe(false);
-        expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(true);
-        expect(ui.properties.playButton.classList.contains('layer-pause-button')).toBe(false);
-        expect(ui.properties.audio.paused).toBe(true);
+            // Posttest 2
+            setTimeout(function() {
+              try {
+                expect(ui.playing).toBe(false);
+                expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(true);
+                expect(ui.properties.playButton.classList.contains('layer-pause-button')).toBe(false);
+                expect(ui.properties.audio.paused).toBe(true);
+                done();
+              } catch (e) {
+                done(e);
+              }
+            }, 100);
+          } catch (e) {
+            done(e);
+          }
+        }, 100);
       });
 
-      it("Should pause playback and open Large Message View on tap", function() {
+      it("Should pause playback and open Large Message View on tap", function(done) {
         ui.playing = true;
-        expect(ui.playing).toBe(true);
-        click(el);
-        expect(ui.playing).toBe(false);
-        expect(document.querySelector('layer-dialog')).not.toBe(null);
-        document.querySelector('layer-dialog').destroy();
+        setTimeout(function() {
+          try {
+            expect(ui.playing).toBe(true);
+            click(el);
+
+            setTimeout(function() {
+              try {
+                expect(ui.playing).toBe(false);
+                expect(document.querySelector('layer-dialog')).not.toBe(null);
+                document.querySelector('layer-dialog').destroy();
+                done();
+              } catch(e) {
+                done(e);
+              }
+            }, 100);
+          } catch(e) {
+            done(e);
+          }
+        }, 100);
       });
     });
   });
@@ -562,28 +605,30 @@ describe('Audio Message Components', function() {
 
       el.size = "large"
       el.message = message;
+      Layer.Utils.defer.flush();
+      ui = el.nodes.ui;
+      CustomElements.upgradeAll(ui);
+      ui.classList.remove('show-audio-file-icon');
     });
 
     it("Should render all sorts of metadata", function() {
-      Layer.Utils.defer.flush();
-      ui = el.nodes.ui;
       ui.style.height = '200px';
       ui.parentNode.parentNode.style.width = '300px';
+      ui.onAfterCreate();
 
-      CustomElements.upgradeAll(ui);
-      expect(el.querySelector('.layer-audio-message-large-view-artist').innerHTML).toEqual('artist');
-      expect(el.querySelector('.layer-audio-message-large-view-album').innerHTML).toEqual('album');
-      expect(el.querySelector('.layer-audio-message-large-view-genre').innerHTML).toEqual('genre');
-      expect(el.querySelector('.layer-audio-message-large-view-duration').innerHTML).toEqual('00:00:05');
-      expect(el.querySelector('.layer-audio-message-large-view-size').innerHTML).toEqual('5K');
+      expect(ui.nodes.title.innerText.trim()).toEqual('compl');
+      expect(ui.nodes.description1.innerText.trim()).toEqual('artist');
+      expect(ui.nodes.description2.innerText.trim()).toEqual('album');
+      expect(ui.nodes.description3.innerText.trim()).toEqual('genre');
+      expect(ui.nodes.footer1.innerText.trim()).toEqual('00:00:05');
+      expect(ui.nodes.footer2.innerText.trim()).toEqual('5K');
     });
 
     it("Should render file icon", function() {
       // Setup
-      Layer.Utils.defer.flush();
-      ui = el.nodes.ui;
       ui.style.height = '200px';
       ui.parentNode.parentNode.style.width = '300px';
+      ui.onAfterCreate();
 
       // Posttest
       expect(ui.classList.contains('show-audio-file-icon')).toBe(true);
@@ -594,14 +639,14 @@ describe('Audio Message Components', function() {
       model.previewUrl = "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg";
       model.previewWidth = 100;
       model.previewHeight = 1000;
-      Layer.Utils.defer.flush();
-      ui = el.nodes.ui;
+      ui.onAfterCreate();
+
       ui.style.height = '200px';
       ui.parentNode.parentNode.style.width = '300px';
 
       // Posttest
-      expect(ui.nodes.preview.style.height).toEqual(ui.maxHeight + 'px');
-      expect(ui.nodes.preview.style.width).toEqual((ui.maxHeight / 10) + 'px');
+      expect(ui.nodes.preview.style.height).toEqual(ui.maxPreviewHeight + 'px');
+      expect(ui.nodes.preview.style.width).toEqual((ui.maxPreviewHeight / 10) + 'px');
       expect(ui.classList.contains('show-audio-file-icon')).toBe(false);
     });
 
@@ -610,14 +655,14 @@ describe('Audio Message Components', function() {
       model.previewUrl = "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg";
       model.previewWidth = 1000;
       model.previewHeight = 100;
-      Layer.Utils.defer.flush();
-      ui = el.nodes.ui;
+      ui.onAfterCreate();
+
       ui.style.height = '200px';
       ui.parentNode.parentNode.style.width = '300px';
 
       // Posttest
-      expect(ui.nodes.preview.style.width).toEqual(ui.maxWidth + 'px');
-      expect(ui.nodes.preview.style.height).toEqual((ui.maxWidth / 10) + 'px');
+      expect(ui.nodes.preview.style.width).toEqual(ui.maxPreviewWidth + 'px');
+      expect(ui.nodes.preview.style.height).toEqual((ui.maxPreviewWidth / 10) + 'px');
       expect(ui.classList.contains('show-audio-file-icon')).toBe(false);
     });
   });

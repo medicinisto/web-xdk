@@ -31,13 +31,6 @@ import './components/layer-file-upload-button';
 import './components/layer-send-button';
 
 // Load standard cards
-import './messages/choice/layer-choice-message-view';
-import './messages/carousel/layer-carousel-message-view';
-import './messages/file/layer-file-message-view';
-import './messages/location/layer-location-message-view';
-import './messages/product/layer-product-message-view';
-import './messages/feedback/layer-feedback-message-view';
-import './messages/receipt/layer-receipt-message-view';
-import './messages/audio/layer-audio-message-view';
+import './messages/index';
 
 module.exports = LayerUI;

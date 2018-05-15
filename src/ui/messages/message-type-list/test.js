@@ -202,9 +202,6 @@ xdescribe('Message Type List Message Components', function() {
 
       Layer.Utils.defer.flush();
 
-      // Message Viewer: gets the layer-card-width-any-width class
-      expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
-
       // Message UI: contains anchor tag
       expect(el.nodes.ui.nodes.items.childNodes[0].model).toBe(model.items[0]);
       expect(el.nodes.ui.nodes.items.childNodes[1].model).toBe(model.items[1]);

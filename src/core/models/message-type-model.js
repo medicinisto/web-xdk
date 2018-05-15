@@ -52,6 +52,8 @@ class MessageTypeModel extends Root {
 
     super(options);
 
+    this._metadataSlots = [];
+
     if (this.part) {
       this.id = MessageTypeModel.prefixUUID + this.part.id.replace(/^.*messages\//, '');
       client._addMessageTypeModel(this);
@@ -132,6 +134,7 @@ class MessageTypeModel extends Root {
   _initializeNewModel() {
     this._registerAllStates();
     this.initializeNewModel();
+    this._setupSlots();
   }
 
   /**
@@ -312,6 +315,7 @@ class MessageTypeModel extends Root {
       this.id = MessageTypeModel.prefixUUID + this.part.id.replace(/^.*messages\//, '');
       client._addMessageTypeModel(this);
       this.parseModelChildParts({ changes: this.childParts.map(part => ({ type: 'added', part })), isEdit: false });
+      this._setupSlots();
       this.trigger('message-type-model:has-new-message'); // do this before the callback so it fires before message.send() is called
       if (callback) callback(this.message);
     });
@@ -607,6 +611,7 @@ class MessageTypeModel extends Root {
         }
       }
     });
+    this._setupSlots();
   }
 
 
@@ -673,6 +678,67 @@ class MessageTypeModel extends Root {
     }
   }
 
+  /**
+   * Whenver the {@link #part} is loaded or changes, setup slots method sets up the
+   * title, description and footer slots used by some Message Type Models.
+   *
+   * Should return an array of 3 arrays:
+   *
+   * * Array of values for slot 1 (title)
+   * * Array of values for slot 2 (description)
+   * * Array of values for slot 3 (footer)
+   *
+   * @method setupSlots
+   * @abstract
+   * @returns {String[][]}
+   */
+  setupSlots() {
+    return [
+      [], [], [],
+    ];
+  }
+
+  _setupSlots() {
+    const slots = this.setupSlots();
+
+    // If Slot A is empty (first slot) promote the first element of Slot B or Slot C to Slot A.
+    if (slots[0].length === 0) {
+      if (slots[1].length) {
+        slots[0].push(slots[1].shift());
+      } else if (slots[2].length) {
+        slots[0].push(slots[2].shift());
+      }
+    }
+
+    // If Slot B is empty, promote the first element of Slot C to Slot B
+    if (slots[1].length === 0 && slots[2].length) {
+      slots[1].push(slots[2].shift());
+    }
+
+    // Make sure every slot has a value
+    this._metadataSlots = slots.map(slot => (slot.length ? slot : ['']));
+  }
+
+
+  getDescription() {
+    return this._metadataSlots[1] ? this._metadataSlots[1][0] : '';
+  }
+
+  getFooter() {
+    return this._metadataSlots[2] ? this._metadataSlots[2][0] : '';
+  }
+
+  getMetadataAtIndex(index) {
+    let count = 0;
+    for (let i = 0; i < this._metadataSlots.length; i++) {
+      const slot = this._metadataSlots[i];
+      for (let j = 0; j < slot.length; j++) {
+        if (count === index) return slot[j];
+        count++;
+      }
+    }
+    return '';
+  }
 
   /**
    * Whenever {@link #responses} changes as a result of *any* User posting a Response Message,
@@ -854,25 +920,6 @@ class MessageTypeModel extends Root {
     return this.title || '';
   }
 
-  /**
-   * Returns the description metadata; used by the `<layer-standard-message-view-container />`
-   *
-   * @method getDescription
-   * @returns {String}
-   */
-  getDescription() {
-    return '';
-  }
-
-  /**
-   * Returns the footer metadata; used by the `<layer-standard-message-view-container />`
-   *
-   * @method getFooter
-   * @returns {String}
-   */
-  getFooter() {
-    return '';
-  }
 
   /**
    * Generate a concise textual summary of the Message.
@@ -1336,6 +1383,8 @@ MessageTypeModel.prototype.messageRecipientStatus = null;
  * @property {String} [typeLabel]
  */
 MessageTypeModel.prototype.typeLabel = '';
+
+MessageTypeModel.prototype._metadataSlots = null;
 
 /**
  * The expression to use for setting the notification title.

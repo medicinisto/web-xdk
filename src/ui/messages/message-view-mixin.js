@@ -282,10 +282,14 @@ mixins.MessageViewMixin = module.exports = {
      * @return {Object}
      * @return {Number} return.width
      * @return {Number} return.height
+     * @return {Boolean} return.isCropped  If some content may be cropped by this width/height
+     * @return {Boolean} return.isScaledUp  If content needs to be scaled up in size
      */
     getBestDimensions({ maxHeight, maxWidth, minHeight, minWidth, contentWidth, contentHeight, proportional = true }) {
       let height = contentHeight || this.defaultHeight;
       let width = contentWidth || this.defaultWidth;
+      let isCropped = false;
+      let isScaledUp = false;
       const maxWidthAvailable = this.getMaxMessageWidth();
       maxWidth = maxWidth ? Math.min(maxWidth, maxWidthAvailable) : maxWidthAvailable;
 
@@ -322,10 +326,30 @@ mixins.MessageViewMixin = module.exports = {
           height = minHeight;
           width = height * ratio;
         }
+
+        // Cropping
+        if (minWidth && width < minWidth) {
+          width = minWidth;
+          isScaledUp = true;
+        }
+        if (maxWidth && width > maxWidth) {
+          width = maxWidth;
+          isCropped = true;
+        }
+        if (minHeight && height < minHeight) {
+          height = minHeight;
+          isScaledUp = true;
+        }
+        if (maxHeight && height > maxHeight) {
+          height = maxHeight;
+          isCropped = true;
+        }
       }
       return {
         width: Math.round(width),
         height: Math.round(height),
+        isCropped,
+        isScaledUp,
       };
     },
 

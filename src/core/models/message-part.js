@@ -263,7 +263,7 @@ class MessagePart extends Root {
     // NOTE: This will trigger a messageparts:change event, and therefore a messages:change event
     this.body = body;
 
-    this.trigger('content-loaded');
+    this._triggerAsync('content-loaded');
 
     if (callback) callback(this.body);
   }

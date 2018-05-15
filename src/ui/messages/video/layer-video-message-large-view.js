@@ -137,8 +137,8 @@ registerComponent('layer-video-message-large-view', {
      * @method onRender
      */
     onRender() {
-      this.nodes.title.innerHTML = this.model.getTitle();
       const nodes = [
+        this.nodes.title,
         this.nodes.description1,
         this.nodes.description2,
         this.nodes.footer1,

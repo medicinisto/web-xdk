@@ -45,11 +45,11 @@ registerComponent('layer-audio-message-large-view', {
       <div layer-id="fileIcon" class="layer-file-audio"></div>
       <div class="layer-card-body">
         <div layer-id="title" class="layer-standard-card-container-title"></div>
-        <div layer-id="description1" class="layer-standard-card-container-description layer-audio-message-large-view-artist"></div>
-        <div layer-id="description2" class="layer-standard-card-container-description layer-audio-message-large-view-album"></div>
-        <div layer-id="description3" class="layer-standard-card-container-description layer-audio-message-large-view-genre"></div>
-        <div layer-id="footer1" class="layer-standard-card-container-footer layer-audio-message-large-view-duration"></div>
-        <div layer-id="footer2" class="layer-standard-card-container-footer layer-audio-message-large-view-size"></div>
+        <div layer-id="description1" class="layer-standard-card-container-description"></div>
+        <div layer-id="description2" class="layer-standard-card-container-description"></div>
+        <div layer-id="description3" class="layer-standard-card-container-description"></div>
+        <div layer-id="footer1" class="layer-standard-card-container-footer"></div>
+        <div layer-id="footer2" class="layer-standard-card-container-footer"></div>
       </div>
     </div>
     <div class='layer-vertical-spacer'></div>
@@ -184,11 +184,11 @@ registerComponent('layer-audio-message-large-view', {
      * @method onRender
      */
     onRender() {
-      this.nodes.title.innerHTML = this.model.getTitle();
-
       const nodes = [
+        this.nodes.title,
         this.nodes.description1,
         this.nodes.description2,
+        this.nodes.description3,
         this.nodes.footer1,
         this.nodes.footer2,
       ];

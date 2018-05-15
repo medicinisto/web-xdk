@@ -473,9 +473,6 @@ describe('Button Message Components', function() {
 
       Layer.Utils.defer.flush();
 
-      // Message Viewer: gets the layer-card-width-any-width class
-      expect(el.classList.contains('layer-card-width-flex-width')).toBe(true);
-
       // Message UI:
       var buttons = el.nodes.ui.querySelectorAllArray('layer-action-button');
       buttons.forEach(function(b) {
