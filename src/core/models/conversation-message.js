@@ -481,8 +481,6 @@ ConversationMessage.prototype.deliveryStatus = '';
 ConversationMessage.inObjectIgnore = Message.inObjectIgnore;
 ConversationMessage._supportedEvents = [].concat(Message._supportedEvents);
 
-ConversationMessage.mixins = [];
-
 Root.initClass.apply(ConversationMessage, [ConversationMessage, 'ConversationMessage', Core.Message]);
 
 module.exports = ConversationMessage;

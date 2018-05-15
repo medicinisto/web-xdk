@@ -304,7 +304,8 @@ class MessagePart extends Root {
     if (this.__url) return callback(this.__url, callback);
 
     if (this.body) {
-      this.url = typeof this.body === 'string' ? `data:${this.mimeType};utf8,${escape(this.body)}` : URL.createObjectURL(this.body);
+      this.url = typeof this.body === 'string' ?
+        `data:${this.mimeType};utf8,${escape(this.body)}` : URL.createObjectURL(this.body);
       return this._fetchStreamComplete(this.__url, callback);
     }
 

@@ -60,7 +60,6 @@ import 'blueimp-load-image/js/load-image-meta';
 import 'blueimp-load-image/js/load-image-exif';
 import { normalizeSize } from '../../ui-utils';
 
-import { register } from '../../handlers/message/message-handlers';
 import Core, { Root, MessagePart, MessageTypeModel } from '../../../core/namespace';
 import { xhr } from '../../../utils';
 import { getNativeSupport } from '../../../utils/native-support';
@@ -601,45 +600,5 @@ Root.initClass.apply(ImageModel, [ImageModel, 'ImageModel']);
 
 // Register the Message Model Class with the Client
 Core.Client.registerMessageTypeModelClass(ImageModel, 'ImageModel');
-
-
-/*
- * This Message Handler is NOT the main "layer-message-viewer" Message Handler;
- * rather, this Viewer detects text/plain messages, converts them to
- * Text Cards, and THEN lets the <layer-message-viewer /> component handle it from there
- */
-register({
-  tagName: 'layer-message-viewer',
-  handlesMessage(message, container) {
-    const isCard = Boolean(message.getPartsMatchingAttribute({ role: 'root' })[0]);
-    const source = message.filterParts(part =>
-      ['image/png', 'image/gif', 'image/jpeg'].indexOf(part.mimeType) !== -1)[0];
-
-    if (!isCard && source) {
-      const preview = message.filterParts(part => part.mimeType === 'image/jpeg+preview')[0];
-      const metaPart = message.filterParts(part => part.mimeType === 'application/json+imageSize')[0];
-      const meta = metaPart ? JSON.parse(metaPart.body) : {};
-      const model = new ImageModel({
-        source,
-        preview,
-      });
-
-      if (meta.width) model.width = meta.width;
-      if (meta.height) model.height = meta.height;
-      if (meta.orientation) model.orientation = meta.orientation;
-      message._messageTypeModel = model;
-      model.part = new Layer.Core.MessagePart({
-        id: source.id,
-        _message: message,
-        mimeType: ImageModel.MIMEType,
-        mimeAttributes: { role: 'root' },
-        body: JSON.stringify(meta),
-      });
-
-      message._addToMimeAttributesMap(model.part);
-      return true;
-    }
-  },
-});
 
 module.exports = ImageModel;

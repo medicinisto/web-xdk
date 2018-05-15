@@ -4,7 +4,6 @@
  * @class Layer.UI.messages.MessageViewMixin
  */
 
-import Constants from '../constants';
 import mixins from '../mixins';
 
 mixins.MessageViewMixin = module.exports = {

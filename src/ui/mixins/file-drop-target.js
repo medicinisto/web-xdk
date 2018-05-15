@@ -178,11 +178,7 @@ mixins.FileDropTarget = module.exports = {
      * @private
      */
     _processAttachments(files) {
-      const AudioModel = client.constructor.getMessageTypeModelClass('AudioModel');
-
-      const imageTypes = ['image/gif', 'image/png', 'image/jpeg', 'image/svg'];
-
-      const nonImageFiles = files.filter(file => imageTypes.indexOf(file.type) === -1);
+      const nonImageFiles = files.filter(file => imageMIMETypes.indexOf(file.type) === -1);
 
       let items;
       if (nonImageFiles.length) {

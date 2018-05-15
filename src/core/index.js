@@ -9,6 +9,7 @@ import './root';
 // Message and MessageType Mixins
 import './mixins/message-capi';
 import './mixins/message-type-model-capi';
+import './mixins/message-layer-ui-backwards-compat';
 
 // Client Mixins
 import './mixins/client-capi-authentication';
@@ -29,6 +30,7 @@ import './mixins/client-channels';
 import './mixins/client-members';
 import './mixins/client-announcements';
 import './mixins/client-push-tokens';
+
 
 // Import the Client and models (must happen after loading the mixins!)
 import './client';

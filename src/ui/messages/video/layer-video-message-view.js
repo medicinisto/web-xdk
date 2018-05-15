@@ -15,7 +15,6 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import Constants from '../../constants';
 import './layer-video-message-model';
 import './layer-video-message-large-view';
 
