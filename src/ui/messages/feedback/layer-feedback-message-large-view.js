@@ -1,6 +1,14 @@
 /**
  * large view for the Feedback Message
  *
+ * When user has completed process, will trigger `layer-container-done` event:
+ *
+ * ```
+ * document.body.addEventListener('layer-container-done', function() {
+ *    closeLargeMessageViewer();
+ * });
+ * ```
+ *
  * ### Importing
  *
  * Not included with the standard build. Import using:

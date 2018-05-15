@@ -33,6 +33,7 @@ import Layer from '../../core/namespace';
 import Util from '../../utils';
 import { registerComponent } from './component';
 import Clickable from '../mixins/clickable';
+import { imageMIMETypes, audioMIMETypes, videoMIMETypes } from '../../settings';
 
 registerComponent('layer-file-upload-button', {
   mixins: [Clickable],
@@ -89,28 +90,6 @@ registerComponent('layer-file-upload-button', {
       set(newValue) {
         this.nodes.input.multiple = newValue;
       },
-    },
-
-    /**
-     * Any File with one of these MIME Types will have a Layer.UI.messages.ImageMessageModel generated.
-     *
-     * Use this property to customize what MIME Types to watch for and treat as Images.
-     *
-     * @property {String[]}
-     */
-    imageTypes: {
-      value: ['image/gif', 'image/png', 'image/jpeg', 'image/svg'],
-    },
-
-    /**
-     * Any File with one of these MIME Types will have a Layer.UI.messages.AudioMessageModel generated.
-     *
-     * Use this property to customize what MIME Types to watch for and treat as Audio Clips.
-     *
-     * @property {String[]}
-     */
-    audioTypes: {
-      value: ['audio/mp3', 'audio/mpeg'],
     },
 
     /**
@@ -204,11 +183,11 @@ registerComponent('layer-file-upload-button', {
           }
 
           // Generate either an Image or File Model
-          if (typeof ImageModel !== 'undefined' && this.imageTypes.indexOf(file.type) !== -1) {
+          if (typeof ImageModel !== 'undefined' && imageMIMETypes.indexOf(file.type) !== -1) {
             return new ImageModel(options);
-          } else if (typeof AudioModel !== 'undefined' && this.audioTypes.indexOf(file.type) !== -1) {
+          } else if (typeof AudioModel !== 'undefined' && audioMIMETypes.indexOf(file.type) !== -1) {
             return new AudioModel(options);
-          } else if (typeof VideoModel !== 'undefined' && this.videoTypes.indexOf(file.type) !== -1) {
+          } else if (typeof VideoModel !== 'undefined' && videoMIMETypes.indexOf(file.type) !== -1) {
             return new VideoModel(options);
           } else {
             return new FileModel(options);

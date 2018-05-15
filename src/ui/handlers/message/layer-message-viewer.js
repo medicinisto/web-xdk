@@ -306,7 +306,7 @@ registerComponent('layer-message-viewer', {
      * When the Message Viewer is placed within a Dialog or other container that wants icon/title,
      * this method acts as a proxy for getting that information from the Message Type View.
      *
-     * @method getIconClass
+     * @method getTitle
      * @returns {String}
      */
     getTitle() {
@@ -315,7 +315,8 @@ registerComponent('layer-message-viewer', {
 
     /**
      * When the Message Viewer is placed within a Dialog we may add CSS classes to the dialog itself
-     * to influence its sizing/styling
+     * to influence the dialog's sizing/styling. By default, it simply provides its UIs
+     * tag name as the CSS class
      *
      * @method getDialogClass
      * @returns {String}

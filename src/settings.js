@@ -59,6 +59,9 @@
  *   graphics no matter what platoform they are on. Also insures that platforms lacking emoji support can still render
  *   emojis.  If your customers are all on platforms that support rendering of emojis you may disable this.
  * @property {String} [settings.googleMapsKey=]   The google maps key to use with Location Messages.
+ * @property {String[]} [settings.audioMIMETypes='audio/mp3', 'audio/mpeg']  The MIME Types that are recognized as supported audio files
+ * @property {String[]} [settings.videoMIMETypes='video/mp4']  The MIME Types that are recognized as supported video files
+ * @property {String[]} [settings.imageMIMETypes='image/gif', 'image/png', 'image/jpeg', 'image/svg']  The MIME Types that are recognized as supported image files
  */
 
 module.exports = {
@@ -82,5 +85,8 @@ module.exports = {
   destroyAfterDetachDelay: 10000,
   useEmojiImages: true,
   googleMapsKey: '',
+  audioMIMETypes: ['audio/mp3', 'audio/mpeg'],
+  videoMIMETypes: ['video/mp4'],
+  imageMIMETypes: ['image/gif', 'image/png', 'image/jpeg', 'image/svg'],
 };
 

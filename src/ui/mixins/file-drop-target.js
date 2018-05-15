@@ -10,7 +10,7 @@ import FileModel from '../messages/file/layer-file-message-model';
 
 import CarouselModel from '../messages/carousel/layer-carousel-message-model';
 import mixins from './index';
-import { client } from '../../settings';
+import { client, audioMIMETypes, videoMIMETypes, imageMIMETypes } from '../../settings';
 
 mixins.FileDropTarget = module.exports = {
   properties: {
@@ -203,12 +203,12 @@ mixins.FileDropTarget = module.exports = {
      * @private
      */
     _processAttachment(file) {
-      if (['image/gif', 'image/png', 'image/jpeg', 'image/svg'].indexOf(file.type) !== -1) {
+      if (imageMIMETypes.indexOf(file.type) !== -1) {
         return new ImageModel({
           source: file,
         });
       }
-      if (['audio/mp3', 'audio/mpeg'].indexOf(file.type) !== -1) {
+      if (audioMIMETypes.indexOf(file.type) !== -1) {
         const AudioModel = client.constructor.getMessageTypeModelClass('AudioModel');
         if (AudioModel) {
           return new AudioModel({
@@ -216,7 +216,7 @@ mixins.FileDropTarget = module.exports = {
           });
         }
       }
-      if (['video/mp4'].indexOf(file.type) !== -1) {
+      if (videoMIMETypes.indexOf(file.type) !== -1) {
         const VideoModel = client.constructor.getMessageTypeModelClass('VideoModel');
         if (VideoModel) {
           return new VideoModel({

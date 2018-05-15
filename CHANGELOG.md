@@ -4,24 +4,67 @@
 
 _Breaking Changes_:
 
+While there have been no major breaking changes, there have been some minor changes that could impact a few customers
+
 * WEB-1779: Now throws error if calling `Layer.UI.setupMixins({...})` after calling `Layer.init()`
+* `Layer.Constants.WIDTH` no longer exists and is no longer used
+* Minor CSS Class names and theme changes
 
 _All Changes_:
 
-* Simplistic dependency injection for switching between nodejs, ReactJS, Web, etc... based utilities
-* Static property `CACHE_PURGE_INTERVAL` is now an instance property settable from `Layer.init()` named `cachePurgeInterval`
-* Rips out Client Authenticator Parent class of the Layer Client; replaces all of its capabilities via Mixins
-* Adds a Manual Query class to which you can add and remove data, and have UI Components render them.  `var query = layerClient.createQuery({model: Layer.Core.Query.Manual}); query.addItem(conversation1);`
-* Large Message View Changes:
+* Refactored `Layer.Core.Client` Class
+    * Rips out Client Authenticator Parent class of the Layer Client; replaces all of its capabilities via Mixins
+    * Migrates all optional components into Mixins
+* WEB-1763: Refactored Index Files
+    * Can import standard build with `import '@layerhq/web-xdk'`
+    * Can import minimal build (that includes UI) with `import '@layerhq/web-xdk/index-lite'`
+    * Can import minimal build without UI with `import '@layerhq/web-xdk/index-core'`
+    * Can import Everything with `import '@layerhq/web-xdk/index-all'`
+    * Can import all Message Types with an additional `import '@layerhq/web-xdk/ui/messages'`
+    * Adds simplistic dependency injection for switching between utilities for nodejs, ReactJS, Web, etc...
+    * Static Client property:
+        * `CACHE_PURGE_INTERVAL` is now an instance property settable from `Layer.init()` named `cachePurgeInterval`
+        * `TimeBetweenReauths` is now an instance property settable from `Layer.init()` named `timeBetweenReauths`
+        * `ResetAfterOfflineDuration` is now an instance property settable from `Layer.init()` named `resetAfterOfflineDuration`
+* Refactors Model Classes
+    * Most classes in `src/core/models` now support a Mixin mechanism for customizing their capabilities; this is primarily used to customize it for use with Client API vs Server API.
+    * Adds `mixins/message-capi` for Client API specific operations for the `Layer.Core.Message` class (Server API operations are in a separate repository)
+    * Adds `mixins/message-type-model-capi` for Client API specific operations for the `Layer.Core.MessageType` class (Server API operations are in a separate repository)
+    * `Layer.Core.MessagePart` `fetchStream()` method now uses any `body` value it already has if it has it
+* Large Message View has changed (not previously an officially documented/released component):
     * Renames `layer-open-expanded-view` action to `layer-show-large-message`
     * Renames `messageRendererExpanded` to `largeMessageRenderer`
     * Removes `<layer-message-viewer-expanded/>` in favor of `<layer-message-viewer size='large' />`
-        * For the full `<layer-message-viewer-expanded />` put `<layer-message-viewer size='large' />` inside of a `<layer-dialog />`
+        * For the full `<layer-message-viewer-expanded />` experience, put `<layer-message-viewer size='large' />` inside of a `<layer-dialog />`
     * Renames `<layer-feedback-message-expanded-view />` to `<layer-feedback-message-large-view />` which is now rendered within the `<layer-message-viewer size='large' />`
-* Adds Audio Message
-* WEB-1763: Refactoring to simplify imports of `@layerhq/webxdk` and  `@layerhq/webxdk/index-lite` without generating conflicts or duplication
+* Message Type Model Changes
+    * Message Types that have a Large Message View need to name that view using their `largeMessageRenderer` (previously used a preview release name of `messageRendererExpanded`)
+    * Adds `presend()` method that will generate a message and call `message.presend()` so that users may preview it in their Message List without having sent it yet.
+    * Supports concept of Slots for organizing Message Metadata (optional)
+* New Message Types
+    * Adds Audio Message
+    * Adds Video Message
+    * File Upload Button detects if Audio/Video messages are part of the build and will send an Audio/Video message based on the selected file
+* Changes to the Message Viewer Component (`<layer-message-viewer />`)
+    * Adds a `size` property that can be set to `large` for the Large version of a given Message (not supported for all Message Types yet)
+    * Removes the `widthType` property; see instead the `width` property
+    * Removes the `preferredMaxWidth` and `preferredMinWidth` properties
+    * Adds a `width` property which if set, will force the message width to match that width (but will not violate any constraining `max-width` settings)
+    * Various changes to how Message sizes are controlled using `height`, `width`, `maxWidth` and `minWidth` properties
+* The Standard Message View Container (`<layer-standard-message-view-container />`) now supports Replaceable Content for inserting controls
+    * This is used by Link Message and Location Message to insert an arrow indicating the message can be clicked
+    * This is used by the Audio Message to insert a Play button
+* The Message View Mixin used to implement all Custom Messages:
+    * now only calls `onAfterCreate` after the root part of the message has loaded
+    * Now provides `getMaxMessageWidth()` method for getting the available width for the Message to render in (not counting that message's own min/max widths)
+  if this part excedes 2K, it will wait until its downloaded before calling `onAfterCreate` and allowing the lifecycle to continue.
+* Adds a Manual Query class to which you can add and remove data, and have UI Components render them.  `var query = layerClient.createQuery({model: Layer.Core.Query.Manual}); query.addItem(conversation1);`
+* Component base class now supports properties where `type: Object` is part of the definition; will deserialize JSON property values.
 * WEB-1779: Now throws error if calling `Layer.UI.setupMixins({...})` after calling `Layer.init()`
 * Increases priority of DOM nodes with `layer-replaceable-name="foo"` within your HTML over `widget.replaceableContent = {foo: nodes}` within your Javascript
+* `message-type-response-summmary-v2` renamed to `message-type-response-summary-v2`
+* `message-type-response-summmary-v1` renamed to `message-type-response-summary-v1`; This will be imported by your project if you require it; please update your imports!
+* Supported Image Types, Audio Types and Video Types can be set in the `settings` via `Layer.init({imageMIMETypes: ['image/gif'], audioMIMETypes: ['audio/mp3'], videoMIMETypes: ['video/mp4']})`; but the default values indicate values that Layer Messages have been tested against.
 
 ## 4.0.3
 

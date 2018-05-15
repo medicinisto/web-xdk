@@ -20,6 +20,16 @@
  * dialog.destroy();
  * ```
  *
+ * The dialog listens to its child components for a `layer-container-done` event, and will close on detecting this event.
+ * Thus a component within a dialog might implement a Save method as:
+ *
+ * ```
+ * onSave(result) {
+ *   this.model.responses.addState('result', result);
+ *   this.trigger('layer-container-done');
+ * }
+ * ```
+ *
  * @class Layer.UI.components.Dialog
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.Clickable
