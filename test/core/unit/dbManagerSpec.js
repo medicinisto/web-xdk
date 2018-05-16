@@ -696,7 +696,7 @@ var dbIt = it;
                 id: message.findPart().id,
                 body: message.findPart().body,
                 encoding: message.findPart().encoding,
-                mime_type: message.findPart().mimeType,
+                mime_type: message.findPart().mimeType + ';role=root',
                 content: null
               }]
             }]);
@@ -740,7 +740,7 @@ var dbIt = it;
                 id: part1.id,
                 body: jasmine.any(String),
                 encoding: part1.encoding,
-                mime_type: part1.mimeType,
+                mime_type: part1.mimeType + ';role=root',
                 useBlob: true,
                 content: null
               },
@@ -748,7 +748,7 @@ var dbIt = it;
                 id: part2.id,
                 body: jasmine.any(String),
                 encoding: part2.encoding,
-                mime_type: part2.mimeType,
+                mime_type: part2.mimeType + ';role=source',
                 useBlob: true,
                 content: null
               }]
@@ -793,7 +793,7 @@ var dbIt = it;
                 id: message.findPart().id,
                 body: null,
                 encoding: message.findPart().encoding,
-                mime_type: message.findPart().mimeType,
+                mime_type: message.findPart().mimeType + ';role=root',
                 content: null
               }]
             }]);
@@ -831,7 +831,7 @@ var dbIt = it;
                 id: message.findPart().id,
                 body: message.findPart().body,
                 encoding: message.findPart().encoding,
-                mime_type: message.findPart().mimeType,
+                mime_type: message.findPart().mimeType + ';role=root',
                 content: null
               }]
             }]);
@@ -850,13 +850,13 @@ var dbIt = it;
                 id: part1.id,
                 body: part1.body,
                 encoding: part1.encoding,
-                mime_type: part1.mimeType,
+                mime_type: part1.mimeType + ';role=root',
                 content: null
               }, {
                 id: part2.id,
                 body: part2.body,
                 encoding: part2.encoding,
-                mime_type: part2.mimeType,
+                mime_type: part2.mimeType + ';role=source',
                 content: {
                   download_url: part2._content.downloadUrl,
                   expiration:   part2._content.expiration,

@@ -53,6 +53,7 @@ describe("The Client CAPI Auth Mixin", function() {
 
     afterEach(function() {
         client.destroy();
+        Layer.Settings.__client = null;
         jasmine.clock().uninstall();
         jasmine.Ajax.uninstall();
     });
