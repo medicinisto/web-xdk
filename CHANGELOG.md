@@ -79,7 +79,7 @@ _All Changes_:
 * WEB-1772: No longer pings to check if server is available unless client is ready and authenticated
 * WEB-1763: No longer requires all imports follow the same path; one component may import `@layerhq/webxdk` and another  `@layerhq/webxdk/index-lite` without generating conflicts or duplication
 * WEB-1762: Use passive scroll listeners
-
+* WEB-1783: text/plain and legacy messages from Layer UI/Atlas now render in the Conversation List
 
 ## 4.0.2
 

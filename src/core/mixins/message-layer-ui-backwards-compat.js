@@ -37,7 +37,7 @@ function convertToImage(message) {
     const source = message.parts.filter(part =>
       ['image/png', 'image/gif', 'image/jpeg'].indexOf(part.mime_type) !== -1)[0];
     const preview = message.parts.filter(part => part.mime_type === 'image/jpeg+preview')[0];
-    const metaPart = message.parts.filter(part => part.mime_type === 'application/json+imageSize')[0];
+    const metaPart = message.parts.filter(part => part.mime_type.toLowerCase() === 'application/json+imagesize')[0];
     const meta = metaPart ? JSON.parse(metaPart.body) : {};
     const uuid = generateUUID();
     const parts = [
