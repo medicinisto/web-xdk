@@ -46,14 +46,12 @@ describe("The Client Authenticator Class", function() {
 
     afterEach(function() {
         Layer.Utils.defer.flush();
-        if (Layer.client) Layer.client.destroy();
+        if (Layer.client && !Layer.client.isDestroyed) Layer.client.destroy();
+        Layer.Settings.__client = null;
         jasmine.clock().uninstall();
         jasmine.Ajax.uninstall();
     });
 
-    afterAll(function() {
-
-    });
 
     describe("The constructor method", function() {
         it("Should return a new client", function() {

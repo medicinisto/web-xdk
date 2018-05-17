@@ -26,6 +26,33 @@ import { register } from './index';
  *   Now you can put `<layer-conversation-view>` and other widgets into angular templates and expect them to work.
  *   Prefix ALL property names with `ng-` to insure that scope is evaluated prior to passing the value on to the webcomponent.
  *
+ * ### Bindings
+ *
+ * Bindings should work... except when put within Replaceable Content; the following will *not* work:
+ *
+ * ```
+ * <layer-conversation-view>
+ *   <div layer-replaceable-name="composerButtonPanelRight">
+ *     <div>{{displayName}}</div>
+ *     <layer-send-button></layer-send-button>
+ *     <layer-file-upload-button></layer-file-upload-button>
+ *   </div>
+ * </layer-conversation-view>
+ * ```
+ *
+ * The above code correctly inserts the send button and upload button, but will not lookup `displayName` in your scope.
+ *
+ * Note that the above technique of using `layer-replaceable-name` only works for non-repeating content; to customize nodes
+ * that repeat, you will need to use a callback function, best accomplished using:
+ *
+ * ```javascript
+ * document.getElementById('my-layer-conversation-view').replaceableContent = {
+ *    conversationRowRightSide: function(widget) {
+ *       return domNodeOrInnerHTML;
+ *    }
+ * };
+ * ```
+ *
  * ### Importing
  *
  * Not included with the standard build. To import:

@@ -137,10 +137,10 @@ describe("The OnlineStateManager Class", function() {
             manager.destroy();
         });
 
-        it("Should call checkOnlineStatus", function() {
-          spyOn(manager, "checkOnlineStatus");
+        it("Should call _scheduleNextOnlineCheck", function() {
+          spyOn(manager, "_scheduleNextOnlineCheck");
           manager.start();
-          expect(manager.checkOnlineStatus).toHaveBeenCalledWith();
+          expect(manager._scheduleNextOnlineCheck).toHaveBeenCalled();
         });
 
         it("Should set isOnline to true", function() {

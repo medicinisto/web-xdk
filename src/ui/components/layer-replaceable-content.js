@@ -84,36 +84,32 @@ registerComponent('layer-replaceable-content', {
       const mainComponent = parents[0];
 
       // Identify any nodes inserted into the top level component's DOM structure via:
-      // <some-top-level-component><div class='some-default-stuff>some default stuff</div></some-top-level-component>
+      // <some-top-level-component><div layer-replaceable-name='foo' class='some-default-stuff>some default stuff</div></some-top-level-component>
       // Note that these nodes are removed by Layer.UI.Component during initialization and cached in originalChildNodes
       const originalNodes = mainComponent.properties.originalChildNodes || [];
-
-      // If a generator was provided via the `replaceableContent` property of any parent, use it
-      const { nodeOrGenerator, parent } = this._findNodeOrNodeGenerator(parents);
-
-      // Either use the nodeOrGenerator and insert suitable DOM nodes...
-      if (nodeOrGenerator) {
-        this._insertContent(parent, nodeOrGenerator);
-        processed = true;
-      } else if (nodeOrGenerator === null) {
-        // Only if its undefined is it not processed; null can be used to indicate that Nothing goes there
-        // and that no other processing (i.e. restoring original child nodes) should be done
-        processed = true;
+      for (let i = 0; i < originalNodes.length; i++) {
+        if (originalNodes[i] instanceof HTMLElement) {
+          const matchingNode = this._searchAttributesForLayerReplaceableName(mainComponent, originalNodes[i]);
+          if (matchingNode) {
+            this._insertContent(mainComponent, matchingNode);
+            processed = true;
+            break;
+          }
+        }
       }
 
-      // Or... Check the top level component's originalChildNodes (we ignore originalChildNodes of other parents)
-      // to see if any of them contain a layer-replaceable-content attribute
-      // that matches our name and use it instead.
-      else {
-        for (let i = 0; i < originalNodes.length; i++) {
-          if (originalNodes[i] instanceof HTMLElement) {
-            const matchingNode = this._searchAttributesForLayerReplaceableName(mainComponent, originalNodes[i]);
-            if (matchingNode) {
-              this._insertContent(mainComponent, matchingNode);
-              processed = true;
-              break;
-            }
-          }
+      if (!processed) {
+        // If a generator was provided via the `replaceableContent` property of any parent, use it
+        const { nodeOrGenerator, parent } = this._findNodeOrNodeGenerator(parents);
+
+        // Either use the nodeOrGenerator and insert suitable DOM nodes...
+        if (nodeOrGenerator) {
+          this._insertContent(parent, nodeOrGenerator);
+          processed = true;
+        } else if (nodeOrGenerator === null) {
+          // Only if its undefined is it not processed; null can be used to indicate that Nothing goes there
+          // and that no other processing (i.e. restoring original child nodes) should be done
+          processed = true;
         }
       }
 

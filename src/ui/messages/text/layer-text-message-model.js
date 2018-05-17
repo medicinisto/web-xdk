@@ -37,7 +37,6 @@
  * @extends Layer.Core.MessageTypeModel
  */
 import Core, { MessagePart, Root, MessageTypeModel } from '../../../core';
-import { register } from '../../handlers/message/message-handlers';
 import { STANDARD_MIME_TYPES } from '../../../constants';
 
 class TextModel extends MessageTypeModel {
@@ -159,25 +158,5 @@ Root.initClass.apply(TextModel, [TextModel, 'TextModel']);
 
 // Register the Message Model Class with the Client
 Core.Client.registerMessageTypeModelClass(TextModel, 'TextModel');
-
-
-/*
- * This Message Handler is NOT the main "layer-message-viewer" Message Handler;
- * rather, this Viewer detects text/plain messages, converts them to
- * Text Cards, and THEN lets the <layer-message-viewer /> component handle it from there
- */
-register({
-  tagName: 'layer-message-viewer',
-  handlesMessage(message, container) {
-    const isCard = Boolean(message.getPartsMatchingAttribute({ role: 'root' })[0]);
-    const textPlainPart = message.filterParts(part => part.mimeType === 'text/plain')[0];
-    if (!isCard && textPlainPart) {
-      textPlainPart.body = JSON.stringify({ text: textPlainPart.body });
-      textPlainPart.mimeType = TextModel.MIMEType + '; role=root';
-      message._addToMimeAttributesMap(textPlainPart);
-      return true;
-    }
-  },
-});
 
 module.exports = TextModel;

@@ -1,5 +1,20 @@
 # Web XDK Change Log
 
+## 4.0.3
+
+* Fixes identity metadata so that it is always an Object even when there is no value in the object
+* Adds Property Type for UI Components of `type: Object`
+* `replaceableContent` can now be set as an attribute and will be converted to Object: `<my-widget replaceable-content='{"name": "value"}'></my-widget>`
+* WEB-1765: Adds `presend()` method to all Message Type Models so that messages created from Models can be previewed in the Message List.
+* Fixes rendering of Date Sent for messages that were `presend()` before they were `send()`
+* Refactors imports for Messaging Models/Components into `src/ui/messages/index` and `src/ui/messages/index-lite`
+  (typical apps do not use this directly)
+* WEB-1772: No longer pings to check if server is available unless client is ready and authenticated
+* WEB-1763: No longer requires all imports follow the same path; one component may import `@layerhq/webxdk` and another  `@layerhq/webxdk/index-lite` without generating conflicts or duplication
+* Replaceable Content: Increases priority of DOM nodes with `layer-replaceable-name="foo"` within your HTML over `widget.replaceableContent = {foo: nodes}`; if both are used, the DOM nodes with the attribute will be used and the other ignored.
+* WEB-1762: Use passive scroll listeners
+* WEB-1783: text/plain and legacy messages from Layer UI/Atlas now render in the Conversation List
+
 ## 4.0.2
 
 * Adds logging mode for doing timing; `Layer.init({ appId, logLevel: Layer.Constants.LOG.TIMING })`

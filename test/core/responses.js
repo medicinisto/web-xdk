@@ -10,13 +10,13 @@ var messageTemplate = {
     "parts": [
         {
             "id": "layer:///messages/940de862-3c96-11e4-baad-164230d1df67/parts/0",
-            "mime_type": "text/plain",
-            "body": "This is the message.",
+            "mime_type": "application/vnd.layer.text+json;role=root",
+            "body": JSON.stringify({text: "This is the message."}),
             "size": 20
         },
         {
             "id": "layer:///messages/940de862-3c96-11e4-baad-164230d1df67/parts/1",
-            "mime_type": "image/png",
+            "mime_type": "image/png;role=source",
             "content": {
                 download_url: "https://storage.googleapis.com/content-prod1/9ec30af8-5591-11e4-af9e-f7a201004a3b/9326d2b7-e34a-4659-a1d9-656290e7a346/ade53880-e00f-11e5-b2ae-0242ac110090?GoogleAccessId=562313368749-gcg5vvavqprdhpnp8udipdnablc4o3hp@developer.gserviceaccount.com&Expires=1456882972&Signature=R3mnrP9OC4uCgKcZf62afC%2BTS1oLLdBs6BC0rTZc2sK8ohaczs9qkzd55xK%2BKaqSc%2FDW%2FNmXDJJs4aM0Pl3BfEI8G7ds%2BkQ3%2F4Bo6kcKavcdVVIO1cEsnI2m4JCPicQUflAlFM7H1wYbLqN%2B3dug0eL1QOin5uDqmnNbDXqKt1w%3D",
                 expiration: "2016-03-02T01:42:52.290Z",
@@ -133,8 +133,8 @@ responses = {
       "parts": [
           {
               "id": "layer:///announcements/b40de862-3c96-11e4-baad-164230d1df67/parts/0",
-              "mime_type": "text/plain",
-              "body": "This is the message.",
+              "mime_type": "application/vnd.layer.text+json;role=root",
+              "body": JSON.stringify({text: "This is the message."}),
               "size": 20
           }
       ],

@@ -189,7 +189,7 @@ describe("The Client class", function() {
 
             it("Should get by id", function() {
                 var part = message.findPart(function(part) {
-                    return part.mimeType === responses.message1.parts[1].mime_type;
+                    return part.mimeType === responses.message1.parts[1].mime_type.replace(/;.*$/,'');
                 })
                 expect(client.getMessagePart(responses.message1.parts[1].id)).toBe(part);
             });

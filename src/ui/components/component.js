@@ -653,6 +653,14 @@ function castProperty(type, value) {
     case Function:
       /* eslint-disable-next-line */
       return typeof value === 'string' ? eval('(' + value + ')') : value;
+    case Object:
+      if (value && typeof value === 'string') {
+        try {
+          return JSON.parse(value);
+        } catch (e) {
+          // no-op
+        }
+      }
   }
   return value;
 }
@@ -1331,7 +1339,9 @@ const standardClassProperties = {
    *
    * @property {Object} replaceableContent
    */
-  replaceableContent: {},
+  replaceableContent: {
+    type: Object,
+  },
 
   /**
    * Used to track event handlers to subclasses of Layer.Core.Root.

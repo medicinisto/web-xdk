@@ -1,37 +1,24 @@
 /**
  * The Layer Client; this is the top level component for any Layer based application.
-
-    var client = new Layer.Core.Client({
-      appId: 'layer:///apps/staging/ffffffff-ffff-ffff-ffff-ffffffffffff',
-      challenge: function(evt) {
-        myAuthenticator({
-          nonce: evt.nonce,
-          onSuccess: evt.callback
-        });
-      },
-      ready: function(client) {
-        alert('I am Client; Server: Serve me!');
-      }
-    }).connect('Fred')
  *
- * You can also initialize this as
-
-    var client = new Layer.Core.Client({
-      appId: 'layer:///apps/staging/ffffffff-ffff-ffff-ffff-ffffffffffff'
-    });
-
-    client.on('challenge', function(evt) {
-      myAuthenticator({
-        nonce: evt.nonce,
-        onSuccess: evt.callback
-      });
-    });
-
-    client.on('ready', function(client) {
-      alert('I am Client; Server: Serve me!');
-    });
-
-    client.connect('Fred');
+ * ```
+ * var client = new Layer.Core.Client({
+ *   appId: 'layer:///apps/staging/ffffffff-ffff-ffff-ffff-ffffffffffff'
+ * });
+ *
+ * client.on('challenge', function(evt) {
+ *   myAuthenticator({
+ *     nonce: evt.nonce,
+ *     onSuccess: evt.callback
+ *   });
+ * });
+ *
+ * client.on('ready', function(client) {
+ *   alert('I am Client; Server: Serve me!');
+ * });
+ *
+ * client.connect('Fred');
+ * ```
  *
  * ## API Synopsis:
  *

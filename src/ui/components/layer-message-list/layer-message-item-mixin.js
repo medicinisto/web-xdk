@@ -288,6 +288,12 @@ module.exports = {
 
       this.toggleClass(`${statusPrefix}-pending`, this.properties.item.isSaving());
       this.toggleClass('layer-message-preview', this.properties.item.isNew());
+
+      // Needed for when a message was first rendered after calling `presend()`
+      // and later gets `send()` called on it.
+      if (this.nodes.date && !this.item.isNew()) {
+        this.nodes.date.date = this.item.sentAt;
+      }
     },
 
     /**

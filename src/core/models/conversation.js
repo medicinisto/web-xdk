@@ -146,7 +146,7 @@ class Conversation extends Container {
       messageConfig = options;
     }
     messageConfig.conversationId = this.id;
-    messageConfig._loadType = 'websocket'; // treat this the same as a websocket loaded object
+    messageConfig._loadType = 'websocket'; // treat this the same as a websocket loaded object when triggering events
 
     return new ConversationMessage(messageConfig);
   }

@@ -93,7 +93,7 @@ mixins.List = module.exports = {
     onCreate() {
       if (!this.id) this.id = Util.generateUUID();
       this.properties.listData = [];
-      this.addEventListener('scroll', this._onScroll.bind(this));
+      this.addEventListener('scroll', this._onScroll.bind(this), { passive: true });
       this.onRender();
     },
 
@@ -105,9 +105,7 @@ mixins.List = module.exports = {
      * @private
      */
     _onScroll(evt) {
-      if (this.properties.isSelfScrolling) {
-        evt.preventDefault();
-      } else {
+      if (!this.properties.isSelfScrolling) {
         this._throttler(this._handleScroll.bind(this));
       }
     },

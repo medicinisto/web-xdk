@@ -134,6 +134,7 @@ import { ErrorDictionary } from '../layer-error';
 import Constants from '../../constants';
 import Util from '../../utils';
 import Identity from './identity';
+import MessageBackwardsCompat from './layer-ui-message-backwards-compat';
 
 class Message extends Syncable {
   /**
@@ -649,6 +650,8 @@ class Message extends Syncable {
    */
   _populateFromServer(message) {
     this._inPopulateFromServer = true;
+
+    MessageBackwardsCompat(message);
 
     this.id = message.id;
     this.url = message.url;

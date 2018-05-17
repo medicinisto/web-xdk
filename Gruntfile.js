@@ -519,57 +519,6 @@ module.exports = function (grunt) {
       return contents.substring(0, startIndex) + stringToOptimize + contents.substring(endIndex);
     }
 
-    function parseTemplates(parentFolder, className, pathToLayerUI) {
-      var output = '';
-      var templates = grunt.file.expand(parentFolder + "/*.html")
-      templates.forEach(function(templateFileName) {
-      // Stick the entire template into a function comment for easy multi-line string,
-      // and feed the resulting function.toString() into buildTemplate() to create and assign a template to the widget.
-      // TODO: maybe we should minify the HTML and CSS so it fits on a single line and doesn't need a function comment.
-      //       Note: this would require escaping of all strings, which can get messy.
-        grunt.log.writeln("Writing template for " + className);
-        var contents = grunt.file.read(templateFileName);
-        contents = contents.replace(/\/\*[\s\S]*?\*\//mg, '');
-
-        var templateCount = 0;
-        var templates = contents.match(/^\s*<template(\s+id=['"].*?['"]\s*)?>([\s\S]*?)<\/template>/mg);
-        templates.forEach(function(templateString) {
-          templateCount++;
-          var templateMatches = templateString.match(/^\s*<template(\s+id=['"].*?['"]\s*)?>([\s\S]*?)<\/template>/m);
-          var templateContents = templateMatches[2];
-          var templateId = templateMatches[1] || '';
-          if (templateId) templateId = templateId.replace(/^.*['"](.*)['"].*$/, "$1");
-          if (!templateId) {
-            var templateName = templateFileName.replace(/\.html/, '').replace(/^.*\//, '');
-            if (templateName !== className) templateId = templateName;
-          }
-
-          // Extracting styles won't be needed once we have shadow dom.  For now, this prevents 500 <layer-message> css blocks
-          // from getting added and all applying to all messages.
-          var styleMatches = templateContents.match(/<style>([\s\S]*)<\/style>/);
-          var style;
-          if (styleMatches) {
-            style = styleMatches[1].replace(/^\s*/gm, '');
-            templateContents = templateContents.replace(/<style>([\s\S]*)<\/style>\s*/, '');
-          }
-
-          // Strip out white space between tags
-          templateContents = templateContents.replace(/<!--[\s\S]*?-->/gm, '');
-
-          // Strip out HTML Comment Nodes
-          templateContents = templateContents.replace(/>\s+</g, '><');
-
-          // Generate the <template /> and <style> objects
-          output += '\n(function() {\n';
-          output += 'var layerUI = require(\'' + pathToLayerUI + '\');\n';
-          output += 'layerUI.buildAndRegisterTemplate("' + className + '", ' + JSON.stringify(templateContents.replace(/\n/g,'').trim()) + ', "' + templateId + '");\n';
-          output += 'layerUI.buildStyle("' + className + '", ' + JSON.stringify(style.trim()) + ', "' + templateId + '");\n';
-          output += '})()';
-        });
-      });
-      return output;
-    }
-
     function createCombinedComponentFile(file, outputPathES5, outputPathES6) {
       try {
       // Extract the class name; TODO: class name should be same as file name.
@@ -587,10 +536,6 @@ module.exports = function (grunt) {
 
       // Find the template file by checking for an html file of the same name as the js file in the same folder.
       var parentFolder = path.dirname(file);
-      var pathToLayerUI = parentFolder.replace(/[/|\bsrc/ui/][^/]*/g, "/..").substring(7) + "/layer-ui"
-
-      // We have mostly migrated away from these template files
-      output += parseTemplates(parentFolder, className, pathToLayerUI);
 
       //var outputES5 = output.replace(/\/\*[\s\S]*?\*\//g, '');
       var outputES5 = output;
