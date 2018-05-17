@@ -24,7 +24,11 @@
     "arrow-paren": ["as-needed", { "requireForBlockBody": true }],
     "react/no-children-prop": 0,
     "react/prop-types": 0,
-    "no-cond-assign": [2, "except-parens"]
+    "no-cond-assign": [2, "except-parens"],
+    "no-restricted-properties": [2, {
+      "object": "Math",
+      "property": "pow"
+    }]
   },
   "env": {
       "browser": true,

@@ -75,7 +75,8 @@ module.exports.normalizeSize = (dimensions, maxSizes) => {
  */
 module.exports.humanFileSize = (size) => {
   const i = Math.floor(Math.log(size) / Math.log(1024));
-  const base = Math.round(size / 1024 ** i);
+  /* eslint-disable no-restricted-properties */
+  const base = Math.round(size / Math.pow(1024, i));
   if (i > 4) {
     return base + new Array(i - 3).join(',000') + 'T';
   } else {

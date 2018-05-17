@@ -207,7 +207,7 @@ class AudioModel extends MessageTypeModel {
   setupSlots() {
     const slots = [
       [
-        this.title, this.sourceUrl.replace(/(.*\/)?(.*?)(\..*)?$/, '$2'), this.getOneLineSummary(true),
+        this.title || this.sourceUrl.replace(/(.*\/)?(.*?)(\..*)?$/, '$2') || this.getOneLineSummary(true),
       ].filter(value => value),
       [
         this.artist, this.album, this.genre,

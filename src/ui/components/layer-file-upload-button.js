@@ -30,7 +30,7 @@
  * @mixin Layer.UI.mixins.Clickable
  */
 import Layer from '../../core/namespace';
-import Util from '../../utils';
+import Util, { logger } from '../../utils';
 import { registerComponent } from './component';
 import Clickable from '../mixins/clickable';
 import { imageMIMETypes, audioMIMETypes, videoMIMETypes } from '../../settings';
@@ -128,6 +128,43 @@ registerComponent('layer-file-upload-button', {
      */
     onChange() {
       const files = Array.prototype.slice.call(this.nodes.input.files);
+      let models;
+
+      function onDone() {
+        if (models.filter(model => !(model instanceof Layer.MessageTypeModel)).length) return;
+
+        /**
+         * This widget triggers a `layer-models-generated` event when the user selects files, and Message Type Models
+         * have been generated for them.  Call `event.preventDefault()` to prevent this event from being received
+         * by the parent {@link Layer.UI.components.ComposeBar}:
+         *
+         * ```
+         * document.body.addEventListener('layer-models-generated', function(evt) {
+         *   evt.preventDefault();
+         *   var models = evt.detail.models;
+         *   var CarouselModel = Layer.Core.Client.getMessageTypeModelClass('CarouselModel');
+         *   var model = new CarouselModel({ items: models });
+         *   model.send({ conversation });
+         * });
+         * ```
+         *
+         * Also supports:
+         *
+         * ```
+         * widget.onModelsGenerated = function(evt) {...}
+         * ```
+         *
+         * @event layer-models-generated
+         * @param {Object} evt
+         * @param {Object} evt.detail
+         * @param {Layer.Core.MessageTypeModel[]} evt.detail.models
+         */
+        if (this.trigger('layer-models-generated', { models })) {
+          if (this.parentComponent && this.parentComponent.onModelsGenerated) {
+            this.parentComponent.onModelsGenerated(models);
+          }
+        }
+      }
 
       /**
        * This event is triggered when files are selected, but before Message Type Models are generated for those files.
@@ -176,7 +213,8 @@ registerComponent('layer-file-upload-button', {
         const VideoModel = Layer.Client.getMessageTypeModelClass('VideoModel');
 
         // Generate Message Type Models for each File
-        const models = files.map((file) => {
+        models = [].concat(files);
+        files.forEach((file, index) => {
           const options = { source: file };
           if (files.length > 1 && file.name) {
             options.title = file.name;
@@ -184,47 +222,25 @@ registerComponent('layer-file-upload-button', {
 
           // Generate either an Image or File Model
           if (typeof ImageModel !== 'undefined' && imageMIMETypes.indexOf(file.type) !== -1) {
-            return new ImageModel(options);
+            models[index] = new ImageModel(options);
           } else if (typeof AudioModel !== 'undefined' && audioMIMETypes.indexOf(file.type) !== -1) {
-            return new AudioModel(options);
+            models[index] = new AudioModel(options);
           } else if (typeof VideoModel !== 'undefined' && videoMIMETypes.indexOf(file.type) !== -1) {
-            return new VideoModel(options);
+            VideoModel.testIfVideoOnlyFile(file, (isVideo) => {
+              if (isVideo === true) {
+                models[index] = new VideoModel(options);
+              } else if (isVideo === false && AudioModel) {
+                models[index] = new AudioModel(options);
+              } else {
+                logger.error(isVideo);
+              }
+              onDone();
+            });
           } else {
-            return new FileModel(options);
+            models[index] = new FileModel(options);
           }
         });
-
-        /**
-         * This widget triggers a `layer-models-generated` event when the user selects files, and Message Type Models
-         * have been generated for them.  Call `event.preventDefault()` to prevent this event from being received
-         * by the parent {@link Layer.UI.components.ComposeBar}:
-         *
-         * ```
-         * document.body.addEventListener('layer-models-generated', function(evt) {
-         *   evt.preventDefault();
-         *   var models = evt.detail.models;
-         *   var CarouselModel = Layer.Core.Client.getMessageTypeModelClass('CarouselModel');
-         *   var model = new CarouselModel({ items: models });
-         *   model.send({ conversation });
-         * });
-         * ```
-         *
-         * Also supports:
-         *
-         * ```
-         * widget.onModelsGenerated = function(evt) {...}
-         * ```
-         *
-         * @event layer-models-generated
-         * @param {Object} evt
-         * @param {Object} evt.detail
-         * @param {Layer.Core.MessageTypeModel[]} evt.detail.models
-         */
-        if (this.trigger('layer-models-generated', { models })) {
-          if (this.parentComponent && this.parentComponent.onModelsGenerated) {
-            this.parentComponent.onModelsGenerated(models);
-          }
-        }
+        onDone();
       }
     },
   },

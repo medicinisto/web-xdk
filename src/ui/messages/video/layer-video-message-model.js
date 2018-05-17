@@ -217,7 +217,7 @@ class VideoModel extends MessageTypeModel {
   setupSlots() {
     const slots = [
       [
-        this.title, this.sourceUrl.replace(/(.*\/)?(.*?)(\..*)?$/, '$2'), this.getOneLineSummary(true),
+        this.title || this.sourceUrl.replace(/(.*\/)?(.*?)(\..*)?$/, '$2') || this.getOneLineSummary(true),
       ].filter(value => value),
       [
         this.subtitle, this.artist,
@@ -333,6 +333,23 @@ class VideoModel extends MessageTypeModel {
     if (this.__height) return this.__height;
     if (this.__width && this.__aspectRatio) return this.__width / this.__aspectRatio;
     return 0;
+  }
+
+  /**
+   * Test if the provided javascript File object is actually an audio file
+   *
+   * @method testIfVideoOnlyFile
+   * @static
+   * @param {File/Blob} file
+   * @param {Function} callback
+   * @param {Boolean} callback.result
+   */
+  static testIfVideoOnlyFile(file, callback) {
+    const video = document.createElement('video');
+    video.addEventListener('durationchange', () => {
+      callback(video.videoWidth || video.videoHeight);
+    });
+    video.addEventListener('error', err => callback(err));
   }
 }
 

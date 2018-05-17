@@ -85,7 +85,7 @@ module.exports = {
   destroyAfterDetachDelay: 10000,
   useEmojiImages: true,
   googleMapsKey: '',
-  audioMIMETypes: ['audio/mp3', 'audio/mpeg'],
+  audioMIMETypes: ['audio/mp3', 'audio/mpeg', 'audio/aac', 'audio/x-m4a'],
   videoMIMETypes: ['video/mp4'],
   imageMIMETypes: ['image/gif', 'image/png', 'image/jpeg', 'image/svg'],
 };
