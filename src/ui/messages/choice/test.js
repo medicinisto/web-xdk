@@ -538,7 +538,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         var responseMessage;
-        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+        spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "_triggerAsync").and.callThrough();
 
         // Run: selectedAnswer starts unset and is changed to the specified value
@@ -599,7 +599,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         var responseMessage;
-        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+        spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "_triggerAsync").and.callThrough();
 
         // Run: selectedAnswer starts unset and is changed to the specified value
@@ -663,7 +663,7 @@ describe('Choice Message Components', function() {
         jasmine.clock().tick(1000);
 
         var responseMessage;
-        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+        spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "_triggerAsync").and.callThrough();
 
         // Run: Starts with a preselected choice and deselects it
@@ -726,7 +726,7 @@ describe('Choice Message Components', function() {
         jasmine.clock().tick(1000);
 
         var responseMessage;
-        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+        spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "_triggerAsync").and.callThrough();
 
         // Run: Starts with "bb" and deselects it
@@ -790,7 +790,7 @@ describe('Choice Message Components', function() {
         jasmine.clock().tick(1000);
 
         var responseMessage;
-        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+        spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "_triggerAsync").and.callThrough();
 
         // Run: Deselect the second choice
@@ -851,7 +851,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         var responseMessage;
-        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+        spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         // Select the second choice
@@ -891,7 +891,7 @@ describe('Choice Message Components', function() {
         });
 
         var responseMessage;
-        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+        spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "_triggerAsync").and.callThrough();
 
         // Run 1: User not permitted to change this state
@@ -932,7 +932,7 @@ describe('Choice Message Components', function() {
         jasmine.clock().tick(1000);
 
         var responseMessage;
-        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+        spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "_triggerAsync").and.callThrough();
 
         // Validate initial state for multi-select
@@ -999,7 +999,7 @@ describe('Choice Message Components', function() {
         jasmine.clock().tick(1000);
 
         var responseMessage;
-        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+        spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "_triggerAsync").and.callThrough();
 
         // Run: Deselect the second choice
@@ -1063,7 +1063,7 @@ describe('Choice Message Components', function() {
         message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
       });
       var responseMessage;
-      spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+      spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
       spyOn(model, "trigger").and.callThrough();
 
       // Run: Select choice 2
@@ -1104,7 +1104,7 @@ describe('Choice Message Components', function() {
       });
 
       var responseMessage;
-      spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+      spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
       spyOn(model, "_triggerAsync").and.callThrough();
 
       // Run 1: Multiselect should block selection if not enabled for
@@ -1211,7 +1211,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         var responseMessage;
-        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+        spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         model.selectAnswer({ id: "bb" });
@@ -1263,7 +1263,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         var responseMessage;
-        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+        spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         model.selectAnswer({ id: "bb" });
@@ -1312,7 +1312,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         var responseMessage;
-        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+        spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         model.selectAnswer({ id: "bb" });
@@ -1366,7 +1366,7 @@ describe('Choice Message Components', function() {
         jasmine.clock().tick(1000);
 
         var responseMessage;
-        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+        spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         // Deselect
@@ -1417,7 +1417,7 @@ describe('Choice Message Components', function() {
           message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
         });
         var responseMessage;
-        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+        spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         model.selectAnswer({ id: "bb" });
@@ -1472,7 +1472,7 @@ describe('Choice Message Components', function() {
 
 
         var responseMessage;
-        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+        spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
         spyOn(model, "trigger").and.callThrough();
 
         // Deselect
@@ -1630,7 +1630,7 @@ describe('Choice Message Components', function() {
         });
 
         var responseMessage;
-        spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+        spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
         model.selectAnswer({id: "bb"});
         jasmine.clock().tick(1000);
         var responsePart = responseMessage.getRootPart();

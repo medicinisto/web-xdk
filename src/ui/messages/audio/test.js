@@ -276,7 +276,7 @@ describe('Audio Message Components', function() {
         size: 60000,
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
-      }).getFooter()).toEqual("60K");
+      }).getFooter()).toEqual("59K");
 
       expect(new AudioModel({
         artist: "artist",
@@ -290,7 +290,7 @@ describe('Audio Message Components', function() {
         size: 60000,
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
-      }).getFooter()).toEqual("60K");
+      }).getFooter()).toEqual("59K");
 
       expect(new AudioModel({
         duration: duration,
@@ -476,7 +476,7 @@ describe('Audio Message Components', function() {
         if (el) el.onDestroy();
       });
 
-      it("The play button should toggle the playing property", function() {
+      it("The play button should toggle the playing property", function(done) {
         // Pretest
         expect(el.contains(ui.properties.playButton)).toBe(true);
         expect(ui.properties.playButton).toEqual(jasmine.any(HTMLElement));
@@ -485,8 +485,11 @@ describe('Audio Message Components', function() {
         // Run
         click(ui.properties.playButton);
 
-        // Posttest
-        expect(ui.playing).toBe(true);
+        setTimeout(function() {
+          // Posttest
+          expect(ui.playing).toBe(true);
+          done();
+        }, 1500);
       });
 
       it("The play button should prevent runAction from being called", function() {
@@ -551,11 +554,11 @@ describe('Audio Message Components', function() {
               } catch (e) {
                 done(e);
               }
-            }, 100);
+            }, 2000);
           } catch (e) {
             done(e);
           }
-        }, 100);
+        }, 2000);
       });
 
       it("Should pause playback and open Large Message View on tap", function(done) {
@@ -574,11 +577,11 @@ describe('Audio Message Components', function() {
               } catch(e) {
                 done(e);
               }
-            }, 100);
+            }, 2000);
           } catch(e) {
             done(e);
           }
-        }, 100);
+        }, 2000);
       });
     });
   });

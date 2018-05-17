@@ -216,7 +216,7 @@ describe('File Message Components', function() {
       expect(model1.getDescription()).toEqual("c");
       expect(model2.getDescription()).toEqual("");
 
-      expect(model1.getFooter()).toEqual('0K');
+      expect(model1.getFooter()).toEqual('55B');
       expect(model2.getFooter()).toEqual("");
     });
 

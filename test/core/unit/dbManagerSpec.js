@@ -740,7 +740,7 @@ var dbIt = it;
                 id: part1.id,
                 body: jasmine.any(String),
                 encoding: part1.encoding,
-                mime_type: part1.mimeType + ';role=root',
+                mime_type: part1.mimeType ,
                 useBlob: true,
                 content: null
               },
@@ -748,7 +748,7 @@ var dbIt = it;
                 id: part2.id,
                 body: jasmine.any(String),
                 encoding: part2.encoding,
-                mime_type: part2.mimeType + ';role=source',
+                mime_type: part2.mimeType,
                 useBlob: true,
                 content: null
               }]
@@ -793,7 +793,7 @@ var dbIt = it;
                 id: message.findPart().id,
                 body: null,
                 encoding: message.findPart().encoding,
-                mime_type: message.findPart().mimeType + ';role=root',
+                mime_type: message.findPart().mimeType,
                 content: null
               }]
             }]);

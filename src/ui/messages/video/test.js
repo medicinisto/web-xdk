@@ -268,7 +268,7 @@ describe('Video Message Components', function() {
         size: 60000,
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
-      }).getDescription()).toEqual("60K");
+      }).getDescription()).toEqual("59K");
     });
 
     it("Should return duration or size or empty string to a getFooter() call", function() {
@@ -287,7 +287,7 @@ describe('Video Message Components', function() {
         size: 60000,
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
-      }).getFooter()).toEqual("60K");
+      }).getFooter()).toEqual("59K");
 
       expect(new VideoModel({
         subtitle: 'subtitle',
@@ -303,7 +303,7 @@ describe('Video Message Components', function() {
         size: 60000,
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
-      }).getFooter()).toEqual("60K");
+      }).getFooter()).toEqual("59K");
 
       expect(new VideoModel({
         subtitle: 'subtitle',

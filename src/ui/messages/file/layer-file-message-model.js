@@ -41,6 +41,7 @@
 
 import Core, { MessagePart, MessageTypeModel, Root } from '../../../core/namespace';
 import { xhr } from '../../../utils';
+import { humanFileSize } from '../../ui-utils';
 
 class FileModel extends MessageTypeModel {
 
@@ -154,7 +155,7 @@ class FileModel extends MessageTypeModel {
   getDescription() { return this.author; }
   getFooter() {
     if (!this.size) return '';
-    return (Math.floor(this.size / 1000)).toLocaleString() + 'K';
+    return humanFileSize(this.size);
   }
 }
 

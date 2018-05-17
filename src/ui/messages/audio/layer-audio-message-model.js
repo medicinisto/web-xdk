@@ -41,6 +41,7 @@
 
 import Core, { MessagePart, MessageTypeModel, Root } from '../../../core/namespace';
 import { logger } from '../../../utils';
+import { humanFileSize } from '../../ui-utils';
 
 class AudioModel extends MessageTypeModel {
 
@@ -266,7 +267,7 @@ class AudioModel extends MessageTypeModel {
    * @returns {String}
    */
   getSize() {
-    return (Math.floor(this.size / 1000)).toLocaleString() + 'K';
+    return humanFileSize(this.size);
   }
 
   /**

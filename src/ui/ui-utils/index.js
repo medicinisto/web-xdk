@@ -64,6 +64,26 @@ module.exports.normalizeSize = (dimensions, maxSizes) => {
   };
 };
 
+/**
+ * Return a human readable file size with B, K, M, G, etc... appended to it
+ *
+ * Thanks to https://stackoverflow.com/a/20732091/2094063
+ *
+ * @method humanFileSize
+ * @param {Number} size
+ * @returns {String}
+ */
+module.exports.humanFileSize = (size) => {
+  const i = Math.floor(Math.log(size) / Math.log(1024));
+  const base = Math.round(size / 1024 ** i);
+  if (i > 4) {
+    return base + new Array(i - 3).join(',000') + 'T';
+  } else {
+    return base + ['B', 'K', 'M', 'G', 'T'][i];
+  }
+};
+
+
 module.exports.ReplaceableSnippets = RCUtils;
 Object.keys(StatusManager).forEach(keyName => (module.exports[keyName] = StatusManager[keyName]));
 Object.keys(ListSeparatorManager).forEach(keyName => (module.exports[keyName] = ListSeparatorManager[keyName]));

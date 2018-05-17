@@ -723,7 +723,7 @@ describe('Button Message Components', function() {
       Layer.Utils.defer.flush();
 
       var responseMessage;
-      spyOn(Layer.Core.Message.prototype, "send").and.callFake(function() {responseMessage = this;});
+      spyOn(Layer.Core.Message.ConversationMessage.prototype, "send").and.callFake(function() {responseMessage = this;});
 
       var buttons = el.nodes.ui.nodes.buttons;
 

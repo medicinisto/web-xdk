@@ -41,6 +41,7 @@
 
 import Core, { MessagePart, MessageTypeModel, Root } from '../../../core/namespace';
 import { logger } from '../../../utils';
+import { humanFileSize } from '../../ui-utils';
 
 class VideoModel extends MessageTypeModel {
 
@@ -277,7 +278,7 @@ class VideoModel extends MessageTypeModel {
    * @returns {String}
    */
   getSize() {
-    return (Math.floor(this.size / 1000)).toLocaleString() + 'K';
+    return humanFileSize(this.size);
   }
 
   /**
