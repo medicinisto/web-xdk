@@ -160,8 +160,8 @@ mixins.FileDropTarget = module.exports = {
       const files = Array.prototype.filter.call(dt.files, file => file.type);
 
       if (files.length === 1) {
-        const model = this._processAttachment(files[0]);
-        model.send({ conversation: this.conversation, callback });
+        this._processAttachment(files[0], model =>
+          model.send({ conversation: this.conversation, callback }));
       } else {
         const model = this._processAttachments(files);
         model.send({ conversation: this.conversation, callback });
@@ -195,34 +195,44 @@ mixins.FileDropTarget = module.exports = {
      *
      * @method _processAttachments
      * @param {File} files    File Objects to turn into a carousel
-     * @returns {Layer.Core.MessageTypeModel}
+     * @param {Function} callback
+     * @param {Layer.Core.MessageTypeModel} callback.result
+     *
      * @private
      */
-    _processAttachment(file) {
+    _processAttachment(file, callback) {
+      const VideoModel = client.constructor.getMessageTypeModelClass('VideoModel');
+      const AudioModel = client.constructor.getMessageTypeModelClass('AudioModel');
+
       if (imageMIMETypes.indexOf(file.type) !== -1) {
-        return new ImageModel({
+        callback(new ImageModel({
           source: file,
+        }));
+      }
+      if (audioMIMETypes.indexOf(file.type) !== -1 && AudioModel) {
+        callback(new AudioModel({
+          source: file,
+        }));
+      }
+      if (videoMIMETypes.indexOf(file.type) !== -1 && VideoModel) {
+        VideoModel.testIfVideoOnlyFile(file, (isVideo) => {
+          if (isVideo === true) {
+            callback(new VideoModel({
+              source: file,
+            }));
+          } else if (isVideo === false && AudioModel) {
+            callback(new AudioModel({
+              source: file,
+            }));
+          } else {
+            logger.error(isVideo);
+          }
         });
+      } else {
+        callback(new FileModel({
+          source: file,
+        }));
       }
-      if (audioMIMETypes.indexOf(file.type) !== -1) {
-        const AudioModel = client.constructor.getMessageTypeModelClass('AudioModel');
-        if (AudioModel) {
-          return new AudioModel({
-            source: file,
-          });
-        }
-      }
-      if (videoMIMETypes.indexOf(file.type) !== -1) {
-        const VideoModel = client.constructor.getMessageTypeModelClass('VideoModel');
-        if (VideoModel) {
-          return new VideoModel({
-            source: file,
-          });
-        }
-      }
-      return new FileModel({
-        source: file,
-      });
     },
   },
 };

@@ -65,6 +65,8 @@ _All Changes_:
 * `message-type-response-summmary-v2` renamed to `message-type-response-summary-v2`
 * `message-type-response-summmary-v1` renamed to `message-type-response-summary-v1`; This will be imported by your project if you require it; please update your imports!
 * Supported Image Types, Audio Types and Video Types can be set in the `settings` via `Layer.init({imageMIMETypes: ['image/gif'], audioMIMETypes: ['audio/mp3'], videoMIMETypes: ['video/mp4']})`; but the default values indicate values that Layer Messages have been tested against.
+* File Upload Button can now reslect the same file twice in a row
+
 
 ## 4.0.3
 

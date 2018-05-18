@@ -116,6 +116,7 @@ module.exports = {
           id: Message.prefixUUID + this.id.replace(/\/parts\/.*$/, '').replace(/^.*MessageTypeModels\//, ''),
           parts: this.childParts,
         });
+        this._setupSlots();
 
         client._removeMessageTypeModel(this);
         this.id = Core.MessageTypeModel.prefixUUID + this.part.id.replace(/^.*messages\//, '');

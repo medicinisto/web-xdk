@@ -347,9 +347,16 @@ class VideoModel extends MessageTypeModel {
   static testIfVideoOnlyFile(file, callback) {
     const video = document.createElement('video');
     video.addEventListener('durationchange', () => {
-      callback(video.videoWidth || video.videoHeight);
+      URL.revokeObjectURL(video.src);
+      callback(Boolean(video.videoWidth || video.videoHeight));
     });
-    video.addEventListener('error', err => callback(err));
+    video.addEventListener('error', (err) => {
+      URL.revokeObjectURL(video.src);
+      callback(err);
+    });
+
+    video.src = URL.createObjectURL(file);
+
   }
 }
 

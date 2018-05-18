@@ -276,52 +276,6 @@ class MessageTypeModel extends Root {
   }
 
   /**
-   * Generate a Layer.Core.Message from this Model.
-   *
-   * This method returns the Layer.Core.Message asynchronously as some models
-   * may require processing of data prior to writing data into the Layer.Core.MessagePart objects.
-   *
-   * ```
-   * model.generateMessage(conversation, function(message) {
-   *     message.send();
-   * });
-   * ```
-   *
-   * > *Note*
-   * >
-   * > A model can have only a single message; calling `generateMessage()` a second time
-   * > will do nothing other than call `callback` with the existing message.
-   *
-   * @method generateMessage
-   * @param {Layer.Core.Conversation} conversation
-   * @param {Function} callback
-   * @param {Layer.Core.Message} callback.message
-   * @return {Layer.Core.MessageTypeModel} this
-   */
-  generateMessage(conversation, callback) {
-    if (this.message) return callback(this.message);
-    if (!conversation) throw new Error(ErrorDictionary.conversationMissing);
-    if (!(conversation instanceof Root)) throw new Error(ErrorDictionary.conversationMissing);
-    this.generateParts((parts) => {
-      this.childParts = parts.concat(this._generateInitialStateParts(parts));
-      this.part.mimeAttributes.role = 'root';
-      // this.part.mimeAttributes.xdkVersion = 'webxdk-' + version;
-      this.message = conversation.createMessage({
-        id: Message.prefixUUID + this.id.replace(/\/parts\/.*$/, '').replace(/^.*MessageTypeModels\//, ''),
-        parts: this.childParts,
-      });
-
-      client._removeMessageTypeModel(this);
-      this.id = MessageTypeModel.prefixUUID + this.part.id.replace(/^.*messages\//, '');
-      client._addMessageTypeModel(this);
-      this.parseModelChildParts({ changes: this.childParts.map(part => ({ type: 'added', part })), isEdit: false });
-      this._setupSlots();
-      this.trigger('message-type-model:has-new-message'); // do this before the callback so it fires before message.send() is called
-      if (callback) callback(this.message);
-    });
-  }
-
-  /**
    * After generating a Message, generate all of its `initial_response_state` Message Parts.
    * These tell the server what the Message's Initial State should be; the server then initializes
    * its `response_summary` Message Part from this (thus providing this Message Type MOdel with an initial {@link #responses} data.

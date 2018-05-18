@@ -86,7 +86,7 @@ module.exports = {
   useEmojiImages: true,
   googleMapsKey: '',
   audioMIMETypes: ['audio/mp3', 'audio/mpeg', 'audio/aac', 'audio/x-m4a'],
-  videoMIMETypes: ['video/mp4'],
+  videoMIMETypes: ['video/mp4', 'video/3gpp'],
   imageMIMETypes: ['image/gif', 'image/png', 'image/jpeg', 'image/svg'],
 };
 

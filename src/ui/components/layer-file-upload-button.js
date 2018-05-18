@@ -128,9 +128,10 @@ registerComponent('layer-file-upload-button', {
      */
     onChange() {
       const files = Array.prototype.slice.call(this.nodes.input.files);
+      if (files.length === 0) return;
       let models;
 
-      function onDone() {
+      const onDone = () => {
         if (models.filter(model => !(model instanceof Layer.MessageTypeModel)).length) return;
 
         /**
@@ -164,7 +165,9 @@ registerComponent('layer-file-upload-button', {
             this.parentComponent.onModelsGenerated(models);
           }
         }
-      }
+        this.nodes.input.setAttribute('value', '');
+        this.nodes.input.value = '';
+      };
 
       /**
        * This event is triggered when files are selected, but before Message Type Models are generated for those files.
