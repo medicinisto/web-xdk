@@ -669,7 +669,15 @@ class MessageTypeModel extends Root {
       slots[1].push(slots[2].shift());
     }
 
-    // Make sure every slot has a value
+
+    if (slots[1].length == 0 && slots[0].length > 1) {
+      slots[1].push(slots[0].splice(1,1)[0]);
+    }
+    if (slots[2].length == 0 && slots[1].length > 1) {
+      slots[2].push(slots[1].splice(1,1)[0]);
+    }
+
+    // Make sure every slot has a value even if its just an empty string
     this._metadataSlots = slots.map(slot => (slot.length ? slot : ['']));
   }
 

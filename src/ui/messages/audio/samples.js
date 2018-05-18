@@ -151,6 +151,16 @@ imgBase64 = "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAECElEQVR4Xu2ZO44TURR
     duration: 12345678,
   }).send({ conversation: $("layer-conversation-view").conversation })
 
+  new TextModel({text: "Renders Artist and album but not genre if no duration or size"}).send({ conversation: $("layer-conversation-view").conversation });
+  new AudioModel({
+    sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
+    title: "Sample mp3",
+    artist: "Artist Foo",
+    album: "Album Foo",
+    genre: "Foo Mastery",
+    mimeType: "audio/mpeg",
+  }).send({ conversation: $("layer-conversation-view").conversation })
+
   new TextModel({text: "Renders Album instead of artist if no artist"}).send({ conversation: $("layer-conversation-view").conversation });
   new AudioModel({
     sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
