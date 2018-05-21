@@ -47,7 +47,7 @@
  *   const { respondingToModel, responseModel } = evt;
  *   if (respondingToModel.getModelName() === 'ChoiceModel') {
  *     // Customize the Text displayed in the Response
- *     responseModel.displayModel.text = "Something important just changed";
+ *     respondingToModel.setResponseMessageText("Something important just changed");
  *
  *     // Add additional state changes to this Response Message
  *     respondingToModel.addState('who-is-a-dodo', 'frodo-the-dodo');

@@ -97,6 +97,7 @@ mixins.MessageViewMixin = module.exports = {
      */
     isHeightAllocated: {
       value: true,
+      valueLowPriority: true,
       set(value) {
         if (value) {
           this.trigger('message-height-change');

@@ -220,3 +220,13 @@ imgBase64 = "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAECElEQVR4Xu2ZO44TURR
     duration: 12345678,
     size: 12345,
   }).send({ conversation: $("layer-conversation-view").conversation })
+
+  new TextModel({text: "Used for the docs.layer.com example"}).send({ conversation: $("layer-conversation-view").conversation });
+  AudioModel = Layer.Core.Client.getMessageTypeModelClass('AudioModel');  new AudioModel({
+    sourceUrl: "http://www.mpgedit.org/mpgedit/testdata/mpeg1/layer3/compl.mp3",
+    previewUrl: "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg",
+    title: "Land of Ice and Fire",
+    artist: "Audiomachine",
+    mimeType: "audio/mpeg",
+    duration: 60*3+9,previewWidth: 600, previewHeight: 600
+  }).send({ conversation: $("layer-conversation-view").conversation })
