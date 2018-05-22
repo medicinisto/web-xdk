@@ -71,7 +71,6 @@ _All Changes_:
 
 * WEB-1796: Fixes Image Orientation for rotated images sent via Safari
 
-
 ## 4.0.3
 
 * Fixes identity metadata so that it is always an Object even when there is no value in the object
