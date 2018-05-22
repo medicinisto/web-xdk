@@ -90,7 +90,7 @@ describe('layer-dialog', function() {
 
       var div = document.createElement('div');
       div.getTitle = function() {return "Hello Title"}
-      div.getIconClass = function() {debugger;return 'i-got-no-class'}
+      div.getIconClass = function() {return 'i-got-no-class'}
       div.innerHTML = 'hello world';
       el.replaceableContent = {
         content: div

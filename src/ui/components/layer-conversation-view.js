@@ -732,8 +732,8 @@ registerComponent('layer-conversation-view', {
      *
      * Changes in width will cause a CSS class to be added that is one of:
      *
-     * * `layer-conversation-view-width-small`: Width is less than 460px
-     * * `layer-conversation-view-width-medium`: Width is between 460 and 600
+     * * `layer-conversation-view-width-small`: Width is less than 480px
+     * * `layer-conversation-view-width-medium`: Width is between 480 and 600
      * * `layer-conversation-view-width-large`: Width is greater than or equal to 600
      *
      * > *Note*
@@ -745,9 +745,10 @@ registerComponent('layer-conversation-view', {
      */
     width: {
       set(newValue, oldValue) {
-        this.toggleClass('layer-conversation-view-width-small', newValue < 460);
-        this.toggleClass('layer-conversation-view-width-medium', newValue >= 460 && newValue < 600);
+        this.toggleClass('layer-conversation-view-width-small', newValue < 480);
+        this.toggleClass('layer-conversation-view-width-medium', newValue >= 480 && newValue < 600);
         this.toggleClass('layer-conversation-view-width-large', newValue >= 600);
+        if (this.nodes.list) this.nodes.list.width = newValue;
       },
     },
 
@@ -813,6 +814,16 @@ registerComponent('layer-conversation-view', {
      * @private
      */
     _handleResize() {
+      this._throttler(this._updateWidth.bind(this));
+    },
+
+    /**
+     * Update the width property based on browser size changes
+     *
+     * @method _updateWidth
+     * @private
+     */
+    _updateWidth() {
       this.width = this.clientWidth;
     },
 

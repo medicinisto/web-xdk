@@ -280,6 +280,54 @@ registerComponent('layer-message-list', {
     screenFullsBeforePaging: {
       value: 2.0,
     },
+
+
+    width: {
+      set(newValue, oldValue) {
+        this._updateShowingAvatars();
+        this.onMessageWidthChange();
+      },
+    },
+    showMyAvatars: {
+      type: Boolean,
+      value: true,
+      set(value) {
+        this._updateShowingAvatars();
+      },
+    },
+    showOtherAvatars: {
+      type: Boolean,
+      value: true,
+      set(value) {
+        this._updateShowingAvatars();
+      },
+    },
+    minWidthToShowMyAvatar: {
+      type: Number,
+      value: 460,
+      set(value) {
+        this._updateShowingAvatars();
+      },
+    },
+    minWidthToShowOtherAvatar: {
+      type: Number,
+      value: 320,
+      set(value) {
+        this._updateShowingAvatars();
+      },
+    },
+    _showMyAvatars: {
+      set(value) {
+        this.toggleClass('layer-message-list-show-my-avatars', value);
+        this.onMessageWidthChange();
+      },
+    },
+    _showOtherAvatars: {
+      set(value) {
+        this.toggleClass('layer-message-list-show-other-avatars', value);
+        this.onMessageWidthChange();
+      },
+    },
   },
   methods: {
     // Lifecycle method sets up intial properties and events
@@ -305,6 +353,12 @@ registerComponent('layer-message-list', {
      */
     onDestroy() {
       window.removeEventListener('focus', this.properties._checkVisibilityBound);
+    },
+
+
+    _updateShowingAvatars() {
+      this._showMyAvatars = this.showMyAvatars && this.width >= this.minWidthToShowMyAvatar;
+      this._showOtherAvatars = this.showOtherAvatars && this.width >= this.minWidthToShowOtherAvatar;
     },
 
     /**

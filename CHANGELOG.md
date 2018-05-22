@@ -10,7 +10,39 @@ While there have been no major breaking changes, there have been some minor chan
 * `Layer.Constants.WIDTH` no longer exists and is no longer used
 * Minor CSS Class names and theme changes
 
-_All Changes_:
+### Message Avatar Breaking Changes
+
+Previously, hiding and showing of Avatars within the Message List was managed directly via Style sheets:
+
+Avatars were shown using:
+
+```
+@message-item-text-indent: 12px + 12px + 32px;
+@mesage-item-show-avatars: block;
+```
+
+Avatars were hidden using:
+
+```
+@message-item-text-indent: 12px + 12px;
+@mesage-item-show-avatars: none;
+```
+
+These variables are no longer used; Instead, the Message List supports the following properties:
+
+* `showMyAvatars`: Set to `false` to hide Avatars of the current authenticated user
+* `showOtherAvatars`: Set to `false` to hide Avatars of other participants in the conversation
+* `minWidthToShowMyAvatar`: Width in pixels that the Message List must be to show the current user's Avatar; you may set this to 0 for your user's Avatar to always show
+* `minWidthToShowOtherAvatar`: Width in pixels that the Message List must be to show other participant's Avatars; you may set this to 0 for other participant's Avatars to always show
+* `@message-item-text-indent-with-avatar`: In the theme file, this variable can be changed to adjust how much space is allocated on the left/right edge of the view for Avatars
+* `@message-item-text-indent-without-avatar`: In the theme file, this variable can be changed to adjust how much space is allocated on the left/right edge of the view when Avatars are not shown
+
+Impact of this change:
+
+* Apps that had taken steps to hide avatars may have them showing again and will need to use the above properties to hide them again
+* Apps that used `@message-item-text-indent` to control indentation will no longer have those values be applied
+
+### All Changes
 
 * Refactored `Layer.Core.Client` Class
     * Rips out Client Authenticator Parent class of the Layer Client; replaces all of its capabilities via Mixins
@@ -70,6 +102,7 @@ _All Changes_:
 ## 4.0.4
 
 * WEB-1796: Fixes Image Orientation for rotated images sent via Safari
+* WEB-1785: Rendering of Unused Product Choices Fixed
 
 ## 4.0.3
 

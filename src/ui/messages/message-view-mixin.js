@@ -199,26 +199,22 @@ mixins.MessageViewMixin = module.exports = {
      * @return {HTMLElement} return.node
      */
     getAvailableWidthAndNode() {
+      const viewerParent = this.messageViewer.parentNode;
       let parent = this.parentComponent;
 
       const nodeTypes = ['BODY', 'LAYER-DIALOG', 'DIV', 'LAYER-MESSAGE-LIST'];
       // If we hit a <div/> then we didn't have a proper parentComponent; treat that as
       // the wrapper that provides us our size
       while (parent !== null && nodeTypes.indexOf(parent.tagName) === -1) {
-        parent = parent.parentComponent || parent.parentNode;
+        parent = parent.parentComponent;
       }
+      if (!parent) parent = viewerParent;
 
       if (parent) {
-        switch (parent.tagName) {
-          case 'LAYER-MESSAGE-LIST':
-          case 'DIV':
-            return { node: parent, width: parent.clientWidth };
-          case 'LAYER-DIALOG':
-            return { node: parent.nodes.inner, width: parent.nodes.inner.clientWidth };
-        }
+        return { node: parent, width: viewerParent.clientWidth };
+      } else {
+        return { node: parent, width: 0 };
       }
-
-      return { node: parent, width: 0 };
     },
 
     /**
@@ -234,14 +230,10 @@ mixins.MessageViewMixin = module.exports = {
       let adjustedWidth;
       if (width) {
         if (node.tagName === 'LAYER-MESSAGE-LIST') {
-          if (width >= 600) {
+          if (width < 480) {
             adjustedWidth = Math.round(width * 0.6);
           } else {
-            // TODO: Spec says 0.9 rather than 0.85, but spec refers to
-            // width of available portion of Message List; the space between stuff on right and
-            // stuff on left (avatars, menus, etc...).  We don't have a calculation for that (yet);
-            // and we really should have some reliable way to know if avatars show and how much space they take
-            adjustedWidth = Math.round(width * 0.85);
+            adjustedWidth = Math.round(width * 0.8);
           }
         } else {
           adjustedWidth = width;

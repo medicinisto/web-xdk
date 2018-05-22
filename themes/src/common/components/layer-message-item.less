@@ -57,7 +57,6 @@ layer-message-list {
     &.layer-list-item-last .layer-message-footer {
       display: flex;
       margin-right: 5px;
-      margin-left: @message-item-text-indent + @message-item-margin-left;
     }
   }
 
@@ -73,15 +72,60 @@ layer-message-list {
       }
     }
 
-    &.layer-list-item-first .layer-message-header, &.layer-list-item-last .layer-message-footer {
+    &.layer-list-item-first .layer-message-header,
+    &.layer-list-item-last .layer-message-footer {
       display: flex;
       .layer-replaceable-inner {
-        margin-right: @message-item-text-indent + @message-item-margin-right;
+/*        margin-right: @message-item-text-indent + @message-item-margin-right; */
         margin-left: 5px;
         layer-message-status {
           margin-right: 5px;
         }
       }
+    }
+  }
+
+  &.layer-message-list-show-my-avatars layer-message-item-sent {
+    layer-avatar {
+      display: block;
+    }
+
+    &.layer-list-item-first .layer-message-header,
+    &.layer-list-item-last .layer-message-footer {
+      margin-right: @message-item-text-indent-with-avatar + @message-item-margin-right;
+    }
+  }
+
+  &:not(.layer-message-list-show-my-avatars) layer-message-item-sent {
+    layer-avatar {
+      display: none;
+    }
+
+    &.layer-list-item-first .layer-message-header,
+    &.layer-list-item-last .layer-message-footer {
+      margin-right: @message-item-text-indent-without-avatar + @message-item-margin-right;
+    }
+  }
+
+  &.layer-message-list-show-other-avatars layer-message-item-received {
+    layer-avatar {
+      display: block;
+    }
+
+    &.layer-list-item-first .layer-message-header,
+    &.layer-list-item-last .layer-message-footer {
+      margin-left: @message-item-text-indent-with-avatar + @message-item-margin-left;
+    }
+  }
+
+  &:not(.layer-message-list-show-other-avatars) layer-message-item-received {
+    layer-avatar {
+      display: none;
+    }
+
+    &.layer-list-item-first .layer-message-header,
+    &.layer-list-item-last .layer-message-footer {
+      margin-left: @message-item-text-indent-without-avatar + @message-item-margin-left;
     }
   }
 
@@ -106,10 +150,6 @@ layer-message-list {
   .layer-message-item:not(.layer-list-item-last) layer-avatar {
     visibility: hidden;
     overflow: hidden;
-  }
-
-  .layer-message-item layer-avatar {
-    display: @mesage-item-show-avatars;
   }
 
   /*
