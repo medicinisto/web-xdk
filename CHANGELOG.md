@@ -67,6 +67,10 @@ _All Changes_:
 * Supported Image Types, Audio Types and Video Types can be set in the `settings` via `Layer.init({imageMIMETypes: ['image/gif'], audioMIMETypes: ['audio/mp3'], videoMIMETypes: ['video/mp4']})`; but the default values indicate values that Layer Messages have been tested against.
 * File Upload Button can now reslect the same file twice in a row
 
+## 4.0.4
+
+* WEB-1796: Fixes Image Orientation for rotated images sent via Safari
+
 
 ## 4.0.3
 

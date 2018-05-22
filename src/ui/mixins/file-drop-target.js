@@ -11,6 +11,7 @@ import FileModel from '../messages/file/layer-file-message-model';
 import CarouselModel from '../messages/carousel/layer-carousel-message-model';
 import mixins from './index';
 import { client, audioMIMETypes, videoMIMETypes, imageMIMETypes } from '../../settings';
+import { logger } from '../../utils';
 
 mixins.FileDropTarget = module.exports = {
   properties: {
@@ -209,12 +210,14 @@ mixins.FileDropTarget = module.exports = {
           source: file,
         }));
       }
-      if (audioMIMETypes.indexOf(file.type) !== -1 && AudioModel) {
+
+      else if (audioMIMETypes.indexOf(file.type) !== -1 && AudioModel) {
         callback(new AudioModel({
           source: file,
         }));
       }
-      if (videoMIMETypes.indexOf(file.type) !== -1 && VideoModel) {
+
+      else if (videoMIMETypes.indexOf(file.type) !== -1 && VideoModel) {
         VideoModel.testIfVideoOnlyFile(file, (isVideo) => {
           if (isVideo === true) {
             callback(new VideoModel({
@@ -228,7 +231,9 @@ mixins.FileDropTarget = module.exports = {
             logger.error(isVideo);
           }
         });
-      } else {
+      }
+
+      else {
         callback(new FileModel({
           source: file,
         }));

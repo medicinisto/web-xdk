@@ -20,7 +20,6 @@ import 'blueimp-load-image/js/load-image-exif';
 
 import { registerComponent } from '../../components/component';
 import { logger } from '../../../utils';
-import Constants from '../../constants';
 import MessageViewMixin from '../message-view-mixin';
 import './layer-image-message-model';
 
@@ -185,7 +184,7 @@ registerComponent('layer-image-message-view', {
             orientation: this.model.orientation,
           };
 
-          if (data.imageHead && data.exif) {
+          if (!this.model.orientation && data.imageHead && data.exif) {
             options.orientation = data.exif.get('Orientation') || 1;
           }
 
