@@ -239,8 +239,13 @@ class ImageModel extends MessageTypeModel {
 
       if (data.imageHead && data.exif) {
         this.orientation = data.exif.get('Orientation');
-        this.width = data.exif.get('ImageWidth');
-        this.height = data.exif.get('ImageHeight');
+        if (this.orientation >= 5) {
+          this.width = data.exif.get('ImageHeight');
+          this.height = data.exif.get('ImageWidth');
+        } else {
+          this.width = data.exif.get('ImageWidth');
+          this.height = data.exif.get('ImageHeight');
+        }
         this.artist = data.exif.get('Artist');
         this.description = data.exif.get('ImageDescription') || data.exif.get('UserComment');
       }

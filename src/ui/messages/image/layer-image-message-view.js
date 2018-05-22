@@ -160,10 +160,12 @@ registerComponent('layer-image-message-view', {
      */
     _imageLoaded() {
       if (this.properties._internalState.onDestroyCalled) return;
-      const img = this.nodes.image;
-      this.model.previewWidth = img.naturalWidth;
-      this.model.previewHeight = img.naturalHeight;
-      this._resizeContent();
+      if (!this.properties.usingCanvas) {
+        const img = this.nodes.image;
+        this.model.previewWidth = img.naturalWidth;
+        this.model.previewHeight = img.naturalHeight;
+        this._resizeContent();
+      }
     },
 
 
@@ -182,6 +184,8 @@ registerComponent('layer-image-message-view', {
           const options = {
             canvas: true,
             orientation: this.model.orientation,
+            width: this.model.orientation >= 5 ? this.model.previewHeight : this.model.previewWidth,
+            height: this.model.orientation >= 5 ? this.model.previewWidth : this.model.previewHeight,
           };
 
           if (!this.model.orientation && data.imageHead && data.exif) {
@@ -191,6 +195,7 @@ registerComponent('layer-image-message-view', {
           // Write the image to a canvas with the specified orientation
           ImageManager(blob, (canvas) => {
             if (canvas instanceof HTMLElement) {
+              this.properties.usingCanvas = true;
               this.nodes.image.src = canvas.toDataURL();
               this.isHeightAllocated = true;
             } else {
