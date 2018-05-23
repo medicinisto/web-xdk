@@ -115,6 +115,46 @@ describe('layer-message-list', function() {
     });
   });
 
+  describe("The width and avatar properties", function() {
+    it("Should have suitable default values", function() {
+      expect(Layer.Settings.conversationViewWidths.maxTiny).toEqual(320);
+      expect(Layer.Settings.conversationViewWidths.maxSmall).toEqual(480);
+    });
+    it("Should show all avatars for large width", function() {
+      el.width = 1000;
+      expect(el.classList.contains('layer-message-list-show-my-avatars')).toBe(true);
+      expect(el.classList.contains('layer-message-list-show-other-avatars')).toBe(true);
+    });
+    it("Should show all avatars for medium width", function() {
+      el.width = 500;
+      expect(el.classList.contains('layer-message-list-show-my-avatars')).toBe(true);
+      expect(el.classList.contains('layer-message-list-show-other-avatars')).toBe(true);
+    });
+    it("Should show other avatars for small width", function() {
+      el.width = 400;
+      expect(el.classList.contains('layer-message-list-show-my-avatars')).toBe(false);
+      expect(el.classList.contains('layer-message-list-show-other-avatars')).toBe(true);
+    });
+    it("Should show no avatars for tiny width", function() {
+      el.width = 300;
+      expect(el.classList.contains('layer-message-list-show-my-avatars')).toBe(false);
+      expect(el.classList.contains('layer-message-list-show-other-avatars')).toBe(false);
+    });
+    it("Should respect canShowMyAvatars set to false", function() {
+      el.canShowMyAvatars = false;
+      el.width = 1000;
+      expect(el.classList.contains('layer-message-list-show-my-avatars')).toBe(false);
+      expect(el.classList.contains('layer-message-list-show-other-avatars')).toBe(true);
+    });
+
+    it("Should respect canShowOtherAvatars set to false", function() {
+      el.canShowOtherAvatars = false;
+      el.width = 1000;
+      expect(el.classList.contains('layer-message-list-show-my-avatars')).toBe(true);
+      expect(el.classList.contains('layer-message-list-show-other-avatars')).toBe(false);
+    });
+  });
+
   describe('The created() method', function() {
     beforeEach(function() {
       el = document.createElement('layer-message-list');

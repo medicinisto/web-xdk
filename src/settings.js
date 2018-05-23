@@ -62,6 +62,7 @@
  * @property {String[]} [settings.audioMIMETypes='audio/mp3', 'audio/mpeg']  The MIME Types that are recognized as supported audio files
  * @property {String[]} [settings.videoMIMETypes='video/mp4']  The MIME Types that are recognized as supported video files
  * @property {String[]} [settings.imageMIMETypes='image/gif', 'image/png', 'image/jpeg', 'image/svg']  The MIME Types that are recognized as supported image files
+ * @property {Object} [settings.conversationViewWidths={maxTiny: 320, maxSmall: 480, maxMedium: 600}] The widths that the Conversation View must be for it to transition to the rendering associated with a new class of size
  */
 
 module.exports = {
@@ -88,5 +89,10 @@ module.exports = {
   audioMIMETypes: ['audio/mp3', 'audio/mpeg', 'audio/aac', 'audio/x-m4a'],
   videoMIMETypes: ['video/mp4', 'video/3gpp'],
   imageMIMETypes: ['image/gif', 'image/png', 'image/jpeg', 'image/svg'],
+  conversationViewWidths: {
+    maxTiny: 320,
+    maxSmall: 480,
+    maxMedium: 600,
+  },
 };
 

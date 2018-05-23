@@ -398,6 +398,50 @@ describe('layer-conversation-view', function() {
     });
   });
 
+  describe("The width property", function() {
+    it("Expect maxTiny maxSmall and maxMedium to have values", function() {
+      expect(Layer.Settings.conversationViewWidths.maxTiny).toEqual(320);
+      expect(Layer.Settings.conversationViewWidths.maxSmall).toEqual(480);
+      expect(Layer.Settings.conversationViewWidths.maxMedium).toEqual(600);
+    });
+    it("Should update CSS Classes", function() {
+      el.width = 200;
+      expect(el.classList.contains('layer-conversation-view-width-tiny')).toBe(true);
+      expect(el.classList.contains('layer-conversation-view-width-small')).toBe(false);
+      expect(el.classList.contains('layer-conversation-view-width-medium')).toBe(false);
+      expect(el.classList.contains('layer-conversation-view-width-large')).toBe(false);
+
+      el.width = 400;
+      expect(el.classList.contains('layer-conversation-view-width-tiny')).toBe(false);
+      expect(el.classList.contains('layer-conversation-view-width-small')).toBe(true);
+      expect(el.classList.contains('layer-conversation-view-width-medium')).toBe(false);
+      expect(el.classList.contains('layer-conversation-view-width-large')).toBe(false);
+
+      el.width = 500;
+      expect(el.classList.contains('layer-conversation-view-width-tiny')).toBe(false);
+      expect(el.classList.contains('layer-conversation-view-width-small')).toBe(false);
+      expect(el.classList.contains('layer-conversation-view-width-medium')).toBe(true);
+      expect(el.classList.contains('layer-conversation-view-width-large')).toBe(false);
+
+      el.width = 800;
+      expect(el.classList.contains('layer-conversation-view-width-tiny')).toBe(false);
+      expect(el.classList.contains('layer-conversation-view-width-small')).toBe(false);
+      expect(el.classList.contains('layer-conversation-view-width-medium')).toBe(false);
+      expect(el.classList.contains('layer-conversation-view-width-large')).toBe(true);
+    });
+
+    it("Should pass width down to message list", function() {
+      el.width = 200;
+      expect(el.nodes.list.width).toEqual(200);
+
+      el.width = 500;
+      expect(el.nodes.list.width).toEqual(500);
+
+      el.width = 800;
+      expect(el.nodes.list.width).toEqual(800);
+    });
+  });
+
   describe("The created() method", function() {
     it("Should setup basic properties", function() {
       expect(el.nodes.list.tagName).toEqual('LAYER-MESSAGE-LIST');

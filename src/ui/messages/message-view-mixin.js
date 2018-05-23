@@ -5,6 +5,7 @@
  */
 
 import mixins from '../mixins';
+import { conversationViewWidths } from '../../settings';
 
 mixins.MessageViewMixin = module.exports = {
   properties: {
@@ -230,7 +231,7 @@ mixins.MessageViewMixin = module.exports = {
       let adjustedWidth;
       if (width) {
         if (node.tagName === 'LAYER-MESSAGE-LIST') {
-          if (width < 480) {
+          if (width > conversationViewWidths.maxSmall) {
             adjustedWidth = Math.round(width * 0.6);
           } else {
             adjustedWidth = Math.round(width * 0.8);

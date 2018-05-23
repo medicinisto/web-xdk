@@ -281,37 +281,42 @@ registerComponent('layer-message-list', {
       value: 2.0,
     },
 
-
+    /**
+     * Use this property to tell this View what its width is.
+     *
+     * This is not used to set its actual width, but rather to tell it when its been resized so it can
+     * do any neccesssary recalculations.  Typically this is set directly via {@link Layer.UI.components.ConversationView#width}.
+     *
+     * @property {Number} width
+     */
     width: {
       set(newValue, oldValue) {
         this._updateShowingAvatars();
         this.onMessageWidthChange();
       },
     },
-    showMyAvatars: {
+
+    /**
+     * Control whether or not the Message List is allowed to show the current user's avatars.
+     *
+     * @property {Boolean} [canShowMyAvatars=true]
+     */
+    canShowMyAvatars: {
       type: Boolean,
       value: true,
       set(value) {
         this._updateShowingAvatars();
       },
     },
-    showOtherAvatars: {
+
+    /**
+     * Control whether or not the Message List is allowed to show other participant's avatars.
+     *
+     * @property {Boolean} [canShowOtherAvatars=true]
+     */
+    canShowOtherAvatars: {
       type: Boolean,
       value: true,
-      set(value) {
-        this._updateShowingAvatars();
-      },
-    },
-    minWidthToShowMyAvatar: {
-      type: Number,
-      value: 460,
-      set(value) {
-        this._updateShowingAvatars();
-      },
-    },
-    minWidthToShowOtherAvatar: {
-      type: Number,
-      value: 320,
       set(value) {
         this._updateShowingAvatars();
       },
@@ -357,8 +362,8 @@ registerComponent('layer-message-list', {
 
 
     _updateShowingAvatars() {
-      this._showMyAvatars = this.showMyAvatars && this.width >= this.minWidthToShowMyAvatar;
-      this._showOtherAvatars = this.showOtherAvatars && this.width >= this.minWidthToShowOtherAvatar;
+      this._showMyAvatars = this.canShowMyAvatars && this.width >= Settings.conversationViewWidths.maxSmall;
+      this._showOtherAvatars = this.canShowOtherAvatars && this.width >= Settings.conversationViewWidths.maxTiny;
     },
 
     /**

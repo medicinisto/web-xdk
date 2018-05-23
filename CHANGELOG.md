@@ -30,12 +30,20 @@ Avatars were hidden using:
 
 These variables are no longer used; Instead, the Message List supports the following properties:
 
-* `showMyAvatars`: Set to `false` to hide Avatars of the current authenticated user
-* `showOtherAvatars`: Set to `false` to hide Avatars of other participants in the conversation
-* `minWidthToShowMyAvatar`: Width in pixels that the Message List must be to show the current user's Avatar; you may set this to 0 for your user's Avatar to always show
-* `minWidthToShowOtherAvatar`: Width in pixels that the Message List must be to show other participant's Avatars; you may set this to 0 for other participant's Avatars to always show
+* `canShowMyAvatars`: Set to `false` to hide Avatars of the current authenticated user
+* `canShowOtherAvatars`: Set to `false` to hide Avatars of other participants in the conversation
+* Assuming that the `canShowMyAvatars` and `canShowOtherAvatars` properties are left alone, avatars are shown if width permits; width settings are as follows:
+    * `Layer.Settings.conversationViewWidths.maxTiny: 320`: If the Message List width falls below 320px, no avatars are shown
+    * `Layer.Settings.conversationViewWidths.maxSmall: 480`: If the Message List width falls below 480px, only other participant's avatars are shown
+    * Show all avatars if width is greater than `maxSmall`
+    * Settings can be changed from `Layer.init()`
 * `@message-item-text-indent-with-avatar`: In the theme file, this variable can be changed to adjust how much space is allocated on the left/right edge of the view for Avatars
 * `@message-item-text-indent-without-avatar`: In the theme file, this variable can be changed to adjust how much space is allocated on the left/right edge of the view when Avatars are not shown
+* CSS Classes added to the Conversation View have also changed, based on `Layer.Settings.conversationViewWidths`:
+    * `Layer.Settings.conversationViewWidths.maxTiny`: CSS Class `layer-conversation-view-width-tiny` is added
+    * `Layer.Settings.conversationViewWidths.maxSmall`: CSS Class `layer-conversation-view-width-small` is added
+    * `Layer.Settings.conversationViewWidths.maxMedium`: CSS Class `layer-conversation-view-width-medium` is added
+    * For all other cases, CSS Class `layer-conversation-view-width-large` is added
 
 Impact of this change:
 
@@ -98,6 +106,7 @@ Impact of this change:
 * `message-type-response-summmary-v1` renamed to `message-type-response-summary-v1`; This will be imported by your project if you require it; please update your imports!
 * Supported Image Types, Audio Types and Video Types can be set in the `settings` via `Layer.init({imageMIMETypes: ['image/gif'], audioMIMETypes: ['audio/mp3'], videoMIMETypes: ['video/mp4']})`; but the default values indicate values that Layer Messages have been tested against.
 * File Upload Button can now reslect the same file twice in a row
+* The Conversation View now provides properties `maxWidthSmall` and `maxWidthMedium` which can be configured to change when the Conversation View uses its Small rendering and when it uses its Medium rendering. A `width` property is set whenever the window resizes; apps may need to set this if they use sliders or other internal size changes.  Previously these values were hardcoded in.
 
 ## 4.0.4
 

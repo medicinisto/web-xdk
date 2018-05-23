@@ -58,7 +58,7 @@
  * @mixin Layer.UI.mixins.HasQuery
  * @mixin Layer.UI.mixins.FileDropTarget
  */
-import { client } from '../../settings';
+import { client, conversationViewWidths } from '../../settings';
 import Core from '../../core/namespace';
 import UIConstants from '../constants';
 import { registerComponent } from './component';
@@ -732,9 +732,10 @@ registerComponent('layer-conversation-view', {
      *
      * Changes in width will cause a CSS class to be added that is one of:
      *
-     * * `layer-conversation-view-width-small`: Width is less than 480px
-     * * `layer-conversation-view-width-medium`: Width is between 480 and 600
-     * * `layer-conversation-view-width-large`: Width is greater than or equal to 600
+     * * `layer-conversation-view-width-tiny`: Width is less than 320px (Settings.conversationViewWidths.maxTiny)
+     * * `layer-conversation-view-width-small`: Width is less than 480px (Settings.conversationViewWidths.maxSmall)
+     * * `layer-conversation-view-width-medium`: Width is between 480 and 600 (Settings.conversationViewWidths.maxSmall - Settings.conversationViewWidths.maxMedium)
+     * * `layer-conversation-view-width-large`: Width is greater than or equal to 600 (> (Settings.conversationViewWidths.maxMedium)
      *
      * > *Note*
      * >
@@ -745,9 +746,10 @@ registerComponent('layer-conversation-view', {
      */
     width: {
       set(newValue, oldValue) {
-        this.toggleClass('layer-conversation-view-width-small', newValue < 480);
-        this.toggleClass('layer-conversation-view-width-medium', newValue >= 480 && newValue < 600);
-        this.toggleClass('layer-conversation-view-width-large', newValue >= 600);
+        this.toggleClass('layer-conversation-view-width-tiny', newValue < conversationViewWidths.maxTiny);
+        this.toggleClass('layer-conversation-view-width-small', newValue >= conversationViewWidths.maxTiny && newValue < conversationViewWidths.maxSmall);
+        this.toggleClass('layer-conversation-view-width-medium', newValue >= conversationViewWidths.maxSmall && newValue < conversationViewWidths.maxMedium);
+        this.toggleClass('layer-conversation-view-width-large', newValue >= conversationViewWidths.maxMedium);
         if (this.nodes.list) this.nodes.list.width = newValue;
       },
     },
