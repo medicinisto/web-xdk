@@ -184,7 +184,7 @@ describe('Text Message Components', function() {
   describe("View Tests", function() {
     var el;
     beforeEach(function() {
-      el = document.createElement('layer-text-message-view');
+      el = document.createElement('layer-message-viewer');
       testRoot.appendChild(el);
     });
     afterEach(function() {
@@ -200,7 +200,7 @@ describe('Text Message Components', function() {
       el.model = model;
       Layer.Utils.defer.flush();
 
-      expect(el.innerHTML).toEqual("<p class=\"layer-line-wrapping-paragraphs\">hello</p>");
+      expect(el.nodes.ui.innerHTML).toEqual("<p class=\"layer-line-wrapping-paragraphs\">hello</p>");
     });
 
     it("Should render newline characters", function() {
@@ -210,7 +210,7 @@ describe('Text Message Components', function() {
       el.model = model;
       Layer.Utils.defer.flush();
 
-      expect(el.innerHTML).toEqual("<p class=\"layer-line-wrapping-paragraphs\">hello</p><p class=\"layer-line-wrapping-paragraphs\">there</p>");
+      expect(el.nodes.ui.innerHTML).toEqual("<p class=\"layer-line-wrapping-paragraphs\">hello</p><p class=\"layer-line-wrapping-paragraphs\">there</p>");
     });
 
     it("Should render links", function() {
@@ -219,12 +219,13 @@ describe('Text Message Components', function() {
       });
       el.model = model;
       Layer.Utils.defer.flush();
-      expect(el.firstChild.tagName).toEqual("P");
-      expect(el.firstChild.className).toEqual("layer-line-wrapping-paragraphs");
-      expect(el.firstChild.childNodes[0].textContent).toEqual("hello from ");
-      expect(el.firstChild.childNodes[1].tagName).toEqual("A");
-      expect(el.firstChild.childNodes[1].href).toEqual("https://layer.com/");
-      expect(el.firstChild.childNodes[1].innerHTML).toEqual("layer.com");
+      var ui = el.nodes.ui;
+      expect(ui.firstChild.tagName).toEqual("P");
+      expect(ui.firstChild.className).toEqual("layer-line-wrapping-paragraphs");
+      expect(ui.firstChild.childNodes[0].textContent).toEqual("hello from ");
+      expect(ui.firstChild.childNodes[1].tagName).toEqual("A");
+      expect(ui.firstChild.childNodes[1].href).toEqual("https://layer.com/");
+      expect(ui.firstChild.childNodes[1].innerHTML).toEqual("layer.com");
     });
 
     it("Should render emoji characters", function() {
@@ -234,7 +235,7 @@ describe('Text Message Components', function() {
       el.model = model;
       Layer.Utils.defer.flush();
 
-      expect(el.innerHTML).toMatch("<p class=\"layer-line-wrapping-paragraphs\">hello <img");
+      expect(el.nodes.ui.innerHTML).toMatch("<p class=\"layer-line-wrapping-paragraphs\">hello <img");
     });
   });
 });

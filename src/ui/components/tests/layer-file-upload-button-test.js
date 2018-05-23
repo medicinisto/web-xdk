@@ -65,7 +65,8 @@ describe('layer-file-upload-button', function() {
   it("Should trigger layer-files-selected onChange", function() {
     var file = new Blob(["abcdef"], {type: "crap/plain"});
     el.nodes.input = {
-      files: [file]
+      files: [file],
+      setAttribute: jasmine.createSpy('spy')
     }
 
     var eventSpy = jasmine.createSpy('eventListener');
@@ -84,7 +85,8 @@ describe('layer-file-upload-button', function() {
   it("Should stop processing after layer-files-selected evt.preventDefault", function() {
     var file = new Blob(["abcdef"], {type: "crap/plain"});
     el.nodes.input = {
-      files: [file]
+      files: [file],
+      setAttribute: jasmine.createSpy('spy')
     }
 
     el.addEventListener('layer-files-selected', function(evt) {
@@ -105,7 +107,8 @@ describe('layer-file-upload-button', function() {
   it("Should trigger layer-models-generated", function() {
     var file = new Blob(["abcdef"], {type: "crap/plain"});
     el.nodes.input = {
-      files: [file]
+      files: [file],
+      setAttribute: jasmine.createSpy('spy')
     }
 
     var eventSpy = jasmine.createSpy('eventListener');
@@ -129,7 +132,8 @@ describe('layer-file-upload-button', function() {
     }
     var file = new Blob(["abcdef"], {type: "crap/plain"});
     el.nodes.input = {
-      files: [file]
+      files: [file],
+      setAttribute: jasmine.createSpy('spy')
     }
     var FileModel = Layer.Core.Client.getMessageTypeModelClass('FileModel');
 
@@ -138,6 +142,7 @@ describe('layer-file-upload-button', function() {
 
     // Posttest
     expect(el.parentComponent.onModelsGenerated).toHaveBeenCalledWith([jasmine.any(FileModel)]);
+    expect(el.nodes.input.setAttribute).toHaveBeenCalledWith('value', '');
 
     // Cleanup
     delete el.properties.parentComponent;
@@ -150,7 +155,8 @@ describe('layer-file-upload-button', function() {
     }
     var file = new Blob(["abcdef"], {type: "crap/plain"});
     el.nodes.input = {
-      files: [file]
+      files: [file],
+      setAttribute: jasmine.createSpy('spy')
     }
     var FileModel = Layer.Core.Client.getMessageTypeModelClass('FileModel');
     el.addEventListener('layer-models-generated', function(evt) {
@@ -162,6 +168,7 @@ describe('layer-file-upload-button', function() {
 
     // Posttest
     expect(el.parentComponent.onModelsGenerated).not.toHaveBeenCalled();
+    expect(el.nodes.input.setAttribute).toHaveBeenCalledWith('value', '');
 
     // Cleanup
     delete el.properties.parentComponent;

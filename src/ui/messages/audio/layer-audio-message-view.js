@@ -316,6 +316,9 @@ registerComponent('layer-audio-message-view', {
     onDetach() {
       if (this.properties.audio) {
         this.properties.audio.pause();
+
+        // This helps deallocate any memory/processing this thing is consuming
+        this.properties.audio.src = '';
       }
     },
 

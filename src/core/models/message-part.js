@@ -652,7 +652,7 @@ class MessagePart extends Root {
    * @returns {Layer.Core.MessageTypeModel}
    */
   createModel() {
-    if (!this._messageTypeModel) {
+    if (!this._messageTypeModel && Client) {
       const message = this._getMessage();
       if (message) {
         this._messageTypeModel = Client.createMessageTypeModel(message, this);

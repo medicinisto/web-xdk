@@ -17,7 +17,6 @@ const showLargeView = ({ messageViewer, model, data }) => {
   largeMessageViewer.model = model;
   largeMessageViewer.openActionData = data;
   largeMessageViewer.parentComponent = dialog;
-  largeMessageViewer._onAfterCreate();
 
   dialog.replaceableContent = {
     content: largeMessageViewer,
@@ -33,6 +32,7 @@ const showLargeView = ({ messageViewer, model, data }) => {
   }
   if (node.tagName === 'BODY' || node.tagName === 'LAYER-CONVERSATION-VIEW') {
     node.appendChild(dialog);
+    largeMessageViewer._onAfterCreate();
   } else {
     logger.error('Unable to find a layer-conversation-view or body containing', messageViewer);
   }

@@ -4,13 +4,14 @@
  * @class Layer.Core.Client
  */
 
-import { xhr, logger } from '../../utils';
+import { xhr, logger, generateUUID } from '../../utils';
 import Core from '../namespace';
 import SyncManager from '../sync-manager';
 import { XHRSyncEvent, WebsocketSyncEvent } from '../sync-event';
 import { timeBetweenReauths } from '../../settings';
 import LayerError from '../layer-error';
 import { LOCALSTORAGE_KEYS, ACCEPT } from '../../constants';
+import version from '../../version';
 
 const MAX_XHR_RETRIES = 3;
 
@@ -24,6 +25,7 @@ module.exports = {
         socketManager: this.socketManager,
         requestManager: this.socketRequestManager,
       });
+      this._tabId = generateUUID();
     },
     destroy() {
       this.syncManager.destroy();
@@ -51,6 +53,9 @@ module.exports = {
      * @property {String}
      */
     websocketUrl: 'wss://websockets.layer.com',
+
+    // Uniquely identify this tab even though the session token might be used in multiple tabs
+    _tabId: 0,
 
   },
   methods: {
@@ -190,6 +195,8 @@ module.exports = {
       if (this.sessionToken && !headers.Authorization) {
         headers.authorization = 'Layer session-token="' + this.sessionToken + '"'; // eslint-disable-line
       }
+      //if (!headers['layer-xdk-version']) headers['layer-xdk-version'] = version;
+      //if (!headers['client-id']) headers['client-id'] = this._tabId;
     },
 
     /**

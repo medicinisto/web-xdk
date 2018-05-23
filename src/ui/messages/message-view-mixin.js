@@ -199,7 +199,7 @@ mixins.MessageViewMixin = module.exports = {
      * @return {HTMLElement} return.node
      */
     getAvailableWidthAndNode() {
-      const viewerParent = this.messageViewer.parentNode;
+      const viewerParent = this.messageViewer.parentNode || this.messageViewer.parentComponent;
       let parent = this.parentComponent;
 
       const nodeTypes = ['BODY', 'LAYER-DIALOG', 'DIV', 'LAYER-MESSAGE-LIST'];

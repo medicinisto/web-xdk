@@ -183,7 +183,7 @@ registerComponent('layer-avatar', {
       // Add the "cluster" css if rendering multiple users
       // No classList.toggle due to poor IE11 support
       this.toggleClass('layer-avatar-cluster', users.length > 1 && !this.properties.firstUserIsAnonymous);
-      if (users.length === 1 && this.showPresence && Client.isPresenceEnabled) {
+      if (users.length === 1 && this.showPresence && Client && Client.isPresenceEnabled) {
         this.createElement('layer-presence', {
           size: this.size === 'larger' ? 'large' : this.size,
           item: users[0],

@@ -4,6 +4,45 @@ describe('Audio Message Components', function() {
   var conversation;
   var testRoot;
   var client;
+  var realAudio;
+  var currentOnError;
+
+  beforeAll(function() {
+    realAudio = window.Audio;
+    window.Audio = function(src) {
+      this.paused = true;
+      this.pause = function() { this.paused = true;}
+      this.play = function() { this.paused = false;}
+      this._events = [];
+      this.addEventListener = function(name, fn) {
+        this._events.push({name: name, fn: fn});
+      };
+      this.src = src;
+    };
+    Object.defineProperty(window.Audio.prototype, "src", {
+      get(value) {
+        return this.__src || "";
+      },
+      set(value) {
+        this.__src = value;
+        setTimeout(function() {
+          if (value === "https://google.com") {
+            this._events.filter(event => event.name === "error").forEach(function(event) {
+              event.fn({});
+            });
+          } else if (value) {
+            this._events.filter(event => ["durationchange", "canplay"].indexOf(event.name) !== -1).forEach(function(event) {
+              event.fn({});
+            });
+          }
+        }.bind(this), 100);
+      }
+    });
+  });
+
+  afterAll(function() {
+    window.Audio = realAudio;
+  });
 
   function click(el) {
     if (Layer.Utils.isIOS) {
@@ -71,11 +110,12 @@ describe('Audio Message Components', function() {
 
     Layer.Utils.defer.flush();
     jasmine.clock().tick(800);
-    jasmine.clock().uninstall();
   });
 
 
   afterEach(function() {
+    jasmine.clock().uninstall();
+    currentOnError = null;
     if (client) client.destroy();
     if (testRoot.parentNode) {
       testRoot.parentNode.removeChild(testRoot);
@@ -138,6 +178,7 @@ describe('Audio Message Components', function() {
         preview: imageBlob,
         title: "title"
       });
+      debugger;
       model.generateMessage(conversation, function(message) {
         try {
           expect(message.parts.size).toEqual(3);
@@ -164,6 +205,7 @@ describe('Audio Message Components', function() {
           done(e);
         }
       });
+      jasmine.clock().tick(200);
     });
 
     it("Should instantiate a Model from a Message with metadata", function() {
@@ -471,12 +513,13 @@ describe('Audio Message Components', function() {
             done();
           }
         });
+        jasmine.clock().tick(200);
       });
       afterEach(function() {
         if (el) el.onDestroy();
       });
 
-      it("The play button should toggle the playing property", function(done) {
+      it("The play button should toggle the playing property", function() {
         // Pretest
         expect(el.contains(ui.properties.playButton)).toBe(true);
         expect(ui.properties.playButton).toEqual(jasmine.any(HTMLElement));
@@ -484,12 +527,7 @@ describe('Audio Message Components', function() {
 
         // Run
         click(ui.properties.playButton);
-
-        setTimeout(function() {
-          // Posttest
-          expect(ui.playing).toBe(true);
-          done();
-        }, 1500);
+        expect(ui.playing).toBe(true);
       });
 
       it("The play button should prevent runAction from being called", function() {
@@ -498,16 +536,10 @@ describe('Audio Message Components', function() {
         expect(ui.runAction).not.toHaveBeenCalled();
       });
 
-      it("Should show the broken play button if content is not playable", function(done) {
+      it("Should show the broken play button if content is not playable", function() {
         ui.properties.audio.src = 'https://google.com';
-        setTimeout(function() {
-          try {
-            expect(ui.properties.playButton.classList.contains('layer-not-playable-button')).toBe(true);
-            done();
-          } catch(e) {
-            done(e);
-          }
-        }, 2000);
+        jasmine.clock().tick(200);
+        expect(ui.properties.playButton.classList.contains('layer-not-playable-button')).toBe(true);
       });
 
       it("Should render progress", function() {
@@ -523,7 +555,7 @@ describe('Audio Message Components', function() {
 
       });
 
-      it("Should handle setting playing to true and false", function(done) {
+      it("Should handle setting playing to true and false", function() {
         // Pretest
         expect(ui.playing).toBe(false);
         expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(true);
@@ -533,55 +565,27 @@ describe('Audio Message Components', function() {
         ui.playing = true;
 
         // Posttest 1
-        setTimeout(function() {
-          try {
-            expect(ui.playing).toBe(true);
-            expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(false);
-            expect(ui.properties.playButton.classList.contains('layer-pause-button')).toBe(true);
-            expect(ui.properties.audio.paused).toBe(false);
+        expect(ui.playing).toBe(true);
+        expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(false);
+        expect(ui.properties.playButton.classList.contains('layer-pause-button')).toBe(true);
+        //expect(ui.properties.audio.paused).toBe(false);
 
-            // Run 2
-            ui.playing = false;
+        // Run 2
+        ui.playing = false;
 
-            // Posttest 2
-            setTimeout(function() {
-              try {
-                expect(ui.playing).toBe(false);
-                expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(true);
-                expect(ui.properties.playButton.classList.contains('layer-pause-button')).toBe(false);
-                expect(ui.properties.audio.paused).toBe(true);
-                done();
-              } catch (e) {
-                done(e);
-              }
-            }, 2000);
-          } catch (e) {
-            done(e);
-          }
-        }, 2000);
+        // Posttest 2
+        expect(ui.playing).toBe(false);
+        expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(true);
+        expect(ui.properties.playButton.classList.contains('layer-pause-button')).toBe(false);
       });
 
-      it("Should pause playback and open Large Message View on tap", function(done) {
+      it("Should pause playback and open Large Message View on tap", function() {
         ui.playing = true;
-        setTimeout(function() {
-          try {
-            expect(ui.playing).toBe(true);
-            click(el);
-
-            setTimeout(function() {
-              try {
-                expect(ui.playing).toBe(false);
-                expect(document.querySelector('layer-dialog')).not.toBe(null);
-                document.querySelector('layer-dialog').destroy();
-                done();
-              } catch(e) {
-                done(e);
-              }
-            }, 2000);
-          } catch(e) {
-            done(e);
-          }
-        }, 2000);
+        expect(ui.properties.playing).toBe(true);
+        click(el);
+        expect(ui.playing).toBe(false);
+        expect(document.querySelector('layer-dialog')).not.toBe(null);
+        document.querySelector('layer-dialog').destroy();
       });
     });
   });
