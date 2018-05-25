@@ -172,7 +172,9 @@ registerComponent('layer-standard-message-view-container', {
       this.description = model.getDescription();
       this.footer = model.getFooter();
 
-      if (this.ui.parentComponent === this) this.ui._setupContainerClasses();
+      if (this.ui.parentComponent === this) {
+        this.ui._setupContainerClasses();
+      }
       this.toggleClass('layer-standard-message-view-no-metadata', !this.isShowingMetadata);
       this.parentComponent.toggleClass('layer-standard-message-view-no-metadata', !this.isShowingMetadata);
     },
@@ -187,6 +189,7 @@ registerComponent('layer-standard-message-view-container', {
      * @method getPreferredMinWidth
      * @returns {Number}
      * @protected until we get this cleaned up
+     * @deprecated remove for WebXDK 5.0
      */
     getPreferredMinWidth() {
       return this.isShowingMetadata ? 350 : 192;
@@ -202,6 +205,7 @@ registerComponent('layer-standard-message-view-container', {
      * @method getPreferredMaxWidth
      * @returns {Number}
      * @protected until we get this cleaned up
+     * @deprecated remove for WebXDK 5.0
      */
     getPreferredMaxWidth() {
       return 350;
