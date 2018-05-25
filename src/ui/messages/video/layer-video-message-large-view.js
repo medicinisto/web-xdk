@@ -96,7 +96,7 @@ registerComponent('layer-video-message-large-view', {
 
     // Setup the preview image sizing once the view is in the DOM
     _resizeContent() {
-      const { width } = this.getAvailableWidthAndNode();
+      const width = this.getAvailableMessageWidth();
       if (width) {
         const sizes = this.getBestDimensions({
           contentWidth: this.model.width,

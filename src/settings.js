@@ -62,7 +62,10 @@
  * @property {String[]} [settings.audioMIMETypes='audio/mp3', 'audio/mpeg']  The MIME Types that are recognized as supported audio files
  * @property {String[]} [settings.videoMIMETypes='video/mp4']  The MIME Types that are recognized as supported video files
  * @property {String[]} [settings.imageMIMETypes='image/gif', 'image/png', 'image/jpeg', 'image/svg']  The MIME Types that are recognized as supported image files
- * @property {Object} [settings.conversationViewWidths={maxTiny: 320, maxSmall: 480, maxMedium: 600}] The widths that the Conversation View must be for it to transition to the rendering associated with a new class of size
+ * @property {Object} [settings.conversationViewWidths={maxTiny: 320, maxSmall: 480, maxMedium: 640}] The widths that the Conversation View must be for it to transition to the rendering associated with a new class of size
+ * @property {Number} [settings.conversationViewWidths.maxTiny=320] If width is less than this, use `layer-conversation-view-width-tiny` css class
+ * @property {Number} [settings.conversationViewWidths.maxSmall=480] If width is less than this, use `layer-conversation-view-width-small` css class
+ * @property {Number} [settings.conversationViewWidths.maxMedium=640] If width is less than this, use `layer-conversation-view-width-medium` css class
  */
 
 module.exports = {
@@ -92,7 +95,7 @@ module.exports = {
   conversationViewWidths: {
     maxTiny: 320,
     maxSmall: 480,
-    maxMedium: 600,
+    maxMedium: 640,
   },
 };
 

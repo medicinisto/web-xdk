@@ -230,3 +230,110 @@ imgBase64 = "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAECElEQVR4Xu2ZO44TURR
     mimeType: "audio/mpeg",
     duration: 60*3+9,previewWidth: 600, previewHeight: 600
   }).send({ conversation: $("layer-conversation-view").conversation })
+
+CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json');
+TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+AudioModel = Layer.Core.Client.getMessageTypeModelClass('AudioModel');
+
+new TextModel({text: "Carousel of Audio"}).send({ conversation: $("layer-conversation-view").conversation });
+
+new CarouselModel({
+  items: [
+    new AudioModel({
+      source: Layer.Utils.base64ToBlob(mp3Base64, 'audio/mp3'),
+      previewUrl: "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg",
+      title: "Land of Ice and Fire",
+      artist: "Audiomachine",
+      mimeType: "audio/mpeg",
+      duration: 60*3+9,previewWidth: 600, previewHeight: 600
+    }),
+    new AudioModel({
+      source: Layer.Utils.base64ToBlob(mp3Base64, 'audio/mp3'),
+      previewUrl: "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg",
+      title: "Land of Ice and Fire",
+      artist: "Audiomachine",
+      mimeType: "audio/mpeg",
+      duration: 60*3+9,previewWidth: 600, previewHeight: 600
+    }),
+    new AudioModel({
+      source: Layer.Utils.base64ToBlob(mp3Base64, 'audio/mp3'),
+      previewUrl: "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg",
+      title: "Land of Ice and Fire",
+      artist: "Audiomachine",
+      mimeType: "audio/mpeg",
+      duration: 60*3+9,previewWidth: 600, previewHeight: 600
+    })
+  ]
+}).send({ conversation: $("layer-conversation-view").conversation });
+
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+AudioModel = Layer.Core.Client.getMessageTypeModelClass('AudioModel');
+
+new TextModel({text: "Button Message with Audio"}).send({ conversation: $("layer-conversation-view").conversation });
+
+model = new ButtonModel({
+  buttons: [
+    {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+  ],
+  contentModel: new AudioModel({
+    source: Layer.Utils.base64ToBlob(mp3Base64, 'audio/mp3'),
+    previewUrl: "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg",
+    title: "Land of Ice and Fire",
+    artist: "Audiomachine",
+    mimeType: "audio/mpeg",
+    duration: 60*3+9,previewWidth: 600, previewHeight: 600
+  })
+});
+model.send({ conversation: $("layer-conversation-view").conversation });
+
+CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json');
+TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+AudioModel = Layer.Core.Client.getMessageTypeModelClass('AudioModel');
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+
+new TextModel({text: "Carousel of Audio Buttons"}).send({ conversation: $("layer-conversation-view").conversation });
+
+new CarouselModel({
+  items: [
+    new ButtonModel({
+      buttons: [
+        {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+      ],
+      contentModel: new AudioModel({
+        source: Layer.Utils.base64ToBlob(mp3Base64, 'audio/mp3'),
+        previewUrl: "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg",
+        title: "Land of Ice and Fire",
+        artist: "Audiomachine",
+        mimeType: "audio/mpeg",
+        duration: 60*3+9,previewWidth: 600, previewHeight: 600
+      })
+    }),
+    new ButtonModel({
+      buttons: [
+        {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+      ],
+      contentModel: new AudioModel({
+        source: Layer.Utils.base64ToBlob(mp3Base64, 'audio/mp3'),
+        previewUrl: "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg",
+        title: "Land of Ice and Fire",
+        artist: "Audiomachine",
+        mimeType: "audio/mpeg",
+        duration: 60*3+9,previewWidth: 600, previewHeight: 600
+      })
+    }),
+    new ButtonModel({
+      buttons: [
+        {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+      ],
+      contentModel: new AudioModel({
+        source: Layer.Utils.base64ToBlob(mp3Base64, 'audio/mp3'),
+        previewUrl: "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg",
+        title: "Land of Ice and Fire",
+        artist: "Audiomachine",
+        mimeType: "audio/mpeg",
+        duration: 60*3+9,previewWidth: 600, previewHeight: 600
+      })
+    })
+  ]
+}).send({ conversation: $("layer-conversation-view").conversation });

@@ -131,7 +131,7 @@ registerComponent('layer-audio-message-large-view', {
 
     // Setup the preview image sizing once the view is in the DOM
     _resizeContent() {
-      const { width } = this.getAvailableWidthAndNode();
+      const width = this.getAvailableMessageWidth();
       if (width) {
         if (this.model.preview || this.model.previewUrl) {
           const sizes = this.getBestDimensions({

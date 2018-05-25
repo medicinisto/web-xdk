@@ -76,7 +76,6 @@ layer-message-list {
     &.layer-list-item-last .layer-message-footer {
       display: flex;
       .layer-replaceable-inner {
-/*        margin-right: @message-item-text-indent + @message-item-margin-right; */
         margin-left: 5px;
         layer-message-status {
           margin-right: 5px;
@@ -86,46 +85,46 @@ layer-message-list {
   }
 
   &.layer-message-list-show-my-avatars layer-message-item-sent {
-    layer-avatar {
+    .layer-message-right-side layer-avatar {
       display: block;
     }
 
     &.layer-list-item-first .layer-message-header,
     &.layer-list-item-last .layer-message-footer {
-      margin-right: @message-item-text-indent-with-avatar + @message-item-margin-right;
+      margin-right: @message-item-text-indent-with-avatar;
     }
   }
 
   &:not(.layer-message-list-show-my-avatars) layer-message-item-sent {
-    layer-avatar {
+    .layer-message-right-side layer-avatar {
       display: none;
     }
 
     &.layer-list-item-first .layer-message-header,
     &.layer-list-item-last .layer-message-footer {
-      margin-right: @message-item-text-indent-without-avatar + @message-item-margin-right;
+      margin-right: @message-item-text-indent-without-avatar;
     }
   }
 
   &.layer-message-list-show-other-avatars layer-message-item-received {
-    layer-avatar {
+    .layer-message-left-side layer-avatar {
       display: block;
     }
 
     &.layer-list-item-first .layer-message-header,
     &.layer-list-item-last .layer-message-footer {
-      margin-left: @message-item-text-indent-with-avatar + @message-item-margin-left;
+      margin-left: @message-item-text-indent-with-avatar;
     }
   }
 
   &:not(.layer-message-list-show-other-avatars) layer-message-item-received {
-    layer-avatar {
+    .layer-message-left-side layer-avatar {
       display: none;
     }
 
     &.layer-list-item-first .layer-message-header,
     &.layer-list-item-last .layer-message-footer {
-      margin-left: @message-item-text-indent-without-avatar + @message-item-margin-left;
+      margin-left: @message-item-text-indent-without-avatar;
     }
   }
 
@@ -181,9 +180,8 @@ layer-message-list {
     .layer-message-left-side {
       .layer-replaceable-inner {
         position: relative;
-        padding-left: 12px;
       }
-      .layer-replaceable-inner:not(:empty) {
+      layer-avatar {
         padding-right: 8px;
       }
     }
@@ -191,9 +189,8 @@ layer-message-list {
     .layer-message-right-side {
       .layer-replaceable-inner {
         position: relative;
-        padding-right: 12px;
       }
-      .layer-replaceable-inner:not(:empty) {
+      layer-avatar {
         padding-left: 8px;
       }
     }
@@ -201,6 +198,8 @@ layer-message-list {
 
   /* Menu Button in Left/Right Panel; note that this will render within the 12px margin between the Replaceable Content div and the right edge of the Message Item */
   .layer-message-item {
+    padding-right: 12px;
+    padding-left: 12px;
     .layer-message-left-side, .layer-message-right-side {
       layer-menu-button.layer-has-menu {
         margin-left: 2px;
@@ -261,5 +260,12 @@ layer-message-list {
         padding: 0px 4px;
       }
     }
+  }
+}
+
+.layer-conversation-view-width-small, .layer-conversation-view-width-tiny {
+   layer-message-list .layer-message-item {
+    padding-right: 8px;
+    padding-left: 8px;
   }
 }

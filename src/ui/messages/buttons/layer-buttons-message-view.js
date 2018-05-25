@@ -51,20 +51,29 @@ registerComponent('layer-buttons-message-view', {
      * @property {Number} [maxWidth=350]
      */
     maxWidth: {
+      noGetterFromSetter: true,
+      value: 350,
       get() {
         if (this.properties.contentView) {
           return this.properties.contentView.nodes.ui.maxWidth; // may not have a value
         } else {
-          return this.properties.maxWidth || 350;
+          return this.properties.maxWidth;
         }
       },
     },
+
+    /**
+     * Button Messages use whatever its content view's preferred min width is
+     *
+     * @property {Number} [minWidth]
+     */
     minWidth: {
+      noGetterFromSetter: true,
       get() {
         if (this.properties.contentView) {
           return this.properties.contentView.nodes.ui.minWidth; // may not have a value
         } else {
-          return this.properties.maxWidth || 192;
+          return this.properties.minWidth;
         }
       },
       set(value) {
@@ -94,6 +103,8 @@ registerComponent('layer-buttons-message-view', {
           parentNode: this.nodes.content,
           name: 'subviewer',
         });
+        this.minWidth = this.minWidth;
+        this.maxWidth = this.maxWidth;
         if (this.properties.contentView.style.width) {
           this.messageViewer.width = parseInt(this.properties.contentView.style.width, 10);
           this.style.width = this.properties.contentView.style.width;

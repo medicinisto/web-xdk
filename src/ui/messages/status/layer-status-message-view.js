@@ -18,7 +18,6 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import Constants from '../../constants';
 import { processText } from '../../handlers/text/text-handlers';
 import './layer-status-message-model';
 
@@ -37,6 +36,9 @@ registerComponent('layer-status-message-view', {
   properties: {
     messageViewContainerTagName: {
       value: '',
+    },
+    maxWidth: {
+      value: 500,
     },
   },
   methods: {

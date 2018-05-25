@@ -15,7 +15,6 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import Constants from '../../constants';
 import './layer-file-message-model';
 
 registerComponent('layer-file-message-view', {
@@ -38,6 +37,13 @@ registerComponent('layer-file-message-view', {
     messageViewContainerTagName: {
       noGetterFromSetter: true,
       value: 'layer-standard-message-view-container',
+    },
+
+    minWidth: {
+      value: 192,
+    },
+    maxWidth: {
+      value: 384,
     },
   },
   methods: {

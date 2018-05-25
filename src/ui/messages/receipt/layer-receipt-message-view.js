@@ -61,6 +61,9 @@ registerComponent('layer-receipt-message-view', {
       noGetterFromSetter: true,
       value: 'layer-titled-message-view-container',
     },
+    minWidth: {
+      value: 384,
+    },
     maxWidth: {
       value: 500,
     },

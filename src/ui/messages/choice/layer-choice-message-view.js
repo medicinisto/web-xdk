@@ -58,6 +58,9 @@ registerComponent('layer-choice-message-view', {
     <div layer-id='choices' class='layer-choice-message-view-choices'></div>
   `,
   style: `
+  layer-choice-message-view {
+    display: block;
+  }
   layer-choice-message-view .layer-choice-message-view-choices {
     display: flex;
     flex-direction: column;
@@ -74,6 +77,10 @@ registerComponent('layer-choice-message-view', {
     messageViewContainerTagName: {
       noGetterFromSetter: true,
       value: 'layer-titled-message-view-container',
+    },
+
+    maxWidth: {
+      value: 384,
     },
   },
   methods: {

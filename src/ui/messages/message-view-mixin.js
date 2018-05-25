@@ -5,7 +5,6 @@
  */
 
 import mixins from '../mixins';
-import { conversationViewWidths } from '../../settings';
 
 mixins.MessageViewMixin = module.exports = {
   properties: {
@@ -68,25 +67,33 @@ mixins.MessageViewMixin = module.exports = {
     /**
      * Each Message Type View can specify their minimum width.
      *
-     * @property {Number} [minWidth=192]
+     * @property {Number} [minWidth=256]
      */
     minWidth: {
       type: Number,
-      value: 192,
+      value: 256,
       valueLowPriority: true,
       set(value) {
-        this.style.minWidth = value ? value + 'px' : '';
+        const realValue = this.minWidth; // get the real value from the getter, if one is provided
+        this.style.minWidth = realValue ? realValue + 'px' : '';
+        if (this.messageViewer) this.messageViewer.style.minWidth = this.style.minWidth;
       },
     },
 
     /**
      * Each Message Type View can specify their preferred maximum width.
      *
-     * If unset, then 60% of message list width is used if message list is wide; 85% if message list is narrow.
+     * If unset, then 70% of message list width is used if message list is wide; 95% if message list is narrow.
      *
      * @property {Number} [maxWidth]
      */
-    maxWidth: {},
+    maxWidth: {
+      set(value) {
+        const realValue = this.maxWidth;
+        this.style.maxWidth = realValue ? realValue + 'px' : '';
+        if (this.messageViewer) this.messageViewer.style.maxWidth = this.style.maxWidth;
+      },
+    },
 
     /**
      * Most cards are fixed height; those that must calculate their height asynchonously will use this.
@@ -152,9 +159,6 @@ mixins.MessageViewMixin = module.exports = {
         }
         return true;
       },
-      value() {
-        if (this.maxWidth) this.style.maxWidth = this.maxWidth + 'px';
-      },
     },
 
     /**
@@ -192,31 +196,22 @@ mixins.MessageViewMixin = module.exports = {
     },
 
     /**
-     * Returns the number of pixels wide that a message has available to it; assumes its already been inserted into the DOM and style sheets applied.
+     * Returns the number of pixels wide that a message has available to it.
      *
-     * @method getAvailableWidthAndNode
-     * @return {Object}
-     * @return {Number} return.width
-     * @return {HTMLElement} return.node
+     * This can use `parentComponent` properties that exist prior to this widget being inserted into the document,
+     * and thus the parentComponent may already know the available width even though this widget has no width.
+     *
+     * @method getAvailableMessageWidth
+     * @return {Number}
      */
-    getAvailableWidthAndNode() {
-      const viewerParent = this.messageViewer.parentNode || this.messageViewer.parentComponent;
-      let parent = this.parentComponent;
-
-      const nodeTypes = ['BODY', 'LAYER-DIALOG', 'DIV', 'LAYER-MESSAGE-LIST'];
-      // If we hit a <div/> then we didn't have a proper parentComponent; treat that as
-      // the wrapper that provides us our size
-      while (parent !== null && nodeTypes.indexOf(parent.tagName) === -1) {
-        parent = parent.parentComponent;
-      }
-      if (!parent) parent = viewerParent;
-
-      if (parent) {
-        return { node: parent, width: viewerParent.clientWidth };
+    getAvailableMessageWidth(messageViewer) {
+      if (this.messageViewer) {
+        return this.messageViewer.getAvailableMessageWidth(messageViewer);
       } else {
-        return { node: parent, width: 0 };
+        return this.clientWidth;
       }
     },
+
 
     /**
      * Returns the maximum number of pixels width allowed for a message given the current Message Width List.
@@ -227,22 +222,12 @@ mixins.MessageViewMixin = module.exports = {
      * @returns {Number}
      */
     getMaxMessageWidth() {
-      const { width, node } = this.getAvailableWidthAndNode();
-      let adjustedWidth;
+      const width = this.getAvailableMessageWidth();
       if (width) {
-        if (node.tagName === 'LAYER-MESSAGE-LIST') {
-          if (width > conversationViewWidths.maxSmall) {
-            adjustedWidth = Math.round(width * 0.6);
-          } else {
-            adjustedWidth = Math.round(width * 0.8);
-          }
-        } else {
-          adjustedWidth = width;
-        }
         if (this.maxWidth) {
-          return Math.min(adjustedWidth, this.maxWidth);
+          return Math.min(width, this.maxWidth);
         } else {
-          return adjustedWidth;
+          return width;
         }
       } else {
         return this.maxWidth;

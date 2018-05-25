@@ -388,5 +388,16 @@ registerComponent('layer-dialog', {
       const maxHeight = parseInt(styles.getPropertyValue('max-height'), 10);
       if (altMaxHeight < maxHeight) this.nodes.inner.style.maxHeight = altMaxHeight + 'px';
     },
+
+    /**
+     * Get the width available to the Message Viewer within this dialog.
+     *
+     * @method getAvailableMessageWidth
+     * @param {Layer.UI.handlers.message.MessageViewer} messageViewer
+     * @returns {Number}
+     */
+    getAvailableMessageWidth(messageViewer) {
+      return this.nodes.inner.clientWidth;
+    },
   },
 });

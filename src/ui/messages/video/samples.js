@@ -135,7 +135,7 @@ new VideoModel({
   new TextModel({text: "previewWidth and previewHeight, and width and aspectRatio of 0.5; mp3"}).send({ conversation: $("layer-conversation-view").conversation });
   new VideoModel({
     sourceUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-    previewUrl: "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg",
+    previewUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
     previewWidth: 600,
     width: 1000,
     aspectRatio: 0.5,
@@ -154,3 +154,145 @@ new VideoModel({
     size: Layer.Utils.base64ToBlob(videoBase64, 'video/mp4').size,
     title: 'Sample mp3',
   }).send({ conversation: $("layer-conversation-view").conversation });
+
+CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json');
+TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+VideoModel = Layer.Core.Client.getMessageTypeModelClass('VideoModel');
+
+new TextModel({text: "Carousel of Video"}).send({ conversation: $("layer-conversation-view").conversation });
+
+new CarouselModel({
+  items: [
+    new VideoModel({
+      source: Layer.Utils.base64ToBlob(videoBase64, 'video/mp4'),
+      previewUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
+      title: "Land of Ice and Fire",
+      artist: "Audiomachine",
+      mimeType: "video/mp4",
+      duration: 60*3+9,
+      previewWidth: 480,
+      previewHeight: 360,
+      width: 1280,
+      height: 720,
+
+    }),
+    new VideoModel({
+      source: Layer.Utils.base64ToBlob(videoBase64, 'video/mp4'),
+      previewUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
+      title: "Land of Ice and Fire",
+      artist: "Audiomachine",
+      mimeType: "video/mp4",
+      duration: 60*3+9,
+      previewWidth: 480,
+      previewHeight: 360,
+      width: 1280,
+      height: 720,
+
+    }),
+    new VideoModel({
+      source: Layer.Utils.base64ToBlob(videoBase64, 'video/mp4'),
+      previewUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
+      title: "Land of Ice and Fire",
+      artist: "Audiomachine",
+      mimeType: "video/mp4",
+      duration: 60*3+9,
+      previewWidth: 480,
+      previewHeight: 360,
+      width: 1280,
+      height: 720,
+
+    })
+  ]
+}).send({ conversation: $("layer-conversation-view").conversation });
+
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+VideoModel = Layer.Core.Client.getMessageTypeModelClass('VideoModel');
+
+new TextModel({text: "Button Message with Video"}).send({ conversation: $("layer-conversation-view").conversation });
+
+model = new ButtonModel({
+  buttons: [
+    {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+  ],
+  contentModel: new VideoModel({
+    source: Layer.Utils.base64ToBlob(videoBase64, 'video/mp4'),
+    previewUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
+    title: "Land of Ice and Fire",
+    artist: "Audiomachine",
+    mimeType: "video/mp4",
+    duration: 60*3+9,
+    previewWidth: 480,
+    previewHeight: 360,
+    width: 1280,
+    height: 720,
+
+  })
+});
+model.send({ conversation: $("layer-conversation-view").conversation });
+
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json');
+TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+VideoModel = Layer.Core.Client.getMessageTypeModelClass('VideoModel');
+
+new TextModel({text: "Carousel of Video Buttons"}).send({ conversation: $("layer-conversation-view").conversation });
+
+new CarouselModel({
+  items: [
+    new ButtonModel({
+      buttons: [
+        {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+      ],
+      contentModel: new VideoModel({
+        source: Layer.Utils.base64ToBlob(videoBase64, 'video/mp4'),
+        previewUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
+        title: "Land of Ice and Fire",
+        artist: "Audiomachine",
+        mimeType: "video/mp4",
+        duration: 60*3+9,
+        previewWidth: 480,
+        previewHeight: 360,
+        width: 1280,
+        height: 720,
+
+      })
+    }),
+    new ButtonModel({
+      buttons: [
+        {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+      ],
+      contentModel: new VideoModel({
+        source: Layer.Utils.base64ToBlob(videoBase64, 'video/mp4'),
+        previewUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
+        title: "Land of Ice and Fire",
+        artist: "Audiomachine",
+        mimeType: "video/mp4",
+        duration: 60*3+9,
+        previewWidth: 480,
+        previewHeight: 360,
+        width: 1280,
+        height: 720,
+
+      })
+    }),
+    new ButtonModel({
+      buttons: [
+        {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+      ],
+      contentModel: new VideoModel({
+        source: Layer.Utils.base64ToBlob(videoBase64, 'video/mp4'),
+        previewUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
+        title: "Land of Ice and Fire",
+        artist: "Audiomachine",
+        mimeType: "video/mp4",
+        duration: 60*3+9,
+        previewWidth: 480,
+        previewHeight: 360,
+        width: 1280,
+        height: 720,
+
+      })
+    })
+  ]
+}).send({ conversation: $("layer-conversation-view").conversation });

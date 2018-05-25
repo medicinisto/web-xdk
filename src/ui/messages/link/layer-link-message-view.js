@@ -51,9 +51,23 @@ registerComponent('layer-link-message-view', {
   properties: {
     minWidth: {
       noGetterFromSetter: true,
-      value: 0,
       get() {
-        return this.isPlainLink() ? 0 : 192;
+        if (this.isPlainLink()) {
+          return 0;
+        } else {
+          return this.properties.minWidth;
+        }
+      },
+    },
+    maxWidth: {
+      value: 384,
+      noGetterFromSetter: true,
+      get() {
+        if (this.isPlainLink()) {
+          return 1280;
+        } else {
+          return this.properties.maxWidth;
+        }
       },
     },
 
@@ -99,6 +113,8 @@ registerComponent('layer-link-message-view', {
       }
 
       this.parentComponent.classList[!useArrow ? 'remove' : 'add']('layer-no-core-ui');
+
+      if (this.parentComponent.isShowingMetadata) this.parentComponent.style.maxWidth = this.maxWidth + 'px';
     },
 
     isPlainLink() {

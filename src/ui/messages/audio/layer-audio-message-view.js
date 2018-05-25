@@ -15,7 +15,6 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import Constants from '../../constants';
 import './layer-audio-message-model';
 import './layer-audio-message-large-view';
 import Clickable from '../../mixins/clickable';
@@ -81,6 +80,13 @@ registerComponent('layer-audio-message-view', {
           }
           this.properties.playButton.classList.remove('layer-play-button');
           this.properties.playButton.classList.add('layer-pause-button');
+
+          const players = document.querySelectorAll('audio');
+          for (let i = 0; i < players.length; i++) players[i].pause();
+          const audioMessages = document.querySelectorAll('layer-audio-message-view');
+          for (let i = 0; i < audioMessages.length; i++) {
+            if (audioMessages[i] !== this) audioMessages[i].playing = false;
+          }
         } else {
           this.properties.audio.pause();
           this.properties.playButton.classList.add('layer-play-button');
@@ -99,6 +105,21 @@ registerComponent('layer-audio-message-view', {
      */
     maxWidth: {
       value: 450,
+    },
+
+    /**
+     * Minimum width allowed for a preview image in px
+     *
+     * @property {Number} [minWidth=192]
+     */
+    minWidth: {
+      get() {
+        if (this._hasValidPreview()) {
+          return this.properties.minWidth;
+        } else {
+          return 192;
+        }
+      },
     },
 
     /**
@@ -138,13 +159,26 @@ registerComponent('layer-audio-message-view', {
     },
 
     /**
+     * Does this message model hava a valid preview image?
+     *
+     * Its only valid if there is a preview/previewUrl and width/height
+     *
+     * @method _hasValidPreview
+     * @return {Boolean}
+     * @private
+     */
+    _hasValidPreview() {
+      return (this.model.preview || this.model.previewUrl) && (this.model.previewWidth && this.model.previewHeight);
+    },
+
+    /**
      * Setup the preview image or the file icon if there is no preview image.
      *
      * @method _setupPreview
      * @private
      */
     _setupPreview() {
-      if ((this.model.preview || this.model.previewUrl) && (this.model.previewWidth && this.model.previewHeight)) {
+      if (this._hasValidPreview()) {
         this.classList.add('layer-audio-preview');
         this.model.getPreviewUrl(url => (this.nodes.preview.style.backgroundImage = 'url(' + url + ')'));
       } else {
@@ -172,8 +206,14 @@ registerComponent('layer-audio-message-view', {
       this._resizeContent();
     },
 
+    /**
+     * Setup the message size based on the previewWidth/previewHeight.
+     *
+     * @method _resizeContent
+     * @private
+     */
     _resizeContent() {
-      const { width } = this.getAvailableWidthAndNode();
+      const width = this.getAvailableMessageWidth();
       if (width) {
         if ((this.model.preview || this.model.previewUrl) && (this.model.previewWidth && this.model.previewHeight)) {
           // Setup sizes for this node and the parent node
@@ -182,6 +222,7 @@ registerComponent('layer-audio-message-view', {
             contentHeight: this.model.previewHeight,
             maxHeight: this.maxHeight,
             maxWidth: this.maxWidth,
+            minWidth: this.minWidth,
           });
 
           this.nodes.preview.style.width = sizes.width + 'px';
@@ -216,14 +257,6 @@ registerComponent('layer-audio-message-view', {
       evt.preventDefault();
       evt.stopPropagation();
       this.playing = !this.playing;
-      if (this.playing) {
-        const players = document.querySelectorAll('audio');
-        for (let i = 0; i < players.length; i++) players[i].pause();
-        const audioMessages = document.querySelectorAll('layer-audio-message-view');
-        for (let i = 0; i < audioMessages.length; i++) {
-          if (audioMessages[i] !== this) audioMessages[i].playing = false;
-        }
-      }
     },
 
     /**
@@ -298,6 +331,7 @@ registerComponent('layer-audio-message-view', {
      */
     onRerender(evt) {
       if (evt && evt.hasProperty('currentTime') && this.properties.audio.currentTime !== this.model.currentTime) {
+        // Restoring currentTime seems to fail based on unknown browser state
         this.properties.audio.currentTime = this.model.currentTime;
         this.renderBufferBar();
         this.renderProgressBar();

@@ -45,10 +45,13 @@ registerComponent('layer-image-message-view', {
 
     minWidth: {
       noGetterFromSetter: true,
-      value: 0,
       get() {
-        return this.parentComponent.isShowingMetadata ? 192 : 0;
+        return this.parentComponent.isShowingMetadata ? this.properties.minWidth : 0;
       },
+    },
+
+    maxWidth: {
+      value: 450,
     },
 
     /**
@@ -69,10 +72,6 @@ registerComponent('layer-image-message-view', {
      */
     maxHeightWithoutMetadata: {
       value: 768,
-    },
-
-    maxWidth: {
-      value: 450,
     },
 
     /**
@@ -106,7 +105,7 @@ registerComponent('layer-image-message-view', {
     },
 
     _resizeContent() {
-      const { width } = this.getAvailableWidthAndNode();
+      const width = this.getAvailableMessageWidth();
       if (width) {
         const hasMetadata = this.parentComponent.isShowingMetadata;
         // Setup sizes for this node and the parent node
@@ -121,6 +120,8 @@ registerComponent('layer-image-message-view', {
         this.style.height = sizes.height + 'px';
         if (sizes.width >= this.minWidth) {
           this.messageViewer.width = sizes.width;
+        } else {
+          this.messageViewer.width = this.minWidth;
         }
 
         // If it needed to be allocated, its now allocated

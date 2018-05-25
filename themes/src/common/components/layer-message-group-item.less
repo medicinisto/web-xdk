@@ -9,7 +9,7 @@ layer-message-list {
    * Layout for the Header and Footer
    */
   .layer-message-header, .layer-message-footer {
-    margin-left: @message-item-margin-left + @message-item-text-indent;
+    margin-left: @message-item-margin-left + @message-item-text-indent-with-avatar;
     margin-right: @message-item-margin-right;
 
     display: none;
@@ -30,8 +30,17 @@ layer-message-list {
     .layer-replaceable-inner:empty {
       display: none;
     }
-    width: @message-item-text-indent + @message-item-margin-left;
+    width: @message-item-text-indent-with-avatar + @message-item-margin-left;
     position: relative;
+  }
+
+  &:not(.layer-message-list-show-my-avatars) {
+    .layer-message-header, .layer-message-footer {
+      margin-left: @message-item-margin-left + @message-item-text-indent-without-avatar;
+    }
+    .layer-message-left-side {
+      width: @message-item-text-indent-without-avatar + @message-item-margin-left;
+    }
   }
 
   .layer-list-item-last {
@@ -43,8 +52,14 @@ layer-message-list {
     &.layer-list-item-last .layer-message-footer {
       display: flex;
     }
-    &.layer-list-item-last layer-avatar {
+    &.layer-list-item-last .layer-message-left-side layer-avatar {
       display: block;
+    }
+  }
+
+  &:not(.layer-message-list-show-my-avatars) .layer-list-item-last {
+    .layer-message-left-side layer-avatar {
+      display: none;
     }
   }
 
@@ -138,7 +153,7 @@ layer-message-list {
 
 
 .layer-message-item {
-    layer-avatar {
+  .layer-message-left-side layer-avatar {
       display: none;
     }
 
@@ -247,4 +262,11 @@ layer-message-list .layer-message-item  .layer-message-item-main {
 
 .layer-message-status-delivered-to-some layer-message-status, .layer-message-status-read-by-some layer-message-status {
   opacity: 0.5;
+}
+
+.layer-conversation-view-width-small, .layer-conversation-view-width-tiny {
+  layer-message-list .layer-message-item {
+   padding-right: 8px;
+   padding-left: 8px;
+ }
 }

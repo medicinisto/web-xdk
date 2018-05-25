@@ -93,3 +93,105 @@ new TextModel({text: "URL Only"}).send({ conversation: $("layer-conversation-vie
     description:  'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.'
   });
   model.send({ conversation: $("layer-conversation-view").conversation });
+
+
+
+  CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json');
+  TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+  LinkModel = Layer.Core.Client.getMessageTypeModelClass('LinkModel');
+
+  new TextModel({text: "Carousel of File"}).send({ conversation: $("layer-conversation-view").conversation });
+
+  new CarouselModel({
+    items: [
+      new LinkModel({
+        url: "https://layer.com/introducing-the-layer-conversation-design-system/",
+        title: "Introducing the Layer Conversation Design System",
+        imageUrl: "https://layer.com/wp-content/uploads/2017/07/bezier-blog-header-2x.png",
+        description: "The Layer Conversation Design System helps you imagine and design the perfect customer conversation across devices.",
+        author: "layer.com"
+      }),
+      new LinkModel({
+        url: "https://layer.com/introducing-the-layer-conversation-design-system/",
+        title: "Introducing the Layer Conversation Design System",
+        imageUrl: "https://layer.com/wp-content/uploads/2017/07/bezier-blog-header-2x.png",
+        description: "The Layer Conversation Design System helps you imagine and design the perfect customer conversation across devices.",
+        author: "layer.com"
+      }),
+      new LinkModel({
+        url: "https://layer.com/introducing-the-layer-conversation-design-system/",
+        title: "Introducing the Layer Conversation Design System",
+        imageUrl: "https://layer.com/wp-content/uploads/2017/07/bezier-blog-header-2x.png",
+        description: "The Layer Conversation Design System helps you imagine and design the perfect customer conversation across devices.",
+        author: "layer.com"
+      })
+    ]
+  }).send({ conversation: $("layer-conversation-view").conversation });
+
+
+  ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+  TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+  LinkModel = Layer.Core.Client.getMessageTypeModelClass('LinkModel');
+
+  new TextModel({text: "Button Message with File"}).send({ conversation: $("layer-conversation-view").conversation });
+
+  model = new ButtonModel({
+    buttons: [
+      {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+    ],
+    contentModel: new LinkModel({
+      url: "https://layer.com/introducing-the-layer-conversation-design-system/",
+      title: "Introducing the Layer Conversation Design System",
+      imageUrl: "https://layer.com/wp-content/uploads/2017/07/bezier-blog-header-2x.png",
+      description: "The Layer Conversation Design System helps you imagine and design the perfect customer conversation across devices.",
+      author: "layer.com"
+    })
+  }).send({ conversation: $("layer-conversation-view").conversation });
+
+  CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json');
+  TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+  LinkModel = Layer.Core.Client.getMessageTypeModelClass('LinkModel');
+  ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+
+  new TextModel({text: "Carousel of Button Messages with File"}).send({ conversation: $("layer-conversation-view").conversation });
+
+  new CarouselModel({
+    items: [
+      new ButtonModel({
+        buttons: [
+          {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+        ],
+        contentModel: new LinkModel({
+          url: "https://layer.com/introducing-the-layer-conversation-design-system/",
+          title: "Introducing the Layer Conversation Design System",
+          imageUrl: "https://layer.com/wp-content/uploads/2017/07/bezier-blog-header-2x.png",
+          description: "The Layer Conversation Design System helps you imagine and design the perfect customer conversation across devices.",
+          author: "layer.com"
+        })
+      }),
+      new ButtonModel({
+        buttons: [
+          {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+        ],
+        contentModel: new LinkModel({
+          url: "https://layer.com/introducing-the-layer-conversation-design-system/",
+          title: "Introducing the Layer Conversation Design System",
+          imageUrl: "https://layer.com/wp-content/uploads/2017/07/bezier-blog-header-2x.png",
+          description: "The Layer Conversation Design System helps you imagine and design the perfect customer conversation across devices.",
+          author: "layer.com"
+        })
+      }),
+      new ButtonModel({
+        buttons: [
+          {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+        ],
+        contentModel: new LinkModel({
+          url: "https://layer.com/introducing-the-layer-conversation-design-system/",
+          title: "Introducing the Layer Conversation Design System",
+          imageUrl: "https://layer.com/wp-content/uploads/2017/07/bezier-blog-header-2x.png",
+          description: "The Layer Conversation Design System helps you imagine and design the perfect customer conversation across devices.",
+          author: "layer.com"
+        })
+      })
+    ]
+  }).send({ conversation: $("layer-conversation-view").conversation });

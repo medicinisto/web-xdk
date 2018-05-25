@@ -262,9 +262,10 @@ model.send({ conversation: $("layer-conversation-view").conversation })
 
 
 TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
-new TextModel({text: "Carousel of Choices"}).send({ conversation: $("layer-conversation-view").conversation });
 ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
 var CarouselModel = Layer.Core.Client.getMessageTypeModelClass('CarouselModel');
+
+new TextModel({text: "Carousel of Choices"}).send({ conversation: $("layer-conversation-view").conversation });
 
 model = new CarouselModel({
   items: [
@@ -320,6 +321,68 @@ model = new CarouselModel({
         allowMultiselect: true,
         preselectedChoice: "blue,black"
     })
+  ]
+});
+model.send({ conversation: $("layer-conversation-view").conversation })
+
+
+TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
+ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
+CarouselModel = Layer.Core.Client.getMessageTypeModelClass('CarouselModel');
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel');
+
+new TextModel({text: "Carousel of Choices with Buttons"}).send({ conversation: $("layer-conversation-view").conversation });
+
+model = new CarouselModel({
+  items: [
+    new ButtonModel({
+      buttons: [{type: "action", text: "Kill Arthur", action: "kill-arthur"}],
+      contentModel: new ChoiceModel({
+        enabledFor: Layer.client.user.id,
+        label: "single select without initial state",
+        choices: [
+          {text:  "red", id: "red"},
+          {text:  "blue", id: "blue"},
+          {text:  "black", id: "black"},
+        ],
+      }),
+    }),
+    new ButtonModel({
+      buttons: [{type: "action", text: "Kill Arthur", action: "kill-arthur"}],
+      contentModel: new ChoiceModel({
+        enabledFor: Layer.client.user.id,
+        label: "single select without initial state",
+        choices: [
+          {text:  "red", id: "red"},
+          {text:  "blue", id: "blue"},
+          {text:  "black", id: "black"},
+        ],
+      }),
+    }),
+    new ButtonModel({
+      buttons: [{type: "action", text: "Kill Arthur", action: "kill-arthur"}],
+      contentModel: new ChoiceModel({
+        enabledFor: Layer.client.user.id,
+        label: "single select without initial state",
+        choices: [
+          {text:  "red", id: "red"},
+          {text:  "blue", id: "blue"},
+          {text:  "black", id: "black"},
+        ],
+      }),
+    }),
+    new ButtonModel({
+      buttons: [{type: "action", text: "Kill Arthur", action: "kill-arthur"}],
+      contentModel: new ChoiceModel({
+        enabledFor: Layer.client.user.id,
+        label: "single select without initial state",
+        choices: [
+          {text:  "red", id: "red"},
+          {text:  "blue", id: "blue"},
+          {text:  "black", id: "black"},
+        ],
+      }),
+    }),
   ]
 });
 model.send({ conversation: $("layer-conversation-view").conversation })

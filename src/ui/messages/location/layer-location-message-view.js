@@ -24,7 +24,6 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import Constants from '../../constants';
 import './layer-location-message-model';
 import { logger } from '../../../utils';
 import { googleMapsKey } from '../../../settings';
@@ -68,7 +67,7 @@ registerComponent('layer-location-message-view', {
     },
 
     maxWidth: {
-      value: 640,
+      value: 384,
     },
 
     /**

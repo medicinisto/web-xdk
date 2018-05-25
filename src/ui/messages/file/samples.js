@@ -40,3 +40,89 @@ var imgBase64 = "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAECElEQVR4Xu2ZO44
     title:  'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.',
     sourceUrl: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
   }).send({ conversation: $("layer-conversation-view").conversation });
+
+  CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json');
+TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+FileModel = Layer.Core.Client.getMessageTypeModelClass('FileModel');
+
+new TextModel({text: "Carousel of File"}).send({ conversation: $("layer-conversation-view").conversation });
+
+new CarouselModel({
+  items: [
+    new FileModel({
+      sourceUrl: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
+      mimeType: "image/png",
+      title: "This is a logo for someone in silicon valley"
+    }),
+    new FileModel({
+      sourceUrl: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
+      mimeType: "image/png",
+      title: "This is a logo for someone in silicon valley"
+    }),
+    new FileModel({
+      sourceUrl: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
+      mimeType: "image/png",
+      title: "This is a logo for someone in silicon valley"
+    })
+  ]
+}).send({ conversation: $("layer-conversation-view").conversation });
+
+
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+FileModel = Layer.Core.Client.getMessageTypeModelClass('FileModel');
+
+new TextModel({text: "Button Message with File"}).send({ conversation: $("layer-conversation-view").conversation });
+
+model = new ButtonModel({
+  buttons: [
+    {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+  ],
+  contentModel: new FileModel({
+    sourceUrl: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
+    mimeType: "image/png",
+    title: "This is a logo for someone in silicon valley"
+  })
+}).send({ conversation: $("layer-conversation-view").conversation });
+
+CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json');
+TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+FileModel = Layer.Core.Client.getMessageTypeModelClass('FileModel');
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+
+new TextModel({text: "Carousel of Button Messages with File"}).send({ conversation: $("layer-conversation-view").conversation });
+
+new CarouselModel({
+  items: [
+    new ButtonModel({
+      buttons: [
+        {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+      ],
+      contentModel: new FileModel({
+        sourceUrl: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
+        mimeType: "image/png",
+        title: "This is a logo for someone in silicon valley"
+      })
+    }),
+    new ButtonModel({
+      buttons: [
+        {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+      ],
+      contentModel: new FileModel({
+        sourceUrl: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
+        mimeType: "image/png",
+        title: "This is a logo for someone in silicon valley"
+      })
+    }),
+    new ButtonModel({
+      buttons: [
+        {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+      ],
+      contentModel: new FileModel({
+        sourceUrl: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
+        mimeType: "image/png",
+        title: "This is a logo for someone in silicon valley"
+      })
+    })
+  ]
+}).send({ conversation: $("layer-conversation-view").conversation });

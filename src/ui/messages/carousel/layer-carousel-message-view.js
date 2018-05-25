@@ -186,8 +186,6 @@ registerComponent('layer-carousel-message-view', {
         const maxWidth = card.nodes.ui.maxWidth ? Math.min(maxCardWidth, card.nodes.ui.maxWidth) : maxCardWidth;
         if (maxWidth < minWidth) {
           card.style.maxWidth = card.style.minWidth = card.style.width = maxWidth + 'px';
-        } else {
-          card.style.maxWidth = card.style.minWidth = card.style.width = minWidth + 'px';
         }
       });
 
@@ -227,7 +225,7 @@ registerComponent('layer-carousel-message-view', {
      * @private
      */
     _adjustCarouselWidth() {
-      const { width } = this.getAvailableWidthAndNode();
+      const width = this.getAvailableMessageWidth();
       if (!width) return;
       this.messageViewer.style.maxWidth = (width - 2) + 'px';
     },

@@ -93,3 +93,98 @@ img = Layer.Utils.base64ToBlob('iVBORw0KGgoAAAANSUhEUgAAAyAAAAGQCAYAAABWJQQ0AAAH
     height: 400,
     title: "Wider and taller than card but much wider than tall"
   }).send({ conversation: $("layer-conversation-view").conversation });
+
+
+
+  CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json');
+  TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+  ImageModel = Layer.Core.Client.getMessageTypeModelClass('ImageModel');
+
+  new TextModel({text: "Carousel of File"}).send({ conversation: $("layer-conversation-view").conversation });
+
+  new CarouselModel({
+    items: [
+      new ImageModel({
+        sourceUrl: "https://farm5.staticflickr.com/4272/34912460025_be2700d3e7_k.jpg",
+        title: 'this is a long subtitle',
+        width: 1505,
+        height: 846,
+      }),
+      new ImageModel({
+        sourceUrl: "https://farm5.staticflickr.com/4272/34912460025_be2700d3e7_k.jpg",
+        title: 'this is a long subtitle',
+        width: 1505,
+        height: 846,
+      }),
+      new ImageModel({
+        sourceUrl: "https://farm5.staticflickr.com/4272/34912460025_be2700d3e7_k.jpg",
+        title: 'this is a long subtitle',
+        width: 1505,
+        height: 846,
+      })
+    ]
+  }).send({ conversation: $("layer-conversation-view").conversation });
+
+
+  ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+  TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+  ImageModel = Layer.Core.Client.getMessageTypeModelClass('ImageModel');
+
+  new TextModel({text: "Button Message with File"}).send({ conversation: $("layer-conversation-view").conversation });
+
+  model = new ButtonModel({
+    buttons: [
+      {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+    ],
+    contentModel: new ImageModel({
+      sourceUrl: "https://farm5.staticflickr.com/4272/34912460025_be2700d3e7_k.jpg",
+      title: 'this is a long subtitle',
+      width: 1505,
+      height: 846,
+    })
+  }).send({ conversation: $("layer-conversation-view").conversation });
+
+  CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json');
+  TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+  ImageModel = Layer.Core.Client.getMessageTypeModelClass('ImageModel');
+  ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+
+  new TextModel({text: "Carousel of Button Messages with File"}).send({ conversation: $("layer-conversation-view").conversation });
+
+  new CarouselModel({
+    items: [
+      new ButtonModel({
+        buttons: [
+          {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+        ],
+        contentModel: new ImageModel({
+          sourceUrl: "https://farm5.staticflickr.com/4272/34912460025_be2700d3e7_k.jpg",
+          title: 'this is a long subtitle',
+          width: 1505,
+          height: 846,
+        })
+      }),
+      new ButtonModel({
+        buttons: [
+          {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+        ],
+        contentModel: new ImageModel({
+          sourceUrl: "https://farm5.staticflickr.com/4272/34912460025_be2700d3e7_k.jpg",
+          title: 'this is a long subtitle',
+          width: 1505,
+          height: 846,
+        })
+      }),
+      new ButtonModel({
+        buttons: [
+          {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+        ],
+        contentModel: new ImageModel({
+          sourceUrl: "https://farm5.staticflickr.com/4272/34912460025_be2700d3e7_k.jpg",
+          title: 'this is a long subtitle',
+          width: 1505,
+          height: 846,
+        })
+      })
+    ]
+  }).send({ conversation: $("layer-conversation-view").conversation });

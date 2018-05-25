@@ -27,7 +27,7 @@ import { registerComponent } from '../../components/component';
 import MessageHandler from '../../mixins/message-handler';
 import Clickable from '../../mixins/clickable';
 import SizeProperty from '../../mixins/size-property';
-
+import { conversationViewWidths } from '../../../settings';
 import messageActionHandlers from '../../message-actions/index';
 import { register } from './message-handlers';
 
@@ -323,6 +323,36 @@ registerComponent('layer-message-viewer', {
      */
     getDialogClass() {
       return this.nodes.ui.tagName.toLowerCase();
+    },
+
+    /**
+     * Get the width available to the Message Viewer within its parent.
+     *
+     * Offset value to account for rules on how much of a Message List its allowed to use.
+     *
+     * @method getAvailableMessageWidth
+     * @returns {Number}
+     */
+    getAvailableMessageWidth() {
+      if (this.parentComponent.classList.contains('layer-message-item')) {
+        const width = this.parentNode.clientWidth;
+
+        // 95%, 80% and 70% must be changed both here and in layer-message-viewer.less
+        if (
+          this.nodes.ui.hideMessageItemRightAndLeftContent ||
+          width < conversationViewWidths.maxMedium
+        ) {
+          return Math.round(width * 0.95);
+        } else if (width < conversationViewWidths.maxMedium) {
+          return Math.round(width * 0.8);
+        } else {
+          return Math.round(width * 0.7);
+        }
+      } else if (this.parentComponent.getAvailableMessageWidth) {
+        return this.parentComponent.getAvailableMessageWidth(this);
+      } else {
+        return this.parentNode.clientWidth;
+      }
     },
   },
 });

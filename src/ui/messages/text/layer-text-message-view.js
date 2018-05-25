@@ -15,7 +15,6 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import Constants from '../../constants';
 import { processText } from '../../handlers/text/text-handlers';
 import './layer-text-message-model';
 
@@ -32,9 +31,15 @@ registerComponent('layer-text-message-view', {
   properties: {
     minWidth: {
       noGetterFromSetter: true,
-      value: 0,
       get() {
-        return this.parentComponent.isShowingMetadata ? 192 : 0;
+        return this.parentComponent.isShowingMetadata ? this.properties.minWidth : 0;
+      },
+    },
+    maxWidth: {
+      value: 384,
+      noGetterFromSetter: true,
+      get() {
+        return this.parentComponent.isShowingMetadata ? this.properties.maxWidth : 1280;
       },
     },
     messageViewContainerTagName: {
@@ -45,6 +50,9 @@ registerComponent('layer-text-message-view', {
   methods: {
     onRerender() {
       this.innerHTML = processText(this.model.text);
+    },
+    _setupContainerClass() {
+      if (this.parentComponent.isShowingMetadata) this.parentComponent.style.maxWidth = this.maxWidth + 'px';
     },
   },
 });

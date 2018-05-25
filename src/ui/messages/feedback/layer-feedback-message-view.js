@@ -40,6 +40,12 @@ registerComponent('layer-feedback-message-view', {
     cssClassList: {
       value: ['layer-feedback-message-view-ratings'],
     },
+    minWidth: {
+      value: 300,
+    },
+    maxWidth: {
+      value: 300,
+    },
   },
   methods: {
 

@@ -94,3 +94,92 @@ model = new TextModel({
   model = new TextModel({
   text: 'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.  And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.'
 }).send({ conversation: $("layer-conversation-view").conversation });
+
+
+CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json');
+TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+LocationModel = Layer.Core.Client.getMessageTypeModelClass('LocationModel');
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+
+new TextModel({text: "Carousel of Text"}).send({ conversation: $("layer-conversation-view").conversation });
+
+new CarouselModel({
+  items: [
+    new TextModel({
+      text: 'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.',
+      title: 'The Holy Hand Grenade',
+      author: 'King Arthur'
+    }),
+    new TextModel({
+      text: 'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.',
+      title: 'The Holy Hand Grenade',
+      author: 'King Arthur'
+    }),
+    new TextModel({
+      text: 'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.',
+      title: 'The Holy Hand Grenade',
+      author: 'King Arthur'
+    })
+  ]
+}).send({ conversation: $("layer-conversation-view").conversation });
+
+CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json');
+TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+LocationModel = Layer.Core.Client.getMessageTypeModelClass('LocationModel');
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+
+new TextModel({text: "Text Button"}).send({ conversation: $("layer-conversation-view").conversation });
+
+new ButtonModel({
+  buttons: [
+    {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+  ],
+  contentModel: new TextModel({
+    text: 'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.',
+    title: 'The Holy Hand Grenade',
+    author: 'King Arthur'
+  })
+}).send({ conversation: $("layer-conversation-view").conversation });
+
+
+CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json');
+TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+LocationModel = Layer.Core.Client.getMessageTypeModelClass('LocationModel');
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+
+new TextModel({text: "Carousel of Text Buttons"}).send({ conversation: $("layer-conversation-view").conversation });
+
+new CarouselModel({
+  items: [
+    new ButtonModel({
+      buttons: [
+        {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+      ],
+      contentModel: new TextModel({
+        text: 'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.',
+        title: 'The Holy Hand Grenade',
+        author: 'King Arthur'
+      })
+    }),
+    new ButtonModel({
+      buttons: [
+        {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+      ],
+      contentModel: new TextModel({
+        text: 'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.',
+        title: 'The Holy Hand Grenade',
+        author: 'King Arthur'
+      })
+    }),
+    new ButtonModel({
+      buttons: [
+        {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+      ],
+      contentModel: new TextModel({
+        text: 'And the Lord spake, saying, "First shalt thou take out the Holy Pin. Then shalt thou count to three, no more, no less. Three shall be the number thou shalt count, and the number of the counting shall be three. Four shalt thou not count, neither count thou two, excepting that thou then proceed to three. Five is right out! Once the number three, being the third number, be reached, then lobbest thou thy Holy Hand Grenade of Antioch towards thy foe, who, being naughty in my sight, shall snuff it.',
+        title: 'The Holy Hand Grenade',
+        author: 'King Arthur'
+      })
+    })
+  ]
+}).send({ conversation: $("layer-conversation-view").conversation });

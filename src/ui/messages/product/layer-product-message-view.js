@@ -18,7 +18,6 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import Constants from '../../constants';
 import { processText } from '../../handlers/text/text-handlers';
 import './layer-product-message-model';
 

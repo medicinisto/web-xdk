@@ -48,10 +48,10 @@ registerComponent('layer-video-message-view', {
     /**
      * Maximum width allowed for a preview image in px.
      *
-     * @property {Number} [maxWidth=450]
+     * @property {Number} [maxWidth=384]
      */
     maxWidth: {
-      value: 450,
+      value: 384,
     },
 
     /**
@@ -66,18 +66,18 @@ registerComponent('layer-video-message-view', {
     /**
      * Minimum width allowed for a preview image in px.
      *
-     * @property {Number} [minWidth=48]
+     * @property {Number} [minPreviewWidth=48]
      */
-    minWidth: {
+    minPreviewWidth: {
       value: 48,
     },
 
     /**
      * Minimum height allowed for a preview image in px.
      *
-     * @property {Number} [minHeight=48]
+     * @property {Number} [minPreviewHeight=48]
      */
-    minHeight: {
+    minPreviewHeight: {
       value: 48,
     },
   },
@@ -98,7 +98,7 @@ registerComponent('layer-video-message-view', {
     },
 
     _resizeContent() {
-      const { width } = this.getAvailableWidthAndNode();
+      const width = this.getAvailableMessageWidth();
       if (width) {
         // Setup sizes for this node and the parent node
         const sizes = this.getBestDimensions({
@@ -106,8 +106,8 @@ registerComponent('layer-video-message-view', {
           contentHeight: this.model.previewHeight,
           maxHeight: this.maxHeight,
           maxWidth: this.maxWidth,
-          minHeight: this.minHeight,
-          minWidth: this.minWidth,
+          minHeight: this.minPreviewHeight,
+          minWidth: this.minPreviewWidth,
         });
         this.style.width = sizes.width + 'px';
         this.style.height = sizes.height + 'px';

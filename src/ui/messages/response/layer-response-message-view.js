@@ -19,7 +19,6 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import Constants from '../../constants';
 import './layer-response-message-model';
 
 registerComponent('layer-response-message-view', {
@@ -35,6 +34,9 @@ registerComponent('layer-response-message-view', {
     }
   `,
   properties: {
+    maxWidth: {
+      value: 500,
+    },
   },
   methods: {
 

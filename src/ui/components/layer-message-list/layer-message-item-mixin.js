@@ -327,5 +327,16 @@ module.exports = {
         }
       });
     },
+
+    /**
+     * Get the width available to the Message Viewer within this Message Row Item.
+     *
+     * @method getAvailableMessageWidth
+     * @param {Layer.UI.handlers.message.MessageViewer} messageViewer
+     * @returns {Number}
+     */
+    getAvailableMessageWidth(messageViewer) {
+      return this.parentComponent.getAvailableMessageWidth(messageViewer);
+    },
   },
 };

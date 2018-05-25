@@ -215,3 +215,331 @@ model = new ProductModel({
 });
 model.send({ conversation: $("layer-conversation-view").conversation });
 
+CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json');
+TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+ProductModel = Layer.Core.Client.getMessageTypeModelClass('ProductModel');
+ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel');
+
+new TextModel({text: "Carousel of Products"}).send({ conversation: $("layer-conversation-view").conversation });
+
+new CarouselModel({
+  items: [
+    new ProductModel({
+      customData: {
+        product_id: "Frodo-the-dodo",
+        sku: "frodo-is-askew"
+      },
+      url: 'https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg',
+      currency: 'USD',
+      price: 175,
+      quantity: 3,
+      brand: 'Apple',
+      name: 'Apple 2 plus desktop computer',
+      description: 'This computer will last you a lifetime.  Its processing power far outweighs your old calculator.  Its DOS based interface is the most modern available anywhere in the world. Keyboard is built-in and ergonomic.',
+      imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
+      options: [
+        new ChoiceModel({
+          enabledFor: Layer.client.user.id,
+          label: 'RAM',
+          type: 'label',
+          allowReselect: true,
+          preselectedChoice: 'large',
+          choices: [
+            {text:  "2K", id: "small"},
+            {text:  "4K", id: "medium"},
+            {text:  "8K", id: "large"},
+          ]
+        }),
+        new ChoiceModel({
+          enabledFor: Layer.client.user.id,
+          label: 'Color',
+          type: 'label',
+          allowReselect: true,
+          preselectedChoice: 'offwhite',
+          choices: [
+            {text:  "Off White", id: "offwhite"},
+            {text:  "Awful White", id: "awfwhite"}
+          ]
+        }),
+      ]
+   }),
+   new ProductModel({
+      customData: {
+        product_id: "Frodo-the-dodo",
+        sku: "frodo-is-askew"
+      },
+      url: 'https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg',
+      currency: 'USD',
+      price: 175,
+      quantity: 3,
+      brand: 'Apple',
+      name: 'Apple 2 plus desktop computer',
+      description: 'This computer will last you a lifetime.  Its processing power far outweighs your old calculator.  Its DOS based interface is the most modern available anywhere in the world. Keyboard is built-in and ergonomic.',
+      imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
+      options: [
+        new ChoiceModel({
+          enabledFor: Layer.client.user.id,
+          label: 'RAM',
+          type: 'label',
+          allowReselect: true,
+          preselectedChoice: 'large',
+          choices: [
+            {text:  "2K", id: "small"},
+            {text:  "4K", id: "medium"},
+            {text:  "8K", id: "large"},
+          ]
+        }),
+        new ChoiceModel({
+          enabledFor: Layer.client.user.id,
+          label: 'Color',
+          type: 'label',
+          allowReselect: true,
+          preselectedChoice: 'offwhite',
+          choices: [
+            {text:  "Off White", id: "offwhite"},
+            {text:  "Awful White", id: "awfwhite"}
+          ]
+        }),
+      ]
+    }),
+    new ProductModel({
+      customData: {
+        product_id: "Frodo-the-dodo",
+        sku: "frodo-is-askew"
+      },
+      url: 'https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg',
+      currency: 'USD',
+      price: 175,
+      quantity: 3,
+      brand: 'Apple',
+      name: 'Apple 2 plus desktop computer',
+      description: 'This computer will last you a lifetime.  Its processing power far outweighs your old calculator.  Its DOS based interface is the most modern available anywhere in the world. Keyboard is built-in and ergonomic.',
+      imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
+      options: [
+        new ChoiceModel({
+          enabledFor: Layer.client.user.id,
+          label: 'RAM',
+          type: 'label',
+          allowReselect: true,
+          preselectedChoice: 'large',
+          choices: [
+            {text:  "2K", id: "small"},
+            {text:  "4K", id: "medium"},
+            {text:  "8K", id: "large"},
+          ]
+        }),
+        new ChoiceModel({
+          enabledFor: Layer.client.user.id,
+          label: 'Color',
+          type: 'label',
+          allowReselect: true,
+          preselectedChoice: 'offwhite',
+          choices: [
+            {text:  "Off White", id: "offwhite"},
+            {text:  "Awful White", id: "awfwhite"}
+          ]
+        }),
+      ]
+    })
+  ]
+}).send({ conversation: $("layer-conversation-view").conversation });
+
+
+
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+ProductModel = Layer.Core.Client.getMessageTypeModelClass('ProductModel');
+ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel');
+
+
+new TextModel({text: "Button Message with Product"}).send({ conversation: $("layer-conversation-view").conversation });
+
+model = new ButtonModel({
+  buttons: [
+    {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+  ],
+  contentModel: new ProductModel({
+    customData: {
+      product_id: "Frodo-the-dodo",
+      sku: "frodo-is-askew"
+    },
+    url: 'https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg',
+    currency: 'USD',
+    price: 175,
+    quantity: 3,
+    brand: 'Apple',
+    name: 'Apple 2 plus desktop computer',
+    description: 'This computer will last you a lifetime.  Its processing power far outweighs your old calculator.  Its DOS based interface is the most modern available anywhere in the world. Keyboard is built-in and ergonomic.',
+    imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
+    options: [
+      new ChoiceModel({
+        enabledFor: Layer.client.user.id,
+        label: 'RAM',
+        type: 'label',
+        allowReselect: true,
+        preselectedChoice: 'large',
+        choices: [
+          {text:  "2K", id: "small"},
+          {text:  "4K", id: "medium"},
+          {text:  "8K", id: "large"},
+        ]
+      }),
+      new ChoiceModel({
+        enabledFor: Layer.client.user.id,
+        label: 'Color',
+        type: 'label',
+        allowReselect: true,
+        preselectedChoice: 'offwhite',
+        choices: [
+          {text:  "Off White", id: "offwhite"},
+          {text:  "Awful White", id: "awfwhite"}
+        ]
+      }),
+    ]
+  })
+}).send({ conversation: $("layer-conversation-view").conversation });
+
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
+ProductModel = Layer.Core.Client.getMessageTypeModelClass('ProductModel');
+ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel');
+CarouselModel = Layer.Core.Client.getMessageTypeModelClass('CarouselModel');
+
+new TextModel({text: "Carousel of Button Message with Product"}).send({ conversation: $("layer-conversation-view").conversation });
+
+new CarouselModel({
+  items: [
+    new ButtonModel({
+      buttons: [
+        {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+      ],
+      contentModel: new ProductModel({
+        customData: {
+          product_id: "Frodo-the-dodo",
+          sku: "frodo-is-askew"
+        },
+        url: 'https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg',
+        currency: 'USD',
+        price: 175,
+        quantity: 3,
+        brand: 'Apple',
+        name: 'Apple 2 plus desktop computer',
+        description: 'This computer will last you a lifetime.  Its processing power far outweighs your old calculator.  Its DOS based interface is the most modern available anywhere in the world. Keyboard is built-in and ergonomic.',
+        imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
+        options: [
+          new ChoiceModel({
+            enabledFor: Layer.client.user.id,
+            label: 'RAM',
+            type: 'label',
+            allowReselect: true,
+            preselectedChoice: 'large',
+            choices: [
+              {text:  "2K", id: "small"},
+              {text:  "4K", id: "medium"},
+              {text:  "8K", id: "large"},
+            ]
+          }),
+          new ChoiceModel({
+            enabledFor: Layer.client.user.id,
+            label: 'Color',
+            type: 'label',
+            allowReselect: true,
+            preselectedChoice: 'offwhite',
+            choices: [
+              {text:  "Off White", id: "offwhite"},
+              {text:  "Awful White", id: "awfwhite"}
+            ]
+          }),
+        ]
+      })
+    }),
+    new ButtonModel({
+      buttons: [
+        {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+      ],
+      contentModel: new ProductModel({
+        customData: {
+          product_id: "Frodo-the-dodo",
+          sku: "frodo-is-askew"
+        },
+        url: 'https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg',
+        currency: 'USD',
+        price: 175,
+        quantity: 3,
+        brand: 'Apple',
+        name: 'Apple 2 plus desktop computer',
+        description: 'This computer will last you a lifetime.  Its processing power far outweighs your old calculator.  Its DOS based interface is the most modern available anywhere in the world. Keyboard is built-in and ergonomic.',
+        imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
+        options: [
+          new ChoiceModel({
+            enabledFor: Layer.client.user.id,
+            label: 'RAM',
+            type: 'label',
+            allowReselect: true,
+            preselectedChoice: 'large',
+            choices: [
+              {text:  "2K", id: "small"},
+              {text:  "4K", id: "medium"},
+              {text:  "8K", id: "large"},
+            ]
+          }),
+          new ChoiceModel({
+            enabledFor: Layer.client.user.id,
+            label: 'Color',
+            type: 'label',
+            allowReselect: true,
+            preselectedChoice: 'offwhite',
+            choices: [
+              {text:  "Off White", id: "offwhite"},
+              {text:  "Awful White", id: "awfwhite"}
+            ]
+          }),
+        ]
+      })
+    }),
+    new ButtonModel({
+      buttons: [
+        {"type": "action", "text": "Kill Arthur", "event": "kill-arthur"}
+      ],
+      contentModel: new ProductModel({
+        customData: {
+          product_id: "Frodo-the-dodo",
+          sku: "frodo-is-askew"
+        },
+        url: 'https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg',
+        currency: 'USD',
+        price: 175,
+        quantity: 3,
+        brand: 'Apple',
+        name: 'Apple 2 plus desktop computer',
+        description: 'This computer will last you a lifetime.  Its processing power far outweighs your old calculator.  Its DOS based interface is the most modern available anywhere in the world. Keyboard is built-in and ergonomic.',
+        imageUrls: ['https://static.giantbomb.com/uploads/original/0/7465/1296890-apple3.jpg'],
+        options: [
+          new ChoiceModel({
+            enabledFor: Layer.client.user.id,
+            label: 'RAM',
+            type: 'label',
+            allowReselect: true,
+            preselectedChoice: 'large',
+            choices: [
+              {text:  "2K", id: "small"},
+              {text:  "4K", id: "medium"},
+              {text:  "8K", id: "large"},
+            ]
+          }),
+          new ChoiceModel({
+            enabledFor: Layer.client.user.id,
+            label: 'Color',
+            type: 'label',
+            allowReselect: true,
+            preselectedChoice: 'offwhite',
+            choices: [
+              {text:  "Off White", id: "offwhite"},
+              {text:  "Awful White", id: "awfwhite"}
+            ]
+          }),
+        ]
+      })
+    })
+  ]
+}).send({ conversation: $("layer-conversation-view").conversation });
