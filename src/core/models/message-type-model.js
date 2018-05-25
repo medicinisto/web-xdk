@@ -523,6 +523,7 @@ class MessageTypeModel extends Root {
       payload: this.part.body ? JSON.parse(this.part.body) : {},
       isEdit: false,
     });
+    this._setupSlots();
     this._registerAllStates();
     if (responses) {
       this._parseModelResponses(responses);
@@ -565,7 +566,6 @@ class MessageTypeModel extends Root {
         }
       }
     });
-    this._setupSlots();
   }
 
 
@@ -740,6 +740,7 @@ class MessageTypeModel extends Root {
         payload: this.part.body ? JSON.parse(this.part.body) : {},
         isEdit: true,
       });
+      this._setupSlots();
     } else if (evt.target.role === 'response_summary') {
       this._parseModelResponses(evt.target);
     } else {
