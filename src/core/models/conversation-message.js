@@ -105,7 +105,7 @@ class ConversationMessage extends Message {
   __updateRecipientStatus(status, oldStatus) {
     const conversation = this.getConversation(false);
 
-    if (!conversation || Util.doesObjectMatch(status, oldStatus)) return;
+    if (Util.doesObjectMatch(status, oldStatus)) return;
 
     const id = Client.needsUserContext ? Client.user.id : '';
     const isSender = Client.needsUserContext ? this.sender.isMine : false;
@@ -134,14 +134,14 @@ class ConversationMessage extends Message {
 
     try {
       // -1 so we don't count this user
-      const userCount = conversation.participants.length - 1;
+      const userCount = conversation ? conversation.participants.length - 1 : Object.keys(status || {}).length - 1;
 
       // If sent by this user or read by this user, update isRead/unread
       if (!this.__isRead && (isSender || userHasRead)) {
         this.__isRead = true; // no __updateIsRead event fired
       }
 
-      if (conversation.isLoading) {
+      if (conversation && conversation.isLoading) {
         conversation.once('conversations:loaded', () => {
           const { readCount, deliveredCount } = this._getReceiptStatus(status, id);
           this._setReceiptStatus(readCount, deliveredCount, userCount);

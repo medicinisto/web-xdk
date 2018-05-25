@@ -108,6 +108,7 @@ Impact of this change:
 * File Upload Button can now reslect the same file twice in a row
 * The Conversation View now provides properties `maxWidthSmall` and `maxWidthMedium` which can be configured to change when the Conversation View uses its Small rendering and when it uses its Medium rendering. A `width` property is set whenever the window resizes; apps may need to set this if they use sliders or other internal size changes.  Previously these values were hardcoded in.
 * WEB-1792: Adds Replaceable Content section named `conversationViewTop` to the top of the Conversation View; this can be used to render temporary or persisted content on top of the Message List
+* Fixes bug where if Conversation is not loaded, Message Status cannot be rendered
 
 ## 4.0.4
 
