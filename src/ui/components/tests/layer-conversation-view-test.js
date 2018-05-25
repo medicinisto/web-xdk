@@ -402,7 +402,7 @@ describe('layer-conversation-view', function() {
     it("Expect maxTiny maxSmall and maxMedium to have values", function() {
       expect(Layer.Settings.conversationViewWidths.maxTiny).toEqual(320);
       expect(Layer.Settings.conversationViewWidths.maxSmall).toEqual(480);
-      expect(Layer.Settings.conversationViewWidths.maxMedium).toEqual(600);
+      expect(Layer.Settings.conversationViewWidths.maxMedium).toEqual(640);
     });
     it("Should update CSS Classes", function() {
       el.width = 200;

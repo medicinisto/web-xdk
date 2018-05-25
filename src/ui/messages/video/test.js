@@ -375,8 +375,6 @@ describe('Video Message Components', function() {
       el.nodes.ui._resizeContent();
 
       expect(el.nodes.ui.style.backgroundImage.indexOf(previewUrl)).not.toEqual("-1");
-      expect(el.nodes.ui.maxHeight > 0).toBe(true);
-      expect(el.nodes.ui.minWidth).toEqual(48);
       expect(el.nodes.ui.style.height).toEqual('250px')
       expect(el.nodes.ui.style.width).toEqual('125px');
     });
@@ -400,8 +398,6 @@ describe('Video Message Components', function() {
       el.nodes.ui._resizeContent();
 
       expect(el.nodes.ui.style.backgroundImage.indexOf(previewUrl)).not.toEqual("-1");
-      expect(el.nodes.ui.maxHeight > 0).toBe(true);
-      expect(el.nodes.ui.minWidth).toEqual(48);
       expect(el.nodes.ui.style.height).toEqual('250px')
       expect(el.nodes.ui.style.width).toEqual('48px');
     });

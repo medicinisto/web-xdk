@@ -418,7 +418,7 @@ describe('Audio Message Components', function() {
 
       expect(el.nodes.ui.nodes.preview.style.backgroundImage.indexOf("https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg")).not.toEqual("-1");
       expect(el.nodes.ui.nodes.preview.style.height).toEqual(el.nodes.ui.maxHeight + 'px');
-      expect(el.nodes.ui.nodes.preview.style.width).toEqual((100 * el.nodes.ui.maxHeight / 1000) + 'px');
+      expect(el.nodes.ui.nodes.preview.style.width).toEqual(Math.max(el.nodes.ui.minWidth, (100 * el.nodes.ui.maxHeight / 1000)) + 'px');
 
       expect(el.nodes.ui.classList.contains('layer-audio-preview')).toBe(true);
       expect(el.nodes.ui.classList.contains('layer-file-audio')).toBe(false);

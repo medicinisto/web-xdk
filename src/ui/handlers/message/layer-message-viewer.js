@@ -334,25 +334,27 @@ registerComponent('layer-message-viewer', {
      * @returns {Number}
      */
     getAvailableMessageWidth() {
-      if (this.parentComponent.classList.contains('layer-message-item')) {
-        const width = this.parentNode.clientWidth;
+      if (this.parentComponent) {
+        if (this.parentComponent.classList.contains('layer-message-item')) {
+          const width = this.parentNode.clientWidth;
 
-        // 95%, 80% and 70% must be changed both here and in layer-message-viewer.less
-        if (
-          this.nodes.ui.hideMessageItemRightAndLeftContent ||
-          width < conversationViewWidths.maxMedium
-        ) {
-          return Math.round(width * 0.95);
-        } else if (width < conversationViewWidths.maxMedium) {
-          return Math.round(width * 0.8);
-        } else {
-          return Math.round(width * 0.7);
+          // 95%, 80% and 70% must be changed both here and in layer-message-viewer.less
+          if (
+            this.nodes.ui.hideMessageItemRightAndLeftContent ||
+            width < conversationViewWidths.maxMedium
+          ) {
+            return Math.round(width * 0.95);
+          } else if (width < conversationViewWidths.maxMedium) {
+            return Math.round(width * 0.8);
+          } else {
+            return Math.round(width * 0.7);
+          }
+        } else if (this.parentComponent.getAvailableMessageWidth) {
+          return this.parentComponent.getAvailableMessageWidth(this);
         }
-      } else if (this.parentComponent.getAvailableMessageWidth) {
-        return this.parentComponent.getAvailableMessageWidth(this);
-      } else {
-        return this.parentNode.clientWidth;
       }
+
+      return this.parentNode.clientWidth;
     },
   },
 });

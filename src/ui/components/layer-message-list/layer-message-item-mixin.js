@@ -336,7 +336,7 @@ module.exports = {
      * @returns {Number}
      */
     getAvailableMessageWidth(messageViewer) {
-      return this.parentComponent.getAvailableMessageWidth(messageViewer);
+      return this.parentComponent ? this.parentComponent.getAvailableMessageWidth(messageViewer) : this.clientWidth;
     },
   },
 };
