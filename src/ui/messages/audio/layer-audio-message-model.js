@@ -203,7 +203,7 @@ class AudioModel extends MessageTypeModel {
     }
   }
 
-
+  // See parent method
   setupSlots() {
     const slots = [
       [
@@ -275,6 +275,8 @@ class AudioModel extends MessageTypeModel {
    *
    * currentTime is number of seconds into the playback as reported by `audioPlayer.currentTime`
    *
+   * @method __updateCurrentTime
+   * @private
    * @param {Number} newValue
    * @param {Number} oldValue
    */

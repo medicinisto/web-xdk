@@ -94,7 +94,12 @@ registerComponent('layer-video-message-large-view', {
       this._resizeContent();
     },
 
-    // Setup the preview image sizing once the view is in the DOM
+    /**
+     * Setup the message size based on the previewWidth/previewHeight.
+     *
+     * @method _resizeContent
+     * @private
+     */
     _resizeContent() {
       const width = this.getAvailableMessageWidth();
       if (width) {
@@ -123,6 +128,12 @@ registerComponent('layer-video-message-large-view', {
       if (!this.isHeightAllocated) this._resizeContent();
     },
 
+    /**
+     * When this widget is removed from the DOM, cache the currentTime in the model so that whatever viewer picks it up next
+     * can resume from where we left off.
+     *
+     * @method onDetach
+     */
     onDetach() {
       if (this.nodes.player.currentTime < this.nodes.player.duration) {
         this.model.currentTime = this.nodes.player.currentTime;

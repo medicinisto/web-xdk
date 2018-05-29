@@ -82,10 +82,12 @@ registerComponent('layer-video-message-view', {
     },
   },
   methods: {
+    // See parent method
     onCreate() {
       this.isHeightAllocated = false;
     },
 
+    // See parent method
     onAfterCreate() {
       const video = document.createElement('video');
       if (!video.canPlayType(this.model.mimeType)) {
@@ -97,6 +99,12 @@ registerComponent('layer-video-message-view', {
       this._resizeContent();
     },
 
+    /**
+     * Setup the message size based on the previewWidth/previewHeight.
+     *
+     * @method _resizeContent
+     * @private
+     */
     _resizeContent() {
       const width = this.getAvailableMessageWidth();
       if (width) {

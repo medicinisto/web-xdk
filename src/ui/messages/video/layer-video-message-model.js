@@ -214,6 +214,7 @@ class VideoModel extends MessageTypeModel {
     }
   }
 
+  // See parent class
   setupSlots() {
     const slots = [
       [
@@ -286,6 +287,8 @@ class VideoModel extends MessageTypeModel {
    *
    * currentTime is number of seconds into the playback as reported by `audioPlayer.currentTime`
    *
+   * @method __updateCurrentTime
+   * @private
    * @param {Number} newValue
    * @param {Number} oldValue
    */
@@ -297,38 +300,61 @@ class VideoModel extends MessageTypeModel {
     });
   }
 
-  __updateHeight(newValue) {
-    if (this.width) this.aspectRatio = this.width / newValue;
-  }
-
-  __updateWidth(newValue) {
-    if (this.height) this.aspectRatio = newValue / this.height;
-  }
-
+  /**
+   * Aspect Ratio getter uses width/height if aspectRatio not set
+   *
+   *
+   * @method __getAspectRatio
+   * @private
+   */
   __getAspectRatio() {
     if (this.__aspectRatio) return this.__aspectRatio;
     if (this.height && this.width) return this.width / this.height;
     return 0;
   }
 
+  /**
+   * Get the previewWidth from whatever width/previewWidth/aspectRatio is set
+   *
+   * @method __getPreviewWidth
+   * @private
+   */
   __getPreviewWidth() {
     if (this.__previewWidth) return this.__previewWidth;
     if (this.__previewHeight && this.__aspectRatio) return this.__previewHeight * this.__aspectRatio;
     return this.width;
   }
 
+  /**
+   * Get the previewHeight from whatever height/previewHeight/aspectRatio is set
+   *
+   * @method __getPreviewHeight
+   * @private
+   */
   __getPreviewHeight() {
     if (this.__previewHeight) return this.__previewHeight;
     if (this.__previewWidth && this.__aspectRatio) return this.__previewWidth / this.__aspectRatio;
     return this.height;
   }
 
+  /**
+   * Get the width from whatever width/aspectRatio is set
+   *
+   * @method __getWidth
+   * @private
+   */
   __getWidth() {
     if (this.__width) return this.__width;
     if (this.__height && this.__aspectRatio) return this.__height * this.__aspectRatio;
     return 0;
   }
 
+  /**
+   * Get the height from whatever height/aspectRatio is set
+   *
+   * @method __getHeight
+   * @private
+   */
   __getHeight() {
     if (this.__height) return this.__height;
     if (this.__width && this.__aspectRatio) return this.__width / this.__aspectRatio;
@@ -499,9 +525,6 @@ VideoModel.prototype.size = null;
  * @property {Number} currentTime
  */
 VideoModel.prototype.currentTime = null;
-
-VideoModel.prototype._simpleMetadataSlots = null;
-VideoModel.prototype._allMetadataSlots = null;
 
 /**
  * One instance of this type

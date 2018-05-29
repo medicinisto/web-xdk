@@ -15,7 +15,6 @@
  */
 import { registerComponent } from '../../components/component';
 import { animatedScrollLeftTo } from '../../ui-utils';
-import Constants from '../../constants';
 import MessageViewMixin from '../message-view-mixin';
 import Throttler from '../../mixins/throttler';
 import Clickable from '../../mixins/clickable';

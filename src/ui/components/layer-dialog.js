@@ -158,7 +158,7 @@ registerComponent('layer-dialog', {
      * setting the the content.
      *
      * @readonly
-     * @property {HTMLElment} content
+     * @property {HTMLElement} content
      */
     content: {},
 

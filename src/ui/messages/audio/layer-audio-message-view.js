@@ -236,6 +236,7 @@ registerComponent('layer-audio-message-view', {
       }
     },
 
+    // See parent method
     onAttach() {
       // resizeContent should already have triggered, but if onAfterCreate was called when the parent
       // was not yet added to the DOM, then it will need to be resolved here.
@@ -356,6 +357,11 @@ registerComponent('layer-audio-message-view', {
       }
     },
 
+    /**
+     * Called when this widget is being deallocated; insure that the audio player is paused.
+     *
+     * @method onDestroy
+     */
     onDestroy() {
       if (this.properties.audio) {
         this.properties.audio.pause();

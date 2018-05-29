@@ -129,7 +129,12 @@ registerComponent('layer-audio-message-large-view', {
       this._resizeContent();
     },
 
-    // Setup the preview image sizing once the view is in the DOM
+    /**
+     * Setup the message size based on the previewWidth/previewHeight.
+     *
+     * @method _resizeContent
+     * @private
+     */
     _resizeContent() {
       const width = this.getAvailableMessageWidth();
       if (width) {
@@ -166,12 +171,19 @@ registerComponent('layer-audio-message-large-view', {
       }
     },
 
+    // See parent method
     onAttach() {
       // resizeContent should already have triggered, but if onAfterCreate was called when the parent
       // was not yet added to the DOM, then it will need to be resolved here.
       if (!this.isHeightAllocated) this._resizeContent();
     },
 
+    /**
+     * When this widget is removed from the DOM, cache the currentTime in the model so that whatever viewer picks it up next
+     * can resume from where we left off.
+     *
+     * @method onDetach
+     */
     onDetach() {
       if (this.properties.playing) {
         this.model.currentTime = this.nodes.player.currentTime;

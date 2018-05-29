@@ -44,7 +44,6 @@
  */
 import { client } from '../../../settings';
 import { registerComponent } from '../../components/component';
-import Constants from '../../constants';
 
 import MessageViewMixin from '../message-view-mixin';
 import '../../components/layer-action-button';

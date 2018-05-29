@@ -5,7 +5,6 @@
  */
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
-import Constants from '../../constants';
 
 registerComponent('layer-message-type-list-view', {
   template: '',

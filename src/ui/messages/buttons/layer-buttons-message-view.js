@@ -17,7 +17,6 @@ import { registerComponent } from '../../components/component';
 import '../../components/layer-action-button';
 import '../../components/layer-choice-button';
 import MessageViewMixin from '../message-view-mixin';
-import Constants from '../../constants';
 import './layer-buttons-message-model';
 import { logger } from '../../../utils';
 

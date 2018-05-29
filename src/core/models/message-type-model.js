@@ -30,8 +30,6 @@ import Core from '../namespace';
 import Util from '../../utils';
 import Root from '../root';
 import Identity from './identity';
-import Message from './message';
-import { ErrorDictionary } from '../layer-error';
 import MessageTypeResponseSummary from './message-type-response-summary/message-type-response-summary-v2';
 import { get as getResponseSummaryClass } from './message-type-response-summary';
 import { STANDARD_MIME_TYPES } from '../../constants';
@@ -652,6 +650,17 @@ class MessageTypeModel extends Root {
     ];
   }
 
+  /**
+   * Sets up or updates the slots for subclasses that use the Slot System.
+   *
+   * Slots are primarily for use with the Standard Message Container which is not used for all Messages.
+   *
+   * This calls {@link #setupSlots} to get the basic slot values, and then shifts things around to insure
+   * that all slots are filled.
+   *
+   * @method _setupSlots
+   * @private
+   */
   _setupSlots() {
     const slots = this.setupSlots();
 
@@ -670,26 +679,52 @@ class MessageTypeModel extends Root {
     }
 
 
-    if (slots[1].length == 0 && slots[0].length > 1) {
-      slots[1].push(slots[0].splice(1,1)[0]);
+    if (slots[1].length === 0 && slots[0].length > 1) {
+      slots[1].push(slots[0].splice(1, 1)[0]);
     }
-    if (slots[2].length == 0 && slots[1].length > 1) {
-      slots[2].push(slots[1].splice(1,1)[0]);
+    if (slots[2].length === 0 && slots[1].length > 1) {
+      slots[2].push(slots[1].splice(1, 1)[0]);
     }
 
     // Make sure every slot has a value even if its just an empty string
     this._metadataSlots = slots.map(slot => (slot.length ? slot : ['']));
   }
 
-
+  /**
+   * Standard method used primarily by the Standard Message Container to get description meta data.
+   *
+   * Messages that do not use the Standard Message Container will likely not need this.
+   *
+   * @method getDescription
+   * @returns {String}
+   */
   getDescription() {
     return this._metadataSlots[1] ? this._metadataSlots[1][0] : '';
   }
 
+  /**
+   * Standard method used primarily by the Standard Message Container to get footer meta data.
+   *
+   * Messages that do not use the Standard Message Container will likely not need this.
+   *
+   * @method getFooter
+   * @returns {String}
+   */
   getFooter() {
     return this._metadataSlots[2] ? this._metadataSlots[2][0] : '';
   }
 
+  /**
+   * Get the metadata data at the specified Slot.
+   *
+   * This is only used by Message Types that use the Slot system to organize and present their metadata.
+   *
+   * Used primarily by Large Message Views that are showing ALL metadata.
+   *
+   * @method getMetadataAtIndex
+   * @param {Number} index
+   * @return {String}
+   */
   getMetadataAtIndex(index) {
     let count = 0;
     for (let i = 0; i < this._metadataSlots.length; i++) {
@@ -910,6 +945,12 @@ class MessageTypeModel extends Root {
     }
   }
 
+  /**
+   * Use the static `SummaryTemplate` property of this class to generate a summary
+   *
+   * @method useOneLineSummaryTemplate
+   * @return {String}
+   */
   useOneLineSummaryTemplate() {
     const templateStr = this.constructor.SummaryTemplate || '';
     return templateStr.replace(/(\$\{.*?\})/g, (match) => {

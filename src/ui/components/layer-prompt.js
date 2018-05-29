@@ -159,7 +159,9 @@ registerComponent('layer-prompt', {
       this.action2 = action2;
       this.title = title;
       this.text = text;
-      if (typeof document !== 'undefined' && document.body && !document.body.contains(this)) document.body.appendChild(this);
+      if (typeof document !== 'undefined' && document.body && !document.body.contains(this)) {
+        document.body.appendChild(this);
+      }
       this.classList.add('layer-prompt-showing');
     },
 

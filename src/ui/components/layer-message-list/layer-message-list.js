@@ -321,12 +321,26 @@ registerComponent('layer-message-list', {
         this._updateShowingAvatars();
       },
     },
+
+    /**
+     * Hides the current user's Avatars within the Message List
+     *
+     * @property {Boolean} _showMyAvatars
+     * @private
+     */
     _showMyAvatars: {
       set(value) {
         this.toggleClass('layer-message-list-show-my-avatars', value);
         this.onMessageWidthChange();
       },
     },
+
+    /**
+     * Hides Avatars of all other users within the Message List
+     *
+     * @property {Boolean} _showOtherAvatars
+     * @private
+     */
     _showOtherAvatars: {
       set(value) {
         this.toggleClass('layer-message-list-show-other-avatars', value);
@@ -360,7 +374,12 @@ registerComponent('layer-message-list', {
       window.removeEventListener('focus', this.properties._checkVisibilityBound);
     },
 
-
+    /**
+     * Avatars are showing if `canShowXXXAvatars` is true and if the width is sufficient
+     *
+     * @method _updateShowingAvatars
+     * @private
+     */
     _updateShowingAvatars() {
       this._showMyAvatars = this.canShowMyAvatars && this.width >= Settings.conversationViewWidths.maxSmall;
       this._showOtherAvatars = this.canShowOtherAvatars && this.width >= Settings.conversationViewWidths.maxTiny;
@@ -987,6 +1006,11 @@ registerComponent('layer-message-list', {
       }
     },
 
+    /**
+     * Whenever the width of any messages changes, assume that things may have been pushed up/down and scrollToBottom.
+     *
+     * @method onMessageWidthChange
+     */
     onMessageWidthChange() {
       if (this.properties.stuckToBottom && !this.properties.inPagedData) {
         this.scrollToBottom();

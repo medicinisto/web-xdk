@@ -73,7 +73,8 @@ import './layer-typing-indicator';
 registerComponent('layer-conversation-view', {
   mixins: [HasQuery, 'FocusOnKeydown', 'FileDropTarget', Throttler],
   template: `
-    <layer-replaceable-content name='conversationViewTop' layer-id='top' class='layer-conversation-view-top'></layer-replaceable-content>
+    <layer-replaceable-content name='conversationViewTop' layer-id='top' class='layer-conversation-view-top'>
+    </layer-replaceable-content>
     <layer-message-list layer-id='list'></layer-message-list>
     <layer-typing-indicator layer-id='typingIndicators'></layer-typing-indicator>
     <layer-compose-bar layer-id='composer'></layer-compose-bar>
@@ -748,8 +749,10 @@ registerComponent('layer-conversation-view', {
     width: {
       set(newValue, oldValue) {
         this.toggleClass('layer-conversation-view-width-tiny', newValue < conversationViewWidths.maxTiny);
-        this.toggleClass('layer-conversation-view-width-small', newValue >= conversationViewWidths.maxTiny && newValue < conversationViewWidths.maxSmall);
-        this.toggleClass('layer-conversation-view-width-medium', newValue >= conversationViewWidths.maxSmall && newValue < conversationViewWidths.maxMedium);
+        this.toggleClass('layer-conversation-view-width-small',
+          newValue >= conversationViewWidths.maxTiny && newValue < conversationViewWidths.maxSmall);
+        this.toggleClass('layer-conversation-view-width-medium',
+          newValue >= conversationViewWidths.maxSmall && newValue < conversationViewWidths.maxMedium);
         this.toggleClass('layer-conversation-view-width-large', newValue >= conversationViewWidths.maxMedium);
         if (this.nodes.list) this.nodes.list.width = newValue;
       },
