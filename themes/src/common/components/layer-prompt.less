@@ -1,0 +1,96 @@
+/* Styles for the Toast Popup that notifies users of new Messages */
+layer-prompt.layer-prompt-showing {
+  animation-name: layer-prompt-fade-in;
+  animation-duration: 0.4s;
+}
+
+layer-prompt.layer-prompt-fading {
+  animation-name: layer-prompt-fade-out;
+  animation-duration: 0.4s;
+  opacity: 0.01;
+}
+
+
+@keyframes layer-prompt-fade-in {
+  from {
+    opacity: 0.1;
+  }
+  to {
+    opacity: 1.0;
+  }
+}
+
+@keyframes layer-prompt-fade-out {
+  from {
+    opacity: 1.0;
+  }
+  to {
+    opacity: 0.01;
+  }
+}
+
+layer-prompt {
+  background-color: @prompt-background-color;
+  padding: 10px;
+  border: solid 1px @prompt-border-color;
+  align-items: flex-stretch;
+  display: flex;
+  flex-direction: column;
+
+  .layer-prompt-title {
+    margin-bottom: 5px;
+    font-size: @prompt-title-size;
+    color: @prompt-title-color;
+    font-weight: @prompt-title-weight;
+    display: flex;
+    flex-direction: row;
+    justify-content: center
+  }
+  .layer-prompt-title:after {
+    content: ':';
+  }
+
+  .layer-prompt-text {
+    font-size: @prompt-text-size;
+    color: @prompt-text-color;
+    font-weight: @prompt-text-weight;
+  }
+
+  .layer-prompt-main {
+    overflow-y: hidden;
+    text-overflow: ellipsis;
+    padding-top: 5px;
+  }
+
+  .layer-prompt-title, .layer-prompt-text {
+    text-align: center;
+    padding: 4px 20px;
+  }
+
+  layer-action-button button {
+    background-color: @prompt-background-color;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  layer-prompt {
+    width: 100vw;
+    right: inherit;
+    padding: 0px;
+    bottom: 0px;
+
+    layer-action-button {
+      border: solid 1px @color-g2;
+    }
+  }
+}
+
+@media screen and (min-width: 480px) {
+  layer-prompt {
+    width: @prompt-width;
+    border-radius: @prompt-border-radius;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    right: 20px;
+    bottom: 20px;
+  }
+}

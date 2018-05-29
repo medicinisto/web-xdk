@@ -59,6 +59,8 @@ import { isInBackground as IsInBackground } from '../ui-utils';
 import { registerComponent } from './component';
 import Clickable from '../mixins/clickable';
 import './layer-avatar';
+import './layer-prompt';
+import { hasLocalStorage } from '../../utils';
 
 let Notify = NotifyLib;
 if ('default' in Notify) Notify = Notify.default; // Annoying difference between webpack and browserify...
@@ -201,7 +203,7 @@ registerComponent('layer-notifier', {
       value: 'desktop',
       set(value) {
         if (value === 'desktop' && window.Notification) {
-          Notify.requestPermission(this._onPermissionGranted.bind(this));
+          this._requestPermissions();
         }
       },
     },
@@ -225,7 +227,7 @@ registerComponent('layer-notifier', {
       value: 'none',
       set(value) {
         if (value === 'desktop' && window.Notification) {
-          Notify.requestPermission(this._onPermissionGranted.bind(this));
+          this._requestPermissions();
         }
       },
     },
@@ -341,6 +343,42 @@ registerComponent('layer-notifier', {
     },
 
     /**
+     * Prompt used to tell user to enable notifications
+     *
+     * @property {String} enableNotificationPrompt
+     */
+    enableNotificationPrompt: {
+      value: 'Enable notifications when this tab is in the background (closing tab ends notifications)?',
+    },
+
+    /**
+     * Title for the prompt used to tell user to enable notifications
+     *
+     * @property {String} enableNotificationTitle
+     */
+    enableNotificationTitle: {
+      value: 'Enable Browser Permissions',
+    },
+
+    /**
+     * "OK" button text for prompt to tell user to enable notifications.
+     *
+     * @property {String} enableNotificationOK
+     */
+    enableNotificationOK: {
+      value: 'Yes',
+    },
+
+    /**
+     * "Cancel" button text for prompt to tell user to enable notifications.
+     *
+     * @property {String} enableNotificationCancel
+     */
+    enableNotificationCancel: {
+      value: 'No',
+    },
+
+    /**
      * Timeout ID for clearing the toast notification
      *
      * @private
@@ -361,6 +399,66 @@ registerComponent('layer-notifier', {
     // Lifecycle method depends upon `client` property
     onAfterCreate() {
       client.on('messages:notify', this._notify.bind(this));
+
+      // Prompt the user to enable permissions if it is required
+      if (this.properties.needsDesktopNotificationPermission) {
+        this.promptForPermissions();
+      }
+    },
+
+    /**
+     * Ask the user if they want to enable notifications and explain why they should want to.
+     *
+     * This is typically called during initialization of the UI Component.  You may use a mixin to
+     * replace this method and remove this prompt entirely (or provide your own prompt).
+     *
+     * > *Note*
+     * >
+     * > If a user clicks `NO` a value is written to `localStorage.LAYER-NOTIFICATION-PROMPT-BLOCKED` to prevent the user from being
+     * > prompted again. If an app wants to prompt the user again, use `localStorage.removeItem('LAYER-NOTIFICATION-PROMPT-BLOCKED')`
+     *
+     * @method promptForPermissions
+     */
+    promptForPermissions() {
+      if (hasLocalStorage && localStorage.getItem('LAYER-NOTIFICATION-PROMPT-BLOCKED')) return;
+      const prompt = document.createElement('layer-prompt');
+      prompt.show({
+        text: this.enableNotificationPrompt,
+        title: this.enableNotificationTitle,
+        button1: this.enableNotificationOK,
+        button2: this.enableNotificationCancel,
+        action1: () => {
+          Notify.requestPermission(this.onPermissionGranted.bind(this));
+        },
+        action2: () => {
+          if (hasLocalStorage) localStorage.setItem('LAYER-NOTIFICATION-PROMPT-BLOCKED', true);
+        },
+      });
+    },
+
+    /**
+     * Based on the current Notificaiton permission settings, grant permissions, prompt for permissions or do nothing.
+     *
+     * If permissions have been denied, there is nothing much we can do here.
+     *
+     * IE11 does not support `Notification.permission` so will use the `default` case.
+     *
+     * @method _requestPermissions
+     * @private
+     */
+    _requestPermissions() {
+      switch (Notification.permission) {
+        case 'granted':
+          this.onPermissionGranted();
+          break;
+        case 'default':
+          this.properties.needsDesktopNotificationPermission = true;
+          break;
+        case 'denied':
+          break;
+        default:
+          this.properties.needsDesktopNotificationPermission = true;
+      }
     },
 
     /**
@@ -376,10 +474,9 @@ registerComponent('layer-notifier', {
     /**
      * Callback indicating that the user has granted permissions for desktop notifications.
      *
-     * @method _onPermissionGranted
-     * @private
+     * @method onPermissionGranted
      */
-    _onPermissionGranted() {
+    onPermissionGranted() {
       this.properties.userEnabledDesktopNotifications = true;
     },
 

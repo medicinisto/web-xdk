@@ -1,25 +1,13 @@
 /* Styles for the Toast Popup that notifies users of new Messages */
+
 layer-notifier {
-  max-width: 40%;
-  background-color: @toast-background-color;
+  min-width: @toast-width;
   border-radius: @toast-border-radius;
-  padding: 10px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-	border: solid 1px @toast-border-color;
+  background-color: @toast-background-color;
+  padding: 10px;
+  border: solid 1px @toast-border-color;
   align-items: flex-start;
-
-  &.layer-notifier-toast-fade {
-    top: 10px;
-  }
-
-  &.layer-notifier-toast {
-    top: 10px;
-  }
-
-  layer-avatar {
-    margin-left: 0px;
-    margin-right: 10px;
-  }
 
   .layer-notifier-title {
     margin-bottom: 5px;
@@ -45,8 +33,33 @@ layer-notifier {
   }
 
   .layer-message-item-main {
-    width: @toast-width;
     overflow-y: hidden;
     text-overflow: ellipsis;
+  }
+
+  &.layer-notifier-toast-fade {
+    top: 10px;
+  }
+
+  &.layer-notifier-toast {
+    top: 10px;
+  }
+
+  layer-avatar {
+    margin-left: 0px;
+    margin-right: 10px;
+  }
+
+  @media screen and (min-width: 640px) {
+    max-width: 60%;
+  }
+  @media screen and (max-width: 640px) {
+    max-width: 95%;
+    box-sizing: border-box;
+
+    &.layer-notifier-toast {
+      top: 4px;
+      right: 4px;
+    }
   }
 }

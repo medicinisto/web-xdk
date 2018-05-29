@@ -177,13 +177,13 @@ if (window.Notification) {
       });
     });
 
-    describe("The _onPermissionGranted() method", function() {
+    describe("The onPermissionGranted() method", function() {
       it("Should flag desktop notifications are enabled", function() {
         testRoot.innerHTML = '<layer-notifier notify-in-background="false"></layer-notifier>';
         CustomElements.takeRecords();
         el = testRoot.firstChild;
         expect(el.properties.userEnabledDesktopNotifications).toBe(false);
-        el._onPermissionGranted();
+        el.onPermissionGranted();
         expect(el.properties.userEnabledDesktopNotifications).toBe(true);
       });
     });
