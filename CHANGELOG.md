@@ -83,6 +83,10 @@ Impact of this change:
     * Message Types that have a Large Message View need to name that view using their `largeMessageRenderer` (previously used a preview release name of `messageRendererExpanded`)
     * Adds `presend()` method that will generate a message and call `message.presend()` so that users may preview it in their Message List without having sent it yet.
     * Supports concept of Slots for organizing Message Metadata (optional)
+* Response Message Changes (WEB-1766)
+    * Adds `getOperationsForState(stateName)` to get the list of operations to be sent (or already sent) to the server
+    * Adds `getStateChanges()` which returns the Change Events associated with the operations to be sent to the server.
+    * Adds `getResponseSummary()` to get the Response Summary instance that this Resonse Message is being sent/was sent to update.
 * New Message Types
     * Adds Audio Message
     * Adds Video Message

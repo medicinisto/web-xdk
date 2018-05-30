@@ -27,8 +27,13 @@
 import Core, { MessagePart, MessageTypeModel } from '../../../core/namespace';
 import { registerStatusModel } from '../../ui-utils';
 import { ErrorDictionary } from '../../../core/layer-error';
+import { client } from '../../../settings';
 
 class ResponseModel extends MessageTypeModel {
+  constructor(options) {
+    super(options);
+    this._changeEvents = {};
+  }
 
   /**
    * Generate all of the Layer.Core.MessagePart needed to represent this Model.
@@ -115,11 +120,72 @@ class ResponseModel extends MessageTypeModel {
    *
    * @method addOperations
    * @param {Layer.Core.CRDT.Changes[]} operations
+   * @param {Object} changeDef
    */
-  addOperations(operations) {
+  addOperations(operations, changeDef) {
     if (this.message) throw new Error(ErrorDictionary.useBeforeMessageCreation);
     if (!this.operations) this.operations = [];
     this.operations.push(...operations);
+
+    if (changeDef) {
+      const stateName = operations[0].name;
+      if (!this._changeEvents[stateName]) {
+        this._changeEvents[stateName] = changeDef;
+      } else {
+        this._changeEvents[stateName].newValue = changeDef.newValue;
+      }
+    }
+  }
+
+  /**
+   * Get all Change Operations for the specified state name that are to be sent (or are already sent) to the server.
+   *
+   * ```
+   * const operations = responseModel.getOperationsForState('selection');
+   * operations.forEach(operation => console.log(`${operation.operation}ed the value ${operation.value} from state ${operation.name}`));
+   * ```
+   *
+   * @method getOperationsForState
+   * @param {String} stateName
+   * return {Changes[]}
+   */
+  getOperationsForState(stateName) {
+    return (this.operations || []).filter(operation => operation.name === stateName);
+  }
+
+  /**
+   * Get a hash of Change Events for each state that is being changed via these operations.
+   *
+   * This data is only available to Response Messages that are being generated to be sent, and are not available
+   * on older Response Messages.
+   *
+   * ```
+   * const changes = responseModel.getStateChanges();
+   * const selectionChange = changes.selection;
+   * console.log(`selection changed from ${selectionChange.oldValue} to ${selectionChange.newValue}`);
+   * ```
+   *
+   * @method getStateChanges
+   * @return {Object}
+   */
+  getStateChanges() {
+    return this._changeEvents;
+  }
+
+  /**
+   * Returns the Response Summary that generated this Response Messeage.
+   *
+   * @method getResponseSummary
+   * @returns {Layer.Core.MessageTypeResponseSummary}
+   */
+  getResponseSummary() {
+    const message = this.responseTo ? client.getMessage(this.responseTo) : null;
+    const part = (message && this.responseToNodeId) ? message.getPartById(`${message.id}/parts/${this.responseToNodeId}`) : null;
+    if (part) {
+      const model = part.createModel();
+      return model.responses;
+    }
+    return null;
   }
 }
 
@@ -129,6 +195,22 @@ class ResponseModel extends MessageTypeModel {
  * @property {Layer.Core.CRDT.Changes[]}
  */
 ResponseModel.prototype.operations = null;
+
+/**
+ * Hash of changes that are associated with the operations to be sent to the server.
+ *
+ * These are used for understanding what is to be sent to the server, but cannot be used to manipulate those changes.
+ *
+ * ```
+ * const changes = responseModel.getStateChanges();
+ * const selectionChange = changes.selection;
+ * console.log(`selection changed from ${selectionChange.oldValue} to ${selectionChange.newValue}`);
+ * ```
+ *
+ * @property {Object} _changeEvents
+ * @private
+ */
+ResponseModel.prototype._changeEvents = null;
 
 /**
  * Message ID of the message that this is a Response to.  Used by the server,

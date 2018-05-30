@@ -77,14 +77,15 @@ class MessageTypeResponseSummary extends Root {
   addState(name, value) {
     const operations = this._trackers[name].addValue(value);
     if (operations && operations.length) {
-      this._addOperations(operations);
-      this.parentModel._triggerAsync('message-type-model:change', {
+      const evt = {
         property: 'responses.' + name,
-        newValue: this.getState(name, client.user),
+        newValue: this.getState(name, client.user.id),
         addedValue: operations[0].value,
         oldValue: operations[0].oldValue,
         identityId: client.user.id,
-      });
+      };
+      this._addOperations(operations, evt);
+      this.parentModel._triggerAsync('message-type-model:change', evt);
     }
   }
 
@@ -132,16 +133,17 @@ class MessageTypeResponseSummary extends Root {
    * @param {String} value
    */
   removeState(name, value) {
-    const oldValue = this.getState(name, client.user);
+    const oldValue = this.getState(name, client.user.id);
     const operations = this._trackers[name].removeValue(value);
     if (operations && operations.length) {
-      this._addOperations(operations);
-      this.parentModel._triggerAsync('message-type-model:change', {
+      const evt = {
         property: 'responses.' + name,
-        newValue: operations[0].value,
+        newValue: this.getState(name, client.user.id),
         oldValue,
         identityId: client.user.id,
-      });
+      };
+      this._addOperations(operations, evt);
+      this.parentModel._triggerAsync('message-type-model:change', evt);
     }
   }
 
@@ -175,6 +177,8 @@ class MessageTypeResponseSummary extends Root {
       const StatusModel = Core.Client.getMessageTypeModelClass('StatusModel');
       this._currentResponseModel = new ResponseModel({
         displayModel: new StatusModel({}),
+        responseTo: this.parentModel.message ? this.parentModel.message.id : null,
+        responseToNodeId: this.parentModel.part ? this.parentModel.nodeId : this.parentModel.parentId,
       });
     }
   }
@@ -185,13 +189,14 @@ class MessageTypeResponseSummary extends Root {
    * @private
    * @method _addOperations
    * @param {Layer.Core.CRDT.Changes[]} operations
+   * @param {Object} changeDef
    */
-  _addOperations(operations) {
+  _addOperations(operations, changeDef) {
     if (operations && operations.length) {
       this._createResponseModel();
 
       // The ResponseModel understands how to take a `set` operation and serialize it
-      this._currentResponseModel.addOperations(operations);
+      this._currentResponseModel.addOperations(operations, changeDef);
 
       this._scheduleSendResponseMessage();
     }
@@ -223,20 +228,29 @@ class MessageTypeResponseSummary extends Root {
   sendResponseMessage() {
     if (this.isDestroyed || !this._currentResponseModel || !this._currentResponseModel.operations.length) return;
     this._sendResponseTimeout = 0;
+
     if (this.parentModel.message && this.parentModel.part && !this.parentModel.message.isNew()) {
-      this._currentResponseModel.responseTo = this.parentModel.message.id;
-      this._currentResponseModel.responseToNodeId =
-        this.parentModel.part ? this.parentModel.nodeId : this.parentModel.parentId;
       const evt = this.parentModel.trigger('message-type-model:sending-response-message', {
         respondingToModel: this.parentModel,
         responseModel: this._currentResponseModel,
         cancelable: true,
       });
+
+      // If the event was canceled, do nothing
       if (evt.canceled) {
         this._currentResponseModel = null;
-      } else {
-        this._currentResponseModel.send({ conversation: this.parentModel.message.getConversation() });
+      }
+
+      // Fix up the response model's properties and then call `send`
+      else {
+        const response = this._currentResponseModel;
         this._currentResponseModel = null;
+
+        if (!response.responseTo) response.responseTo = this.parentModel.message.id;
+        if (!response.responseToNodeId) {
+          response.responseToNodeId = this.parentModel.part ? this.parentModel.nodeId : this.parentModel.parentId;
+        }
+        response.send({ conversation: this.parentModel.message.getConversation() });
       }
     } else if (this.parentModel.message) {
       this.parentModel.message.once('messages:sent', this.sendResponseMessage.bind(this), this);
@@ -249,7 +263,7 @@ class MessageTypeResponseSummary extends Root {
    * Returns an Array or value (depending upon the state type)
    *
    * ```
-   * const clickCounterValue = model.responses.getState('click-counter', client.user);
+   * const clickCounterValue = model.responses.getState('click-counter', client.user.id);
    * ```
    *
    * @method getState
@@ -278,7 +292,7 @@ class MessageTypeResponseSummary extends Root {
    * 4. A nulled value _will_ still be returned, only if the value was never set will it be left out.
    *
    * ```
-   * const allClickCounterValues = model.responses.getStates('click-counter', [client.user, otherIdentity]);
+   * const allClickCounterValues = model.responses.getStates('click-counter', [client.user.id, otherIdentityIDs]);
    * allClickCounterValues.forEach(result => console.log(`${result.identityId} has a counter of ${result.value}`));
    * ```
    *

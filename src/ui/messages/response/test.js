@@ -1,6 +1,6 @@
 /* eslint-disable */
 describe('Response Message Components', function() {
-  var ResponseModel, StatusModel;
+  var ResponseModel, StatusModel, TextModel;
   var conversation;
   var testRoot;
   var uuidPart, uuidMessage;
@@ -48,6 +48,7 @@ describe('Response Message Components', function() {
 
     ResponseModel = Layer.Core.Client.getMessageTypeModelClass("ResponseModel");
     StatusModel = Layer.Core.Client.getMessageTypeModelClass("StatusModel");
+    TextModel = Layer.Core.Client.getMessageTypeModelClass("TextModel");
 
     responseToMessage = conversation.createMessage("hello");
     responseToMessage.presend();
@@ -216,6 +217,46 @@ describe('Response Message Components', function() {
 
       expect(model1.getOneLineSummary()).toEqual("howdy");
       expect(model2.getOneLineSummary()).toEqual("");
+    });
+
+    it("Should return all operations using getOperationsForState", function() {
+      // SEtup
+      var textModel = new TextModel({text: "hello"});
+      textModel.responses.registerState('test', Layer.Constants.CRDT_TYPES.LAST_WRITER_WINS);
+      textModel.responses.registerState('tset', Layer.Constants.CRDT_TYPES.LAST_WRITER_WINS_NULLABLE);
+      textModel.responses.addState('test', 'r1');
+      textModel.responses.addState('test', 'r2');
+      textModel.responses.addState('tset', 'r3');
+      var model = textModel.responses._currentResponseModel;
+
+      // Run
+      expect(model.getOperationsForState('test').length).toEqual(2);
+      expect(model.getOperationsForState('tset').length).toEqual(1);
+      expect(model.getOperationsForState('tet').length).toEqual(0);
+    });
+
+    it("Should return all change events with getStateChanges", function() {
+      // SEtup
+      var textModel = new TextModel({text: "hello"});
+      textModel.responses.registerState('test', Layer.Constants.CRDT_TYPES.LAST_WRITER_WINS);
+      textModel.responses.registerState('tset', Layer.Constants.CRDT_TYPES.LAST_WRITER_WINS_NULLABLE);
+      textModel.responses.addState('test', 'r1');
+      textModel.responses.addState('test', 'r2');
+      textModel.responses.addState('tset', 'r3');
+      var model = textModel.responses._currentResponseModel;
+
+      // Run
+      expect(model.getStateChanges().test).toEqual(jasmine.objectContaining({
+        newValue: 'r2',
+        oldValue: null,
+        property: 'responses.test'
+      }));
+      expect(model.getStateChanges().tset).toEqual(jasmine.objectContaining({
+        newValue: 'r3',
+        oldValue: null,
+        property: 'responses.tset'
+      }));
+      expect(model.getStateChanges().tet).toBe(undefined);
     });
   });
 
