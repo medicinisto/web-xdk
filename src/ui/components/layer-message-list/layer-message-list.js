@@ -347,11 +347,59 @@ registerComponent('layer-message-list', {
         this.onMessageWidthChange();
       },
     },
+
+    /**
+     * Margin for indenting each message's header/footer text for messages that I have sent and which have my Avatar
+     *
+     * @property {Number} marginWithMyAvatar
+     */
+    marginWithMyAvatar: {
+      value: 52,
+      set() {
+        this._scheduleRegenerateStyles();
+      },
+    },
+
+    /**
+     * Margin for indenting each message's header/footer text for messages that I have sent and which my Avatar is hidden
+     *
+     * @property {Number} marginWithoutMyAvatar
+     */
+    marginWithoutMyAvatar: {
+      value: 12,
+      set() {
+        this._scheduleRegenerateStyles();
+      },
+    },
+
+    /**
+     * Margin for indenting each message's header/footer text for messages that I have received and which have the sender's Avatar
+     *
+     * @property {Number} marginWithOtherAvatar
+     */
+    marginWithOtherAvatar: {
+      value: 52,
+      set() {
+        this._scheduleRegenerateStyles();
+      },
+    },
+
+    /**
+     * Margin for indenting each message's header/footer text for messages that I have received and which the sender's Avatar is hidden
+     *
+     * @property {Number} marginWithoutOtherAvatar
+     */
+    marginWithoutOtherAvatar: {
+      value: 12,
+      set() {
+        this._scheduleRegenerateStyles();
+      },
+    },
   },
   methods: {
     // Lifecycle method sets up intial properties and events
     onCreate() {
-      if (!this.id) this.id = generateUUID();
+      if (!this.id) this.id = 'messagelist_' + generateUUID().replace(/-/g, '_');
 
       // Init some local props
       this.properties.lastPagedAt = 0;
@@ -371,7 +419,72 @@ registerComponent('layer-message-list', {
      * @private
      */
     onDestroy() {
+      if (this.properties._stylesNode) {
+        document.head.removeChild(this.properties._stylesNode);
+        this.properties._stylesNode = null;
+      }
+
       window.removeEventListener('focus', this.properties._checkVisibilityBound);
+    },
+
+    /**
+     * Builds and rebuilds a `style` tag with margins setup for message items of this Message List.
+     *
+     * Why not use style sheets? Because these are pretty common values that needs to be setup,
+     * and we wanted it front and center in our API to have them setup.
+     *
+     * Furthermore, these values may vary from Message List to Message List even within a single app, such that
+     * any theming engine would struggle to distinguish between the different message lists.
+     *
+     * @method _scheduleRegenerateStyles
+     * @private
+     */
+    _scheduleRegenerateStyles() {
+      if (!this.properties._regenerateStylesPending) {
+        this.properties._regenerateStylesPending = true;
+
+        // Defer so that if multiple property changes are being made, they can be applied all at once
+        defer(() => {
+          this.properties._regenerateStylesPending = false;
+          if (!this.properties._stylesNode) {
+            this.properties._stylesNode = document.createElement('style');
+          }
+          const styles = this.properties._stylesNode;
+          styles.innerHTML = this.generateStyles();
+
+          if (!document.body.contains(styles)) document.head.appendChild(styles);
+        });
+      }
+    },
+
+    /**
+     * Method for generating the styles specific to this Message List.
+     *
+     * Override this method using a mixin to change the behavivors
+     *
+     * @method generateStyles
+     * @protected
+     */
+    generateStyles() {
+      return `
+        /* Generated styles for one message list */
+        #${this.id}.layer-message-list-show-my-avatars layer-message-item-sent.layer-list-item-first .layer-message-header,
+        #${this.id}.layer-message-list-show-my-avatars layer-message-item-sent.layer-list-item-last .layer-message-footer {
+          margin-right: ${this.marginWithMyAvatar}px;
+        }
+        #${this.id}:not(.layer-message-list-show-my-avatars) layer-message-item-sent.layer-list-item-first .layer-message-header,
+        #${this.id}:not(.layer-message-list-show-my-avatars) layer-message-item-sent.layer-list-item-last .layer-message-footer {
+          margin-right: ${this.marginWithoutMyAvatar}px;
+        }
+        #${this.id}.layer-message-list-show-other-avatars layer-message-item-received.layer-list-item-first .layer-message-header,
+        #${this.id}.layer-message-list-show-other-avatars layer-message-item-received.layer-list-item-last .layer-message-footer {
+          margin-left: ${this.marginWithOtherAvatar}px;
+        }
+        #${this.id}:not(.layer-message-list-show-other-avatars) layer-message-item-received.layer-list-item-first .layer-message-header,
+        #${this.id}:not(.layer-message-list-show-other-avatars) layer-message-item-received.layer-list-item-last .layer-message-footer {
+          margin-left: ${this.marginWithoutOtherAvatar}px;
+        }
+     `;
     },
 
     /**

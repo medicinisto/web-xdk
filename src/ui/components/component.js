@@ -705,7 +705,6 @@ function setupProperty(classDef, prop, propertyDefHash) {
   // This means that the setter does NOT need to write to this.properties, but can handle side effects, transformations, etc...
   newDef.set = function propertySetter(value) {
     if (this.properties._internalState.onDestroyCalled) return;
-
     if (propDef.type) value = castProperty(propDef.type, value);
 
     const oldValue = prop.noGetterFromSetter ? this.properties[name] : this[name];
@@ -1165,7 +1164,11 @@ function _registerComponent(tagName) {
       }
 
       // Cast the property and set it
-      this.properties[prop.propertyName] = prop.type ? castProperty(prop.type, finalValue) : finalValue;
+      if (finalValue !== null) {
+        this.properties[prop.propertyName] = prop.type ? castProperty(prop.type, finalValue) : finalValue;
+      } else {
+        this.properties[prop.propertyName] = null;
+      }
     },
   };
 

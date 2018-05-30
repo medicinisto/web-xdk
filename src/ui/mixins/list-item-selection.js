@@ -15,6 +15,7 @@ mixins.ListItemSelection = module.exports = {
      */
     isSelected: {
       type: Boolean,
+      value: false,
       set(value) {
         this.toggleClass('layer-selected-item', value);
         this.onSelection(value);

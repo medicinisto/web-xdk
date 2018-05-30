@@ -29,10 +29,34 @@ const config = {
           messageSentHeader: messageHeader,
           messageReceivedHeader: messageHeader,
           messageSentFooter: null,
-          messageReceivedFooter: null
-        }
-      }
-    }
+          messageReceivedFooter: null,
+        },
+      },
+    },
+    methods: {
+      generateStyles: {
+        mode: UI.registerComponent.MODES.OVERWRITE,
+        value: function generateStyles() {
+          return `
+            /* Generated styles for one message list */
+            #${this.id} .layer-message-header,
+            #${this.id} .layer-message-footer{
+              margin-left: ${this.marginWithMyAvatar}px;
+            }
+            #${this.id} .layer-message-left-side {
+              width: ${this.marginWithMyAvatar}px;
+            }
+            #${this.id}:not(.layer-message-list-show-my-avatars) .layer-message-header,
+            #${this.id}:not(.layer-message-list-show-my-avatars) .layer-message-footer {
+              margin-left: ${this.marginWithoutMyAvatar}px;
+            }
+            #${this.id}:not(.layer-message-list-show-my-avatars) .layer-message-left-side {
+              width: ${this.marginWithoutMyAvatar}px;
+            }
+          `;
+        },
+      },
+    },
   },
   'layer-message-status': {
     properties: {

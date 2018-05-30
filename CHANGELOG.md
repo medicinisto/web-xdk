@@ -30,15 +30,17 @@ Avatars were hidden using:
 
 These variables are no longer used; Instead, the Message List supports the following properties:
 
-* `canShowMyAvatars`: Set to `false` to hide Avatars of the current authenticated user
-* `canShowOtherAvatars`: Set to `false` to hide Avatars of other participants in the conversation
+* `conversationView.canShowMyAvatars`: Set to `false` to hide Avatars of the current authenticated user
+* `conversationView.canShowOtherAvatars`: Set to `false` to hide Avatars of other participants in the conversation
+* `conversationView.marginWithMyAvatar`: set to a number to indicate how large a margin to use for display name, sent time and message status for message I send, and where my avatar is showing
+* `conversationView.marginWithoutMyAvatar`: set to a number to indicate how large a margin to use for display name, sent time and message status for message I send, and where my avatar is hidden
+* `conversationView.marginWithOtherAvatar`: set to a number to indicate how large a margin to use for display name, sent time and message status for message I receive and where the sender's avatar is showing
+* `conversationView.marginWithoutOtherAvatar`: set to a number to indicate how large a margin to use for display name, sent time and message status for message I receive and where the sender's avatar is hidden
 * Assuming that the `canShowMyAvatars` and `canShowOtherAvatars` properties are left alone, avatars are shown if width permits; width settings are as follows:
     * `Layer.Settings.conversationViewWidths.maxTiny: 320`: If the Message List width falls below 320px, no avatars are shown
     * `Layer.Settings.conversationViewWidths.maxSmall: 480`: If the Message List width falls below 480px, only other participant's avatars are shown
     * Show all avatars if width is greater than `maxSmall`
     * Settings can be changed from `Layer.init()`
-* `@message-item-text-indent-with-avatar`: In the theme file, this variable can be changed to adjust how much space is allocated on the left/right edge of the view for Avatars
-* `@message-item-text-indent-without-avatar`: In the theme file, this variable can be changed to adjust how much space is allocated on the left/right edge of the view when Avatars are not shown
 * CSS Classes added to the Conversation View have also changed, based on `Layer.Settings.conversationViewWidths`:
     * `Layer.Settings.conversationViewWidths.maxTiny`: CSS Class `layer-conversation-view-width-tiny` is added
     * `Layer.Settings.conversationViewWidths.maxSmall`: CSS Class `layer-conversation-view-width-small` is added

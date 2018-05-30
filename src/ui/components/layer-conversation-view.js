@@ -781,6 +781,78 @@ registerComponent('layer-conversation-view', {
         return !model || !(model.getModelName() === 'ResponseModel' && !model.displayModel);
       },
     },
+
+    /**
+     * Margin for indenting each message's header/footer text for messages that I have sent and which have my Avatar
+     *
+     * @property {Number} marginWithMyAvatar
+     */
+    marginWithMyAvatar: {
+      type: Number,
+      set(value) {
+        this.nodes.list.marginWithMyAvatar = value;
+      },
+    },
+
+    /**
+     * Margin for indenting each message's header/footer text for messages that I have sent and which my Avatar is hidden
+     *
+     * @property {Number} marginWithoutMyAvatar
+     */
+    marginWithoutMyAvatar: {
+      type: Number,
+      set(value) {
+        this.nodes.list.marginWithoutMyAvatar = value;
+      },
+    },
+
+    /**
+     * Margin for indenting each message's header/footer text for messages that I have received and which have the sender's Avatar
+     *
+     * @property {Number} marginWithOtherAvatar
+     */
+    marginWithOtherAvatar: {
+      type: Number,
+      set(value) {
+        this.nodes.list.marginWithOtherAvatar = value;
+      },
+    },
+
+    /**
+     * Margin for indenting each message's header/footer text for messages that I have received and which the sender's Avatar is hidden
+     *
+     * @property {Number} marginWithoutOtherAvatar
+     */
+    marginWithoutOtherAvatar: {
+      type: Number,
+      set(value) {
+        this.nodes.list.marginWithoutOtherAvatar = value;
+      },
+    },
+
+    /**
+     * Use this to force MY avatars within the Message List to always be hidden; default behavior is to show avatars if there is sufficient screen real-estate.
+     *
+     * @property {Boolean} canShowMyAvatars
+     */
+    canShowMyAvatars: {
+      type: Boolean,
+      set(value) {
+        this.nodes.list.canShowMyAvatars = value;
+      },
+    },
+
+    /**
+     * Use this to force Other user's avatars within the Message List to always be hidden; default behavior is to show avatars if there is sufficient screen real-estate.
+     *
+     * @property {Boolean} canShowOtherAvatars
+     */
+    canShowOtherAvatars: {
+      type: Boolean,
+      set(value) {
+        this.nodes.list.canShowOtherAvatars = value;
+      },
+    },
   },
   methods: {
     // Lifecycle method; wire up to detect UI Size changes;

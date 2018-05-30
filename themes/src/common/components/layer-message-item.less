@@ -88,21 +88,11 @@ layer-message-list {
     .layer-message-right-side layer-avatar {
       display: block;
     }
-
-    &.layer-list-item-first .layer-message-header,
-    &.layer-list-item-last .layer-message-footer {
-      margin-right: @message-item-text-indent-with-avatar;
-    }
   }
 
   &:not(.layer-message-list-show-my-avatars) layer-message-item-sent {
     .layer-message-right-side layer-avatar {
       display: none;
-    }
-
-    &.layer-list-item-first .layer-message-header,
-    &.layer-list-item-last .layer-message-footer {
-      margin-right: @message-item-text-indent-without-avatar;
     }
   }
 
@@ -110,24 +100,13 @@ layer-message-list {
     .layer-message-left-side layer-avatar {
       display: block;
     }
-
-    &.layer-list-item-first .layer-message-header,
-    &.layer-list-item-last .layer-message-footer {
-      margin-left: @message-item-text-indent-with-avatar;
-    }
   }
 
   &:not(.layer-message-list-show-other-avatars) layer-message-item-received {
     .layer-message-left-side layer-avatar {
       display: none;
     }
-
-    &.layer-list-item-first .layer-message-header,
-    &.layer-list-item-last .layer-message-footer {
-      margin-left: @message-item-text-indent-without-avatar;
-    }
   }
-
 
 
   /* Styling for Message header and footer contents */
@@ -137,7 +116,6 @@ layer-message-list {
       margin-left: 5px;
     }
   }
-
 
 
 

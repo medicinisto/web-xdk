@@ -9,7 +9,7 @@ layer-message-list {
    * Layout for the Header and Footer
    */
   .layer-message-header, .layer-message-footer {
-    margin-left: @message-item-margin-left + @message-item-text-indent-with-avatar;
+    margin-left: @message-item-margin-left;
     margin-right: @message-item-margin-right;
 
     display: none;
@@ -30,16 +30,16 @@ layer-message-list {
     .layer-replaceable-inner:empty {
       display: none;
     }
-    width: @message-item-text-indent-with-avatar + @message-item-margin-left;
+    width: @message-item-margin-left;
     position: relative;
   }
 
   &:not(.layer-message-list-show-my-avatars) {
     .layer-message-header, .layer-message-footer {
-      margin-left: @message-item-margin-left + @message-item-text-indent-without-avatar;
+      margin-left: @message-item-margin-left;
     }
     .layer-message-left-side {
-      width: @message-item-text-indent-without-avatar + @message-item-margin-left;
+      width: @message-item-margin-left;
     }
   }
 
