@@ -828,7 +828,8 @@ module.exports = function (grunt) {
   grunt.registerTask('debug', [
     'version', 'remove:libes6', 'webcomponents', 'custom_copy:src', 'remove:libes5',
     'custom_babel', 'remove:lib', 'move:lib',
-    'browserify:build',  "generate-quicktests", "generate-smalltests", 'copy:npm', 'copy:npmthemes','fix-npm-package']);
+    'copy:npm', 'copy:npmthemes','fix-npm-package',
+    'browserify:build',  "generate-quicktests", "generate-smalltests"]);
 
   grunt.registerTask('build', ['remove:build', 'eslint:build', 'debug', 'uglify', 'theme', 'cssmin', 'copy:npmthemes']);
   grunt.registerTask('prepublish', ['build', 'refuse-to-publish']);

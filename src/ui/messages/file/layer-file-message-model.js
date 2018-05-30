@@ -40,7 +40,6 @@
 
 
 import Core, { MessagePart, MessageTypeModel, Root } from '../../../core/namespace';
-import { xhr } from '../../../utils';
 import { humanFileSize } from '../../ui-utils';
 
 class FileModel extends MessageTypeModel {
@@ -54,14 +53,8 @@ class FileModel extends MessageTypeModel {
    * @param {Layer.Core.MessagePart[]} callback.parts
    */
   generateParts(callback) {
-    const source = this.source;
-
     // Intialize metadata from the Blob
-    if (source) {
-      if (!this.title && source.name) this.title = source.name;
-      if (!this.mimeType) this.mimeType = source.type;
-      this.size = source.size;
-    }
+    super.generateParts();
 
     // Setup the MessagePart
     const body = this.initBodyWithMetadata(['sourceUrl', 'author', 'size', 'title', 'mimeType']);
@@ -70,27 +63,7 @@ class FileModel extends MessageTypeModel {
       body: JSON.stringify(body),
     });
 
-    // Create the source Message Part
-    if (source) {
-      this.source = new MessagePart(this.source);
-      this.addChildPart(this.source, 'source');
-      this.childParts.push(this.source);
-    }
-
-    callback(this.source ? [this.part, this.source] : [this.part]);
-  }
-
-  // See parent class
-  parseModelPart({ payload, isEdit }) {
-    super.parseModelPart({ payload, isEdit });
-
-    // Initialize the mimeType property if available
-    if (!this.mimeType && this.source) this.mimeType = this.source.mimeType;
-  }
-
-  parseModelChildParts({ changes = [], isEdit = false }) {
-    super.parseModelChildParts({ changes, isEdit });
-    this.source = this.childParts.filter(part => part.role === 'source')[0] || null;
+    callback([this.part].concat(this.childParts));
   }
 
   /**
@@ -100,23 +73,14 @@ class FileModel extends MessageTypeModel {
    * fileModel.getSourceUrl(url => window.open(url));
    * ```
    *
+   * > *Note*
+   * >
+   * > This method is generated via `DefineFileBehaviors`
+   *
    * @method getSourceUrl
    * @param {Function} callback
    * @param {String} callback.url
    */
-  getSourceUrl(callback) {
-    if (this.sourceUrl) {
-      callback(this.sourceUrl);
-    } else if (this.source) {
-      if (this.source.url) {
-        callback(this.source.url);
-      } else {
-        this.source.fetchStream(url => callback(url));
-      }
-    } else {
-      callback('');
-    }
-  }
 
   /**
    * Get the raw file data in a non-expiring form; this does involve download costs not paid using {@link #getSourceUrl}
@@ -125,22 +89,15 @@ class FileModel extends MessageTypeModel {
    * fileModel.getSourceBody(body => (this.innerHTML = body));
    * ```
    *
+   * > *Note*
+   * >
+   * > This method is generated via `DefineFileBehaviors`
+   *
    * @method getSourceBody
    * @param {Function} callback
    * @param {String} callback.body
    */
-  getSourceBody(callback) {
-    if (this.source) {
-      this.source.fetchContent(body => callback(body));
-    } else if (this.sourceUrl) {
-      xhr({
-        method: 'GET',
-        url: this.sourceUrl,
-      }, body => callback(body));
-    } else {
-      callback('');
-    }
-  }
+
 
   // See title property below
   __getTitle() {
@@ -165,9 +122,13 @@ class FileModel extends MessageTypeModel {
  * The File Model may instead use `sourceUrl`; use the `getSourceUrl()` method
  * to abstract these concepts.
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {Layer.Core.MessagePart} source
  */
-FileModel.prototype.source = null;
+
 
 /**
  * URL to the file to be shared
@@ -175,9 +136,12 @@ FileModel.prototype.source = null;
  * The File Model may instead use `source`; use the `getSourceUrl()` method
  * to abstract these concepts.
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {String} sourceUrl
  */
-FileModel.prototype.sourceUrl = '';
 
 /**
  * Author of the file; typically shown as the Message description.
@@ -196,16 +160,31 @@ FileModel.prototype.title = '';
 /**
  * Size of the file in bytes
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {Number} size
  */
-FileModel.prototype.size = '';
 
 /**
  * MIME Type of the file.
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {String} mimeType
  */
-FileModel.prototype.mimeType = '';
+
+MessageTypeModel.DefineFileBehaviors({
+  classDef: FileModel,
+  propertyName: 'source',
+  sizeProperty: 'size',
+  mimeTypeProperty: 'mimeType',
+  nameProperty: 'title',
+  roleName: 'source',
+});
 
 /**
  * One instance of this type

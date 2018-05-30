@@ -54,19 +54,14 @@ class AudioModel extends MessageTypeModel {
    * @param {Layer.Core.MessagePart[]} callback.parts
    */
   generateParts(callback) {
-    const source = this.source;
-    const preview = this.preview;
-    let sourcePart;
+    super.generateParts(callback);
 
     // Intialize metadata and source MesssgePart from the Blob
-    if (source) {
-      if (!this.title && source.name) this.title = source.name.replace(/(.*\/)?(.*?)(\..*)?$/, '$2');
-      if (!this.mimeType) this.mimeType = source.type;
-      sourcePart = new MessagePart(source);
-      this.size = source.size;
+    if (this.source) {
 
       // Instantiate an audio player so we can examine the audio file; call continueFn1 when done
-      const tmpAudio = new Audio(sourcePart.url);
+      // url is not expiring; this is locally generated from a local Blob.
+      const tmpAudio = new Audio(this.source.url);
       tmpAudio.addEventListener('durationchange', () => {
         this.duration = tmpAudio.duration;
         continueFn1.bind(this)();
@@ -82,7 +77,7 @@ class AudioModel extends MessageTypeModel {
     // TODO: Promisify this stuff
     // If a Preview blob is provided, examine it to get our previewWidth and height, and call continueFn2 when done
     function continueFn1() {
-      if (preview) {
+      if (this.preview) {
         const img = new Image();
         img.addEventListener('load', () => {
           this.previewWidth = img.width;
@@ -93,7 +88,7 @@ class AudioModel extends MessageTypeModel {
           logger.error('Failed to read audio file: ', err);
           continueFn2.bind(this)();
         });
-        img.src = URL.createObjectURL(preview);
+        img.src = this.preview.url;
       } else {
         continueFn2.bind(this)();
       }
@@ -114,40 +109,14 @@ class AudioModel extends MessageTypeModel {
         body: JSON.stringify(body),
       });
 
-      const parts = [this.part];
-
-      // Create the source Message Part
-      if (source) {
-        this.source = new MessagePart(source);
-        this.addChildPart(this.source, 'source');
-        this.childParts.push(this.source);
-        parts.push(this.source);
-      }
-
-      if (preview) {
-        this.preview = new MessagePart(preview);
-        this.addChildPart(this.preview, 'preview');
-        this.childParts.push(this.preview);
-        parts.push(this.preview);
-      }
-
-      callback(parts);
+      callback([this.part].concat(this.childParts));
     }
   }
 
-  // See parent class
-  parseModelPart({ payload, isEdit }) {
-    super.parseModelPart({ payload, isEdit });
-
-    // Initialize the mimeType property if available
-    if (!this.mimeType && this.source) this.mimeType = this.source.mimeType;
-  }
 
   // See parent class
   parseModelChildParts({ changes = [], isEdit = false }) {
     super.parseModelChildParts({ changes, isEdit });
-    this.source = this.childParts.filter(part => part.role === 'source')[0] || null;
-    this.preview = this.childParts.filter(part => part.role === 'preview')[0] || null;
     this.transcript = this.childParts.filter(part => part.role === 'transcript')[0] || null;
   }
 
@@ -159,23 +128,15 @@ class AudioModel extends MessageTypeModel {
    * AudioModel.getSourceUrl(url => player.src = url);
    * ```
    *
+   * > *Note*
+   * >
+   * > This method is generated via `DefineFileBehaviors`
+   *
    * @method getSourceUrl
    * @param {Function} callback
    * @param {String} callback.url
    */
-  getSourceUrl(callback) {
-    if (this.sourceUrl) {
-      callback(this.sourceUrl);
-    } else if (this.source) {
-      if (this.source.url) {
-        callback(this.source.url);
-      } else {
-        this.source.fetchStream(url => callback(url));
-      }
-    } else {
-      callback('');
-    }
-  }
+
 
   /**
    * Get the preview url to use for fetching the preview image... returns '' if there is no preview image.
@@ -185,23 +146,15 @@ class AudioModel extends MessageTypeModel {
    * AudioModel.getPreviewUrl(url => img.src = url);
    * ```
    *
+   * > *Note*
+   * >
+   * > This method is generated via `DefineFileBehaviors`
+   *
    * @method getPreviewUrl
    * @param {Function} callback
    * @param {String} callback.url
    */
-  getPreviewUrl(callback) {
-    if (this.previewUrl) {
-      callback(this.previewUrl);
-    } else if (this.preview) {
-      if (this.preview.url) {
-        callback(this.preview.url);
-      } else {
-        this.preview.fetchStream(url => callback(url));
-      }
-    } else {
-      callback('');
-    }
-  }
+
 
   // See parent method
   setupSlots() {
@@ -294,36 +247,48 @@ class AudioModel extends MessageTypeModel {
  *
  * Use {@link #getSourceUrl} method rather than the `source` property to access this content.
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {Layer.Core.MessagePart} source
  */
-AudioModel.prototype.source = null;
 
 /**
  * URL to the Audio File to be shared
  *
  * Use {@link #getSourceUrl} method rather than the `sourceUrl` property to access this content.
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {String} sourceUrl
  */
-AudioModel.prototype.sourceUrl = '';
 
 /**
  * MessagePart with the Preview Image to be shared.
  *
  * Use {@link #getPreviewUrl} method rather than the `preview` property to access this content.
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {Layer.Core.MessagePart} source
  */
-AudioModel.prototype.preview = null;
 
 /**
  * URL to the Preview Image to be shared
  *
  * Use {@link #getPreviewUrl} method rather than the `previewUrl` property to access this content.
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {String} previewUrl
  */
-AudioModel.prototype.previewUrl = '';
 
 /**
  * Album this sound file comes from
@@ -356,9 +321,12 @@ AudioModel.prototype.title = '';
 /**
  * MIME Type of the file.
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {String} mimeType
  */
-AudioModel.prototype.mimeType = '';
 
 /**
  * If a preview image is provided, provide a width and height property
@@ -386,9 +354,12 @@ AudioModel.prototype.duration = '';
 /**
  * Size of the file in bytes
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {Number} size
  */
-AudioModel.prototype.size = null;
 
 /**
  * This property is used by different Views to share the time they have played up to.
@@ -406,6 +377,23 @@ AudioModel.prototype.currentTime = null;
  * @protected
  */
 AudioModel.prototype.transcript = null;
+
+
+MessageTypeModel.DefineFileBehaviors({
+  classDef: AudioModel,
+  propertyName: 'source',
+  sizeProperty: 'size',
+  mimeTypeProperty: 'mimeType',
+  nameProperty: 'title',
+  roleName: 'source',
+});
+
+MessageTypeModel.DefineFileBehaviors({
+  classDef: AudioModel,
+  propertyName: 'preview',
+  roleName: 'preview',
+});
+
 
 /**
  * One instance of this type

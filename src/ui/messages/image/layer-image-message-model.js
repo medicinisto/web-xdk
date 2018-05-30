@@ -61,21 +61,11 @@ import 'blueimp-load-image/js/load-image-exif';
 import { normalizeSize } from '../../ui-utils';
 
 import Core, { Root, MessagePart, MessageTypeModel } from '../../../core/namespace';
-import { xhr } from '../../../utils';
 import { getNativeSupport } from '../../../utils/native-support';
 
 const Blob = getNativeSupport('Blob');
 
 class ImageModel extends MessageTypeModel {
-  constructor(options = {}) {
-    if (options.source && !(options.source instanceof MessagePart)) {
-      options.source = new MessagePart(options.source);
-    }
-    if (options.preview && !(options.preview instanceof MessagePart)) {
-      options.preview = new MessagePart(options.preview);
-    }
-    super(options);
-  }
 
   /**
    * Does the work of generateParts but allows us to asynchronously call it if needed.
@@ -99,23 +89,14 @@ class ImageModel extends MessageTypeModel {
       mimeType: this.constructor.MIMEType,
       body: JSON.stringify(body),
     });
-    const parts = [this.part];
-
-    // If there is a source part, add it to the parts array and add it to the Message Part
-    // Node Heirarchy
-    if (this.source) {
-      parts.push(this.source);
-      this.addChildPart(this.source, 'source');
-    }
 
     // If there is a preview part, add it to the parts array and add it to the Message Part
     // Node Heirarchy
     if (this.preview) {
-      parts.push(this.preview);
       this.addChildPart(this.preview, 'preview');
     }
 
-    return parts;
+    return [this.part].concat(this.childParts);
   }
 
   /**
@@ -131,9 +112,7 @@ class ImageModel extends MessageTypeModel {
    * @param {Layer.Core.MessagePart[]} callback.parts
    */
   generateParts(callback) {
-    if (this.source && !this.mimeType) this.mimeType = this.source.type;
-
-    if (this.source && !this.fileName) this.fileName = this.source.name;
+    super.generateParts(callback);
 
     if (this.source && !this.preview && !this.previewUrl) {
       // We need to generate the preview; first gather orientation and sizing data
@@ -153,52 +132,6 @@ class ImageModel extends MessageTypeModel {
   }
 
   /**
-   * Given a Layer.Core.Message, initialize this Image Model.
-   *
-   * `parseModelChildParts` is called for intialization, and is also recalled
-   * whenever the Message itself is modified.
-   *
-   * @method parseModelChildParts
-   * @protected
-   * @param {Object} payload    Metadata describing the Image Message
-   */
-  parseModelChildParts({ changes = [], isEdit = false }) {
-    super.parseModelChildParts({ changes, isEdit });
-
-    // Iterate over each part, copying suitable parts into the associated property.
-    // Change events occur when fetching external content for these MessageParts and
-    // triggers change events so that UIs can rerender with all image data.
-    this.childParts.forEach((part) => {
-      switch (part.mimeAttributes.role) {
-        case 'source': {
-          this.source = part;
-          const oldUrl = part.url;
-          part.on('url-loaded', () => {
-            this._triggerAsync('message-type-model:change', {
-              property: 'source',
-              oldValue: oldUrl,
-              newValue: part.url,
-            });
-          }, this);
-          break;
-        }
-        case 'preview':
-          this.preview = part;
-          if (!part.body) {
-            part.on('content-loaded', () => {
-              this._triggerAsync('message-type-model:change', {
-                property: 'preview',
-                oldValue: null,
-                newValue: part.body,
-              });
-            }, this);
-          }
-          break;
-      }
-    });
-  }
-
-  /**
    * Get a Blob that can be used to render an Image preview.
    *
    * @method getPreviewBlob
@@ -206,22 +139,9 @@ class ImageModel extends MessageTypeModel {
    * @param {Blob} callback.data
    */
   getPreviewBlob(callback) {
-    if (this.preview) {
-      if (this.preview.body) return callback(this.preview.body);
-      this.preview.fetchContent(data => callback(data));
-    } else if (this.source) {
-      if (this.source.body) return callback(this.source.body);
-      this.source.fetchContent(data => callback(data));
-    } else if (this.previewUrl || this.sourceUrl) {
-      xhr({
-        url: this.previewUrl || this.sourceUrl,
-        responseType: 'blob',
-      }, (result) => {
-        if (result.success) {
-          callback(result.data);
-        }
-      });
-    }
+    if (this.preview || this.previewUrl) return this.getPreviewBody(callback);
+    if (this.source || this.sourceUrl) return this.getSourceBody(callback);
+    callback(null);
   }
 
   /**
@@ -328,24 +248,84 @@ class ImageModel extends MessageTypeModel {
   getDescription() { return this.subtitle; }
   getFooter() { return this.artist; }
 
-  fetchUrl(callback) {
-    if (this.source && this.source.url) callback(this.source.url);
-    else if (this.source) this.source.fetchStream(callback);
-    else if (this.preview && this.preview.url) callback(this.preview.url);
-    else if (this.preview) this.preview.fetchStream(callback);
-  }
+  /**
+   * Get the sourceUrl to use for fetching the Image.
+   *
+   * ```
+   * var image = new Image();
+   * imageModel.getSourceUrl(url => image.src = url);
+   * ```
+   *
+   * > *Note*
+   * >
+   * > This method is generated via `DefineFileBehaviors`
+   *
+   * @method getSourceUrl
+   * @param {Function} callback
+   * @param {String} callback.url
+   */
 
-  // See the url property definition below
-  __getUrl() {
-    if (this.source) {
-      return this.source.url; // doesn't handle expiring content yet
-    } else if (this.sourceUrl) {
-      return this.sourceUrl;
-    } else if (this.preview) {
-      return this.preview.url; // doesn't handle expiring content yet
-    } else if (this.previewUrl) {
-      return this.previewUrl;
-    }
+  /**
+   * Get the previewUrl to use for fetching the Image.
+   *
+   * ```
+   * var image = new Image();
+   * imageModel.getPreviewUrl(url => image.src = url);
+   * ```
+   *
+   * > *Note*
+   * >
+   * > This method is generated via `DefineFileBehaviors`
+   *
+   * @method getPreviewUrl
+   * @param {Function} callback
+   * @param {String} callback.url
+   */
+
+  /**
+   * Get the source blob to use for fetching the Image.
+   *
+   * ```
+   * var image = new Image();
+   * imageModel.getSourceBody(blob => image.src = URL.createObjectURL(blob));
+   * ```
+   *
+   * > *Note*
+   * >
+   * > This method is generated via `DefineFileBehaviors`
+   *
+   * @method getSourceBody
+   * @param {Function} callback
+   * @param {Blob} callback.body
+   */
+
+  /**
+   * Get the preview blob to use for fetching the Image.
+   *
+   * ```
+   * var image = new Image();
+   * imageModel.getPreviewBody(blob => image.src = URL.createObjectURL(blob));
+   * ```
+   *
+   * > *Note*
+   * >
+   * > This method is generated via `DefineFileBehaviors`
+   *
+   * @method getPreviewBody
+   * @param {Function} callback
+   * @param {Blob} callback.body
+   */
+
+  /**
+   * Fetch the URL for the source image or preview image if there is no source.
+   *
+   * @method fetchUrl
+   * @param {Function} callback
+   * @param {String} callback.url
+   */
+  fetchUrl(callback) {
+    if (this.source || this.sourceUrl) return this.getSourceUrl(callback)
+    if (this.preview || this.previewUrl) return this.getPreviewUrl(callback);
   }
 
   __getAspectRatio() {
@@ -411,18 +391,24 @@ ImageModel.prototype.subtitle = '';
  *
  * Not needed if providing a Layer.UI.messages.ImageMessageModel.source property.
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {String} sourceUrl
  */
-ImageModel.prototype.sourceUrl = '';
 
 /**
  * URL to the preview image.
  *
  * Not needed if providing a Layer.UI.messages.ImageMessageModel.preview property.
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {String} previewUrl
  */
-ImageModel.prototype.previewUrl = '';
 
 /**
  * Orientation number to use for orienting the Image.
@@ -458,9 +444,12 @@ ImageModel.prototype.artist = '';
  * See Layer.Core.MessagePart.fetchContent and Layer.Core.MessagePart.fetchStream
  * for more details.
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {Layer.Core.MessagePart} preview
  */
-ImageModel.prototype.preview = null;
 
 /**
  * Image Message Part
@@ -480,9 +469,12 @@ ImageModel.prototype.preview = null;
  * See Layer.Core.MessagePart.fetchContent and Layer.Core.MessagePart.fetchStream
  * for more details.
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {Layer.Core.MessagePart} source
  */
-ImageModel.prototype.source = null;
 
 /**
  * Width of the Image in the Message; applies to the source/sourceUrl image.
@@ -519,14 +511,21 @@ ImageModel.prototype.previewHeight = null;
  */
 ImageModel.prototype.aspectRatio = null;
 
-/**
- * The `open-url` action needs a url property in order to determine what to open.
- *
- * Provide a property getter for `url` that finds a suitable url and returns it.
- *
- * @property {String} url
- */
-ImageModel.prototype.url = '';
+// Define the source, sourceUrl, mimeType and title properties as well as getSourceUrl and getSourceBody methods
+MessageTypeModel.DefineFileBehaviors({
+  classDef: ImageModel,
+  propertyName: 'source',
+  mimeTypeProperty: 'mimeType',
+  nameProperty: 'title',
+  roleName: 'source',
+});
+
+// Define the preview, previewUrl  properties as well as getPreviewUrl and getPreviewBody methods
+MessageTypeModel.DefineFileBehaviors({
+  classDef: ImageModel,
+  propertyName: 'preview',
+  roleName: 'preview',
+});
 
 /**
  * Maximum width/height for a Preview Image.

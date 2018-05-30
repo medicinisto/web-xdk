@@ -297,25 +297,45 @@ describe('Image Message Components', function() {
     it("Should get the correct url value", function() {
       var blob1 = generateBlob(imgBase64);
       var blob2 = generateBlob(imgBase64);
+      var resultingUrl = '';
       var model = new ImageModel({
         sourceUrl: "e",
       });
-      expect(model.url).toEqual("e");
+      resultingUrl = '';
+      model.fetchUrl(function(url) {
+        resultingUrl = url;
+      });
+      expect(resultingUrl).toEqual("e");
 
       model = new ImageModel({
         previewUrl: "f"
       });
-      expect(model.url).toEqual("f");
+      resultingUrl = '';
+      model.fetchUrl(function(url) {
+        resultingUrl = url;
+      });
+      expect(resultingUrl).toEqual("f");
 
       model = new ImageModel({
         source: blob1
       });
-      expect(model.url).toMatch(/^blob/);
+      model.generateParts(function() {});
+
+      resultingUrl = '';
+      model.fetchUrl(function(url) {
+        resultingUrl = url;
+      });
+      expect(resultingUrl).toMatch(/^blob/);
 
       model = new ImageModel({
         preview: blob2
       });
-      expect(model.url).toMatch(/^blob/);
+      model.generateParts(function() {});
+      resultingUrl = '';
+      model.fetchUrl(function(url) {
+        resultingUrl = url;
+      });
+      expect(resultingUrl).toMatch(/^blob/);
     });
   });
 

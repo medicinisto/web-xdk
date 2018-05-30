@@ -9,6 +9,7 @@ While there have been no major breaking changes, there have been some minor chan
 * WEB-1779: Now throws error if calling `Layer.UI.setupMixins({...})` after calling `Layer.init()`
 * `Layer.Constants.WIDTH` no longer exists and is no longer used
 * Minor CSS Class names and theme changes
+* ImageModel no longer has a `url` property; see `fetchUrl(callback)` instead
 
 ### Message Avatar Breaking Changes
 
@@ -120,6 +121,7 @@ Impact of this change:
     * `<layer-notifier />` widget now uses the prompt to ask users if they want to enable notifications
     * If users click Yes, the browser's permissions UI will be presented
     * If users click No, the prompt won't be shown again
+* WEB-1797: Adds MessageTypeModel static `FileBehaviorsForProperty()` method for setting up properties that manage files/blobs
 
 ## 4.0.4
 

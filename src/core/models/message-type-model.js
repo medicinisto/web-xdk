@@ -26,7 +26,7 @@
  * @extends Layer.Core.Root
  */
 import { client } from '../../settings';
-import Core from '../namespace';
+import Core, { MessagePart } from '../namespace';
 import Util from '../../utils';
 import Root from '../root';
 import Identity from './identity';
@@ -301,12 +301,51 @@ class MessageTypeModel extends Root {
   /**
    * Provide a generateParts method so that your model can be turned into a Message when generating it locally.
    *
+   * NOTE: The root class implementation does *not* use the callback!
+   *
    * @abstract
    * @protected
    * @method generateParts
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts  Array of Message Parts to be added to the new message
    */
+  generateParts(callback) {
+    const classDef = this.constructor;
+    (classDef.FileBehaviorDefs || []).forEach(fileBehaviorDef => this._generatePartForFileBehavior(fileBehaviorDef));
+  }
+
+  /**
+   * Generate the parts associated with a registered File Behavior (See `DefineFileBehaviors`)
+   *
+   * @private
+   * @method _generatePartForFileBehavior
+   * @param {Object} fileBehaviorDef
+   */
+  _generatePartForFileBehavior(fileBehaviorDef) {
+    // If there is a File/Blob matching the property name, then we have work to do...
+    const data = this[fileBehaviorDef.propertyName];
+    if (data) {
+      // Generate a Message Part from the File/Blob and add it to our Child Parts with a suitable role
+      const part = new MessagePart(data);
+      this.addChildPart(part, fileBehaviorDef.roleName);
+      this[fileBehaviorDef.propertyName] = part;
+
+      // Setup the size property if one is defined
+      if (fileBehaviorDef.sizeProperty) {
+        this[fileBehaviorDef.sizeProperty] = data.size;
+      }
+
+      // Setup the mimeType property if one is defined
+      if (fileBehaviorDef.mimeTypeProperty && !this[fileBehaviorDef.mimeTypeProperty]) {
+        this[fileBehaviorDef.mimeTypeProperty] = data.type;
+      }
+
+      // Setup the name property if one is defined; strip out any file extention or path information
+      if (fileBehaviorDef.nameProperty && data.name && !this[fileBehaviorDef.nameProperty]) {
+        this[fileBehaviorDef.nameProperty] = data.name.replace(/\..{2,4}$/, '').replace(/^.*\//, '');
+      }
+    }
+  }
 
   /**
    * Adds a Model (submodel) to this Model; for use from `generateParts` *only*.
@@ -373,7 +412,8 @@ class MessageTypeModel extends Root {
    */
   addChildPart(part, role) {
     part.mimeAttributes.role = role;
-    part.mimeAttributes['parent-node-id'] = this.part.nodeId;
+    if (this.part) part.mimeAttributes['parent-node-id'] = this.part.nodeId;
+    if (this.childParts.indexOf(part) === -1) this.childParts.push(part);
   }
 
   /**
@@ -601,8 +641,49 @@ class MessageTypeModel extends Root {
    * @param {Boolean} options.isEdit  Is the change an update to MessageParts or is this the intialization call
    */
   parseModelChildParts({ changes = [], isEdit = false }) {
-    // No-op for now
-    // TODO: Initialize properties by reflecting on prototypes and roles.
+    const FileBehaviorDefs = this.constructor.FileBehaviorDefs || [];
+    FileBehaviorDefs.forEach(fileBehaviorDef => this._parseModelChildPartForFileBehavior(fileBehaviorDef));
+  }
+
+  /**
+   * Parse child parts for Message Parts defined using `DefineFileBehaviors`
+   *
+   * @method
+   * @private _parseModelChildPartForFileBehavior
+   * @param {Object} fileBehaviorDef
+   */
+  _parseModelChildPartForFileBehavior(fileBehaviorDef) {
+    // Setup the this.source, this.preview, this.xxx property
+    if (fileBehaviorDef.propertyName) {
+      this[fileBehaviorDef.propertyName] = this.childParts.filter(part => part.role === fileBehaviorDef.roleName)[0] || null;
+    }
+
+    const part = this[fileBehaviorDef.propertyName];
+    if (part) {
+      // Setup the mimeType property if its unset and we have a source/preview/xxx part
+      if (fileBehaviorDef.mimeTypeProperty && !this[fileBehaviorDef.mimeTypeProperty]) {
+        this[fileBehaviorDef.mimeTypeProperty] = this[fileBehaviorDef.propertyName].mimeType;
+      }
+
+      const oldUrl = part.url;
+      part.on('url-loaded', () => {
+        this._triggerAsync('message-type-model:change', {
+          property: fileBehaviorDef.propertyName,
+          oldValue: oldUrl,
+          newValue: part.url,
+        });
+      }, this);
+
+      if (!part.body) {
+        part.on('content-loaded', () => {
+          this._triggerAsync('message-type-model:change', {
+            property: fileBehaviorDef.propertyName,
+            oldValue: null,
+            newValue: part.body,
+          });
+        }, this);
+      }
+    }
   }
 
   /**
@@ -1101,6 +1182,7 @@ class MessageTypeModel extends Root {
   // Any time the part property is set, tell that part its associated with this model
   __updatePart(part) {
     part._messageTypeModel = this;
+    this.childParts.forEach(aPart => (aPart.mimeAttributes['parent-node-id'] = part.nodeId));
   }
 
   // Any time the Message property is set, call {@link #_setupMessage}
@@ -1143,6 +1225,75 @@ class MessageTypeModel extends Root {
 
   toString() {
     return `[${this.getModelName()} ${this.id}]`;
+  }
+
+  /**
+   * Register a property name to be used as a File type behavior.
+   *
+   * A File Type behavior means that the class should provide:
+   *
+   * * A `${propertyName}` property that refers to a Message Part
+   * * A `${propertyName}Url` property that is an alternate to the `${propertyName}` property
+   * * A `get${PropertyName}Url()` method for getting the URL even if its expired
+   * * A `get${PropertyName}Body()` method for getting the contents of the file
+   * * Optionally some kind of `size` property taken from the file name from the File/Blob
+   * * Optionally some kind of `name` property taken from the file name from the File/Blob
+   * * Optionally some kind of `mimeType` property taken from the file name from the File/Blob
+   *
+   * @method DefineFileBehaviors
+   * @static
+   * @param {Object} options
+   * @param {Function} classDef   The class whose definition is being extended with methods and properties
+   * @param {String} roleName    The name of the role assigned to the MessagePart such as `source`, `preview`
+   * @param {String} propertyName  The name of the property such as `source` or `preview`
+   * @param {String} [sizeProperty]  The name of the property where the size is stored; if not provided, size is not stored
+   * @param {String} [mimeTypeProperty]  The name of the property where the mimeType is stored; if not provided, mimeType is not stored
+   */
+  static DefineFileBehaviors(options) {
+    const { classDef, propertyName, sizeProperty, mimeTypeProperty } = options;
+    const capPropName = propertyName.charAt(0).toUpperCase() + propertyName.slice(1);
+    const urlPropName = propertyName + 'Url';
+
+    classDef.prototype[propertyName] = null;
+    classDef.prototype[urlPropName] = '';
+    if (mimeTypeProperty && !(mimeTypeProperty in classDef.prototype)) classDef.prototype[mimeTypeProperty] = '';
+    if (sizeProperty && !(sizeProperty in classDef.prototype)) classDef.prototype[sizeProperty] = '';
+    if (propertyName && !(propertyName in classDef.prototype)) classDef.prototype[propertyName] = '';
+
+    if (sizeProperty) classDef.prototype[sizeProperty] = 0;
+    if (mimeTypeProperty) classDef.prototype[mimeTypeProperty] = '';
+
+    classDef.prototype[`get${capPropName}Url`] = function getUrl(callback) {
+      if (this[urlPropName]) {
+        callback(this[urlPropName]);
+      } else if (this[propertyName]) {
+        if (this[propertyName].url) {
+          callback(this[propertyName].url);
+        } else {
+          this[propertyName].fetchStream(url => callback(url));
+        }
+      } else {
+        callback('');
+      }
+    };
+
+    classDef.prototype[`get${capPropName}Body`] = function getBody(callback) {
+      if (this[propertyName]) {
+        this[propertyName].fetchContent(body => callback(body));
+      } else if (this[urlPropName]) {
+        Util.xhr({
+          method: 'GET',
+          responseType: 'blob',
+          url: this[urlPropName],
+        }, body => callback(body));
+      } else {
+        callback('');
+      }
+    };
+
+
+    if (!classDef.FileBehaviorDefs) classDef.FileBehaviorDefs = [];
+    classDef.FileBehaviorDefs.push(options);
   }
 }
 

@@ -55,17 +55,11 @@ class VideoModel extends MessageTypeModel {
    * @param {Layer.Core.MessagePart[]} callback.parts
    */
   generateParts(callback) {
-    const source = this.source;
-    const preview = this.preview;
-    let sourcePart;
+    super.generateParts(callback);
+
 
     // Intialize metadata and source MesssgePart from the Blob
-    if (source) {
-      if (!this.title && source.name) this.title = source.name.replace(/(.*\/)?(.*?)(\..*)?$/, '$2');
-
-      if (!this.mimeType) this.mimeType = source.type;
-      sourcePart = new MessagePart(source);
-      this.size = source.size;
+    if (this.source) {
 
       // Instantiate an video player so we can examine the video file; call continueFn1 when done
       const tmpVideo = document.createElement('video');
@@ -79,7 +73,7 @@ class VideoModel extends MessageTypeModel {
         logger.error('Failed to read video file: ', err);
         continueFn1.bind(this)();
       });
-      tmpVideo.src = sourcePart.url;
+      tmpVideo.src = this.source.url;
     } else {
       continueFn1.bind(this)();
     }
@@ -87,7 +81,7 @@ class VideoModel extends MessageTypeModel {
     // TODO: Promisify this stuff
     // If a Preview blob is provided, examine it to get our previewWidth and height, and call continueFn2 when done
     function continueFn1() {
-      if (preview) {
+      if (this.preview) {
         const img = new Image();
         img.addEventListener('load', () => {
           this.previewWidth = img.width;
@@ -98,7 +92,7 @@ class VideoModel extends MessageTypeModel {
           logger.error('Failed to read video file: ', err);
           continueFn2.bind(this)();
         });
-        img.src = URL.createObjectURL(preview);
+        img.src = this.preview.url;
       } else {
         continueFn2.bind(this)();
       }
@@ -124,24 +118,7 @@ class VideoModel extends MessageTypeModel {
         body: JSON.stringify(body),
       });
 
-      const parts = [this.part];
-
-      // Create the source Message Part
-      if (source) {
-        this.source = new MessagePart(source);
-        this.addChildPart(this.source, 'source');
-        this.childParts.push(this.source);
-        parts.push(this.source);
-      }
-
-      if (preview) {
-        this.preview = new MessagePart(preview);
-        this.addChildPart(this.preview, 'preview');
-        this.childParts.push(this.preview);
-        parts.push(this.preview);
-      }
-
-      callback(parts);
+      callback([this.part].concat(this.childParts));
     }
   }
 
@@ -149,16 +126,12 @@ class VideoModel extends MessageTypeModel {
   parseModelPart({ payload, isEdit }) {
     super.parseModelPart({ payload, isEdit });
 
-    // Initialize the mimeType property if available
-    if (!this.mimeType && this.source) this.mimeType = this.source.mimeType;
     if (this.createdAt) this.createdAt = new Date(this.createdAt);
   }
 
   // See parent class
   parseModelChildParts({ changes = [], isEdit = false }) {
     super.parseModelChildParts({ changes, isEdit });
-    this.source = this.childParts.filter(part => part.role === 'source')[0] || null;
-    this.preview = this.childParts.filter(part => part.role === 'preview')[0] || null;
     this.transcript = this.childParts.filter(part => part.role === 'transcript')[0] || null;
   }
 
@@ -170,23 +143,15 @@ class VideoModel extends MessageTypeModel {
    * VideoModel.getSourceUrl(url => player.src = url);
    * ```
    *
+   * > *Note*
+   * >
+   * > This method is generated via `DefineFileBehaviors`
+   *
    * @method getSourceUrl
    * @param {Function} callback
    * @param {String} callback.url
    */
-  getSourceUrl(callback) {
-    if (this.sourceUrl) {
-      callback(this.sourceUrl);
-    } else if (this.source) {
-      if (this.source.url) {
-        callback(this.source.url);
-      } else {
-        this.source.fetchStream(url => callback(url));
-      }
-    } else {
-      callback('');
-    }
-  }
+
 
   /**
    * Get the preview url to use for fetching the preview image... returns '' if there is no preview image.
@@ -196,23 +161,15 @@ class VideoModel extends MessageTypeModel {
    * VideoModel.getPreviewUrl(url => img.src = url);
    * ```
    *
+   * > *Note*
+   * >
+   * > This method is generated via `DefineFileBehaviors`
+   *
    * @method getPreviewUrl
    * @param {Function} callback
    * @param {String} callback.url
    */
-  getPreviewUrl(callback) {
-    if (this.previewUrl) {
-      callback(this.previewUrl);
-    } else if (this.preview) {
-      if (this.preview.url) {
-        callback(this.preview.url);
-      } else {
-        this.preview.fetchStream(url => callback(url));
-      }
-    } else {
-      callback('');
-    }
-  }
+
 
   // See parent class
   setupSlots() {
@@ -391,36 +348,48 @@ class VideoModel extends MessageTypeModel {
  *
  * Use {@link #getSourceUrl} method rather than the `source` property to access this content.
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {Layer.Core.MessagePart} source
  */
-VideoModel.prototype.source = null;
 
 /**
  * URL to the Video File to be shared
  *
  * Use {@link #getSourceUrl} method rather than the `sourceUrl` property to access this content.
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {String} sourceUrl
  */
-VideoModel.prototype.sourceUrl = '';
 
 /**
  * MessagePart with the Preview Image to be shared.
  *
  * Use {@link #getPreviewUrl} method rather than the `preview` property to access this content.
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {Layer.Core.MessagePart} source
  */
-VideoModel.prototype.preview = null;
 
 /**
  * URL to the Preview Image to be shared
  *
  * Use {@link #getPreviewUrl} method rather than the `previewUrl` property to access this content.
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {String} previewUrl
  */
-VideoModel.prototype.previewUrl = '';
 
 /**
  * If a Message Part with role of `transcript` is part of the Message, this will point to that Message Part.
@@ -457,9 +426,12 @@ VideoModel.prototype.artist = '';
 /**
  * MIME Type of the file.
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {String} [mimeType]
  */
-VideoModel.prototype.mimeType = '';
 
 /**
  * Video file creation time
@@ -515,9 +487,12 @@ VideoModel.prototype.duration = '';
 /**
  * Size of the file in bytes
  *
+ * > *Note*
+ * >
+ * > This property is generated via `DefineFileBehaviors`
+ *
  * @property {Number} size
  */
-VideoModel.prototype.size = null;
 
 /**
  * This property is used by different Views to share the time they have played up to.
@@ -525,6 +500,21 @@ VideoModel.prototype.size = null;
  * @property {Number} currentTime
  */
 VideoModel.prototype.currentTime = null;
+
+MessageTypeModel.DefineFileBehaviors({
+  classDef: VideoModel,
+  propertyName: 'source',
+  sizeProperty: 'size',
+  mimeTypeProperty: 'mimeType',
+  nameProperty: 'title',
+  roleName: 'source',
+});
+
+MessageTypeModel.DefineFileBehaviors({
+  classDef: VideoModel,
+  propertyName: 'preview',
+  roleName: 'preview',
+});
 
 /**
  * One instance of this type
