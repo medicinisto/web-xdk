@@ -63,8 +63,9 @@ import { register } from './index';
  *
  * @class Layer.UI.adapters.react
  * @singleton
- * @param {Object} React - Pass in the reactJS library
- * @param {Object} ReactDom - Pass in the ReactDom library
+ * @param {Object} React  Pass in the reactJS library
+ * @param {Object} ReactDom  Pass in the ReactDom library
+ * @return {Object} All the React Components that are imported (some listed below will not show unless application explicitly imports them)
  */
 let libraryResult;
 function initReact(React, ReactDom) {
