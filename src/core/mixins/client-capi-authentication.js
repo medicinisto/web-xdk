@@ -539,7 +539,7 @@ module.exports = {
         }
 
         if (this.user.userId && this.user.userId !== identityObj.prn) {
-          logger.error(ErrorDictionary.invalidUserIdChange);
+          logger.error(ErrorDictionary.invalidUserIdChange, ` '${this.user.userId}' `, ` '${identityObj.prn}' `);
           throw new Error(ErrorDictionary.invalidUserIdChange);
         }
 
