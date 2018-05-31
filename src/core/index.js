@@ -7,6 +7,7 @@ import Core from './namespace';
 import './root';
 
 // Message and MessageType Mixins
+import './mixins/message-part-capi';
 import './mixins/message-capi';
 import './mixins/message-type-model-capi';
 import './mixins/message-layer-ui-backwards-compat';

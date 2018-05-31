@@ -450,8 +450,9 @@ class MessagePart extends Root {
     } else {
       body = this.body;
     }
+    const url = this._getPostContentURL();
     Client.xhr({
-      url: '/content',
+      url,
       method: 'POST',
       headers: {
         'Upload-Content-Type': this.mimeType,
@@ -474,6 +475,8 @@ class MessagePart extends Root {
       }
     });
   }
+
+
 
   /**
    * Creates a Layer.Core.Content object from the server's
@@ -987,6 +990,9 @@ MessagePart._supportedEvents = [
   'content-loaded-error',
   'messageparts:change',
 ].concat(Root._supportedEvents);
+
+MessagePart.mixins = Core.mixins.MessagePart;
+
 Root.initClass.apply(MessagePart, [MessagePart, 'MessagePart', Core]);
 
 module.exports = MessagePart;

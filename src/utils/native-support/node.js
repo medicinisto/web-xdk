@@ -44,6 +44,6 @@ registerNativeSupport('fetchTextFromFile', (blob, callback) => {
 });
 registerNativeSupport('GET-PUT-BLOB-DATA', (blob) => {
   // Hack the blob-polyfill into something that is not a Blob and can be sent by the xhr2 node module
-  const charArray = body.data.split('').map(char => char.charCodeAt(0));
+  const charArray = blob.data.split('').map(char => char.charCodeAt(0));
   return new Uint8Array(charArray);
 });

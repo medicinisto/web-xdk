@@ -7,6 +7,7 @@ module.exports = {
     Conversation: [],
     Identity: [],
     MessageTypeModel: [],
+    MessagePart: [],
   },
   Websockets: {},
   MessageTypeModels: {},
