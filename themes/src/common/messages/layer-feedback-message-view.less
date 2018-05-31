@@ -102,7 +102,7 @@ layer-feedback-message-large-view {
 
   .layer-feedback-message-view-input, .layer-feedback-message-view-comment, .layer-feedback-message-view-ratings {
     border-radius: 4px;
-    margin: 4px 13px;
+    margin: 4px 32px;
     border: solid 1px @color-g2;
   }
 
@@ -116,7 +116,7 @@ layer-feedback-message-large-view {
     text-align: center;
     font-size: @font-small;
     color: @color-role-font-light;
-    padding: 16px 0px 12px 0px;
+    padding: 12px 32px 4px 32px;
   }
 
   .layer-feedback-message-view-input, .layer-feedback-message-view-comment {
@@ -126,15 +126,21 @@ layer-feedback-message-large-view {
   }
 
   layer-action-button {
-    margin: 4px 13px 10px 13px;
+    margin: 8px 32px 12px 32px;
     button {
       border-radius: 4px;
-      background-color: @button-message-type-selected-background;
-      color: @button-message-type-selected-text;
+      //background-color: @color-white;
+      //color: @button-message-type-selected-background;
+      border: solid 1px transparent;
+
+      &:disabled {
+        background-color: @button-message-type-background;
+        cursor: not-allowed;
+      }
 
       &:hover:not(:disabled) {
-        background-color: darken(@button-message-type-selected-background, 5%);
-        color: @button-message-type-selected-text;
+        border-color: @color-g2;
+        background-color: @button-message-type-background;
       }
     }
   }

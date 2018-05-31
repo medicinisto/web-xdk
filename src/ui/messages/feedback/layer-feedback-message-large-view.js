@@ -124,6 +124,7 @@ registerComponent('layer-feedback-message-large-view', {
       this.nodes.input.value = this.model.comment;
 
       this.nodes.comment.innerHTML = this.model.comment.replace(/\n/g, '<br/>');
+      this.nodes.button.disabled = !this.model.rating;
     },
 
     _onClick(evt) {
