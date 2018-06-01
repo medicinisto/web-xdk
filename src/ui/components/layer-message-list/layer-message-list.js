@@ -117,7 +117,7 @@
  * @mixin Layer.UI.mixins.QueryEndIndicator
  */
 import { defer, generateUUID, logger } from '../../../utils';
-import Settings from '../../../settings';
+import Settings, { client } from '../../../settings';
 import StatusMessageManager from '../../ui-utils/status-message-manager';
 import MessageHandlers from '../../handlers/message/message-handlers';
 import UIUtils from '../../ui-utils';
@@ -468,20 +468,28 @@ registerComponent('layer-message-list', {
     generateStyles() {
       return `
         /* Generated styles for one message list */
-        #${this.id}.layer-message-list-show-my-avatars layer-message-item-sent.layer-list-item-first .layer-message-header,
-        #${this.id}.layer-message-list-show-my-avatars layer-message-item-sent.layer-list-item-last .layer-message-footer {
+        #${this.id}.layer-message-list-show-my-avatars layer-message-item-sent.layer-list-item-first
+        .layer-message-header,
+        #${this.id}.layer-message-list-show-my-avatars layer-message-item-sent.layer-list-item-last
+        .layer-message-footer {
           margin-right: ${this.marginWithMyAvatar}px;
         }
-        #${this.id}:not(.layer-message-list-show-my-avatars) layer-message-item-sent.layer-list-item-first .layer-message-header,
-        #${this.id}:not(.layer-message-list-show-my-avatars) layer-message-item-sent.layer-list-item-last .layer-message-footer {
+        #${this.id}:not(.layer-message-list-show-my-avatars) layer-message-item-sent.layer-list-item-first
+        .layer-message-header,
+        #${this.id}:not(.layer-message-list-show-my-avatars) layer-message-item-sent.layer-list-item-last
+        .layer-message-footer {
           margin-right: ${this.marginWithoutMyAvatar}px;
         }
-        #${this.id}.layer-message-list-show-other-avatars layer-message-item-received.layer-list-item-first .layer-message-header,
-        #${this.id}.layer-message-list-show-other-avatars layer-message-item-received.layer-list-item-last .layer-message-footer {
+        #${this.id}.layer-message-list-show-other-avatars layer-message-item-received.layer-list-item-first
+        .layer-message-header,
+        #${this.id}.layer-message-list-show-other-avatars layer-message-item-received.layer-list-item-last
+        .layer-message-footer {
           margin-left: ${this.marginWithOtherAvatar}px;
         }
-        #${this.id}:not(.layer-message-list-show-other-avatars) layer-message-item-received.layer-list-item-first .layer-message-header,
-        #${this.id}:not(.layer-message-list-show-other-avatars) layer-message-item-received.layer-list-item-last .layer-message-footer {
+        #${this.id}:not(.layer-message-list-show-other-avatars) layer-message-item-received.layer-list-item-first
+        .layer-message-header,
+        #${this.id}:not(.layer-message-list-show-other-avatars) layer-message-item-received.layer-list-item-last
+        .layer-message-footer {
           margin-left: ${this.marginWithoutOtherAvatar}px;
         }
      `;
@@ -640,14 +648,19 @@ registerComponent('layer-message-list', {
      * @private
      */
     _checkVisibility() {
-      if (UIUtils.isInBackground() || this.disable) return;
+      if (this.disable) return;
 
       const children = Array.prototype.slice.call(this.childNodes);
       children.filter(item => item.tagName !== 'DIV').forEach((child, index) => {
-        if (child.properties && child.properties.item &&
-          !child.properties.item.isRead && this._shouldMarkAsRead(child)) {
+        if (child.properties && child.properties.item && this._isVisibleEnoughToMarkAsRead(child)) {
           // TODO: Use a scheduler rather than many setTimeout calls
-          setTimeout(() => this._markAsRead(child), Settings.markReadDelay);
+          if (!UIUtils.isInBackground() && !child.properties.item.isRead) {
+            setTimeout(() => this._markAsRead(child), Settings.markReadDelay);
+          }
+
+          // Minus 1 allows this to fire while `isRead` is still `false` so that analytics knows its a message
+          // about to be marked as read rather than one marked as read "some time ago"
+          setTimeout(() => this._reportAnalytics(child), Settings.markReadDelay - 1);
         }
       }, this);
     },
@@ -661,7 +674,23 @@ registerComponent('layer-message-list', {
      * @returns {Boolean}
      */
     _shouldMarkAsRead(child) {
-      if (UIUtils.isInBackground() || this.disable) return;
+      if (UIUtils.isInBackground() || this.disable) return false;
+
+      return this._isVisibleEnoughToMarkAsRead(child);
+    },
+
+    /**
+     * Tests to see if the specified Message Item is visible enough to be marked as read.
+     *
+     * Note that this can return true even for messages that are already read.
+     *
+     * @method _isVisibleEnoughToMarkAsRead
+     * @private
+     * @param {Layer.UI.components.MessageListPanel.Item} child
+     * @returns {Boolean}
+     */
+    _isVisibleEnoughToMarkAsRead(child) {
+      if (this.disabled) return false;
 
       const errorMargin = 10;
       const topVisiblePixel = this.scrollTop;
@@ -693,6 +722,29 @@ registerComponent('layer-message-list', {
         child.properties.item.isRead = true;
       }
     },
+
+    /**
+     * Any message that has been scrolled into view for at least 2.5 seconds should be reported as visible to analytics engines.
+     *
+     * @method _reportAnalytics
+     * @private
+     * @param {Layer.UI.components.MessageListPanel.Item} child
+     */
+    _reportAnalytics(child) {
+      if (this._isVisibleEnoughToMarkAsRead(child)) {
+        client._triggerAsync('analytics', {
+          type: 'message-viewed',
+          size: child.nodes.messageViewer.size,
+          where: 'message-list',
+          message: child.properties.item,
+          model: child.properties.item.createModel(),
+          modelName: child.properties.item.getModelName(),
+          wasUnread: child.properties.item.isUnread,
+          inBackground: UIUtils.isInBackground(),
+        });
+      }
+    },
+
 
     /**
      * Return the tag name to use to render an individual Message Item.

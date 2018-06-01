@@ -343,9 +343,21 @@ module.exports = function (grunt) {
       start: {
         options: {
           title: 'Start Build',
-          message: 'Starting Build'
+          message: 'Starting Build',
         }
-      }
+      },
+      npm: {
+        options: {
+          title: 'Build Running',
+          message: 'NPM Folder Generated',
+        },
+      },
+      browserify: {
+        options: {
+          title: 'Build Running',
+          message: 'Browserify Done',
+        }
+      },
     },
     'saucelabs-jasmine': saucelabsTests.tasks.saucelabs,
   });
@@ -879,8 +891,8 @@ module.exports = function (grunt) {
   grunt.registerTask('debug', [
     'version', 'remove:libes6', 'webcomponents', 'custom_copy:src', 'remove:libes5',
     'custom_babel', 'remove:lib', 'move:lib',
-    'copy:npm', 'copy:npmthemes','fix-npm-package',
-    'browserify:build',  "generate-quicktests", "generate-smalltests"]);
+    'copy:npm', 'copy:npmthemes','fix-npm-package', 'notify:npm',
+    'browserify:build', 'notify:browserify', "generate-quicktests", "generate-smalltests"]);
 
   grunt.registerTask('build', ['remove:build', 'eslint:build', 'debug', 'uglify', 'theme', 'cssmin', 'copy:npmthemes']);
   grunt.registerTask('prepublish', ['build', 'refuse-to-publish']);

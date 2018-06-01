@@ -81,8 +81,9 @@ module.exports = function defer(func) {
 module.exports.flush = () => setImmediateProcessor();
 module.exports.reset = () => { setImmediateQueue = []; };
 
-addEventListener('message', (event) => {
-  if (event.data.type !== 'layer-set-immediate') return;
-  setImmediateProcessor();
-});
-
+if (typeof addEventListener !== 'undefined') {
+  addEventListener('message', (event) => {
+    if (event.data.type !== 'layer-set-immediate') return;
+    setImmediateProcessor();
+  });
+}

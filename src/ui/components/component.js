@@ -1707,6 +1707,28 @@ const standardClassMethods = {
   },
 
   /**
+   * Polyfil for HTMLElement.closest for finding the closest parent node matching a selector string.
+   *
+   * ```
+   * // Find the parent node that is a messageList (or null if none)
+   * var messageList = layerComponent.closest('layer-message-list');
+   * ```
+   * @method closest
+   * @param {String} selector
+   * @return {HTMLElement}
+   */
+  closest: function closest(selector) {
+    if (Element.prototype.closest) return Element.prototype.closest.call(this, selector);
+    let el = this;
+    if (!document.documentElement.contains(el)) return null;
+    do {
+      if (el.matches(selector)) return el;
+      el = el.parentElement || el.parentNode;
+    } while (el !== null && el.nodeType === 1);
+    return null;
+  },
+
+  /**
    * Toggle a CSS Class.
    *
    * Why do we have this? Well, sadly as long as we support IE11 which has an incorrect implementation

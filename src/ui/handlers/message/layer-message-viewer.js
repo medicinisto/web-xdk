@@ -27,7 +27,7 @@ import { registerComponent } from '../../components/component';
 import MessageHandler from '../../mixins/message-handler';
 import Clickable from '../../mixins/clickable';
 import SizeProperty from '../../mixins/size-property';
-import { conversationViewWidths } from '../../../settings';
+import { conversationViewWidths, client } from '../../../settings';
 import messageActionHandlers from '../../message-actions/index';
 import { register } from './message-handlers';
 
@@ -267,6 +267,31 @@ registerComponent('layer-message-viewer', {
     _runAction(action) {
       if (this.size === 'large') return; // For now, there is no action performed when users tap on a Large Message Viewer
 
+      const rootMessageViewer = this.getRootMessageViewer();
+      let whereClicked;
+      const parentName = rootMessageViewer.parentComponent ? rootMessageViewer.parentComponent.tagName.toLowerCase() :
+        rootMessageViewer.parentNode.tagName.toLowerCase() +
+        rootMessageViewer.parentNode.classList.length ? '.' + Array.prototype.join.call(rootMessageViewer.parentNode.classList, '.') : '';
+      switch (parentName) {
+        case 'layer-message-item-sent':
+        case 'layer-message-item-received':
+        case 'layer-message-item-status':
+          whereClicked = 'message-list';
+          break;
+        default:
+          whereClicked = parentName;
+      }
+      client._triggerAsync('analytics', {
+        type: 'message-clicked',
+        size: this.size,
+        where: whereClicked,
+        message: this.message,
+        model: this.model,
+        modelName: this.model.getModelName(),
+        actionEvent: this.model.actionEvent,
+        actionData: this.model.actionData,
+      });
+
       if (this.nodes.ui.runAction && this.nodes.ui.runAction(action)) return;
 
       const event = action && action.event ? action.event : this.model.actionEvent;
@@ -355,6 +380,23 @@ registerComponent('layer-message-viewer', {
       }
 
       return this.parentNode.clientWidth;
+    },
+
+    /**
+     * Find the root Message Viewer; typically returns `this` but if `this` is a child Message Viewer
+     * then will return its root ancestor Message Viewer.
+     *
+     * @method getRootMessageViewer
+     * @returns {Layer.UI.handlers.message.MessageViewer}
+     */
+    getRootMessageViewer() {
+      let lastNode = this;
+      let node = this;
+      while (node && node.parentNode) {
+        lastNode = node;
+        node = node.parentNode.closest('layer-message-viewer');
+      }
+      return lastNode;
     },
   },
 });

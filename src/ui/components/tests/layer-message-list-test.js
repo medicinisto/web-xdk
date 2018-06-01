@@ -155,7 +155,7 @@ describe('layer-message-list', function() {
     });
   });
 
-  describe('The created() method', function() {
+  describe('The onCreate() method', function() {
     beforeEach(function() {
       el = document.createElement('layer-message-list');
       testRoot.innerHTML = '';
@@ -422,23 +422,23 @@ describe('layer-message-list', function() {
     it("Should mark visible messages in middle of list", function() {
       var items = el.querySelectorAllArray('layer-message-item-sent');
       expect(items.length > 0).toBe(true);
-      spyOn(el, "_shouldMarkAsRead").and.callThrough();
+      spyOn(el, "_isVisibleEnoughToMarkAsRead").and.callThrough();
       el.scrollTo(100);
       jasmine.clock().tick(3000);
 
-      expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[0]);
-      expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[1]);
-      expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[2]);
-      expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[3]);
-      expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[4]);
-      expect(el._shouldMarkAsRead).toHaveBeenCalledWith(items[5]);
+      expect(el._isVisibleEnoughToMarkAsRead).toHaveBeenCalledWith(items[0]);
+      expect(el._isVisibleEnoughToMarkAsRead).toHaveBeenCalledWith(items[1]);
+      expect(el._isVisibleEnoughToMarkAsRead).toHaveBeenCalledWith(items[2]);
+      expect(el._isVisibleEnoughToMarkAsRead).toHaveBeenCalledWith(items[3]);
+      expect(el._isVisibleEnoughToMarkAsRead).toHaveBeenCalledWith(items[4]);
+      expect(el._isVisibleEnoughToMarkAsRead).toHaveBeenCalledWith(items[5]);
 
-      expect(el._shouldMarkAsRead(items[0])).toBe(false);
-      expect(el._shouldMarkAsRead(items[1])).toBe(true);
-      expect(el._shouldMarkAsRead(items[2])).toBe(true);
-      expect(el._shouldMarkAsRead(items[3])).toBe(true);
-      expect(el._shouldMarkAsRead(items[4])).toBe(false);
-      expect(el._shouldMarkAsRead(items[5])).toBe(false);
+      expect(el._isVisibleEnoughToMarkAsRead(items[0])).toBe(false);
+      expect(el._isVisibleEnoughToMarkAsRead(items[1])).toBe(true);
+      expect(el._isVisibleEnoughToMarkAsRead(items[2])).toBe(true);
+      expect(el._isVisibleEnoughToMarkAsRead(items[3])).toBe(true);
+      expect(el._isVisibleEnoughToMarkAsRead(items[4])).toBe(false);
+      expect(el._isVisibleEnoughToMarkAsRead(items[5])).toBe(false);
 
       expect(items[0].item.isRead).toBe(false);
       expect(items[1].item.isRead).toBe(true);

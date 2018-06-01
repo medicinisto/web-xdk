@@ -38,6 +38,8 @@ import { registerComponent } from './component';
 import './layer-title-bar';
 import Clickable from '../mixins/clickable';
 import { generateUUID } from '../../utils';
+import { isInBackground } from '../ui-utils';
+import { client } from '../../settings';
 
 registerComponent('layer-dialog', {
   mixins: [Clickable],
@@ -186,6 +188,13 @@ registerComponent('layer-dialog', {
     isAnimationEnabled: {
       value: true,
     },
+
+    /**
+     * Informational property only; if it has a model then this Dialog is being used to render the model or something closely related to it.
+     *
+     * @property {Layer.Core.MessageTypeModel} model
+     */
+    model: {},
   },
   methods: {
     onCreate() {
@@ -260,6 +269,19 @@ registerComponent('layer-dialog', {
         props.onConversationClose = this.onClose.bind(this);
         props.conversationView = this.parentComponent;
         props.conversationView.addEventListener('layer-conversation-panel-change', props.onConversationClose);
+      }
+
+      if (this.model) {
+        client._triggerAsync('analytics', {
+          type: 'message-viewed',
+          size: 'large',
+          where: 'dialog',
+          message: this.model.message,
+          model: this.model,
+          modelName: this.model.getModelName(),
+          wasUnread: this.model.message.isUnread,
+          inBackground: isInBackground(),
+        });
       }
     },
 

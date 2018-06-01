@@ -122,6 +122,7 @@ Impact of this change:
     * If users click Yes, the browser's permissions UI will be presented
     * If users click No, the prompt won't be shown again
 * WEB-1797: Adds MessageTypeModel static `FileBehaviorsForProperty()` method for setting up properties that manage files/blobs
+* WEB-1791: `Layer.Core.Client` instances now generate `analytics` events. Currently tracks Message Clicks, Message Views and Carousel Scroll events.  `client.on('analytics', evt => myProcessAnalyticsEvt(evt))`
 
 ## 4.0.4
 

@@ -14,11 +14,12 @@
  * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
-import { animatedScrollLeftTo } from '../../ui-utils';
+import { animatedScrollLeftTo, isInBackground } from '../../ui-utils';
 import MessageViewMixin from '../message-view-mixin';
 import Throttler from '../../mixins/throttler';
 import Clickable from '../../mixins/clickable';
 import { isMobile } from '../../../utils';
+import { client } from '../../../settings';
 import './layer-carousel-message-model';
 
 registerComponent('layer-carousel-message-view', {
@@ -83,6 +84,18 @@ registerComponent('layer-carousel-message-view', {
 
     hideMessageItemRightAndLeftContent: {
       value: true,
+    },
+
+    /**
+     * Tracks the last Carousel Item Index that the user has scrolled to.
+     *
+     * This tracks the left most fully visible item; if multiple items are visible, this only indicates
+     * which one is left most and still fully visible.
+     *
+     * @property {Number} lastIndex
+     */
+    lastIndex: {
+      value: 0,
     },
   },
   methods: {
@@ -276,11 +289,7 @@ registerComponent('layer-carousel-message-view', {
       //    and scroll to show the item right after it
       if (lastVisible && lastVisibleIndex !== -1 && lastVisibleIndex < root.childNodes.length - 1) {
         const scrollToNode = nodes[lastVisibleIndex + 1];
-        const scrollTo = scrollToNode.offsetLeft;
-        animatedScrollLeftTo(root, scrollTo, 200, this._updateScrollButtons.bind(this));
-
-        // If we showed some item to the right then we can't be at the start anymore
-        this.classList.remove('layer-carousel-start');
+        this.scrollToItem(scrollToNode);
       }
     },
 
@@ -325,11 +334,9 @@ registerComponent('layer-carousel-message-view', {
         let found = false;
         for (let i = 0; i <= firstVisibleIndex - 1; i++) {
           const node = nodes[i];
-          const scrollTo = node.offsetLeft;
-          if (scrollTo > minScrollLeft) {
+          if (node.offsetLeft > minScrollLeft) {
             // We found one, so scroll to it, and update out "layer-carousel-start" class
-            animatedScrollLeftTo(root, scrollTo, 200, this._updateScrollButtons.bind(this));
-            this.toggleClass('layer-carousel-start', scrollTo <= nodes[0].offsetLeft);
+            this.scrollToItem(node);
             found = true;
             break;
           }
@@ -337,9 +344,7 @@ registerComponent('layer-carousel-message-view', {
 
         // We did not find one, so just scroll to the prior item
         if (!found) {
-          const scrollTo = nodes[firstVisibleIndex - 1].offsetLeft;
-          animatedScrollLeftTo(root, scrollTo, 200, this._updateScrollButtons.bind(this));
-          this.toggleClass('layer-carousel-start', scrollTo <= nodes[0].offsetLeft);
+          this.scrollToItem(nodes[firstVisibleIndex - 1]);
         }
       }
     },
@@ -370,12 +375,14 @@ registerComponent('layer-carousel-message-view', {
      * @private
      * @returns {Layer.UI.handlers.message.MessageViewer}
      */
-    _findFirstFullyVisibleItem() {
+    _findFirstFullyVisibleItem(scrolledTo) {
       const root = this.nodes.items;
+      if (scrolledTo === undefined) scrolledTo = root.scrollLeft;
+
       const nodes = root.childNodes;
       for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
-        if (node.offsetLeft >= root.offsetLeft + root.scrollLeft) return node;
+        if (node.offsetLeft >= root.offsetLeft + scrolledTo) return node;
       }
     },
 
@@ -472,16 +479,15 @@ registerComponent('layer-carousel-message-view', {
       if (fingerDirection === 'left') {
         if (percentDistanceToEnd < 0.6) {
           // Revealing items to the right, but only a fraction of a card width from the end, so just scroll to the last (right-most) Carousel Item
-          animatedScrollLeftTo(root, root.lastChild.offsetLeft, 200, this._updateScrollButtons.bind(this));
+          this.scrollToItem(root.lastChild);
         } else if (percentShown > 0.6) {
 
           // Revealing items to the right, but stopped with an item more than 60% visible on the left?
           // Scroll right so as to fully show that item.
-          animatedScrollLeftTo(root, firstPartialCard.offsetLeft, 200, this._updateScrollButtons.bind(this));
+          this.scrollToItem(firstPartialCard);
         } else {
           // Else just snap to the item immediately right of the partially visible item.
-          animatedScrollLeftTo(root, firstPartialCard.nextElementSibling.offsetLeft,
-            200, this._updateScrollButtons.bind(this));
+          this.scrollToItem(firstPartialCard.nextElementSibling);
         }
       }
 
@@ -490,18 +496,82 @@ registerComponent('layer-carousel-message-view', {
         /* eslint-disable no-lonely-if */
         if (percentDistanceToEnd < 0.4) {
           // If close to the end (far right) while moving towards the start, snap to the last Carousel Item
-          animatedScrollLeftTo(root, root.lastChild.offsetLeft, 200, this._updateScrollButtons.bind(this));
+          this.scrollToItem(root.lastChild);
         } else if (percentShown < 0.4) {
           // If less than 40% of the left-most partially visible item is showing snap to the item to the right of it
-          animatedScrollLeftTo(root, firstPartialCard.nextElementSibling.offsetLeft,
-            200, this._updateScrollButtons.bind(this));
+          this.scrollToItem(firstPartialCard.nextElementSibling);
         } else {
           // Snap to the left-most partially visible item.  Will also trigger if the left-most item
           // is fully visible but should not do anything... or only adjust it slightly
-          animatedScrollLeftTo(root, firstPartialCard.offsetLeft, 200, this._updateScrollButtons.bind(this));
+          this.scrollToItem(firstPartialCard);
         }
       }
       this.properties.touching = false;
+    },
+
+    scrollToItem(carouselItemNode) {
+      const index = Array.prototype.indexOf.call(this.nodes.items.childNodes, carouselItemNode);
+      this.scrollToIndex(index);
+    },
+
+    scrollToIndex(index) {
+      const lastIndex = this.lastIndex;
+
+      // Figure out where we are scrolling to; should position the item's left edge to the left edge of the Carousel...
+      // but should not scroll past the end (if the item is one of the last, it may not make it as far left as the left edge of the Carousel)
+      let scrollTo = this.nodes.items.childNodes[index].offsetLeft;
+      const maxScroll = this.nodes.items.scrollWidth - this.nodes.items.clientWidth;
+      if (scrollTo > maxScroll) scrollTo = maxScroll;
+
+      // Figure out which carousel items were visible before we started this and which will be visible after
+      const visibleItemsBefore = [];
+      const visibleItemsAfter = [];
+
+      const firstVisibleAfter = this._findFirstFullyVisibleItem(scrollTo);
+      index = Array.prototype.indexOf.call(this.nodes.items.childNodes, firstVisibleAfter);
+
+      const lastVisibleBefore = this._findLastFullyVisibleItem(this.nodes.items.childNodes[lastIndex].offsetLeft);
+      const lastVisibleAfter  = this._findLastFullyVisibleItem(this.nodes.items.childNodes[index].offsetLeft);
+
+      const lastVisibleBeforeIndex = lastVisibleBefore ? Array.prototype.indexOf.call(this.nodes.items.childNodes, lastVisibleBefore) : lastIndex;
+      const lastVisibleAfterIndex = lastVisibleAfter ? Array.prototype.indexOf.call(this.nodes.items.childNodes, lastVisibleAfter) : index;
+
+      for (let i = lastIndex; i <= lastVisibleBeforeIndex; i++) visibleItemsBefore.push(this.nodes.items.childNodes[i]);
+      for (let i = index; i <= lastVisibleAfterIndex; i++) visibleItemsAfter.push(this.nodes.items.childNodes[i]);
+
+      // Scroll the view
+      animatedScrollLeftTo(this.nodes.items, scrollTo, 200, this._updateScrollButtons.bind(this));
+
+
+      // Update the CSS Classes based on where our view has scrolled to
+      if (index) {
+        this.classList.remove('layer-carousel-start');
+      } else {
+        // If we showed some item to the right then we can't be at the start anymore
+        this.classList.add('layer-carousel-start');
+      }
+
+      if (lastVisibleAfterIndex === this.nodes.items.length - 1) {
+        this.classList.add('layer-carousel-end');
+      } else {
+        this.classList.remove('layer-carousel-end');
+      }
+
+      // Generate analytics events
+      if (lastIndex !== index) {
+        client._triggerAsync('analytics', {
+          type: 'carousel-scrolled',
+          size: this.messageViewer.size,
+          where: 'message-list',
+          message: this.model.message,
+          model: this.model,
+          newItems: visibleItemsAfter.map(item => ({ model: item.model, part: item.model.part })),
+          oldItems: visibleItemsBefore.map(item => ({ model: item.model, part: item.model.part })),
+          inBackground: isInBackground(),
+        });
+      }
+
+      this.lastIndex = index;
     },
   },
 });

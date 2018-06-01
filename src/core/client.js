@@ -436,9 +436,16 @@ Client._ignoredEvents = [
   'conversations:loaded-error',
 ];
 
-Client._supportedEvents = [].concat(Root._supportedEvents);
+Client._supportedEvents = [
+  /**
+   * @event analytics
+   * See https://docs.layer.com for more details on these events
+   */
+  'analytics',
+].concat(Root._supportedEvents);
 
 Client.mixins = Core.mixins.Client;
 
 Root.initClass.apply(Client, [Client, 'Client', Core]);
 module.exports = Client;
+

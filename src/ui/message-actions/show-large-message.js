@@ -21,6 +21,7 @@ const showLargeView = ({ messageViewer, model, data }) => {
   dialog.replaceableContent = {
     content: largeMessageViewer,
   };
+  dialog.model = model;
 
   let node = messageViewer;
   while (node && node.tagName !== 'BODY' && node.tagName !== 'LAYER-CONVERSATION-VIEW' && node.parentNode) {
