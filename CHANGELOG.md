@@ -123,6 +123,9 @@ Impact of this change:
     * If users click No, the prompt won't be shown again
 * WEB-1797: Adds MessageTypeModel static `FileBehaviorsForProperty()` method for setting up properties that manage files/blobs
 * WEB-1791: `Layer.Core.Client` instances now generate `analytics` events. Currently tracks Message Clicks, Message Views and Carousel Scroll events.  `client.on('analytics', evt => myProcessAnalyticsEvt(evt))`
+* WEB-1781: Improved link and address detection
+    * Detects and links `mailto:` and `tel:` URIs
+    * Detects and links email addresses within messages even if not preceded by a `mailto:`
 
 ## 4.0.4
 

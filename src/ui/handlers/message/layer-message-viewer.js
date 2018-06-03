@@ -30,6 +30,7 @@ import SizeProperty from '../../mixins/size-property';
 import { conversationViewWidths, client } from '../../../settings';
 import messageActionHandlers from '../../message-actions/index';
 import { register } from './message-handlers';
+import { getWhereClicked } from '../../ui-utils/analytics';
 
 registerComponent('layer-message-viewer', {
   mixins: [MessageHandler, Clickable, SizeProperty],
@@ -267,24 +268,10 @@ registerComponent('layer-message-viewer', {
     _runAction(action) {
       if (this.size === 'large') return; // For now, there is no action performed when users tap on a Large Message Viewer
 
-      const rootMessageViewer = this.getRootMessageViewer();
-      let whereClicked;
-      const parentName = rootMessageViewer.parentComponent ? rootMessageViewer.parentComponent.tagName.toLowerCase() :
-        rootMessageViewer.parentNode.tagName.toLowerCase() +
-        rootMessageViewer.parentNode.classList.length ? '.' + Array.prototype.join.call(rootMessageViewer.parentNode.classList, '.') : '';
-      switch (parentName) {
-        case 'layer-message-item-sent':
-        case 'layer-message-item-received':
-        case 'layer-message-item-status':
-          whereClicked = 'message-list';
-          break;
-        default:
-          whereClicked = parentName;
-      }
       client._triggerAsync('analytics', {
-        type: 'message-clicked',
+        type: 'message-selected',
         size: this.size,
-        where: whereClicked,
+        where: getWhereClicked(this),
         message: this.message,
         model: this.model,
         modelName: this.model.getModelName(),

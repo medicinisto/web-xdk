@@ -85,7 +85,7 @@ module.exports = {
   defaultHandler: {
     tagName: 'layer-message-unknown',
   },
-  textHandlers: ['autolinker', 'newline', 'emoji'],
+  textHandlers: ['email', 'autolinker', 'newline', 'emoji'],
   destroyAfterDetachDelay: 10000,
   useEmojiImages: true,
   googleMapsKey: '',

@@ -18,6 +18,7 @@
 import 'webcomponents.js/webcomponents-lite';
 import LayerUI from './index-lite';
 
+import './handlers/text/email';
 import './handlers/text/autolinker';
 import './handlers/text/emoji';
 import './handlers/text/newline';

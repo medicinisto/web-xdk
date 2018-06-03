@@ -21,6 +21,7 @@ import Clickable from '../../mixins/clickable';
 import { isMobile } from '../../../utils';
 import { client } from '../../../settings';
 import './layer-carousel-message-model';
+import { whereClicked, getWhereClicked } from '../../ui-utils/analytics';
 
 registerComponent('layer-carousel-message-view', {
   template: `
@@ -562,7 +563,7 @@ registerComponent('layer-carousel-message-view', {
         client._triggerAsync('analytics', {
           type: 'carousel-scrolled',
           size: this.messageViewer.size,
-          where: 'message-list',
+          where: getWhereClicked(this.messageViewer),
           message: this.model.message,
           model: this.model,
           newItems: visibleItemsAfter.map(item => ({ model: item.model, part: item.model.part })),
