@@ -25,7 +25,7 @@ const openFileHandler = ({ data, model }) => {
       }
     }
   } else {
-    logger.error('No getSourceUrl method for the "open-file" Message Action for model ', model);
+    logger.error('OPEN-FILE-ACTION: No getSourceUrl method for the "open-file" Message Action for model ', model);
   }
 };
 

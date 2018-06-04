@@ -163,7 +163,7 @@ class DbManager extends Root {
         // Triggered by Firefox private browsing window
         else {
           this._isOpenError = true;
-          Util.logger.warn('Database Unable to Open (common cause: private browsing window)', evt.target.error);
+          Util.logger.warn('DB-Manager: Unable to Open (common cause: private browsing window)', evt.target.error);
           this.trigger('error', { error: evt });
         }
       };
@@ -180,7 +180,7 @@ class DbManager extends Root {
           setTimeout(() => this._open(false), 1000);
         };
 
-        this.db.onerror = err => Util.logger.info('db-manager Error: ', err);
+        this.db.onerror = err => Util.logger.info('DB-Manager: Error: ', err);
       };
     }
 
@@ -188,7 +188,7 @@ class DbManager extends Root {
     catch (err) {
       // Safari Private Browsing window will fail on request.onerror
       this._isOpenError = true;
-      Util.logger.error('Database Unable to Open: ', err);
+      Util.logger.error('DB-Manager: Unable to Open: ', err);
       this.trigger('error', { error: err });
     }
   }
@@ -245,7 +245,7 @@ class DbManager extends Root {
       } catch (e) {
         // Noop
         /* istanbul ignore next */
-        Util.logger.error(`Failed to create object store ${tableDef.name}`, e);
+        Util.logger.error(`DB-Manager: Failed to create object store ${tableDef.name}`, e);
       }
     });
   }
@@ -572,7 +572,7 @@ class DbManager extends Root {
         const store = transaction.objectStore(tableName);
         if (callback) transaction.oncomplete = evt => callback(evt);
         transaction.onerror = (evt) => {
-          Util.logger.error(evt);
+          Util.logger.error('DB-Manager: _cleanup Error', evt);
           if (callback) callback();
         };
 
@@ -586,7 +586,7 @@ class DbManager extends Root {
           } catch (e) {
             /* istanbul ignore next */
             // Safari throws an error rather than use the onerror event.
-            Util.logger.error(e);
+            Util.logger.error('DB-Manager: Error writing data: ', e);
           }
         });
       });
@@ -1265,7 +1265,7 @@ class DbManager extends Root {
       request.onsuccess = request.onerror = callback;
       delete this.db;
     } catch (e) {
-      Util.logger.error('Failed to delete database', e);
+      Util.logger.error('DB-Manager: Failed to delete database', e);
       if (callback) callback(e);
     }
   }

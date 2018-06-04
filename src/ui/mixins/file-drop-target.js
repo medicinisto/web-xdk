@@ -228,7 +228,7 @@ mixins.FileDropTarget = module.exports = {
               source: file,
             }));
           } else {
-            logger.error(isVideo);
+            logger.error('FILE-DROP-TARGET: isVideo test returned: ', isVideo);
           }
         });
       }

@@ -163,7 +163,7 @@ registerComponent('layer-menu', {
      */
     _showNear() {
       const node = this.near;
-      if (!node) return logger.error('layer-menu widget requires property "near"');
+      if (!node) return logger.error('LAYER-MENU: widget requires property "near"');
       const bounds = node.getBoundingClientRect();
       if (bounds.right + this.menuWidth > document.body.clientWidth) {
         this.style.left = '';

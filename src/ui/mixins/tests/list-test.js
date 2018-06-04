@@ -193,6 +193,8 @@ describe("List Mixin", function() {
         });
         //debugger;
         el.scrollTop = 500;
+        var evt = new Event('scroll', { bubbles: true });
+        el.dispatchEvent(evt);
       }, 200);
     });
 

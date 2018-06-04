@@ -1070,7 +1070,7 @@ registerComponent('layer-message-list', {
           // When paging new data, top item should always be new
           this._processAffectedWidgets(affectedWidgets, true);
         } catch (e) {
-          logger.error(e);
+          logger.error('LAYER-MESSAGE-LIST: Error in renderPagedDataDone', e);
         }
       }
 

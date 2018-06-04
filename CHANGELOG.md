@@ -127,6 +127,8 @@ Impact of this change:
     * Detects and links `mailto:` and `tel:` URIs
     * Detects and links email addresses within messages even if not preceded by a `mailto:`
 * WEB-1752: `Layer.UI.components.Avatar` Component now accepts `avatarComponent.item = identity;` as another option for setting the Avatar's Identity
+* WEB-1707 : Use `Layer.Utils.getLogs()` to get logs to dump to a logging service
+    * Use `Layer.init({ logSize: 500 })` to change the number of lines of logging data that is tracked
 
 ## 4.0.4
 

@@ -334,7 +334,7 @@ mixins.List = module.exports = {
           try {
             this.properties.onRenderListItem(widget, this.properties.listData, firstIndex + index, isTopItemNew);
           } catch (err) {
-            logger.error(`Error in onRenderListItem for ${widget.item.id}; ${err}`);
+            logger.error(`${this.tagName}: Error in onRenderListItem for ${widget.item.id}; ${err}`);
           }
         }
       }, this);

@@ -35,7 +35,7 @@ const showLargeView = ({ messageViewer, model, data }) => {
     node.appendChild(dialog);
     largeMessageViewer._onAfterCreate();
   } else {
-    logger.error('Unable to find a layer-conversation-view or body containing', messageViewer);
+    logger.error('SHOW-LARGE-MESSAGE: Unable to find a layer-conversation-view or body containing: ', messageViewer);
   }
 };
 

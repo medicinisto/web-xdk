@@ -1230,7 +1230,8 @@ function _registerComponent(tagName) {
    */
   classDef.attributeChangedCallback = {
     value: function attributeChangedCallback(name, oldValue, newValue) {
-      logger.debug(`Attribute Change on ${this.tagName}.${name} from ${oldValue} to `, newValue);
+      logger.debug(`${this.tagName}: Attribute Change on ${name} from ${oldValue} to ${newValue}` +
+        (this.id ? ' ' + this.id : ''));
       this[Util.camelCase(name)] = newValue;
     },
   };

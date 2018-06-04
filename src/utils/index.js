@@ -443,6 +443,21 @@ exports.asciiInit = (version) => {
    -/+++++++++++++++++++:'`;
 };
 
+/**
+ * Get a dump of the logs for sending to your logging service.
+ *
+ * @method getLogs
+ * @returns {Object[]} Array of log lines
+ * @return {Number} return.logLevel  One of Layer.Constants.LOG.INFO / DEBUG / WARN / ERROR
+ * @return {String} return.timestamp  ISO String Timestamp for when the log was written
+ * @return {String} return.timezone   Timezone; note that the value used for this is calculated once, and not updated if the user is traveling with the app running.
+ * @return {String} return.shortText  Text of the log that was written
+ * @return {String} return.text       Textual summary of the log (but leaves out details from the Object)
+ * @return {Object} return.object     Contains additional details that may be relevant to your logging; do not try and serialize these as they will infinite loop.
+ * @return {String} return.type       Object type that generated the log
+ */
+exports.getLogs = logger.getLogs;
+
 exports.logger = logger;
 exports.xhr = xhr;
 

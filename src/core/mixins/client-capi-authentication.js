@@ -525,7 +525,7 @@ module.exports = {
     answerAuthenticationChallenge(identityToken) {
       // Report an error if no identityToken provided
       if (!identityToken) {
-        logger.error(ErrorDictionary.identityTokenMissing);
+        logger.error('Client: ' + ErrorDictionary.identityTokenMissing);
         throw new Error(ErrorDictionary.identityTokenMissing);
       } else {
         const userData = Util.decode(identityToken.split('.')[1]);
@@ -534,12 +534,12 @@ module.exports = {
         if (!identityObj.prn) {
           // TODO: Move to dictionary
           const err = 'Your identity token prn (user id) is empty';
-          logger.error(err);
+          logger.error('Client: ', err);
           throw new Error(err);
         }
 
         if (this.user.userId && this.user.userId !== identityObj.prn) {
-          logger.error(ErrorDictionary.invalidUserIdChange, ` '${this.user.userId}' `, ` '${identityObj.prn}' `);
+          logger.error('Client: ' + ErrorDictionary.invalidUserIdChange, ` '${this.user.userId}' `, ` '${identityObj.prn}' `);
           throw new Error(ErrorDictionary.invalidUserIdChange);
         }
 

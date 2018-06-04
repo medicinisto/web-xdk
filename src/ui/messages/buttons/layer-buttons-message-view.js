@@ -142,7 +142,7 @@ registerComponent('layer-buttons-message-view', {
                 model,
               });
             } else {
-              logger.error('Failed to find a Choice Model to render');
+              logger.error('LAYER-BUTTONS-MESSAGE-VIEW: Failed to find a Choice Model to render');
             }
             break;
         }

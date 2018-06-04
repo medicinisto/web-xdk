@@ -235,7 +235,7 @@ registerComponent('layer-file-upload-button', {
               } else if (isVideo === false && AudioModel) {
                 models[index] = new AudioModel(options);
               } else {
-                logger.error(isVideo);
+                logger.error('LAYER-FILE-UPLOAD-BUTTON: isVideo = ', isVideo);
               }
               onDone();
             });

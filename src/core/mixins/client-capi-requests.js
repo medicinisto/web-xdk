@@ -276,7 +276,7 @@ module.exports = {
             // Ignore auth errors if in response to a no longer in use sessionToken
             if (oldSessionToken && this.isReady && this.sessionToken && oldSessionToken !== this.sessionToken) return;
 
-            logger.warn('SESSION EXPIRED!');
+            logger.warn('Client: SESSION EXPIRED!');
             this.isAuthenticated = false;
             this.isReady = false;
             if (global.localStorage) localStorage.removeItem(LOCALSTORAGE_KEYS.SESSIONDATA + this.appId);

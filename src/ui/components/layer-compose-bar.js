@@ -474,7 +474,7 @@ registerComponent('layer-compose-bar', {
         conversation: this.conversation,
       })) {
         if (!this.conversation) {
-          logger.error('Unable to send message without a conversationId');
+          logger.error('LAYER-COMPOSE-BAR: Unable to send message without a conversationId');
         } else if (this.conversation instanceof Core.Channel) {
           this.onSend(model);
         } else {

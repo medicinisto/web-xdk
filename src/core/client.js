@@ -169,7 +169,7 @@ class Client extends Root {
     try {
       this._runMixins('cleanup', []);
     } catch (e) {
-      logger.error(e);
+      logger.error('Client: _cleanup Error', e);
     }
 
     this._inCleanup = false;
@@ -182,7 +182,7 @@ class Client extends Root {
     try {
       this._runMixins('destroy', []);
     } catch (e) {
-      logger.error(e);
+      logger.error('Client: destroy Error', e);
     }
 
     super.destroy();
@@ -356,15 +356,9 @@ class Client extends Root {
    * @private
    */
   _triggerLogger(eventName, evt) {
-    const infoEvents = [
-      'conversations:add', 'conversations:remove', 'conversations:change',
-      'messages:add', 'messages:remove', 'messages:change',
-      'identities:add', 'identities:remove', 'identities:change',
-      'challenge', 'ready',
-    ];
-    if (infoEvents.indexOf(eventName) !== -1) {
+    if (Client.LoggedEvents.indexOf(eventName) !== -1) {
       if (evt && evt.isChange) {
-        logger.info(`Client Event: ${eventName} ${evt.changes.map(change => change.property).join(', ')}`);
+        logger.info(`${eventName}: (${evt.changes.map(change => change.property).join(', ')})`, evt.target);
       } else {
         let text = '';
         if (evt) {
@@ -376,11 +370,9 @@ class Client extends Root {
           if (evt.channel) text = evt.channel.id;
           if (evt.channels) text = evt.channels.length + ' channels';
         }
-        logger.info(`Client Event: ${eventName} ${text}`);
+        logger.info(`${eventName}: ${text}`, evt ? evt.target : null);
       }
-      if (evt) logger.debug(evt);
-    } else {
-      logger.debug(eventName, evt);
+      if (evt) logger.debug(eventName, evt);
     }
   }
 
@@ -443,6 +435,19 @@ Client._supportedEvents = [
    */
   'analytics',
 ].concat(Root._supportedEvents);
+
+/**
+ * List of event names that get logged by the Client whenever the Client triggers them.
+ *
+ * @property {String[]} LoggedEvents
+ * @static
+ */
+Client.LoggedEvents = [
+  'conversations:add', 'conversations:remove', 'conversations:change',
+  'messages:add', 'messages:remove', 'messages:change',
+  'identities:add', 'identities:remove', 'identities:change',
+  'challenge', 'ready',
+];
 
 Client.mixins = Core.mixins.Client;
 

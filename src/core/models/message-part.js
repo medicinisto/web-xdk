@@ -378,7 +378,7 @@ class MessagePart extends Root {
   _sendBody() {
     if (typeof this.body !== 'string') {
       const err = 'MessagePart.body must be a string in order to send it';
-      logger.error(err, { mimeType: this.mimeType, body: this.body });
+      logger.error('Message-Part: ' + err, { mimeType: this.mimeType, body: this.body });
       this._getMessage().trigger('messages:sent-error', {
         error: new LayerError({
           message: err,
@@ -477,7 +477,6 @@ class MessagePart extends Root {
   }
 
 
-
   /**
    * Creates a Layer.Core.Content object from the server's
    * Content object, and then uploads the data to google cloud storage.
@@ -528,7 +527,7 @@ class MessagePart extends Root {
       } else if (retryCount < MessagePart.MaxRichContentRetryCount) {
         this._processContentResponse(contentResponse, body, retryCount + 1);
       } else {
-        logger.error('Failed to upload rich content; triggering message:sent-error event; status of ',
+        logger.error('Message-Part: Failed to upload rich content; triggering message:sent-error event; status of ',
           uploadResult.status, this);
         this._getMessage().trigger('messages:sent-error', {
           error: new LayerError({
@@ -591,7 +590,7 @@ class MessagePart extends Root {
         if (part.body && Util.isBlob(part.body)) {
           Util.blobToBase64(this.body, (inputBase64) => {
             if (!inputBase64) {
-              logger.error(`Invalid Blob for ${this.id} ${this.mimeType}  `, this.body);
+              logger.error(`Message-Part: Invalid Blob for ${this.id} ${this.mimeType}  `, this.body);
             }
             if (inputBase64 !== Util.btoa(part.body)) {
               this.body = new Blob([part.body], { type: this.mimeType });

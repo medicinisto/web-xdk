@@ -273,7 +273,7 @@ class MessageTypeResponseSummary extends Root {
    */
   getState(name, identityId) {
     if (!identityId) {
-      logger.warn(`Identity not found for Model.getState(${name})`);
+      logger.warn(`Response-Summary: Identity not found for Model.getState(${name})`);
       return null;
     }
     if (this._trackers[name]) {
@@ -306,7 +306,7 @@ class MessageTypeResponseSummary extends Root {
   getStates(name, identityIds) {
     identityIds = identityIds.filter((identity) => {
       if (identity) return true;
-      logger.warn(`Identity not found for Model.getStates(${name})`);
+      logger.warn(`Response-Summary: Identity not found for Model.getStates(${name})`);
       return false;
     });
     if (this._trackers[name]) {

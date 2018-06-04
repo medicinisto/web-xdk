@@ -200,7 +200,7 @@ registerComponent('layer-image-message-view', {
               this.nodes.image.src = canvas.toDataURL();
               this.isHeightAllocated = true;
             } else {
-              logger.error(canvas);
+              logger.error('LAYER-IMAGE-MESSAGE-VIEW: expected canvas but instead got: ', canvas);
             }
           }, options);
         },

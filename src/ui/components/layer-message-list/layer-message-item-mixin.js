@@ -268,7 +268,7 @@ module.exports = {
         // Render all mutable data
         this.onRerender();
       } catch (err) {
-        logger.error('layer-message-item.render(): ', err);
+        logger.error('LAYER-MESSAGE-ITEM: render method: ', err);
       }
     },
 

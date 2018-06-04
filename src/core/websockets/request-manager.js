@@ -71,7 +71,7 @@ class WebsocketRequestManager {
     if (evt.data.type === 'response') {
       const msg = evt.data.body;
       const requestId = msg.request_id;
-      logger.debug(`Websocket response ${requestId} ${msg.success ? 'Successful' : 'Failed'}`);
+      logger.debug(`Websocket-Request-Manager: response ${requestId} ${msg.success ? 'Successful' : 'Failed'}`);
 
       if (requestId && this._requestCallbacks[requestId]) {
         this._processResponse(requestId, evt);
@@ -162,7 +162,7 @@ class WebsocketRequestManager {
     }
     const body = Util.clone(data);
     body.request_id = 'r' + this._nextRequestId++;
-    logger.debug(`Request ${body.request_id} is sending`);
+    logger.debug(`Websocket-Request-Manager: Request ${body.request_id} is sending`);
     if (callback || isChangesArray) {
       this._requestCallbacks[body.request_id] = {
         request_id: body.request_id,
@@ -250,7 +250,7 @@ class WebsocketRequestManager {
   _failAll() {
     Object.keys(this._requestCallbacks).forEach((requestId) => {
       try {
-        logger.warn('Websocket request aborted due to reconnect');
+        logger.warn('Websocket-Request-Manager: request aborted due to reconnect');
         this._requestCallbacks[requestId].callback({
           success: false,
           status: 503,
@@ -272,7 +272,7 @@ class WebsocketRequestManager {
 
   _timeoutRequest(requestId) {
     try {
-      logger.warn('Websocket request timeout');
+      logger.warn('Websocket-Request-Manager: request timeout');
       this._requestCallbacks[requestId].callback({
         success: false,
         data: new LayerError({

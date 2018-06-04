@@ -56,19 +56,19 @@ class WebsocketChangeManager {
   _processChange(msg) {
     switch (msg.operation) {
       case 'create':
-        logger.info(`Websocket Change Event: Create ${msg.object.type} ${msg.object.id}`);
-        logger.debug(msg.data);
+        logger.info(`Websocket-Change-Manager: Create ${msg.object.type} ${msg.object.id}`);
+        logger.debug('Websocket-Change-Manager: Details:', msg.data);
         this._handleCreate(msg);
         break;
       case 'delete':
-        logger.info(`Websocket Change Event: Delete ${msg.object.type} ${msg.object.id}`);
-        logger.debug(msg.data);
+        logger.info(`Websocket-Change-Manager: Delete ${msg.object.type} ${msg.object.id}`);
+        logger.debug('Websocket-Change-Manager: Details:', msg.data);
         this._handleDelete(msg);
         break;
       case 'update':
-        logger.info('Websocket Change Event: ' +
+        logger.info('Websocket-Change-Manager: ' +
           `Patch ${msg.object.type} ${msg.object.id}: ${msg.data.map(op => op.property).join(', ')}`);
-        logger.debug(msg.data);
+        logger.debug('Websocket-Change-Manager: Details:', msg.data);
         this._handlePatch(msg);
         break;
     }
@@ -124,7 +124,7 @@ class WebsocketChangeManager {
         });
         entity._inLayerParser = false;
       } catch (err) {
-        logger.error('websocket-manager: Failed to handle event', msg.data);
+        logger.error('Websocket-Change-Manager: Failed to handle event', msg.data);
       }
     } else {
       switch (Util.typeFromID(msg.object.id)) {

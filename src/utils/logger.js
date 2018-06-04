@@ -4,7 +4,14 @@
  *
  */
 /* eslint-disable no-console */
-const { TIMING, DEBUG, INFO, WARN, ERROR, NONE } = require('../constants').LOG;
+import Constants from '../constants';
+import { logSize } from '../settings';
+
+const { TIMING, DEBUG, INFO, WARN, ERROR, NONE } = Constants.LOG;
+
+const Timezone = new Date().toLocaleTimeString('en-US', { timeZoneName: 'short', second: 'numeric' }).replace(/^[\d\s]*/, '');
+
+const cache = [];
 
 // Pretty arbitrary test that IE/edge fails and others don't.  Yes I could do a more direct
 // test for IE/edge but its hoped that MS will fix this around the time they cleanup their internal console object.
@@ -21,7 +28,6 @@ class Logger {
       obj = msg;
       msg = '';
     }
-    const timestamp = this.level === TIMING ? Date.now() : new Date().toLocaleTimeString();
     let op;
     switch (type) {
       case DEBUG:
@@ -41,15 +47,21 @@ class Logger {
     }
 
     if (typeof document !== 'undefined') {
-      window.postMessage({
-        type: 'layer-log',
+      const simplerLogData = {
         level: op,
-        timestamp,
+        timestamp: new Date().toISOString(),
         text: msg,
-        object: obj && obj.toObject ? obj.toObject() : null,
-      }, '*');
-    }
+      };
+      window.postMessage(simplerLogData, '*');
 
+      simplerLogData.object = obj && typeof obj !== 'object' ? { value: obj } : obj;
+
+      cache.push(simplerLogData);
+      if (cache.length > logSize) cache.shift();
+    }
+    if (this.level < type) return;
+
+    const timestamp = this.level === TIMING ? Date.now() : new Date().toLocaleTimeString();
     if (obj) {
       if (supportsConsoleFormatting) {
         console[op](`%cLayer%c ${op.toUpperCase()}%c [${timestamp}]: ${msg}`, LayerCss, `color: ${color}`, Black, obj);
@@ -65,23 +77,37 @@ class Logger {
 
 
   debug(msg, obj) {
-    /* istanbul ignore next */
-    if (this.level >= DEBUG) this.log(msg, obj, DEBUG, '#888');
+    this.log(msg, obj, DEBUG, '#888');
   }
 
   info(msg, obj) {
-    /* istanbul ignore next */
-    if (this.level >= INFO) this.log(msg, obj, INFO, 'black');
+    this.log(msg, obj, INFO, 'black');
   }
 
   warn(msg, obj) {
-    /* istanbul ignore next */
-    if (this.level >= WARN) this.log(msg, obj, WARN, 'orange');
+    this.log(msg, obj, WARN, 'orange');
   }
 
   error(msg, obj) {
-    /* istanbul ignore next */
-    if (this.level >= ERROR) this.log(msg, obj, ERROR, 'red');
+    this.log(msg, obj, ERROR, 'red');
+  }
+
+  getLogs() {
+    const result = cache.map((item) => {
+      const splits = item.text.split(/\s*:\s*/);
+      if (splits.length === 1) splits.unshift('');
+      return {
+        level: item.level,
+        type: splits[0],
+        timestamp: item.timestamp,
+        timezone: Timezone,
+        shortText: splits[1],
+        object: item.object,
+        /* eslint-disable max-len */
+        text: `${item.timestamp} ${Timezone} ${item.level.toUpperCase()} ${splits[0] ? '(' + splits[0] + ')' : ''} ${splits[1]}`,
+      };
+    });
+    return result;
   }
 }
 

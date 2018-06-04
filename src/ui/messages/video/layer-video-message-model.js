@@ -70,7 +70,7 @@ class VideoModel extends MessageTypeModel {
         continueFn1.bind(this)();
       });
       tmpVideo.addEventListener('error', (err) => {
-        logger.error('Failed to read video file: ', err);
+        logger.error('LAYER-VIDEO-MESSAGE-MODEL: Failed to read video file: ', err);
         continueFn1.bind(this)();
       });
       tmpVideo.src = this.source.url;
@@ -89,7 +89,7 @@ class VideoModel extends MessageTypeModel {
           continueFn2.bind(this)();
         });
         img.addEventListener('error', (err) => {
-          logger.error('Failed to read video file: ', err);
+          logger.error('LAYER-VIDEO-MESSAGE-MODEL: Failed to read video file: ', err);
           continueFn2.bind(this)();
         });
         img.src = this.preview.url;

@@ -87,7 +87,7 @@ class SocketManager extends Root {
     if (evt.isOnline) {
       this._reconnect(evt.reset);
     } else {
-      logger.info('Websocket closed due to ambigious connection state');
+      logger.info('Websocket-Manager: closed due to ambigious connection state');
       this.close();
     }
   }
@@ -146,7 +146,7 @@ class SocketManager extends Root {
     // Get the URL and connect to it
     const url = `${client.websocketUrl}/?session_token=${client.sessionToken}`;
 
-    logger.info('Websocket Connecting');
+    logger.info('Websocket-Manager: Connecting');
 
     // Load up our websocket component or shim. Do it here so that unit tests can easily manipulate this value
     // which it can't do to module-scoped variables
@@ -157,7 +157,7 @@ class SocketManager extends Root {
       // Errors at this point tend to show up in IE11 during unit tests;
       // slow things down a bit if this is throwing errors as the assumption is that
       // unit tests are opening too many connections.
-      logger.error('Failed to establish websocket ', err);
+      logger.error('Websocket-Manager: Failed to establish websocket ', err);
       setTimeout(() => this._onError(), 1000);
       return;
     }
@@ -194,7 +194,7 @@ class SocketManager extends Root {
    */
   _connectionFailed() {
     this._connectionFailedId = 0;
-    const msg = 'Websocket failed to connect to server';
+    const msg = 'Websocket-Manager: failed to connect to server';
     logger.warn(msg);
 
     // TODO: At this time there is little information on what happens when closing a websocket connection that is stuck in
@@ -227,7 +227,7 @@ class SocketManager extends Root {
       this._lostConnectionCount = 0;
       this.isOpen = true;
       this.trigger('connected');
-      logger.debug('Websocket Connected');
+      logger.debug('Websocket-Manager: Connected');
       if (this._hasCounter && this._lastTimestamp) {
         this.resync(this._lastTimestamp);
       } else {
@@ -263,7 +263,7 @@ class SocketManager extends Root {
   _onError(err) {
     if (this._closing) return;
     this._clearConnectionFailed();
-    logger.debug('Websocket Error causing websocket to close', err);
+    logger.debug('Websocket-Manager: Error causing websocket to close', err);
     if (!this.isOpen) {
       this._removeSocketEvents();
       this._lostConnectionCount++;
@@ -326,13 +326,13 @@ class SocketManager extends Root {
       this._lastGetCounterId = 0;
     }
 
-    logger.debug('Websocket request: getCounter');
+    logger.debug('Websocket-Manager: getCounter request');
     client.socketRequestManager.sendRequest({
       data: {
         method: 'Counter.read',
       },
       callback: (result) => {
-        logger.debug('Websocket response: getCounter ' + result.data.counter);
+        logger.debug('Websocket-Manager: getCounter response: ' + result.data.counter);
         if (callback) {
           if (result.success) {
             callback(true, result.data.counter, result.fullData.counter);
@@ -379,10 +379,10 @@ class SocketManager extends Root {
   _replayEvents(timestamp, callback) {
     // If we are simply unable to replay because we're disconnected, capture the _needsReplayFrom
     if (!this._isOpen() && !this._needsReplayFrom) {
-      logger.debug('Websocket request: _replayEvents updating _needsReplayFrom');
+      logger.debug('Websocket-Manager: _replayEvents updating _needsReplayFrom');
       this._needsReplayFrom = timestamp;
     } else {
-      logger.info('Websocket request: _replayEvents');
+      logger.info('Websocket-Manager: _replayEvents');
       client.socketRequestManager.sendRequest({
         data: {
           method: 'Event.replay',
@@ -411,14 +411,14 @@ class SocketManager extends Root {
 
       // If replay was completed, and no other requests for replay, then we're done.
       if (!this._needsReplayFrom) {
-        logger.info('Websocket replay complete');
+        logger.info('Websocket-Manager: replay complete');
         if (callback) callback();
       }
 
       // If replayEvents was called during a replay, then replay
       // from the given timestamp.  If request failed, then we need to retry from _lastTimestamp
       else if (this._needsReplayFrom) {
-        logger.info('Websocket replay partially complete');
+        logger.info('Websocket-Manager: replay partially complete');
         const t = this._needsReplayFrom;
         this._needsReplayFrom = null;
         this._replayEvents(t);
@@ -431,11 +431,11 @@ class SocketManager extends Root {
     else if (this._replayRetryCount < 8) {
       const maxDelay = 20;
       const delay = Util.getExponentialBackoffSeconds(maxDelay, Math.min(15, this._replayRetryCount + 2));
-      logger.info('Websocket replay retry in ' + delay + ' seconds');
+      logger.info('Websocket-Manager: replay retry in ' + delay + ' seconds');
       setTimeout(() => this._replayEvents(timestamp), delay * 1000);
       this._replayRetryCount++;
     } else {
-      logger.error('Websocket Event.replay has failed');
+      logger.error('Websocket-Manager: Event.replay has failed');
     }
   }
 
@@ -549,7 +549,7 @@ class SocketManager extends Root {
 
       this._reschedulePing();
     } catch (err) {
-      logger.error('Layer-Websocket: Failed to handle websocket message: ' + err + '\n', evt.data);
+      logger.error('Websocket-Manager:: Failed to handle websocket message: ' + err + '\n', evt.data);
     }
   }
 
@@ -575,7 +575,7 @@ class SocketManager extends Root {
    * @private
    */
   _ping() {
-    logger.debug('Websocket ping');
+    logger.debug('Websocket-Manager: ping');
     this._nextPingId = 0;
     if (this._isOpen()) {
       // NOTE: onMessage will already have called reschedulePing, but if there was no response, then the error handler would NOT have called it.
@@ -590,7 +590,7 @@ class SocketManager extends Root {
    * @method close
    */
   close() {
-    logger.debug('Websocket close requested');
+    logger.debug('Websocket-Manager: close requested');
     this._closing = true;
     this.isOpen = false;
     if (this._socket) {
@@ -627,7 +627,7 @@ class SocketManager extends Root {
    * @private
    */
   _onSocketClose() {
-    logger.debug('Websocket closed');
+    logger.debug('Websocket-Manager: closed');
     this.isOpen = false;
     if (!this._closing) {
       this._scheduleReconnect();
@@ -675,7 +675,7 @@ class SocketManager extends Root {
 
     const delay = Util.getExponentialBackoffSeconds(this.maxDelaySecondsBetweenReconnect,
       Math.min(15, this._lostConnectionCount));
-    logger.debug('Websocket Reconnect in ' + delay + ' seconds');
+    logger.debug('Websocket-Manager: Reconnect in ' + delay + ' seconds');
     if (!this._reconnectId) {
       this._reconnectId = setTimeout(() => {
         this._reconnectId = 0;

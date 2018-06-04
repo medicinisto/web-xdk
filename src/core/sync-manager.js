@@ -120,7 +120,7 @@ class SyncManager extends Root {
     // If its a PATCH request on an object that isn't yet created,
     // do not add it to the queue.
     if (requestEvt.operation !== 'PATCH' || !this._findUnfiredCreate(requestEvt)) {
-      logger.info(`Sync Manager Request ${requestEvt.operation} on target ${requestEvt.target}`, requestEvt.toObject());
+      logger.info(`Sync-Manager: Request ${requestEvt.operation} on target ${requestEvt.target}`, requestEvt.toObject());
       if (requestEvt.operation === 'RECEIPT') {
         this.receiptQueue.push(requestEvt);
       } else {
@@ -131,7 +131,7 @@ class SyncManager extends Root {
         target: requestEvt.target,
       });
     } else {
-      logger.info(`Sync Manager Request PATCH ${requestEvt.target} request ignored; create request still enqueued`,
+      logger.info(`Sync-Manager: Request PATCH ${requestEvt.target} request ignored; create request still enqueued`,
         requestEvt.toObject());
     }
 
@@ -258,7 +258,7 @@ class SyncManager extends Root {
     requestEvt.isFiring = true;
     if (!requestEvt.headers) requestEvt.headers = {};
     requestEvt.headers.authorization = 'Layer session-token="' + Client.sessionToken + '"';
-    logger.info('Sync Manager XHR Request Firing ',
+    logger.info('Sync-Manager: XHR Request Firing ',
       `${requestEvt.operation} ${requestEvt.target} at ${new Date().toISOString()}`,
       requestEvt.toObject());
     xhr(requestEvt._getRequestData(Client), result => this._xhrResult(result, requestEvt));
@@ -273,7 +273,7 @@ class SyncManager extends Root {
    */
   _fireRequestWebsocket(requestEvt) {
     if (this.socketManager && this.socketManager._isOpen()) {
-      logger.debug(`Sync Manager Websocket Request Firing ${requestEvt.operation} on target ${requestEvt.target}`,
+      logger.debug(`Sync-Manager: Websocket Request Firing ${requestEvt.operation} on target ${requestEvt.target}`,
         requestEvt.toObject());
       requestEvt.isFiring = true;
       this.requestManager.sendRequest({
@@ -282,7 +282,7 @@ class SyncManager extends Root {
         isChangesArray: requestEvt.returnChangesArray,
       });
     } else {
-      logger.debug('Sync Manager Websocket Request skipped; socket closed');
+      logger.debug('Sync-Manager: Websocket Request skipped; socket closed');
     }
   }
 
@@ -404,12 +404,12 @@ class SyncManager extends Root {
   _xhrError(result) {
     const requestEvt = result.request;
 
-    logger.warn(`Sync Manager ${requestEvt instanceof WebsocketSyncEvent ? 'Websocket' : 'XHR'} ` +
+    logger.warn(`Sync-Manager: ${requestEvt instanceof WebsocketSyncEvent ? 'Websocket' : 'XHR'} ` +
       `${requestEvt.operation} Request on target ${requestEvt.target} has Failed`, requestEvt.toObject());
 
 
     const errState = this._getErrorState(result, requestEvt, this.isOnline());
-    logger.warn('Sync Manager Error State: ' + errState);
+    logger.warn('Sync-Manager: Error State: ' + errState);
     switch (errState) {
       case 'tooManyFailuresWhileOnline':
         this._xhrHandleServerError(result, 'Sync Manager Server Unavailable Too Long; removing request', false);
@@ -479,7 +479,7 @@ class SyncManager extends Root {
     });
     const maxDelay = SyncManager.MAX_UNAVAILABLE_RETRY_WAIT;
     const delay = Util.getExponentialBackoffSeconds(maxDelay, Math.min(15, request.retryCount++));
-    logger.warn(`Sync Manager Server Unavailable; retry count ${request.retryCount}; retrying in ${delay} seconds`);
+    logger.warn(`Sync-Manager: Server Unavailable; retry count ${request.retryCount}; retrying in ${delay} seconds`);
     setTimeout(this._processNextRequest.bind(this), delay * 1000);
   }
 
@@ -506,11 +506,11 @@ class SyncManager extends Root {
     // Execute all callbacks provided by the request
     if (result.request.callback) result.request.callback(result);
     if (stringify) {
-      logger.error(logMsg +
+      logger.error('Sync-Manager: ' + logMsg +
         '\nREQUEST: ' + JSON.stringify(result.request.toObject(), null, 4) +
         '\nRESPONSE: ' + JSON.stringify(result.data, null, 4));
     } else {
-      logger.error(logMsg, result);
+      logger.error('Sync-Manager: ' + logMsg, result);
     }
     this.trigger('sync:error', {
       target: result.request.target,
@@ -563,7 +563,7 @@ class SyncManager extends Root {
    * @private
    */
   _xhrValidateIsOnline(requestEvt) {
-    logger.debug('Sync Manager verifying online state');
+    logger.debug('Sync-Manager: verifying online state');
     this.onlineManager.checkOnlineStatus(isOnline => this._xhrValidateIsOnlineCallback(isOnline, requestEvt));
   }
 
@@ -583,7 +583,7 @@ class SyncManager extends Root {
    * @param {Layer.Core.SyncEvent} requestEvt - The request that failed triggering this call
    */
   _xhrValidateIsOnlineCallback(isOnline, requestEvt) {
-    logger.debug('Sync Manager online check result is ' + isOnline);
+    logger.debug('Sync-Manager: online check result is ' + isOnline);
     if (!isOnline) {
       // Treat this as a Connection Error
       this._xhrHandleConnectionError();
@@ -611,9 +611,9 @@ class SyncManager extends Root {
    */
   _xhrSuccess(result) {
     const requestEvt = result.request;
-    logger.debug(`Sync Manager ${requestEvt instanceof WebsocketSyncEvent ? 'Websocket' : 'XHR'} ` +
+    logger.debug(`Sync-Manager: ${requestEvt instanceof WebsocketSyncEvent ? 'Websocket' : 'XHR'} ` +
       `${requestEvt.operation} Request on target ${requestEvt.target} has Succeeded`, requestEvt.toObject());
-    if (result.data) logger.debug(result.data);
+    if (result.data) logger.debug('Sync-Manager: Success data', result.data);
     requestEvt.success = true;
     this._removeRequest(requestEvt, true);
     if (requestEvt.callback) requestEvt.callback(result);

@@ -67,7 +67,7 @@ class AudioModel extends MessageTypeModel {
         continueFn1.bind(this)();
       });
       tmpAudio.addEventListener('error', (err) => {
-        logger.error('Failed to read audio file: ', err);
+        logger.error('LAYER-AUDIO-MESSAGE-MODEL: Failed to read audio file: ', err);
         continueFn1.bind(this)();
       });
     } else {
@@ -85,7 +85,7 @@ class AudioModel extends MessageTypeModel {
           continueFn2.bind(this)();
         });
         img.addEventListener('error', (err) => {
-          logger.error('Failed to read audio file: ', err);
+          logger.error('LAYER-AUDIO-MESSAGE-MODEL: Failed to read audio file: ', err);
           continueFn2.bind(this)();
         });
         img.src = this.preview.url;

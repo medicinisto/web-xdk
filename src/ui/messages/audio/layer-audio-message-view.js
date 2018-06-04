@@ -73,7 +73,7 @@ registerComponent('layer-audio-message-view', {
           const result = this.properties.audio.play();
           if (typeof Promise !== 'undefined' && result instanceof Promise) {
             result.catch((err) => {
-              logger.error('Play failed: ', err);
+              logger.error('LAYER-AUDIO-MESSAGE-VIEW: Play failed: ', err);
               this.properties.playButton.classList.add('layer-play-button');
               this.properties.playButton.classList.remove('layer-pause-button');
             });
@@ -284,7 +284,7 @@ registerComponent('layer-audio-message-view', {
      * @protected
      */
     handleError(evt) {
-      logger.error(evt);
+      logger.error('LAYER-AUDIO-MESSAGE-VIEW: ', evt);
       this.properties.playButton.className = 'layer-not-playable-button';
     },
 

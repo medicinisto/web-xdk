@@ -222,7 +222,7 @@ class Query extends Root {
       const paginationWindow = options.paginationWindow;
       this.paginationWindow = Math.min(this._getMaxPageSize(), options.paginationWindow);
       if (options.paginationWindow !== paginationWindow) {
-        logger.warn(`paginationWindow value ${paginationWindow} in Query constructor ` +
+        logger.warn(`Query: paginationWindow value ${paginationWindow} in Query constructor ` +
           `excedes Query.MaxPageSize of ${this._getMaxPageSize()}`);
       }
     }
@@ -313,7 +313,7 @@ class Query extends Root {
     if ('paginationWindow' in optionsBuilt && this.paginationWindow !== optionsBuilt.paginationWindow) {
       this.paginationWindow = Math.min(this._getMaxPageSize() + this.size, optionsBuilt.paginationWindow);
       if (this.paginationWindow < optionsBuilt.paginationWindow) {
-        logger.warn(`paginationWindow value ${optionsBuilt.paginationWindow} in Query.update() ` +
+        logger.warn(`Query: paginationWindow value ${optionsBuilt.paginationWindow} in Query.update() ` +
           `increases size greater than Query.MaxPageSize of ${this._getMaxPageSize()}`);
       }
       needsRefresh = true;
