@@ -182,6 +182,30 @@ describe('layer-avatar', function() {
     expect(el.nodes.presence).toBe(undefined);
   });
 
+  describe("The item property", function() {
+    it("Should accept a conversation", function() {
+      el.item = client.createConversation({participants: [new Layer.Core.Identity({userId: 'BB', id: 'layer:///identities/BB'})]});
+      expect(el.users).toEqual([
+        jasmine.objectContaining({userId: 'BB'}),
+        jasmine.objectContaining({userId: 'FrodoTheDodo'})
+      ]);
+    });
+
+    it("Should accept a Message", function() {
+      var conversation = client.createConversation({participants: [new Layer.Core.Identity({userId: 'BB', id: 'layer:///identities/BB'})]});
+      var m = conversation.createMessage("hello");
+      m.sender = new Layer.Core.Identity({userId: 'CC', id: 'layer:///identities/CC'})
+      el.item = m;
+      expect(el.users).toEqual([jasmine.objectContaining({userId: 'CC'})]);
+    });
+
+    it("Should accept an Identity", function() {
+      var identity = new Layer.Core.Identity({userId: 'CC', id: 'layer:///identities/CC'})
+      el.item = identity;
+      expect(el.users).toEqual([identity]);
+    });
+  });
+
   describe("The onGenerateInitials() method", function() {
     it("Should use firstName and lastName above all else", function() {
       client.user.displayName = "Abe Baker";

@@ -126,6 +126,7 @@ Impact of this change:
 * WEB-1781: Improved link and address detection
     * Detects and links `mailto:` and `tel:` URIs
     * Detects and links email addresses within messages even if not preceded by a `mailto:`
+* WEB-1752: `Layer.UI.components.Avatar` Component now accepts `avatarComponent.item = identity;` as another option for setting the Avatar's Identity
 
 ## 4.0.4
 

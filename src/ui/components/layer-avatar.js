@@ -78,7 +78,15 @@ registerComponent('layer-avatar', {
      *
      * Short cut to {@link #users} for when there is only a single user.
      *
-     * @property {Layer.Core.Identity} [item=null]
+     * Acceptable values:
+     *
+     * * `Layer.Core.Conversation`: Renders the participants of the conversation
+     * * `Layer.Core.Message`: Renders the sender of the message
+     * * `Layer.Core.Identity`: Renders the identity
+     *
+     * *Note*: Use {@link #users} to look at what identities are being rendered, do not use `item` to check what is being rendered.
+     *
+     * @property {Layer.Core.Core} [item=null]
      */
     item: {
       set(value) {
@@ -90,6 +98,8 @@ registerComponent('layer-avatar', {
           if (!value.isLoading) {
             this.users = value.participants;
           }
+        } else if (value instanceof Core.Identity) {
+          this.users = [value];
         } else {
           this.users = [];
         }
@@ -116,7 +126,7 @@ registerComponent('layer-avatar', {
         // If nothing changed other than the array pointer, do nothing
         if (oldValue && newValue && newValue.length === oldValue.length) {
           const matches = newValue.filter(identity => oldValue.indexOf(identity) !== -1);
-          if (matches !== newValue.length) return;
+          if (matches.length === newValue.length) return;
         }
 
         if (!newValue) newValue = [];
@@ -133,7 +143,9 @@ registerComponent('layer-avatar', {
 
         // classList.toggle doesn't work right in IE 11
         this.toggleClass('layer-has-user', newValue.length);
-        this.onRender();
+
+        // Rerender if we just changed the users we are displaying... unless the first render call is still pending
+        if (this._internalState.onRenderCalled) this.onRender();
       },
     },
 
