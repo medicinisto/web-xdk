@@ -381,7 +381,7 @@ registerComponent('layer-message-viewer', {
       let node = this;
       while (node && node.parentNode) {
         lastNode = node;
-        node = node.parentNode.closest('layer-message-viewer');
+        node = this.closest.call(node.parentNode, 'layer-message-viewer'); // IE 11 may not have parentNode.closest()
       }
       return lastNode;
     },

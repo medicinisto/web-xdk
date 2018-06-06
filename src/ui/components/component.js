@@ -1719,11 +1719,12 @@ const standardClassMethods = {
    * @return {HTMLElement}
    */
   closest: function closest(selector) {
+    const matches = this.matches || this.msMatchesSelector;
     if (Element.prototype.closest) return Element.prototype.closest.call(this, selector);
     let el = this;
     if (!document.documentElement.contains(el)) return null;
     do {
-      if (el.matches(selector)) return el;
+      if (matches.call(el, selector)) return el; // Damned IE 11
       el = el.parentElement || el.parentNode;
     } while (el !== null && el.nodeType === 1);
     return null;

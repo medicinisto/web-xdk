@@ -18,7 +18,7 @@ import MessageViewMixin from '../message-view-mixin';
 import './layer-audio-message-model';
 import './layer-audio-message-large-view';
 import Clickable from '../../mixins/clickable';
-import { logger } from '../../../utils';
+import { logger, hasLocalStorage } from '../../../utils';
 
 registerComponent('layer-audio-message-view', {
   mixins: [MessageViewMixin, Clickable],
@@ -150,6 +150,11 @@ registerComponent('layer-audio-message-view', {
     onCreate() {
       this.isHeightAllocated = false;
       this.properties.audio = new Audio();
+      this.properties.audio.loop = false;
+
+      if (hasLocalStorage && global.localStorage.getItem('LAYER-AUDIO-VOLUME')) {
+        this.properties.audio.volume = global.localStorage.getItem('LAYER-AUDIO-VOLUME');
+      }
       this.properties.audio.preload = 'metadata';
       this.properties.audio.addEventListener('ended', this.resetAudio.bind(this));
       this.properties.audio.addEventListener('error', this.handleError.bind(this));
@@ -336,6 +341,11 @@ registerComponent('layer-audio-message-view', {
         this.properties.audio.currentTime = this.model.currentTime;
         this.renderBufferBar();
         this.renderProgressBar();
+
+        if (hasLocalStorage && global.localStorage.getItem('LAYER-AUDIO-VOLUME')) {
+          this.properties.audio.volume = global.localStorage.getItem('LAYER-AUDIO-VOLUME');
+        }
+
         this.playing = true;
       }
     },

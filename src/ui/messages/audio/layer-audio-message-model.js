@@ -100,7 +100,7 @@ class AudioModel extends MessageTypeModel {
 
       // Setup the MessagePart
       const body = this.initBodyWithMetadata([
-        'sourceUrl', 'previewUrl', 'album', 'artist', 'duration',
+        'sourceUrl', 'previewUrl', 'album', 'artist',
         'genre', 'title', 'mimeType', 'previewWidth', 'previewHeight',
         'duration', 'size',
       ]);
@@ -377,6 +377,14 @@ AudioModel.prototype.currentTime = null;
  * @protected
  */
 AudioModel.prototype.transcript = null;
+
+/**
+ * Place for various views to store and share a single Audio player HTML Element.
+ *
+ * @property {Audio} player
+ * @protected
+ */
+AudioModel.prototype.player = null;
 
 
 MessageTypeModel.DefineFileBehaviors({
