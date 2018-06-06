@@ -73,7 +73,7 @@
 
 import ClientAuth from './client-authenticator';
 import TypingIndicatorListener from './typing-indicators/typing-indicator-listener';
-import Util from '../utils';
+import Util, { generateUUID } from '../utils';
 import version from '../version';
 import logger from '../utils/logger';
 import Root from './root';
@@ -557,6 +557,8 @@ Client.prototype.telemetryEnabled = true;
  * @private
  */
 Client.prototype.telemetryMonitor = null;
+
+Client.prototype._tabId = generateUUID();
 
 /**
  * Any  Message that is part of a Query's results are kept in memory for as long as it

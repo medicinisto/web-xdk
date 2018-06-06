@@ -39,6 +39,7 @@ import Identity from './models/identity';
 import { XHRSyncEvent, WebsocketSyncEvent } from './sync-event';
 import { LOCALSTORAGE_KEYS, ACCEPT } from '../constants';
 import Util, { xhr, logger, defer, hasLocalStorage } from '../utils';
+import version from '../version';
 
 const MAX_XHR_RETRIES = 3;
 
@@ -1074,6 +1075,9 @@ class ClientAuthenticator extends Root {
     if (!headers.accept) headers.accept = ACCEPT;
 
     if (!headers['content-type']) headers['content-type'] = 'application/json';
+
+    if (!headers['layer-xdk-version']) headers['layer-xdk-version'] = version;
+    if (!headers['client-id']) headers['client-id'] = this._tabId;
   }
 
   /**

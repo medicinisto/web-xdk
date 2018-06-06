@@ -47,7 +47,7 @@ registerComponent('layer-choice-label-message-view', {
       this.nodes.label.innerHTML = this.model.label;
       const choice = this.model.selectedChoice;
       this.nodes.choice.innerHTML = choice ? choice.text : '';
-      this.toggleClass('layer-choice-no-selection', !choice);
+      this.messageViewer.toggleClass('layer-choice-no-selection', !choice);
     },
   },
 });

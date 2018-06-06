@@ -1,5 +1,11 @@
 # Web XDK Change Log
 
+## 4.0.4
+
+* WEB-1796: Fixes Image Orientation for rotated images sent via Safari
+* WEB-1785: Fixes rendering of Product Choices that have no selections
+* WEB-1782: Adds headers to help server identify clients causing problems
+
 ## 4.0.3
 
 * Fixes identity metadata so that it is always an Object even when there is no value in the object

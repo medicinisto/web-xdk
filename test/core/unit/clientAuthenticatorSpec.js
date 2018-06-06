@@ -461,6 +461,7 @@ describe("The Client Authenticator Class", function() {
             it("Should request a nonce if there is no sessionToken", function () {
                 // Pretest
                 expect(client.sessionToken).toEqual("");
+                client._tabId = 'frodo';
 
                 // Run
                 client.connect("FrodoTheDodo");
@@ -473,7 +474,9 @@ describe("The Client Authenticator Class", function() {
                     url: client.url + "/nonces",
                     requestHeaders: {
                         "content-type": "application/json",
-                        "accept": "application/vnd.layer+json; version=3.0"
+                        "accept": "application/vnd.layer+json; version=3.0",
+                        'layer-xdk-version': Layer.version.replace(/-.*$/, ''),
+                        'client-id': 'frodo'
                     },
                     method: "POST"
                 });

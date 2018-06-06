@@ -226,14 +226,14 @@ describe("The Websocket Socket Manager Class", function() {
         it("Should use the correct default url", function() {
            websocketManager._socket = null;
            websocketManager.connect();
-           expect(websocketManager._socket.url).toEqual('wss://websockets.layer.com/?session_token=sessionToken');
+           expect(websocketManager._socket.url).toEqual('wss://websockets.layer.com/?session_token=sessionToken&client-id=' + client._tabId + "&layer-xdk-version=" + Layer.version.replace(/-.*/, ''));
         });
 
         it("Should allow customization of the websocket url", function() {
             client.websocketUrl = 'wss://staging-websockets.layer.com';
             websocketManager._socket = null;
             websocketManager.connect();
-            expect(websocketManager._socket.url).toEqual('wss://staging-websockets.layer.com/?session_token=sessionToken');
+        expect(websocketManager._socket.url).toEqual('wss://staging-websockets.layer.com/?session_token=sessionToken&client-id=' + client._tabId + "&layer-xdk-version=" + Layer.version.replace(/-.*/, ''));
         });
 
         it("Should be subscribed to websocket events", function(done) {

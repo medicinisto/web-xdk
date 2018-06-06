@@ -269,26 +269,18 @@ registerComponent('layer-image-message-view', {
           const options = {
             canvas: true,
             orientation: this.model.orientation,
+            width: this.model.orientation >= 5 ? this.model.previewHeight : this.model.previewWidth,
+            height: this.model.orientation >= 5 ? this.model.previewWidth : this.model.previewHeight,
           };
 
-          if (data.imageHead && data.exif) {
+          if (!this.model.orientation && data.imageHead && data.exif) {
             options.orientation = data.exif.get('Orientation') || 1;
           }
 
           // Write the image to a canvas with the specified orientation
           ImageManager(blob, (canvas) => {
             if (canvas instanceof HTMLElement) {
-            /*  if (width < minWidth && height < minHeight) {
-                if (width > height) {
-                  canvas = ImageManager.scale(canvas, { minWidth });
-                } else {
-                  canvas = ImageManager.scale(canvas, { minHeight });
-                }
-              }
-*/
-
               this.nodes.image.src = canvas.toDataURL();
-              // if (canvas.width >= this.minWidth) this.parentComponent.style.width = canvas.width + 'px';
               this.isHeightAllocated = true;
             } else {
               logger.error(canvas);

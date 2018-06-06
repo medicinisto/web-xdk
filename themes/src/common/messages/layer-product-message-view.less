@@ -52,9 +52,16 @@ layer-product-message-view {
   }
 
   .layer-card-product-choices {
-    padding: 12px 12px;
+    padding: 0px 12px;
     color: @color-black;
     font-size: @font-large;
+
+    layer-message-viewer:first-child {
+      margin-top: 14px;
+    }
+    layer-message-viewer:last-child {
+      margin-bottom: 14px;
+    }
 
     layer-message-viewer {
       margin-top: 2px;

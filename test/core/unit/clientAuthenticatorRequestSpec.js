@@ -469,7 +469,9 @@ describe("The Client Authenticator Requests", function() {
             expect(client._nonsyncXhr).not.toHaveBeenCalled();
 
             jasmine.clock().tick(1001);
-            expect(client._nonsyncXhr).toHaveBeenCalledWith({url: "test", headers: {}}, callback, 3);
+            expect(client._nonsyncXhr).toHaveBeenCalledWith({
+                url: "test",
+                headers: {}}, callback, 3);
         });
 
         it("Should stop retrying", function() {
@@ -566,7 +568,9 @@ describe("The Client Authenticator Requests", function() {
             expect(headers).toEqual({
                 "hey-ho": "Doh",
                 "content-type": "application/json",
-                accept: "application/vnd.layer+json; version=3.0"
+                accept: "application/vnd.layer+json; version=3.0",
+                'layer-xdk-version': Layer.version.replace(/-.*$/, ''),
+                'client-id': client._tabId
             });
         });
 
@@ -581,7 +585,9 @@ describe("The Client Authenticator Requests", function() {
             expect(headers).toEqual({
                 "hey-ho": "Doh",
                 "content-type": "application/json",
-                accept: "application/vnd.layer+json; version=3.0"
+                accept: "application/vnd.layer+json; version=3.0",
+                'layer-xdk-version': Layer.version.replace(/-.*$/, ''),
+                'client-id': client._tabId
             });
         });
 
@@ -595,7 +601,9 @@ describe("The Client Authenticator Requests", function() {
             // Posttest
             expect(headers).toEqual({
                 "content-type": "text/mountain",
-                accept: "application/vnd.layer+json; version=3.0"
+                accept: "application/vnd.layer+json; version=3.0",
+                'layer-xdk-version': Layer.version.replace(/-.*$/, ''),
+                'client-id': client._tabId
             });
         });
     });
