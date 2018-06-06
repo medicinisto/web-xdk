@@ -195,8 +195,8 @@ module.exports = {
       if (this.sessionToken && !headers.Authorization) {
         headers.authorization = 'Layer session-token="' + this.sessionToken + '"'; // eslint-disable-line
       }
-      // if (!headers['layer-xdk-version']) headers['layer-xdk-version'] = version;
-      // if (!headers['client-id']) headers['client-id'] = this._tabId;
+      if (!headers['layer-xdk-version']) headers['layer-xdk-version'] = version;
+      if (!headers['client-id']) headers['client-id'] = this._tabId;
     },
 
     /**

@@ -144,7 +144,7 @@ class SocketManager extends Root {
     this._lastCounter = -1;
 
     // Get the URL and connect to it
-    const url = `${client.websocketUrl}/?session_token=${client.sessionToken}`;
+    const url = `${client.websocketUrl}/?session_token=${client.sessionToken}&client-id=${client._tabId}&layer-xdk-version=${version}`;
 
     logger.info('Websocket-Manager: Connecting');
 
