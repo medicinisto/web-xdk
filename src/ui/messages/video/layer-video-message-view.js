@@ -1,15 +1,15 @@
 /**
- * UI for an Audio Message
+ * UI for an Video Message
  *
  * ### Importing
  *
  * Not included with the standard build. Import using:
  *
  * ```
- * import '@layerhq/web-xdk/ui/messages/audio/layer-audio-message-view';
+ * import '@layerhq/web-xdk/ui/messages/video/layer-video-message-view';
  * ```
  *
- * @class Layer.UI.messages.AudioMessageView
+ * @class Layer.UI.messages.VideoMessageView
  * @mixin Layer.UI.messages.MessageViewMixin
  * @extends Layer.UI.Component
  */

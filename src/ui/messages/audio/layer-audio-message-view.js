@@ -50,7 +50,11 @@ registerComponent('layer-audio-message-view', {
     },
 
     /**
-     * An `<audio />` node that is used to play the content but which is not inserted into the DOM
+     * An native JS Audio object that is used to play the content
+     *
+     * ```
+     * view.audio.currentTime = 0;
+     * ```
      *
      * @property {HTMLElement} audio
      */
@@ -60,6 +64,7 @@ registerComponent('layer-audio-message-view', {
      * Get/Set whether the player is playing its content.
      *
      * You can toggle playback on/off with:
+     *
      * ```
      * view.playing = !view.playing;
      * ```
@@ -72,25 +77,13 @@ registerComponent('layer-audio-message-view', {
         if (value) {
           const result = this.properties.audio.play();
           if (typeof Promise !== 'undefined' && result instanceof Promise) {
-            result.catch((err) => {
-              logger.error('LAYER-AUDIO-MESSAGE-VIEW: Play failed: ', err);
-              this.properties.playButton.classList.add('layer-play-button');
-              this.properties.playButton.classList.remove('layer-pause-button');
-            });
+            result.catch(this.onError.bind(this));
           }
-          this.properties.playButton.classList.remove('layer-play-button');
-          this.properties.playButton.classList.add('layer-pause-button');
-
-          const players = document.querySelectorAll('audio');
-          for (let i = 0; i < players.length; i++) players[i].pause();
-          const audioMessages = document.querySelectorAll('layer-audio-message-view');
-          for (let i = 0; i < audioMessages.length; i++) {
-            if (audioMessages[i] !== this) audioMessages[i].playing = false;
-          }
+          this.messageViewer.classList.add('layer-audio-playing');
+          this.onPlaying();
         } else {
           this.properties.audio.pause();
-          this.properties.playButton.classList.add('layer-play-button');
-          this.properties.playButton.classList.remove('layer-pause-button');
+          this.messageViewer.classList.remove('layer-audio-playing');
         }
       },
       get() {
@@ -108,7 +101,7 @@ registerComponent('layer-audio-message-view', {
     },
 
     /**
-     * Minimum width allowed for a preview image in px
+     * Minimum width allowed for a preview image in px -- varies based on whether there is a preview image or not.
      *
      * @property {Number} [minWidth=192]
      */
@@ -147,17 +140,32 @@ registerComponent('layer-audio-message-view', {
       this.renderProgressBar();
       this.renderBufferBar();
     },
-    onCreate() {
-      this.isHeightAllocated = false;
-      this.properties.audio = new Audio();
-      this.properties.audio.loop = false;
 
+    /*
+     * Lifecycle method:
+     *
+     * * Initialization code
+     * * Setup the audio player
+     * * Wire up event handlers
+     */
+    onCreate() {
+      // Height won't be known until we deal with the preview image
+      this.isHeightAllocated = false;
+
+      // Create the audio player
+      this.properties.audio = new Audio();
+
+      // Setup the audio player's volume from localStorage
       if (hasLocalStorage && global.localStorage.getItem('LAYER-AUDIO-VOLUME')) {
         this.properties.audio.volume = global.localStorage.getItem('LAYER-AUDIO-VOLUME');
       }
+
+      // Set it to load enough so that we know if the audio is valid or not
       this.properties.audio.preload = 'metadata';
+
+      // Wire up the event handlers
       this.properties.audio.addEventListener('ended', this.resetAudio.bind(this));
-      this.properties.audio.addEventListener('error', this.handleError.bind(this));
+      this.properties.audio.addEventListener('error', this.onError.bind(this));
       this.properties.audio.addEventListener('timeupdate', this.renderProgressBar.bind(this));
       this.properties.audio.addEventListener('timeupdate', this.renderBufferBar.bind(this));
       this.properties.audio.addEventListener('progress', this.renderBufferBar.bind(this));
@@ -204,8 +212,13 @@ registerComponent('layer-audio-message-view', {
       this.parentComponent.customControls = playButton;
       this.addClickHandler('play-button', playButton, this.onPlayClick.bind(this));
     },
+
+
     onAfterCreate() {
-      this.model.getSourceUrl(url => (this.properties.audio.src = url));
+      const player = this.properties.audio;
+      this.model.getSourceUrl(url => (player.src = url));
+
+      this._handleExpiringUrls();
       this._setupPlayButton();
       this._setupPreview();
       this._resizeContent();
@@ -241,15 +254,15 @@ registerComponent('layer-audio-message-view', {
       }
     },
 
-    // See parent method
+    /*
+     * Resize content on attaching this to the document, if needed; onAfterCreate already tried to do this.
+     */
     onAttach() {
-      // resizeContent should already have triggered, but if onAfterCreate was called when the parent
-      // was not yet added to the DOM, then it will need to be resolved here.
       if (!this.isHeightAllocated) this._resizeContent();
     },
 
     /**
-     * When the play button is clicked, toggle playback... and make sure that the Action Handler is not triggered.
+     * When the play button is clicked, toggle playback.
      *
      * Insure that any other audio players have stopped
      *
@@ -260,8 +273,12 @@ registerComponent('layer-audio-message-view', {
      * @protected
      */
     onPlayClick(evt) {
+
+      // Prevent the action handler from triggering and showing Large Audio Message
       evt.preventDefault();
       evt.stopPropagation();
+
+      // Toggle playing (property setter will play/pause)
       this.playing = !this.playing;
     },
 
@@ -279,18 +296,6 @@ registerComponent('layer-audio-message-view', {
     runAction() {
       this.playing = false;
       this.model.currentTime = this.properties.audio.currentTime;
-    },
-
-    /**
-     * If the Audio File has problems loading (or is not a proper audio file) render the playButton as an unplayable button.
-     *
-     * @method handleError
-     * @param {Event} evt
-     * @protected
-     */
-    handleError(evt) {
-      logger.error('LAYER-AUDIO-MESSAGE-VIEW: ', evt);
-      this.properties.playButton.className = 'layer-not-playable-button';
     },
 
     /**
@@ -377,6 +382,75 @@ registerComponent('layer-audio-message-view', {
         this.properties.audio.pause();
         delete this.properties.audio;
       }
+    },
+
+    /**
+     * If the Audio File has problems loading (or is not a proper audio file) render the playButton as an unplayable button.
+     *
+     * @method onError
+     * @param {Event} evt
+     * @protected
+     */
+    onError(err) {
+      if (this._internalState.onDetachCalled) return;
+
+      this.messageViewer.classList.add('layer-audio-not-playable');
+
+      // If the source url has expired, then these would not be equal, and calling getSourceUrl will trigger our model change event we setup above
+      this.model.getSourceUrl((url) => {
+        if (url !== this.properties.audio.src && url + '/' !== this.properties.audio.src) {
+          this.messageViewer.classList.remove('layer-audio-not-playable');
+        } else {
+          logger.error('LAYER-AUDIO-MESSAGE-VIEW: Play failed: ', err);
+        }
+      });
+    },
+
+    /**
+     * Whenever playback begins, attempt to turn off all other audio players
+     *
+     * @method onPlaying
+     */
+    onPlaying() {
+      const players = document.querySelectorAll('audio');
+      for (let i = 0; i < players.length; i++) players[i].pause();
+      const audioMessages = document.querySelectorAll('layer-audio-message-view, layer-audio-message-large-view');
+      for (let i = 0; i < audioMessages.length; i++) {
+        if (audioMessages[i] !== this) audioMessages[i].playing = false;
+      }
+    },
+
+    /**
+     * Any time a model change occurs that causes the url to change (content has expired and a new expiring url requested), restore the player with the new url.
+     *
+     * @method _handleExpiringUrls
+     * @private
+     */
+    _handleExpiringUrls() {
+      const player = this.properties.audio;
+      this.model.on('message-type-model:change', () => {
+        if (this.model.streamUrl && this.model.streamUrl !== player.src) {
+          const wasPlaying = !player.paused;
+          const resumeTime = player.currentTime;
+
+          // When done seeking our playback position, call play
+          const onSeeked = () => {
+            player.removeEventListener('seeked', onSeeked);
+            if (wasPlaying) player.play();
+          };
+
+          // When the new url's data has been loaded, resume playback from where we left off
+          const onLoaded = () => {
+            player.removeEventListener('loadeddata', onLoaded);
+            player.addEventListener('seeked', onSeeked);
+            player.currentTime = resumeTime;
+          };
+          player.addEventListener('loadeddata', onLoaded);
+
+          // Update the player's url
+          player.src = this.model.streamUrl;
+        }
+      });
     },
   },
 });

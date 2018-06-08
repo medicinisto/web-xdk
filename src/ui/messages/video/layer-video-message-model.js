@@ -133,6 +133,7 @@ class VideoModel extends MessageTypeModel {
   parseModelChildParts({ changes = [], isEdit = false }) {
     super.parseModelChildParts({ changes, isEdit });
     this.transcript = this.childParts.filter(part => part.role === 'transcript')[0] || null;
+    if (this.source) this.streamUrl = this.source.url;
   }
 
   /**
@@ -316,6 +317,14 @@ class VideoModel extends MessageTypeModel {
     if (this.__height) return this.__height;
     if (this.__width && this.__aspectRatio) return this.__width / this.__aspectRatio;
     return 0;
+  }
+
+  __updateStreamUrl(newValue, oldValue) {
+    this._triggerAsync('message-type-model:change', {
+      property: 'streamUrl',
+      oldValue,
+      newValue,
+    });
   }
 
   /**

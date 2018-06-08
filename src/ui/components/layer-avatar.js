@@ -86,7 +86,7 @@ registerComponent('layer-avatar', {
      *
      * *Note*: Use {@link #users} to look at what identities are being rendered, do not use `item` to check what is being rendered.
      *
-     * @property {Layer.Core.Core} [item=null]
+     * @property {Layer.Core.Root} [item=null]
      */
     item: {
       set(value) {

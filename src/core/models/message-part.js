@@ -161,6 +161,8 @@ class MessagePart extends Root {
   }
 
   destroy() {
+    clearTimeout(this._fetchStreamTimeoutId);
+
     if (this.__url) {
       URL.revokeObjectURL(this.__url);
       this.__url = null;
@@ -297,11 +299,14 @@ class MessagePart extends Root {
    * @method fetchStream
    * @param {Function} [callback]
    * @param {Mixed} callback.url
+   * @param {Boolean} [forceRefresh=false]  To ignore a valid url and force it to get a new one, set this to true
    * @return {Layer.Core.Content} this
    */
-  fetchStream(callback) {
+  fetchStream(callback, forceRefresh = false) {
+    clearTimeout(this._fetchStreamTimeoutId);
+
     // Locally generate External Content
-    if (this.__url) return callback(this.__url, callback);
+    if (!forceRefresh && this.__url) return callback(this.__url, callback);
 
     if (this.body) {
       this.url = typeof this.body === 'string' ?
@@ -313,7 +318,7 @@ class MessagePart extends Root {
     if (!this._content) throw new Error(ErrorDictionary.contentRequired);
 
     // Expired external content
-    if (this._content.isExpired()) {
+    if (forceRefresh || this._content.isExpired()) {
       this._content.refreshContent(url => this._fetchStreamComplete(url, callback));
     } else {
       this._fetchStreamComplete(this._content.downloadUrl, callback);
@@ -332,6 +337,8 @@ class MessagePart extends Root {
     });
 
     if (callback) callback(url);
+    const f = () => {};
+    this._fetchStreamTimeoutId = setTimeout(this.fetchStream.bind(this, f, true), this._content.expiration - new Date() - 10000);
   }
 
   /**

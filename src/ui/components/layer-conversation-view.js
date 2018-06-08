@@ -57,13 +57,14 @@
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.HasQuery
  * @mixin Layer.UI.mixins.FileDropTarget
+ * @mixin Layer.UI.mixins.WidthTracker
  */
 import { client, conversationViewWidths } from '../../settings';
 import Core from '../../core/namespace';
 import UIConstants from '../constants';
 import { registerComponent } from './component';
 import HasQuery from '../mixins/has-query';
-import Throttler from '../mixins/throttler';
+import WidthTracker from '../mixins/width-tracker';
 import Utils from '../../utils';
 
 import './layer-message-list';
@@ -71,7 +72,7 @@ import './layer-compose-bar';
 import './layer-typing-indicator';
 
 registerComponent('layer-conversation-view', {
-  mixins: [HasQuery, 'FocusOnKeydown', 'FileDropTarget', Throttler],
+  mixins: [HasQuery, 'FocusOnKeydown', 'FileDropTarget', WidthTracker],
   template: `
     <layer-replaceable-content name='conversationViewTop' layer-id='top' class='layer-conversation-view-top'>
     </layer-replaceable-content>
@@ -744,18 +745,24 @@ registerComponent('layer-conversation-view', {
      * > Any measure of width by the browser uses Virtual Pixels rather than Actual Pixels.  So,
      * > an 800px wide device may still show up as only 360px wide depending on Viewport and other settings.
      *
+     * Code for managing width classes is in width-tracker.js mixin
+     *
      * @property {Number} width
      */
     width: {
       set(newValue, oldValue) {
-        this.toggleClass('layer-conversation-view-width-tiny', newValue < conversationViewWidths.maxTiny);
-        this.toggleClass('layer-conversation-view-width-small',
-          newValue >= conversationViewWidths.maxTiny && newValue < conversationViewWidths.maxSmall);
-        this.toggleClass('layer-conversation-view-width-medium',
-          newValue >= conversationViewWidths.maxSmall && newValue < conversationViewWidths.maxMedium);
-        this.toggleClass('layer-conversation-view-width-large', newValue >= conversationViewWidths.maxMedium);
         if (this.nodes.list) this.nodes.list.width = newValue;
       },
+    },
+
+    widthSmallStart: {
+      value: conversationViewWidths.maxTiny,
+    },
+    widthMediumStart: {
+      value: conversationViewWidths.maxSmall,
+    },
+    widthLargeStart: {
+      value: conversationViewWidths.maxMedium,
     },
 
     /**
@@ -858,23 +865,7 @@ registerComponent('layer-conversation-view', {
     // Lifecycle method; wire up to detect UI Size changes;
     // TODO: make tracking width a Mixin behavior to be shared with other components
     onCreate() {
-      this.properties._handleResize = this._handleResize.bind(this);
-      window.addEventListener('resize', this.properties._handleResize);
       this.addEventListener('layer-compose-bar-focus', this._adjustForSoftKeyboard.bind(this));
-    },
-
-    // onAfterCreate() {
-    //   if (this.conversation) this._setupConversation();
-    // },
-
-    // Lifecycle method for initializing the width
-    onAttach() {
-      this.width = this.clientWidth;
-    },
-
-    // Cleanup any global event handlers
-    onDestroy() {
-      window.removeEventListener('resize', this.properties._handleResize);
     },
 
     _adjustForSoftKeyboard() {
@@ -883,26 +874,6 @@ registerComponent('layer-conversation-view', {
           this.nodes.list.scrollToBottom(200);
         }
       }, 250);
-    },
-
-    /**
-     * Any time there is a change that could impact the width, update the width property.
-     *
-     * @method _handleResize
-     * @private
-     */
-    _handleResize() {
-      this._throttler(this._updateWidth.bind(this));
-    },
-
-    /**
-     * Update the width property based on browser size changes
-     *
-     * @method _updateWidth
-     * @private
-     */
-    _updateWidth() {
-      this.width = this.clientWidth;
     },
 
     /**

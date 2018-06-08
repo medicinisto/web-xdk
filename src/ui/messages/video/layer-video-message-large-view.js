@@ -67,28 +67,38 @@ registerComponent('layer-video-message-large-view', {
       return VideoModel.LabelSingular;
     },
 
+    /*
+     * Height will be allocated once we sort out preview images; initialize it to false
+     */
     onCreate() {
       this.isHeightAllocated = false;
     },
 
-    // Setup the player and poster once properties are available.
+    /*
+     * Setup the player and poster once properties are available.
+     */
     onAfterCreate() {
-      this.nodes.player.autoplay = this.autoplay;
+      const player = this.nodes.player;
+
+      player.autoplay = this.autoplay;
 
       // If the model indicates we left off somewhere when previously playing this,
       // resume playback once the data is loaded.
-      this.nodes.player.addEventListener('loadeddata', () => {
+      player.addEventListener('loadeddata', () => {
         if (this.model.currentTime) {
-          this.nodes.player.currentTime = this.model.currentTime;
+          player.currentTime = this.model.currentTime;
         }
       });
 
       // Setup the player's source url
-      this.model.getSourceUrl(url => (this.nodes.player.src = url));
+      this.model.getSourceUrl(url => (player.src = url));
+
+      // Handle expiring urls
+      this._handleExpiringUrls();
 
       // Setup the player's preview/file icon
       if (this.model.preview || this.model.previewUrl) {
-        this.model.getPreviewUrl(url => (this.nodes.player.poster = url));
+        this.model.getPreviewUrl(url => (player.poster = url));
       }
 
       this._resizeContent();
@@ -122,9 +132,11 @@ registerComponent('layer-video-message-large-view', {
       }
     },
 
+    /*
+     * resizeContent should already have triggered, but if onAfterCreate was called when the parent
+     * was not yet added to the DOM, then it will need to be resolved here.
+     */
     onAttach() {
-      // resizeContent should already have triggered, but if onAfterCreate was called when the parent
-      // was not yet added to the DOM, then it will need to be resolved here.
       if (!this.isHeightAllocated) this._resizeContent();
     },
 
@@ -158,6 +170,43 @@ registerComponent('layer-video-message-large-view', {
       ];
 
       nodes.forEach((node, index) => (node.innerHTML = this.model.getMetadataAtIndex(index)));
+    },
+
+    /**
+     * If the URL expires, we should get a new url, and need to load it into the player.
+     *
+     * Message Part automatically calls to refresh this url before it expires, which triggers a model change event.
+     *
+     * We need to resume playback from wherever it is we left off...
+     *
+     * @method _handleExpiringUrls
+     * @private
+     */
+    _handleExpiringUrls() {
+      const player = this.nodes.player;
+      this.model.on('message-type-model:change', () => {
+        if (this.model.streamUrl && this.model.streamUrl !== player.src) {
+          const wasPlaying = !player.paused;
+          const resumeTime = player.currentTime;
+
+          // Once seek has completed, resume playback
+          const onSeeked = () => {
+            player.removeEventListener('seeked', onSeeked);
+            if (wasPlaying) player.play();
+          };
+
+          // Once data is loaded, set the resume time from where we left off
+          const onLoaded = () => {
+            player.removeEventListener('loadeddata', onLoaded);
+            player.addEventListener('seeked', onSeeked);
+            player.currentTime = resumeTime;
+          };
+          player.addEventListener('loadeddata', onLoaded);
+
+          // Update the source and kick off the above events
+          player.src = this.model.streamUrl;
+        }
+      });
     },
   },
 });

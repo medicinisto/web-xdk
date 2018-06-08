@@ -60,7 +60,8 @@ layer-dialog.layer-dialog-hiding {
 
 .layer-conversation-view-width-small, .layer-conversation-view-width-tiny {
   layer-dialog {
-    padding: 2px 2px;
+    padding: 0px;
+    background-color: @color-g1;
   }
 }
 
@@ -96,4 +97,8 @@ layer-dialog {
   .layer-dialog-content-container > .layer-replaceable-inner > layer-message-viewer > layer-title-bar {
     display: none;
   }
+}
+
+layer-dialog > .layer-dialog-inner > .layer-dialog-content-container > .layer-replaceable-inner > :first-child {
+  flex-grow: 1;
 }

@@ -405,7 +405,9 @@ describe("The Client CAPI Auth Mixin", function() {
                 url: client.url + "/nonces",
                 requestHeaders: {
                     "content-type": "application/json",
-                    "accept": "application/vnd.layer+json; version=3.0"
+                    "accept": "application/vnd.layer+json; version=3.0",
+                    "layer-xdk-version": Layer.version.replace(/-.*/, ''),
+                    "client-id": client._tabId,
                 },
                 method: "POST"
             });

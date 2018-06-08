@@ -1,6 +1,5 @@
 /*
  *
- * @class
  * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';

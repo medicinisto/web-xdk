@@ -537,9 +537,9 @@ describe('Audio Message Components', function() {
       });
 
       it("Should show the broken play button if content is not playable", function() {
-        ui.properties.audio.src = 'https://google.com';
+        ui.model.sourceUrl = ui.properties.audio.src = 'https://google.com';
         jasmine.clock().tick(200);
-        expect(ui.properties.playButton.classList.contains('layer-not-playable-button')).toBe(true);
+        expect(ui.messageViewer.classList.contains('layer-audio-not-playable')).toBe(true);
       });
 
       it("Should render progress", function() {
@@ -558,7 +558,7 @@ describe('Audio Message Components', function() {
       it("Should handle setting playing to true and false", function() {
         // Pretest
         expect(ui.playing).toBe(false);
-        expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(true);
+        expect(el.classList.contains('layer-audio-playing')).toBe(false);
         expect(ui.properties.audio.paused).toBe(true);
 
         // Run 1
@@ -566,17 +566,14 @@ describe('Audio Message Components', function() {
 
         // Posttest 1
         expect(ui.playing).toBe(true);
-        expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(false);
-        expect(ui.properties.playButton.classList.contains('layer-pause-button')).toBe(true);
-        //expect(ui.properties.audio.paused).toBe(false);
+        expect(el.classList.contains('layer-audio-playing')).toBe(true);
 
         // Run 2
         ui.playing = false;
 
         // Posttest 2
         expect(ui.playing).toBe(false);
-        expect(ui.properties.playButton.classList.contains('layer-play-button')).toBe(true);
-        expect(ui.properties.playButton.classList.contains('layer-pause-button')).toBe(false);
+        expect(el.classList.contains('layer-audio-playing')).toBe(false);
       });
 
       it("Should pause playback and open Large Message View on tap", function() {

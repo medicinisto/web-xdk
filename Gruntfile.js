@@ -229,7 +229,7 @@ module.exports = function (grunt) {
         options: {
           'builtin-classes': false,
           'warnings': ['-no_doc', '-dup_member', '-link_ambiguous', '-cat_class_missing'],
-          'external': ['HTMLTemplateElement', 'Websocket', 'Blob', 'KeyboardEvent', 'DocumentFragment', 'IDBVersionChangeEvent', 'IDBKeyRange', 'IDBDatabase', 'File', 'Canvas', 'CustomEvent', 'Set', 'Uint8Array'],
+          'external': ['HTMLTemplateElement', 'Websocket', 'Blob', 'KeyboardEvent', 'DocumentFragment', 'IDBVersionChangeEvent', 'IDBKeyRange', 'IDBDatabase', 'File', 'Canvas', 'CustomEvent', 'Set', 'Uint8Array', 'Audio'],
           'title': 'Layer Web XDK - API Documentation',
           'categories': ['jsduck-config/categories.json'],
           'head-html': HTML_HEAD,
@@ -629,10 +629,12 @@ module.exports = function (grunt) {
           const header = script.match(/\/\*\*[\s\S]*?\*\s*(.*)/);
 
           var classNameMatches = script.match(/@class (.*)/m);
-          components[reactComponentName] = {
-            description: header ? header[1] : '',
-            duckName: classNameMatches ? classNameMatches[1] : '',
-          };
+          if (classNameMatches) {
+            components[reactComponentName] = {
+              description: header ? header[1] : '',
+              duckName: classNameMatches ? classNameMatches[1] : '',
+            };
+          }
         }
       });
     });
@@ -884,14 +886,14 @@ module.exports = function (grunt) {
 
   grunt.registerTask("retest", ["connect:saucelabs", "saucelabs-jasmine:smalltests"]);
 
-  grunt.registerTask('docs', ['debug', /*'jsducktemplates',*/ 'jsduck-adapters', 'jsduck', 'jsduckfixes']);
+  grunt.registerTask('docs', ['debug', 'jsduck-adapters', 'jsduck', 'jsduckfixes']);
 
   // Basic Code/theme building
   // We are not going to publish lib-es6 as this risks importing of files from both lib and lib-es6 by accident and getting multiple definitions of classes
   grunt.registerTask('debug', [
     'version', 'remove:libes6', 'webcomponents', 'custom_copy:src', 'remove:libes5',
     'custom_babel', 'remove:lib', 'move:lib',
-    'copy:npm', 'copy:npmthemes','fix-npm-package', 'notify:npm',
+    'copy:npm', 'theme', 'copy:npmthemes','fix-npm-package', 'notify:npm',
     'browserify:build', 'notify:browserify', "generate-quicktests", "generate-smalltests"]);
 
   grunt.registerTask('build', ['remove:build', 'eslint:build', 'debug', 'uglify', 'theme', 'cssmin', 'copy:npmthemes']);

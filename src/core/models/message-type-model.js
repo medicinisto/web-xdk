@@ -414,6 +414,7 @@ class MessageTypeModel extends Root {
     part.mimeAttributes.role = role;
     if (this.part) part.mimeAttributes['parent-node-id'] = this.part.nodeId;
     if (this.childParts.indexOf(part) === -1) this.childParts.push(part);
+    part.on('messageparts:change', this._handlePartChanges, this);
   }
 
   /**
@@ -648,8 +649,8 @@ class MessageTypeModel extends Root {
   /**
    * Parse child parts for Message Parts defined using `DefineFileBehaviors`
    *
-   * @method
-   * @private _parseModelChildPartForFileBehavior
+   * @method _parseModelChildPartForFileBehavior
+   * @private
    * @param {Object} fileBehaviorDef
    */
   _parseModelChildPartForFileBehavior(fileBehaviorDef) {

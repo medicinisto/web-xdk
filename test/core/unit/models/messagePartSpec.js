@@ -390,6 +390,31 @@ describe("The MessageParts class", function() {
         expect(part._content.refreshContent).not.toHaveBeenCalled();
         expect(part._fetchStreamComplete).toHaveBeenCalled();
       });
+
+      it("Should return existing url if it exists", function() {
+        part._content.expiration.setHours(part._content.expiration.getHours() + 1);
+        var url;
+        part.fetchStream(function(data) {url = data;});
+        expect(url).toEqual('fred');
+      });
+
+      it("Should return existing url if it exists", function() {
+        spyOn(part._content, "refreshContent");
+        part._content.expiration.setHours(part._content.expiration.getHours() + 1);
+        var url;
+        part.fetchStream(function(data) {url = data;});
+        expect(url).toEqual('fred');
+        expect(part._content.refreshContent).not.toHaveBeenCalled();
+      });
+
+      it("Should ignore existing url if forceRefresh used", function() {
+        spyOn(part._content, "refreshContent");
+        part._content.expiration.setHours(part._content.expiration.getHours() + 1);
+        var url;
+        part.fetchStream(function(data) {url = data;}, true);
+        expect(url).toEqual(undefined);
+        expect(part._content.refreshContent).toHaveBeenCalled();
+      });
     });
 
     describe("The _fetchStreamComplete() method", function() {
@@ -456,6 +481,18 @@ describe("The MessageParts class", function() {
         var spy = jasmine.createSpy("callback");
         part._fetchStreamComplete("hey", spy);
         expect(spy).toHaveBeenCalledWith("hey");
+      });
+
+      it("Should schedule call to refresh content before it expires", function() {
+        jasmine.clock().install();
+        spyOn(part, "fetchStream");
+        part._content.expiration.setHours(part._content.expiration.getHours() + 1);
+        part._fetchStreamComplete("hey");
+        jasmine.clock().tick(part._content.expiration - new Date() - 10001)
+        expect(part.fetchStream).not.toHaveBeenCalled();
+        jasmine.clock().tick(2);
+        expect(part.fetchStream).toHaveBeenCalledWith(jasmine.any(Function), true);
+        jasmine.clock().uninstall();
       });
     });
 

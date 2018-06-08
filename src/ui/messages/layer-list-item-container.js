@@ -1,6 +1,6 @@
 /* NOT SUPPORTED
  *
- * @class Layer.UI.handlers.message.messageViewer
+ * @class Layer.UI.handlers.message.MessageViewer
  * @extends Layer.UI.Component
  */
 import { registerComponent } from '../components/component';

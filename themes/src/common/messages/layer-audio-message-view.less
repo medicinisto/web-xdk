@@ -41,6 +41,18 @@ layer-message-viewer.layer-audio-message-view {
     position: absolute;
     z-index: 9;
   }
+
+  &.layer-audio-playing:not(.layer-audio-not-playable) .layer-play-button {
+    .layer-pause-button-resource;
+  }
+
+  &:not(.layer-audio-playing):not(.layer-audio-not-playable) .layer-play-button {
+    .layer-play-button-resource;
+  }
+
+  &.layer-audio-not-playable .layer-play-button {
+    .layer-not-playable-button-resource;
+  }
 }
 
 layer-audio-message-large-view {
@@ -133,11 +145,12 @@ layer-audio-message-large-view {
   }
 
 
-  .layer-audio-click-to-play {
+  &:not(.layer-audio-playing) .layer-play-pause-button {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AMOExktvVBUhQAAAfdJREFUeNrt3CGvTwEYwOHLzGaMsQmKIlAoGkXTNMJvo9E0USKZRKOJokRBIUmSoghsbHez2Wx393KkE3wAxfs82/sF3vMr93/fczY2AAAAAAAAAAAAAAAAAAAAAAAA/oHqWXXcJuYGsFQ/qlvVHhuZGcA676tztjI3gKX6VT2qDtvOzADW+VpdrXbZ0swA1nlVnbKpuQEs1VZ1t9pnYzMDWOdjddHW5gawztPqmO3NDWCpvlc3q922ODOAdd5VZ21ybgBLtVM9rA7Z6MwA1vlSXbHVuQGs86I6YbtzA1iqn9Xtaq8tzwxgnQ/VBZueG8BS/a6eVEdtfGYA62xWN/x2MDeAdd5WZ2x/bgBLtV3drw54CjMDWOdTdcmTmBvAOo5ThwfgOFUAfx2nnvd05gaw/nbwuDriKc0MYJ1v1TXHqXMDWOe149TZAThOFUBb1R0BzAzgZXXSE5sXgDeUhgbgHcXhPwR5S9lPwUwKwD+Dhgbg38FDA9iu7lX7PYV5AbypTtv+vAA2q+v+pp8XgLPwwQF4MWRoAF4NGxzAcy+Hzgzgc3XZVucFsFM9qA7a6LwAfCJmaAA+EjU4AJ+JGxqAD0UODcA17uAAHGMODcAx5tAAHGMODsAx5tAAHGMODsAxJgAAAAAAAAAAAAAAAAAAAAAA8N/5A5T9diGrOmvNAAAAAElFTkSuQmCC);
   }
 
-  .layer-audio-click-to-pause, &.layer-audio-seeking .layer-audio-click-to-play {
+  &.layer-audio-playing .layer-play-pause-button,
+  &.layer-audio-seeking .layer-play-pause-button {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AMOExoM2hQXGAAAAK1JREFUeNrt08ENACAIADF0TAZkTR3CmGho/wQeRwQAAAAAAAAAAAAAAAAAAAAAAPCi8fqBmblO5qtq/Lz/tukHehOAABAAAkAACAABIAAEgAAQAAJAAAgAASAABIAAEAACQAAIAAEgAASAABAAAkAACAABIAAEgAAQAAJAAAgAASAABIAAEAACQAAIAAEgAASAABAAAkAACAAAAAAAAAAAAAAAAAAAAAAAAKCnDQAoCHDQABgOAAAAAElFTkSuQmCC);
   }
 
@@ -148,6 +161,7 @@ layer-audio-message-large-view {
     flex-grow: 1;
     margin: 0px 18px;
     padding: 0px;
+    width: 50px; /* Flexbox workaround */
   }
 
   .layer-audio-time-range, .layer-audio-volume-range {
@@ -186,5 +200,18 @@ layer-audio-message-large-view {
   /* IE 11 */
   input[type=range]::-ms-tooltip {
     display: none;
+  }
+
+
+  &.layer-audio-message-large-view-width-small, &.layer-audio-message-large-view-width-medium {
+    .layer-audio-forward-twenty, .layer-audio-rewind-twenty {
+      display: none;
+    }
+  }
+
+  &.layer-audio-message-large-view-width-small {
+    .layer-audio-volume-range, .layer-audio-volume-range-disabled {
+      display: none;
+    }
   }
 }

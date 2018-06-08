@@ -118,6 +118,7 @@ class AudioModel extends MessageTypeModel {
   parseModelChildParts({ changes = [], isEdit = false }) {
     super.parseModelChildParts({ changes, isEdit });
     this.transcript = this.childParts.filter(part => part.role === 'transcript')[0] || null;
+    if (this.source) this.streamUrl = this.source.url;
   }
 
   /**
@@ -236,6 +237,14 @@ class AudioModel extends MessageTypeModel {
   __updateCurrentTime(newValue, oldValue) {
     this._triggerAsync('message-type-model:change', {
       property: 'currentTime',
+      oldValue,
+      newValue,
+    });
+  }
+
+  __updateStreamUrl(newValue, oldValue) {
+    this._triggerAsync('message-type-model:change', {
+      property: 'streamUrl',
       oldValue,
       newValue,
     });

@@ -343,6 +343,7 @@ describe('Video Message Components', function() {
       expect(model3.getOneLineSummary()).toEqual("Video");
       model3.destroy();
     });
+
   });
 
   describe("Video View Tests", function() {

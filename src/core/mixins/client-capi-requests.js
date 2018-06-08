@@ -195,8 +195,6 @@ module.exports = {
       if (this.sessionToken && !headers.Authorization) {
         headers.authorization = 'Layer session-token="' + this.sessionToken + '"'; // eslint-disable-line
       }
-      if (!headers['layer-xdk-version']) headers['layer-xdk-version'] = version;
-      if (!headers['client-id']) headers['client-id'] = this._tabId;
     },
 
     /**
@@ -244,6 +242,9 @@ module.exports = {
       if (!headers.accept) headers.accept = ACCEPT;
 
       if (!headers['content-type']) headers['content-type'] = 'application/json';
+
+      if (!headers['layer-xdk-version']) headers['layer-xdk-version'] = version;
+      if (!headers['client-id']) headers['client-id'] = this._tabId;
     },
 
     /**
