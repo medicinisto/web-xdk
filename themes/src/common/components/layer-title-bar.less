@@ -28,9 +28,21 @@ layer-title-bar {
 
   .layer-title-close-button {
     cursor: pointer;
-    font-size: 30px;
-    &:hover {
-      font-weight: bold;
+    .layer-close-button-line {
+      stroke: @layer-close-button-color;
+      fill: @layer-close-button-color;
+    }
+
+    display: flex;
+    width: 24px;
+    height: 24px;
+    svg {
+      flex-grow: 1;
+    }
+
+    &:hover .layer-close-button-line {
+      stroke: @layer-close-button-hover-color;
+      fill: @layer-close-button-hover-color;
     }
   }
 }

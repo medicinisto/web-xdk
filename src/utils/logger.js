@@ -9,7 +9,10 @@ import { logSize } from '../settings';
 
 const { TIMING, DEBUG, INFO, WARN, ERROR, NONE } = Constants.LOG;
 
-const Timezone = new Date().toLocaleTimeString('en-US', { timeZoneName: 'short', second: 'numeric' }).replace(/^[\d\s]*/, '');
+const Timezone = new Date().toLocaleTimeString('en-US', {
+  timeZoneName: 'short',
+  second: 'numeric',
+}).replace(/^[\d\s]*/, '');
 
 const cache = [];
 

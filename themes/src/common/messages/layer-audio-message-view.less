@@ -43,11 +43,11 @@ layer-message-viewer.layer-audio-message-view {
   }
 
   &.layer-audio-playing:not(.layer-audio-not-playable) .layer-play-button {
-    .layer-pause-button-resource;
+    .layer-pause-button-fancy-resource;
   }
 
   &:not(.layer-audio-playing):not(.layer-audio-not-playable) .layer-play-button {
-    .layer-play-button-resource;
+    .layer-play-button-fancy-resource;
   }
 
   &.layer-audio-not-playable .layer-play-button {
@@ -107,17 +107,6 @@ layer-audio-message-large-view {
     flex-grow: 1;
   }
 
-  /*
-  audio::-webkit-media-controls-panel {
-    background-color: transparent;
-  }
-
-  audio {
-    min-height: 32px;
-    background-color: @color-white;
-    border-top: solid 1px @color-role-heavy-border;
-  }*/
-
   .layer-audio-controls {
     background-color: @color-white;
     font-size: @font-medium;
@@ -125,10 +114,9 @@ layer-audio-message-large-view {
     min-height: 30px;
 
     input[type=button] {
-      background-size: 32px;
       box-sizing: border-box;
-      width: 32px;
-      height: 32px;
+      width: 31px;
+      height: 31px;
       background-color: transparent;
       color: inherit;
       background-repeat: no-repeat;
@@ -144,14 +132,17 @@ layer-audio-message-large-view {
     }
   }
 
+  .layer-play-pause-button, .layer-play-pause-button {
+    background-size: 11px 13px;
+  }
 
   &:not(.layer-audio-playing) .layer-play-pause-button {
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AMOExktvVBUhQAAAfdJREFUeNrt3CGvTwEYwOHLzGaMsQmKIlAoGkXTNMJvo9E0USKZRKOJokRBIUmSoghsbHez2Wx393KkE3wAxfs82/sF3vMr93/fczY2AAAAAAAAAAAAAAAAAAAAAAAA/oHqWXXcJuYGsFQ/qlvVHhuZGcA676tztjI3gKX6VT2qDtvOzADW+VpdrXbZ0swA1nlVnbKpuQEs1VZ1t9pnYzMDWOdjddHW5gawztPqmO3NDWCpvlc3q922ODOAdd5VZ21ybgBLtVM9rA7Z6MwA1vlSXbHVuQGs86I6YbtzA1iqn9Xtaq8tzwxgnQ/VBZueG8BS/a6eVEdtfGYA62xWN/x2MDeAdd5WZ2x/bgBLtV3drw54CjMDWOdTdcmTmBvAOo5ThwfgOFUAfx2nnvd05gaw/nbwuDriKc0MYJ1v1TXHqXMDWOe149TZAThOFUBb1R0BzAzgZXXSE5sXgDeUhgbgHcXhPwR5S9lPwUwKwD+Dhgbg38FDA9iu7lX7PYV5AbypTtv+vAA2q+v+pp8XgLPwwQF4MWRoAF4NGxzAcy+Hzgzgc3XZVucFsFM9qA7a6LwAfCJmaAA+EjU4AJ+JGxqAD0UODcA17uAAHGMODcAx5tAAHGMODsAx5tAAHGMODsAxJgAAAAAAAAAAAAAAAAAAAAAA8N/5A5T9diGrOmvNAAAAAElFTkSuQmCC);
+    .layer-play-button-standard-resource;
   }
 
   &.layer-audio-playing .layer-play-pause-button,
   &.layer-audio-seeking .layer-play-pause-button {
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AMOExoM2hQXGAAAAK1JREFUeNrt08ENACAIADF0TAZkTR3CmGho/wQeRwQAAAAAAAAAAAAAAAAAAAAAAPCi8fqBmblO5qtq/Lz/tukHehOAABAAAkAACAABIAAEgAAQAAJAAAgAASAABIAAEAACQAAIAAEgAASAABAAAkAACAABIAAEgAAQAAJAAAgAASAABIAAEAACQAAIAAEgAASAABAAAkAACAAAAAAAAAAAAAAAAAAAAAAAAKCnDQAoCHDQABgOAAAAAElFTkSuQmCC);
+    .layer-pause-button-standard-resource;
   }
 
   .layer-audio-time-range-disabled, .layer-audio-volume-range-disabled {
@@ -180,21 +171,30 @@ layer-audio-message-large-view {
     padding: 0px 4px;
   }
 
+  .layer-volume-enabled-button, .layer-volume-muted-button {
+    background-size: 25px 25px;
+  }
+
+
   .layer-volume-enabled-button {
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AMOFDsqgcmRgwAABANJREFUeNrtnc+LVlUch9UxMxxxk6kRpvgHtNIkwUTwT5DwcREpammLxJVGqK3aJbqRcOlOFyKabYsUN5OKMoHuDJIaksAKf4xz3dyBd9O833Pnvtx77n0euMv5nh+fh3nf955zz12wQERERERERERERERERERERERERERERERERERERKRDAGPOQr8F+Au4AOwD3nJG+idAMXC9AK4CO4HXnJ3+CTB4PQS+AJY5S/mGe3weAsxeU8BBYLEzmln4QFGDALPXXeADZzaj8GsWoACmgW+A153lDMIfgQCz1y1gnbPd8vBHKEAB/Al86Ky3OPygALuAy8CzChI8B3D2Wxp+RICBGquBr8tv/SkSvAT2mEILw08RYKDecuAk8CRRgt2m0bLwqwgwUHsd8H2CBM+A7abSovDnI8BAO58DT4MS/A1sMJ2WhF+HAGV7G4FHwTYngCWm1ILw6xJg4CPh12C7p0yqBeHXKUDZ/hrgQaDdGWCLiTUcft0ClP14B/gtuHbgknKT4Y9CgLI/7wP/Bdo/bHoNhh+8E7ioYr8+DbT/BzBuig2FHxRgAthcoW8LgSuBPhw1yYbCT1gMmgG+Td30AawF/g1sKHnDRBsIv8Jq4I/Am4l9/SrQj09MtYHwKy4HTwArEvo7HlhA+qlPARZtuir292bKrh/gy8B9gbcVIB8BCuBswphXBvYTfKYAeQlQADsSxn1hSK0fFCA/ASajj46VD5PMVetJLx5D65gARXTLF7Ci3CI2V633FCA/Aa4njP3GkFr7FSA/AQpgfXDsp4bUOaMAeQpwKDj2j4fUuaYAeQpwPjj2rcOWiBUgTwHuBMe+fkidRwqQpwBTCb8E5qrzjwLkKcB0cOyLm9igogAKoAB+BCjAKAW47ZfAfgtwzp+B/RZgrzeCvBXsrWAXg4bWuu5iUPcE2B0ct8vBHRRgMrpV3A0h3RTALWE9FuC7hDFHNoUeVIC8toUvTRjzUbeF1yfQiYYFmARWJvR3mQ+GtFiCRAF+Tn1ngI+GtVyCoAAzwOnUAx18ODQDCQJt/FL1yNfg4+HHTLJBCQL1xyr264AHRGQgwYj6synwr78AjphewxKMoB/RQ6LueUhUCySouf3VwH2PictIghrbfTfhoMjTJtUSCWpqbyPwu0fFZihBDe14WHTOEsyjtsfFd0GCCvXGy5q+MKILEiR+wz/hK2M6JkHg73YBlxI+531pVE4SBP6m6m3mKWCbs95yCUYkwG1fHJmJBDUL4Ktjc5OgRgHueXs3QwlqEMDXx3dckv8L/iFw2PX8fgkwDVwFPnIptz8CPAYuljt8Vjkj/RNgzFkQERERERERERERERERERERERERERERERERERGRtvAK4ID6HNl6lhUAAAAASUVORK5CYII=);
+    .layer-volume-is-enabled-resource;
   }
 
   .layer-volume-muted-button {
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AMOFDsuhqRVmgAABKBJREFUeNrtnclrFEEUhxONijuCaBS3ePTiSVxAhQTxLxAlgiK4EPWgJz24oAh6ccGDxu3mTS+KC4IHPSiKC0ZBDzkJikgQ4r4bX0EPDCHT9aqnursq+T743aZfvZ73Ycae6p6GBgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH2tvbN0tOSRoD7W84U8p3+P8kfZLTIUogPX2QXJJskkxhavkMvy9UCfr190tyXbJKMoIp+h1+kBLU6NHktWSHZCwT9Tf8QiWQNfbXIUAlPZKtfFbQv+mdijc1dwnM8M06HgSo5KlkMRO2v6GNkjNlSlAZvmcBTP5IjkhGMulAJagefg4CVPJEMptJByZB/+HnKIDJe8lSJh2IBAMNXymA4arkZwYJzDFrmHTJEtQavkaAqhrNkoPJp37XzwUbmHRJEqQN30WAqnoTJAckXxwlWMukC5ZAXjNX8tWnAFW150huOv45aGXSxUvQmiaBh563S34oe+6VtDDp4iVoqyWBp54XSN4pe37EdYKAJPDYs/mT8ErZ8zGmHIgEnnueJulW9PtXsoQpByBBDj3PkLxR9NvFV8oBSJBTzwsl3xX97mDCJUugeN2wjD13KC8Xs5+gTAkUr3ksWZSx32uKXncz3QCuGKas2ZdsYDkuaXI8dpbtQlRyaXk00w1Ugn717komOx6/V9HnOiYbqAQ1vuuf6HD8OMUXSHeH0vD6SkhmCWrUeyAZ5VBjj+K6wDQECFCClHqdDjWmKPYTbEGAACWw1FvhUOeypdZNBAhQAkutl9rt4MnNJGm1Pg+JreUBCOAkgbzum6XWGmWdicmdRWm15iNAYBLIa1ZaJLjncO73LT1tRoA4JWhRnvsJSz8nESBOCbYpz329pZcbCBCnBBeV577M0scLBIhTgmfKc2+x9PAOAeKUoMfhfwJp639BgDgl+K089xG29REgTgm+eTr/vwgQpwTdnv4E9CJAnBLMU577XD4ExiWA1+cTJPsQU58rgACDWILkNrK0da4hQPEpcnuZba2jCFB8itxe9txSfyMCFJykpyIeUjFd8Xg8vg4uQ4AiJEieJZhW8xMbQkoUIG8JFHsBrjQMBUIWIC8J5DXjFTeIdCBAAALkKEFbigTmGULNDaAS6EDeApQgwS0mW5IElnWKkmAVUy1JAsU6jb4fcN1PgreuN52CRwmU6+QpwU4mWaIEDuvkIcFyyRimWKIEjut4lwBKliDDOkgwmCTIuA4SDBYJ6lgHCQaDBHWugwSxS1DnGk2SQ2VsLwNPEtRRe57kYZl7DMGDBBnqTUru8v0dwkZTqFMChxpTJYclH0PbbQx1SKA4brXZrKF4ugcSxCiB4pisw/2FBBFIkJMAdyQzJReQIHAJPAtgPhjuq2zuTK4TIEHIEngUoGugXwFJJDivrHGKyRQsgQcBzDP/t6Vt6kgkOGep82/IPC00MklqDczs5NllHgatrJMmAcOPRADzUOfb5ldAs/z0WyLBWYYflwCfk1/+MP/MT/dQr3qjKcOPQICmHGpWvkVk+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAODEf7YuxljaTm/FAAAAAElFTkSuQmCC);
+    .layer-volume-is-muted-resource;
   }
 
-  input[type=button].layer-audio-rewind-twenty, input[type=button].layer-audio-forward-twenty {
-    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+DQogICAgPGRlZnM+DQogICAgICAgIDxwYXRoIGlkPSJhIiBkPSJNMjQgMjRIMFYwaDI0djI0eiIvPg0KICAgIDwvZGVmcz4NCiAgICA8Y2xpcFBhdGggaWQ9ImIiPg0KICAgICAgICA8dXNlIHhsaW5rOmhyZWY9IiNhIiBvdmVyZmxvdz0idmlzaWJsZSIvPg0KICAgIDwvY2xpcFBhdGg+DQogICAgPHBhdGggZmlsbD0iIzVBNUE1QSIgZD0iTTQgMTNjMCA0LjQgMy42IDggOCA4czgtMy42IDgtOGgtMmMwIDMuMy0yLjcgNi02IDZzLTYtMi43LTYtNiAyLjctNiA2LTZ2NGw1LTUtNS01djRjLTQuNCAwLTggMy42LTggOHoiIGNsaXAtcGF0aD0idXJsKCNiKSIvPg0KPC9zdmc+DQo=);
-    background-size: 24px;
+  .layer-audio-forward-fifteen, .layer-audio-rewind-fifteen {
+    background-size: 19px 21px;
   }
 
-  .layer-audio-rewind-twenty {
-    transform: scaleX(-1);
+  .layer-audio-forward-fifteen {
+    .layer-fast-forward-15-button-resource;
+  }
+
+
+  .layer-audio-rewind-fifteen {
+    .layer-rewind-15-button-resource;
   }
 
   /* IE 11 */
@@ -203,8 +203,8 @@ layer-audio-message-large-view {
   }
 
 
-  &.layer-audio-message-large-view-width-small, &.layer-audio-message-large-view-width-medium {
-    .layer-audio-forward-twenty, .layer-audio-rewind-twenty {
+  &.layer-audio-message-large-view-width-small:not(.layer-is-ios), &.layer-audio-message-large-view-width-medium:not(.layer-is-ios) {
+    .layer-audio-forward-fifteen, .layer-audio-rewind-fifteen {
       display: none;
     }
   }

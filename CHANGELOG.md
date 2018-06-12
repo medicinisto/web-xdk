@@ -129,6 +129,9 @@ Impact of this change:
 * WEB-1752: `Layer.UI.components.Avatar` Component now accepts `avatarComponent.item = identity;` as another option for setting the Avatar's Identity
 * WEB-1707 : Use `Layer.Utils.getLogs()` to get logs to dump to a logging service
     * Use `Layer.init({ logSize: 500 })` to change the number of lines of logging data that is tracked
+* DOM structural and rendering changes to:
+    * Dialog Close Button
+    * File Upload Button
 
 ## 4.0.4
 

@@ -82,8 +82,8 @@ registerComponent('layer-audio-message-large-view', {
       <span layer-id="currentTime" class='layer-audio-current-time'></span><span class='layer-audio-separator'>/</span><span layer-id="duration" class='layer-audio-duration'></span>
       <input type="range" layer-id="timeRange" min="0" max="100" class="layer-audio-time-range" />
       <div class="layer-audio-time-range-disabled"></div>
-      <input type="button" class="layer-audio-rewind-twenty" layer-id="jumpBack" />
-      <input type="button" class="layer-audio-forward-twenty" layer-id="jumpForward" />
+      <input type="button" class="layer-audio-rewind-fifteen" layer-id="jumpBack" />
+      <input type="button" class="layer-audio-forward-fifteen" layer-id="jumpForward" />
       <input type="button" class="layer-volume-button" layer-id="muteButton" />
       <input type="range" layer-id="volumeRange" min="0" max="100" class="layer-audio-volume-range" />
       <div class="layer-audio-volume-range-disabled"></div>
@@ -730,21 +730,21 @@ registerComponent('layer-audio-message-large-view', {
     },
 
     /**
-     * The user has clicked the jump forward button to move forwards by 20 seconds.
+     * The user has clicked the jump forward button to move forwards by 15 seconds.
      *
      * * Sets playAfterSeek so that playback will resume after the next `seeked` event is received
      *
      * @method onJumpForwardClick
      */
     onJumpForwardClick() {
-      const nextInc = this.audio.currentTime + 20;
+      const nextInc = this.audio.currentTime + 15;
       const nextValue = Math.min(this.duration, nextInc);
       this.properties.playAfterSeek = true;
       this.setCurrentTime(nextValue, true);
     },
 
     /**
-     * The user has clicked the jump backwards button to move back by 20 seconds.
+     * The user has clicked the jump backwards button to move back by 15 seconds.
      *
      * * Sets playAfterSeek so that playback will resume after the next `seeked` event is received
      *
@@ -753,7 +753,7 @@ registerComponent('layer-audio-message-large-view', {
     onJumpBackClick() {
       if (this.getCurrentTime() > 0) {
         this.properties.playAfterSeek = true; // playback may be halted if we are at the end; clicking jump back should resume playback
-        this.setCurrentTime(Math.max(0, this.getCurrentTime() - 20), true);
+        this.setCurrentTime(Math.max(0, this.getCurrentTime() - 15), true);
       }
     },
 

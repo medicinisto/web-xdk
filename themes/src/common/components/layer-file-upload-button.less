@@ -1,4 +1,5 @@
 layer-file-upload-button {
+
   /* Inspired by http://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/ */
   input {
     width: 0.1px;
@@ -9,8 +10,16 @@ layer-file-upload-button {
     z-index: -1;
   }
   label {
-    display: block;
+    display: flex;
     pointer-events: none;
-    text-align: center;
+  }
+
+  svg {
+    flex-grow: 1;
+  }
+  .layer-file-upload-plus {
+      stroke: @button-color;
+      fill: @button-color;
   }
 }
+

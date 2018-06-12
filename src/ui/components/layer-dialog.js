@@ -47,7 +47,12 @@ registerComponent('layer-dialog', {
     <div class="layer-dialog-inner" layer-id="inner">
       <layer-title-bar layer-id="titleBar">
         <div layer-replaceable-name="buttons">
-          <div layer-id='close' class="layer-title-close-button">&times;</div>
+          <div layer-id='close' class="layer-title-close-button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                <path class="layer-close-button-line" d="M38 12.83L35.17 10 24 21.17 12.83 10 10 12.83 21.17 24 10 35.17 12.83 38 24 26.83 35.17 38 38 35.17 26.83 24z"/>
+                <path d="M0 0h48v48H0z" fill="none"/>
+            </svg>
+          </div>
         </div>
       </layer-title-bar>
       <layer-replaceable-content name='content' layer-id='content' class='layer-dialog-content-container'>
