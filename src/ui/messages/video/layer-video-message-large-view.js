@@ -33,7 +33,7 @@ registerComponent('layer-video-message-large-view', {
   /* eslint-disable */
   template: `
     <video layer-id="player" preload="auto" controls="controls"></video>
-    <div class="layer-card-body">
+    <div class="layer-video-inner">
       <div layer-id="title" class="layer-standard-card-container-title"></div>
       <div layer-id="description1" class="layer-standard-card-container-description"></div>
       <div layer-id="description2" class="layer-standard-card-container-description"></div>
@@ -152,6 +152,7 @@ registerComponent('layer-video-message-large-view', {
       } else if (this.nodes.player.currentTime === this.nodes.player.duration) {
         this.model.currentTime = 0;
       }
+      this.nodes.player.pause();
     },
 
     /**

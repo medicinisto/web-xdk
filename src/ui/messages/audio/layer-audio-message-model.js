@@ -57,11 +57,11 @@ class AudioModel extends MessageTypeModel {
     super.generateParts(callback);
 
     // Intialize metadata and source MesssgePart from the Blob
-    if (this.source) {
+    if (this.source && global.Audio) {
 
       // Instantiate an audio player so we can examine the audio file; call continueFn1 when done
       // url is not expiring; this is locally generated from a local Blob.
-      const tmpAudio = new Audio(this.source.url);
+      const tmpAudio = new global.Audio(this.source.url);
       tmpAudio.addEventListener('durationchange', () => {
         this.duration = tmpAudio.duration;
         continueFn1.bind(this)();

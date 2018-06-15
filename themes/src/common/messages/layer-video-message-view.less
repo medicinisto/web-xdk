@@ -9,8 +9,13 @@ layer-video-message-view {
 }
 
 layer-video-message-large-view {
-  .layer-card-body {
+  background-color: rgb(242,242,242);
+  display: flex;
+  flex-direction: column;
+
+  .layer-video-inner {
     margin: 12px 32px;
+    text-align: center;
 
     & > *:not(:empty) {
       margin-bottom: 4px;

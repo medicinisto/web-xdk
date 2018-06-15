@@ -661,23 +661,27 @@ registerComponent('layer-audio-message-large-view', {
       this.disabled = true;
 
       // If the source url has expired, then these would not be equal, and calling getSourceUrl will trigger our model change event we setup above
-      this.model.getSourceUrl((url) => {
-        if (url && url !== this.properties.audio.src) {
-          this.classList.add('layer-audio-playing');
-          this.disabled = false;
-        }
+      if (!this.model.getSourceUrlExpired()) {
+        logger.error('LAYER-AUDIO-MESSAGE-VIEW: Play failed: ', err);
+      } else {
+        this.model.getSourceUrl((url) => {
+          if (url && url !== this.properties.audio.src) {
+            this.classList.add('layer-audio-playing');
+            this.disabled = false;
+          }
 
-        // An error can be thrown on an audio stream that was succesful and valid; if it was, then firstPlayed would be true and its probably just the stream ending.
-        else if (this.properties.firstPlayed) {
-          this.disabled = false;
-          return this.onEnded();
-        }
+          // An error can be thrown on an audio stream that was succesful and valid; if it was, then firstPlayed would be true and its probably just the stream ending.
+          else if (this.properties.firstPlayed) {
+            this.disabled = false;
+            return this.onEnded();
+          }
 
-        // The audio file is probably invalid
-        else {
-          logger.error('LAYER-AUDIO-MESSAGE-VIEW: Play failed: ', err);
-        }
-      });
+          // The audio file is probably invalid
+          else {
+            logger.error('LAYER-AUDIO-MESSAGE-VIEW: Play failed: ', err);
+          }
+        });
+      }
     },
 
     /**
