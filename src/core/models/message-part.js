@@ -338,7 +338,9 @@ class MessagePart extends Root {
 
     if (callback) callback(url);
     const f = () => {};
-    this._fetchStreamTimeoutId = setTimeout(this.fetchStream.bind(this, f, true), this._content.expiration - new Date() - 10000);
+    if (this._content) {
+      this._fetchStreamTimeoutId = setTimeout(this.fetchStream.bind(this, f, true), this._content.expiration - new Date() - 10000);
+    }
   }
 
   /**
