@@ -53,6 +53,71 @@
  * import '@layerhq/web-xdk/ui/components/layer-conversation-view';
  * ```
  *
+ * * ### Replaceable Content
+ *
+ * Note that replaceable content may be set via:
+ *
+ * * The `replaceableContent` property
+ * * Any Ancestor UI Component's `replaceableContent` property
+ * * DOM nodes with a `layer-replaceable-name` attribute placed within an Ancestor's UI Component
+ *
+ * #### Replaceable nodes for the Conversations View's Compose Bar and Message List:
+ *
+ * `composerButtonPanelLeft`: Insert a node containing buttons that go to the left of the Compose Bar
+ * `composerButtonPanelRight`: Insert a node containing buttons that go to the right of the Compose Bar
+ * `emptyNode`: DOM nodes to show the user when there are no Messages in the  Conversation
+ * `endOfResultsNode`: DOM nodes to show the user when further paging will not load any more messages
+ * `loadIndicator`: DOM nodes to show the user that messages are loading
+ *
+ * #### Replaceable nodes for the Conversation View's messages sent:
+ *
+ * `messageSentHeader`: For each Message in your Message List that you sent, you can insert custom content above that Message. Replaces default header which may show sender name.
+ * `messageSentFooter`: For each Message in your Message List that you sent, you can insert custom content below that Message. Replaces default footer which may show message timestamp and status.
+ * `messageSentRightSide`: Replace the nodes to the right of each Message in your Message List you sent with your own nodes. Replaces default nodes such as the Avatar or Menu.
+ * `messageSentLeftSide`: Replace the nodes to the left of each Message in your Message List you sent with your own nodes. Typically left empty.
+ *
+ * #### Replaceable nodes for the Conversation View's messages received:
+ *
+ * `messageReceivedFooter`: For each Message in your Message List that you receive, you can insert custom content below that Message. Replaces default footer which may show message timestamp and status.
+ * `messageReceivedHeader`: For each Message in your Message List that you receive, you can insert custom content above that Message. Replaces default header which may show sender name.
+ * `messageReceivedLeftSide`: Replace the nodes to the left of each Message in your Message List you receive with your own nodes. Replaces default nodes such as the Avatar or Menu.
+ * `messageReceivedRightSide`: Replace the nodes to the right of each Message in your Message List you receive with your own nodes. Replaces default nodes such as the Avatar or Menu.
+ *
+ * #### Replaceable nodes for the Conversation View's Status Messages:
+ *
+ * `messageStatusLeftSide`: Replace the nodes to the left of each Status Message in your Message List with your own nodes.
+ * `messageStatusRightSide`: Replace the nodes to the right of each Status Message in your Message List with your own nodes.
+ * `messageStatusHeader`: For each Status Message in your Message List, you can insert custom content above that Message. Replaces default header which may show sender name.
+ * `messageStatusFooter`: For each Status Message in your Message List, you can insert custom content below that Message. Replaces default footer which may show message timestamp and status.
+ *
+ * ```
+ * conversationView.replaceableContent = {
+ *   emptyNode: "<div>No messages. Maybe you should just send "Hello" to them?</div>",
+ *   loadIndicator: "<my-custom-load-indicator></my-custom-load-indicator>",
+ *   messageSentRightSide: (messageItem) => {
+ *      var div = document.createElement("div");
+ *      var message = messageItem.item;
+ *      if (message.getModelName() === 'TextModel') {
+ *          div.innerHTML = "Delete";
+ *          div.classList.add("delete");
+ *          div.addEventListener("click", () => message.delete(true));
+ *      }
+ *      return div;
+ *   }
+ * };
+ * ```
+ *
+ * Using the `layer-replaceable-name` attribute you can also do:
+ *
+ * ```
+ * <layer-conversation-view>
+ *    <div layer-replaceable-name="composerButtonPanelRight">
+ *       <layer-file-upload-button></layer-file-upload-button>
+ *       <layer-send-button></layer-send-button>
+ *    </div>
+ * </layer-conversation-view>
+ * ```
+ *
  * @class Layer.UI.components.ConversationView
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.HasQuery

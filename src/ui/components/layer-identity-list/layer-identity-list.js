@@ -45,6 +45,32 @@
  * import '@layerhq/web-xdk/ui/components/layer-identity-list/layer-identity-list';
  * ```
  *
+ * ### Replaceable Content
+ *
+ * Note that replaceable content may be set via:
+ *
+ * * The `replaceableContent` property
+ * * Any Ancestor UI Component's `replaceableContent` property
+ * * DOM nodes with a `layer-replaceable-name` attribute placed within an Ancestor's UI Component
+ *
+ * The following named regions can be used:
+ *
+ * `emptyNode`: DOM nodes to show the user when there are no Identities
+ * `endOfResultsNode`: DOM nodes to show the user when further paging will not load any more Identities
+ * `loadIndicator`: DOM nodes to show the user that Identities are loading
+ * `identityRowRightSide`: Add nodes to the right of each Identity Item in the List
+ *
+ * ```
+ * identityList.replaceableContent = {
+ *   identityRowRightSide: (identityItem) => {
+ *     var button = document.createElement('button');
+ *     button.value = 'Talk';
+ *     button.addEventListener('click', (evt) => client.createConversation({participants: [identityItem.item]}));
+ *     return button;
+ *   },
+ * };
+ * ```
+ *
  * @class Layer.UI.components.IdentityListPanel.List
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.List

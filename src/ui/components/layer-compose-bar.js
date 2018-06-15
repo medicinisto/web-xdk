@@ -21,6 +21,26 @@
  * import '@layerhq/web-xdk/ui/components/layer-compose-bar';
  * ```
  *
+ * ### Replaceable Content
+ *
+ * Note that replaceable content may be set via:
+ *
+ * * The `replaceableContent` property
+ * * Any Ancestor UI Component's `replaceableContent` property (Layer.UI.components.ConversationView)
+ * * DOM nodes with a `layer-replaceable-name` attribute placed within an Ancestor's UI Component
+ *
+ * The following named regions can be used:
+ *
+ * * `composerButtonPanelLeft`: Insert a node containing buttons that go to the left of the Compose Bar
+ * * `composerButtonPanelRight`: Insert a node containing buttons that go to the right of the Compose Bar
+ *
+ * ```
+ * composeBar.replaceableContent = {
+ *   composerButtonPanelRight: "<layer-send-button />",
+ *   composerButtonPanelLeft: () => document.createElement('layer-file-upload-button'),
+ * };
+ * ```
+ *
  * @class Layer.UI.components.ComposeBar
  * @extends Layer.UI.Component
  */

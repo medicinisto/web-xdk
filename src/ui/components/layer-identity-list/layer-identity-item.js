@@ -14,6 +14,29 @@
  * import '@layerhq/web-xdk/ui/components/layer-identity-list/layer-identity-item';
  * ```
  *
+ * ### Replaceable Content
+ *
+ * Note that replaceable content may be set via:
+ *
+ * * The `replaceableContent` property
+ * * Any Ancestor UI Component's `replaceableContent` property (Layer.UI.components.IdentityListPanel.List)
+ * * DOM nodes with a `layer-replaceable-name` attribute placed within an Ancestor's UI Component
+ *
+ * The following named regions can be used:
+ *
+ * `identityRowRightSide`: Add nodes to the right of each Identity Item in the List
+ *
+ * ```
+ * identityList.replaceableContent = {
+ *   identityRowRightSide: (identityItem) => {
+ *     var button = document.createElement('button');
+ *     button.value = 'Talk';
+ *     button.addEventListener('click', (evt) => client.createConversation({participants: [identityItem.item]}));
+ *     return button;
+ *   },
+ * };
+ * ```
+ *
  * @class Layer.UI.components.IdentityListPanel.Item
  * @mixin Layer.UI.mixins.ListItem
  * @mixin Layer.UI.mixins.SizeProperty

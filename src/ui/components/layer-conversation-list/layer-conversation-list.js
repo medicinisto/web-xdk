@@ -48,6 +48,42 @@
  * import '@layerhq/web-xdk/ui/components/layer-conversation-list/layer-conversation-list';
  * ```
  *
+ * ### Replaceable Content
+ *
+ * Note that replaceable content may be set via:
+ *
+ * * The `replaceableContent` property
+ * * Any Ancestor UI Component's `replaceableContent` property
+ * * DOM nodes with a `layer-replaceable-name` attribute placed within an Ancestor's UI Component
+ *
+ * The following named regions can be used:
+ *
+ * * `emptyNode`:  DOM nodes to show the user when there are no Conversations
+ * * `endOfResultsNode`:  DOM nodes to show the user when further paging will not load any more Conversations
+ * * `loadIndicator`:  DOM nodes to show the user that Conversations are loading
+ *
+ * The following named regions are provided by this List's subcomponents:
+ *
+ * * `conversationRowLeftSide`:  Replace the nodes to the left of each Conversation in your Conversation List with your own nodes. Replaces default Avatar node.
+ * * `conversationRowRightSide`:  Replace the nodes to the right of each Conversation in your Conversation List with your own nodes. Replaces default Menu node.
+ *
+ * ```
+ * composeBar.replaceableContent = {
+ *   emptyNode: "<div>No conversations. Nobody wants to talk to you.</div>",
+ *   loadIndicator: "<my-custom-load-indicator></my-custom-load-indicator>",
+ *   conversationRowLeftSide: (conversationComponent) => {
+ *      var div = document.createElement("div");
+ *      var conversation = conversationComponent.item;
+ *      if (conversation.metadata.myTestField) {
+ *          div.innerHTML = "OK";
+ *      } else {
+ *          div.classList.add("no-test-field");
+ *      }
+ *      return div;
+ *   },
+ * };
+ * ```
+ *
  * @class Layer.UI.components.ConversationListPanel.List
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.List

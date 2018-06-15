@@ -19,6 +19,37 @@
  * import '@layerhq/web-xdk/ui/components/layer-conversation-list/layer-conversation-item';
  * ```
  *
+ * ### Replaceable Content
+ *
+ * Note that replaceable content may be set via:
+ *
+ * * The `replaceableContent` property
+ * * Any Ancestor UI Component's `replaceableContent` property (Layer.UI.components.ConversationListPanel.List)
+ * * DOM nodes with a `layer-replaceable-name` attribute placed within an Ancestor's UI Component
+ *
+ * For List Items, its typically easiest to set this on the List (Layer.UI.components.ConversationListPanel.List)
+ *
+ * The following named regions can be used:
+ *
+ * * `conversationRowLeftSide`:  Replace the nodes to the left of each Conversation in your Conversation List with your own nodes. Replaces default Avatar node.
+ * * `conversationRowRightSide`:  Replace the nodes to the right of each Conversation in your Conversation List with your own nodes. Replaces default Menu node.
+ *
+ * ```
+ * composeBar.replaceableContent = {
+ *   conversationRowLeftSide: (conversationComponent) => {
+ *      var div = document.createElement("div");
+ *      var conversation = conversationComponent.item;
+ *      if (conversation.metadata.myTestField) {
+ *          div.innerHTML = "OK";
+ *      } else {
+ *          div.classList.add("no-test-field");
+ *      }
+ *      return div;
+ *   },
+ *   conversationRowRightSide: () => null,
+ * };
+ * ```
+ *
  * @class Layer.UI.components.ConversationListPanel.Item.Conversation
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.ListItem
