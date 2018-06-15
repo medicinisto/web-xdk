@@ -59,7 +59,7 @@ class VideoModel extends MessageTypeModel {
 
 
     // Intialize metadata and source MesssgePart from the Blob
-    if (this.source) {
+    if (this.source && global.document) {
 
       // Instantiate an video player so we can examine the video file; call continueFn1 when done
       const tmpVideo = document.createElement('video');

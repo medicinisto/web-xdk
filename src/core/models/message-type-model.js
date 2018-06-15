@@ -656,7 +656,8 @@ class MessageTypeModel extends Root {
   _parseModelChildPartForFileBehavior(fileBehaviorDef) {
     // Setup the this.source, this.preview, this.xxx property
     if (fileBehaviorDef.propertyName) {
-      this[fileBehaviorDef.propertyName] = this.childParts.filter(part => part.role === fileBehaviorDef.roleName)[0] || null;
+      this[fileBehaviorDef.propertyName] =
+        this.childParts.filter(part => part.role === fileBehaviorDef.roleName)[0] || null;
     }
 
     const part = this[fileBehaviorDef.propertyName];
@@ -1298,8 +1299,6 @@ class MessageTypeModel extends Root {
       if (this[propertyName].url) return false;
       return true;
     };
-
-
 
     if (!classDef.FileBehaviorDefs) classDef.FileBehaviorDefs = [];
     classDef.FileBehaviorDefs.push(options);

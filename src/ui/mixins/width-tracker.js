@@ -27,11 +27,13 @@ mixins.WidthTracker = module.exports = {
       set(newValue, oldValue) {
         if (this.widthSmallStart) {
           this.toggleClass(this.tagName.toLowerCase() + '-width-tiny', newValue < this.widthSmallStart);
-          this.toggleClass(this.tagName.toLowerCase() + '-width-small', newValue >= this.widthSmallStart && newValue < this.widthMediumStart);
+          this.toggleClass(this.tagName.toLowerCase() + '-width-small',
+            newValue >= this.widthSmallStart && newValue < this.widthMediumStart);
         } else {
           this.toggleClass(this.tagName.toLowerCase() + '-width-small', newValue < this.widthMediumStart);
         }
-        this.toggleClass(this.tagName.toLowerCase() + '-width-medium', newValue >= this.widthMediumStart && newValue < this.widthLargeStart);
+        this.toggleClass(this.tagName.toLowerCase() + '-width-medium',
+          newValue >= this.widthMediumStart && newValue < this.widthLargeStart);
         this.toggleClass(this.tagName.toLowerCase() + '-width-large', newValue >= this.widthLargeStart);
       },
     },

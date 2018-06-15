@@ -7,7 +7,7 @@
     "one-var": [2, {"var": "always", "let": "never", "const": "never"}],
     "no-param-reassign": 0,
     "brace-style": 0,
-    "max-len": [2, {"code": 120, "tabWidth": 2, "ignoreUrls": true, "ignoreComments": true}],
+    "max-len": [2, {"code": 120, "tabWidth": 2, "ignoreUrls": true, "ignoreComments": true, "ignoreTemplateLiterals": true}],
     "consistent-return": 0,
     "prefer-template": 0,
     "no-underscore-dangle": 0,

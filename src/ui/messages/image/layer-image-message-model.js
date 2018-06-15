@@ -324,7 +324,7 @@ class ImageModel extends MessageTypeModel {
    * @param {String} callback.url
    */
   fetchUrl(callback) {
-    if (this.source || this.sourceUrl) return this.getSourceUrl(callback)
+    if (this.source || this.sourceUrl) return this.getSourceUrl(callback);
     if (this.preview || this.previewUrl) return this.getPreviewUrl(callback);
   }
 

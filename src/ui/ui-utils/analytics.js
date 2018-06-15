@@ -6,7 +6,8 @@ module.exports.getWhereClicked = (messageViewer) => {
     parentName = rootMessageViewer.parentComponent.tagName.toLowerCase();
   } else if (rootMessageViewer.parentNode.classList.length) {
     parentName =
-      rootMessageViewer.parentNode.tagName.toLowerCase() + '.' + Array.prototype.join.call(rootMessageViewer.parentNode.classList, '.');
+      rootMessageViewer.parentNode.tagName.toLowerCase() + '.' +
+      Array.prototype.join.call(rootMessageViewer.parentNode.classList, '.');
   } else {
     parentName = rootMessageViewer.parentNode.tagName.toLowerCase();
   }

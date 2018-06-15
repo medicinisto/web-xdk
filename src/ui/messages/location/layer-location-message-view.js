@@ -126,7 +126,9 @@ registerComponent('layer-location-message-view', {
           marker = escape(this.model.street1 + (this.model.street2 ? ` ${this.model.street2}` : '') +
             ` ${this.model.city} ${this.model.administrativeArea}, ${this.model.postalCode} ${this.model.country}`);
         }
-        if (!googleMapsKey) logger.error('LAYER-LOCATION-MESSAGE-VIEW: No googleMapsKey found in settings; pass into Layer.init()');
+        if (!googleMapsKey) {
+          logger.error('LAYER-LOCATION-MESSAGE-VIEW: No googleMapsKey found in settings; pass into Layer.init()');
+        }
         this.nodes.img.src = location.protocol + '//maps.googleapis.com/maps/api/staticmap?' +
           `size=${width}x${this.height}&language=${navigator.language.toLowerCase()}` +
           `&key=${googleMapsKey}&zoom=${this.model.zoom}&markers=${marker}`;

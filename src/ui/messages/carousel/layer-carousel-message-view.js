@@ -21,7 +21,7 @@ import Clickable from '../../mixins/clickable';
 import { isMobile } from '../../../utils';
 import { client } from '../../../settings';
 import './layer-carousel-message-model';
-import { whereClicked, getWhereClicked } from '../../ui-utils/analytics';
+import { getWhereClicked } from '../../ui-utils/analytics';
 
 registerComponent('layer-carousel-message-view', {
   template: `
@@ -532,10 +532,12 @@ registerComponent('layer-carousel-message-view', {
       index = Array.prototype.indexOf.call(this.nodes.items.childNodes, firstVisibleAfter);
 
       const lastVisibleBefore = this._findLastFullyVisibleItem(this.nodes.items.childNodes[lastIndex].offsetLeft);
-      const lastVisibleAfter  = this._findLastFullyVisibleItem(this.nodes.items.childNodes[index].offsetLeft);
+      const lastVisibleAfter = this._findLastFullyVisibleItem(this.nodes.items.childNodes[index].offsetLeft);
 
-      const lastVisibleBeforeIndex = lastVisibleBefore ? Array.prototype.indexOf.call(this.nodes.items.childNodes, lastVisibleBefore) : lastIndex;
-      const lastVisibleAfterIndex = lastVisibleAfter ? Array.prototype.indexOf.call(this.nodes.items.childNodes, lastVisibleAfter) : index;
+      const lastVisibleBeforeIndex =
+        lastVisibleBefore ? Array.prototype.indexOf.call(this.nodes.items.childNodes, lastVisibleBefore) : lastIndex;
+      const lastVisibleAfterIndex =
+        lastVisibleAfter ? Array.prototype.indexOf.call(this.nodes.items.childNodes, lastVisibleAfter) : index;
 
       for (let i = lastIndex; i <= lastVisibleBeforeIndex; i++) visibleItemsBefore.push(this.nodes.items.childNodes[i]);
       for (let i = index; i <= lastVisibleAfterIndex; i++) visibleItemsAfter.push(this.nodes.items.childNodes[i]);

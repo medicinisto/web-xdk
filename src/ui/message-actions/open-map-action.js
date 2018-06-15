@@ -33,7 +33,8 @@ const openMapHandler = ({ data, model }) => {
   } else if (mergedData.latitude && mergedData.longitude) {
     url = `https://www.google.com/maps/search/?api=1&query=${mergedData.latitude},${mergedData.longitude}&zoom=${mergedData.zoom}`;
   } else {
-    logger.error('OPEN-MAP-ACTION: No latitude/longitude, nor street address for the "open-map" Message Action for model ', model);
+    logger.error('OPEN-MAP-ACTION: ' +
+      'No latitude/longitude, nor street address for the "open-map" Message Action for model ', model);
   }
   if (url) showFullScreen(url);
 };
