@@ -734,7 +734,7 @@ registerComponent('layer-message-list', {
       if (this._isVisibleEnoughToMarkAsRead(child)) {
         client._triggerAsync('analytics', {
           type: 'message-viewed',
-          size: child.nodes.messageViewer.size,
+          size: child.nodes.messageViewer ? child.nodes.messageViewer.size : '',
           where: 'message-list',
           message: child.properties.item,
           model: child.properties.item.createModel(),
