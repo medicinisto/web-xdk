@@ -150,6 +150,7 @@ registerComponent('layer-message-status', {
      * by the server.
      *
      * @property {String} [channelTemplate=sent]
+     * @ignore
      */
     channelTemplate: {
       value: 'sent',

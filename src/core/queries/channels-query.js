@@ -1,4 +1,4 @@
-/**
+/*
  * Query class for running a Query on Channels
  *
  *      var channelQuery = client.createQuery({

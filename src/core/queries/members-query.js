@@ -1,4 +1,4 @@
-/**
+/*
  * Query class for running a Query on Channel Members
  *
  *      var membersQuery = client.createQuery({

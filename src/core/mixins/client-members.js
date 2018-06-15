@@ -1,4 +1,4 @@
-/**
+/*
  * Adds Channel Membership handling to the Layer.Core.Client.
  *
  * @class Layer.Core.Client

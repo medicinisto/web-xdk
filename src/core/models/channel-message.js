@@ -1,4 +1,4 @@
-/**
+/*
  * @inheritdoc Layer.Core.Message
  *
  * @class Layer.Core.Message.ChannelMessage

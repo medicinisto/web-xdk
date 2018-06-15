@@ -1,4 +1,4 @@
-/**
+/*
  * The Membership class represents an Membership of a user within a channel.
  *
  * Identities are created by the System, never directly by apps.

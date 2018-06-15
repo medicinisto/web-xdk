@@ -367,6 +367,7 @@ class DbManager extends Root {
    * @method writeChannels
    * @param {Layer.Core.Channel[]} channels - Array of Channels to write
    * @param {Function} [callback]
+   * @ignore
    */
   writeChannels(channels, callback) {
     this._writeObjects('channels',
@@ -670,6 +671,7 @@ class DbManager extends Root {
    * @param {number} [pageSize=]  - To limit the number of results, provide a number for how many results to return.
    * @param {Function} [callback]  - Callback for getting results
    * @param {Layer.Core.Channel[]} callback.result
+   * @ignore
    */
   loadChannels(fromId, pageSize, callback) {
     try {
@@ -696,6 +698,7 @@ class DbManager extends Root {
    * @param {Object[]} channels
    * @param {Function} callback
    * @param {Layer.Core.Channel[]} callback.result
+   * @ignore
    */
   _loadChannelsResult(channels, callback) {
     // Instantiate and Register each Conversation; will find any lastMessage that was registered.
@@ -858,6 +861,7 @@ class DbManager extends Root {
    * @private
    * @param {Object} channel
    * @returns {Layer.Core.Channel}
+   * @ignore
    */
   _createChannel(channel) {
     if (!client.getChannel(channel.id)) {

@@ -1,4 +1,4 @@
-/**
+/*
  * A Channel object represents a dialog amongst a large set
  * of participants.
  *

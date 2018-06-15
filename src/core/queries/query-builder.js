@@ -56,10 +56,10 @@ class MessagesQuery {
   }
 
   /**
-   * Query for messages in this Conversation or Channel.
+   * Query for messages in this Conversation.
    *
    * @method forConversation
-   * @param  {String} conversationId  Accepts a Conversation ID or Channel ID
+   * @param  {String} conversationId  Accepts a Conversation ID
    */
   forConversation(conversationId) {
     if (conversationId.indexOf('layer:///channels/') === 0) {
@@ -236,6 +236,7 @@ class ConversationsQuery {
  *      query.update(qBuilder);
  *
  * @class Layer.Core.QueryBuilder.ChannelsQuery
+ * @ignore
  */
 class ChannelsQuery {
 
@@ -316,6 +317,7 @@ class ChannelsQuery {
  *      query.update(qBuilder);
  *
  * @class Layer.Core.QueryBuilder.MembersQuery
+ * @ignore
  */
 class MembersQuery {
 
@@ -513,6 +515,7 @@ const QueryBuilder = {
    * @method channels
    * @static
    * @returns {Layer.Core.QueryBuilder.ChannelsQuery}
+   * @ignore
    */
   channels() {
     return new ChannelsQuery();
@@ -524,6 +527,7 @@ const QueryBuilder = {
    * @method members
    * @static
    * @returns {Layer.Core.QueryBuilder.MembersQuery}
+   * @ignore
    */
   members() {
     return new MembersQuery();

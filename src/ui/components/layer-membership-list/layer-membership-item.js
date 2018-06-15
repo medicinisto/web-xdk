@@ -1,4 +1,4 @@
-/**
+/*
  * The Layer Membership Item represents a single user within a Membership List.
  *
  * ### Importing

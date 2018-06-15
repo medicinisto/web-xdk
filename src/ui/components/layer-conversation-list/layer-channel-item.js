@@ -1,4 +1,4 @@
-/**
+/*
  * The Layer Channel Item widget renders a single Channel, typically for use representing a
  * channel within a list of channels.
  *

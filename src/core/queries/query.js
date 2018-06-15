@@ -4,20 +4,11 @@
  *      // 1. Using a Query Builder
  *      var conversationQueryBuilder = QueryBuilder.conversations().sortBy('lastMessage');
  *      var conversationQuery = client.createQuery(queryBuilder);
- *      var channelQueryBuilder = QueryBuilder.channels();
- *      var channelQuery = client.createQuery(queryBuilder);
  *
  *      // 2. Passing properties directly
  *      var conversationQuery = client.createQuery({
  *        model: Layer.Core.Query.Conversation,
  *        sortBy: [{'createdAt': 'desc'}]
- *      });
- *      var channelQuery = client.createQuery({
- *        model: Layer.Core.Query.Conversation,
- *        sortBy: [{'createdAt': 'desc'}]
- *      });
- *      var channelQuery = client.createQuery({
- *        model: Layer.Core.Query.Channel
  *      });
  *
  * You can change the data selected by your query any time you want using:
@@ -43,7 +34,6 @@
  * For documentation on creating each of these types of queries, see the specified Query Subclass:
  *
  * * Layer.Core.ConversationsQuery
- * * Layer.Core.ChannelsQuery
  * * Layer.Core.MessagesQuery
  * * Layer.Core.IdentitiesQuery
  * * Layer.Core.MembersQuery
@@ -741,6 +731,7 @@ Query.Conversation = 'Conversation';
  * Use this value in the Layer.Core.Query.model property.
  * @property {String} Channel
  * @static
+ * @ignore
  */
 Query.Channel = 'Channel';
 
@@ -777,6 +768,7 @@ Query.Identity = 'Identity';
  * Use this value in the Layer.Core.Query.model property.
  * @property {String}
  * @static
+ * @ignore
  */
 Query.Membership = 'Membership';
 

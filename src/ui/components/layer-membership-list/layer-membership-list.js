@@ -1,4 +1,4 @@
-/**
+/*
  * The Layer Membership List renders a pagable list of Layer.Core.Membership objects, and allows the user to
  * see who else is in the Layer.Core.Channel with them.
  *
