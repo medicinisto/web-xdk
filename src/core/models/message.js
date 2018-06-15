@@ -700,7 +700,7 @@ class Message extends Syncable {
    */
   getModelName() {
     const model = this.createModel();
-    return model.getModelName();
+    return model ? model.getModelName() : '';
   }
 
   /**
