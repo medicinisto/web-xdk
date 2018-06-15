@@ -1237,6 +1237,7 @@ class MessageTypeModel extends Root {
    * * A `${propertyName}Url` property that is an alternate to the `${propertyName}` property
    * * A `get${PropertyName}Url()` method for getting the URL even if its expired
    * * A `get${PropertyName}Body()` method for getting the contents of the file
+   * * A `get${PropertyName}UrlExpired` method for returning true if the Source Part's expiring url has expired and needs to be refreshed
    * * Optionally some kind of `size` property taken from the file name from the File/Blob
    * * Optionally some kind of `name` property taken from the file name from the File/Blob
    * * Optionally some kind of `mimeType` property taken from the file name from the File/Blob
@@ -1291,6 +1292,13 @@ class MessageTypeModel extends Root {
         callback('');
       }
     };
+
+    classDef.prototype[`get${capPropName}UrlExpired`] = function getUrlExpired(callback) {
+      if (this[urlPropName]) return false;
+      if (this[propertyName].url) return false;
+      return true;
+    };
+
 
 
     if (!classDef.FileBehaviorDefs) classDef.FileBehaviorDefs = [];
