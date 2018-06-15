@@ -632,7 +632,7 @@ describe("The Conversation Class", function() {
             }});
 
             // Posttest
-            expect(conversation._triggerAsync).toHaveBeenCalledWith("conversations:sent", {
+            expect(conversation._triggerAsync).toHaveBeenCalledWith("sent", {
                 result: Layer.Core.Conversation.FOUND_WITHOUT_REQUESTED_METADATA
             });
             expect(Layer.Core.Conversation.FOUND_WITHOUT_REQUESTED_METADATA).toEqual(jasmine.any(String));
@@ -650,7 +650,7 @@ describe("The Conversation Class", function() {
 
             // Posttest
             expect(conversation.trigger)
-                .toHaveBeenCalledWith("conversations:sent-error", {
+                .toHaveBeenCalledWith("sent-error", {
                 error: {
                     id: 'doh',
                     data: 'ray'
@@ -683,7 +683,7 @@ describe("The Conversation Class", function() {
 
             // Posttest
             expect(conversation._triggerAsync)
-                .toHaveBeenCalledWith("conversations:sent", {result: Layer.Core.Conversation.CREATED});
+                .toHaveBeenCalledWith("sent", {result: Layer.Core.Conversation.CREATED});
             expect(Layer.Core.Conversation.CREATED).toEqual(jasmine.any(String));
         });
 
@@ -701,7 +701,7 @@ describe("The Conversation Class", function() {
 
             // Posttest
             expect(conversation._triggerAsync)
-                .toHaveBeenCalledWith("conversations:sent", {result: Layer.Core.Conversation.CREATED});
+                .toHaveBeenCalledWith("sent", {result: Layer.Core.Conversation.CREATED});
             expect(Layer.Core.Conversation.CREATED).toEqual(jasmine.any(String));
         });
 
@@ -731,7 +731,7 @@ describe("The Conversation Class", function() {
 
             // Posttest
             expect(conversation._triggerAsync)
-                .toHaveBeenCalledWith("conversations:sent", {result: Layer.Core.Conversation.FOUND});
+                .toHaveBeenCalledWith("sent", {result: Layer.Core.Conversation.FOUND});
             expect(Layer.Core.Conversation.FOUND).toEqual(jasmine.any(String));
         });
     });
@@ -768,7 +768,7 @@ describe("The Conversation Class", function() {
             conversation._populateFromServer(c);
 
             // Posttest
-            expect(conversation._triggerAsync).toHaveBeenCalledWith("conversations:change", jasmine.any(Object));
+            expect(conversation._triggerAsync).toHaveBeenCalledWith("change", jasmine.any(Object));
         });
 
         it("Should trigger ID change events", function() {
@@ -781,7 +781,7 @@ describe("The Conversation Class", function() {
 
             // Posttest
             expect(conversation._triggerAsync)
-                .toHaveBeenCalledWith('conversations:change', {
+                .toHaveBeenCalledWith('change', {
                     oldValue: initialId,
                     newValue: conversation.id,
                     property: 'id',
@@ -895,7 +895,7 @@ describe("The Conversation Class", function() {
             userIdentity1._updateValue(['displayName'], 'Fred');
 
             // Posttest
-            expect(conversation._triggerAsync).toHaveBeenCalledWith('conversations:change', {
+            expect(conversation._triggerAsync).toHaveBeenCalledWith('change', {
                 property: 'participants.displayName',
                 identity: userIdentity1,
                 oldValue: "1",
@@ -1206,7 +1206,7 @@ describe("The Conversation Class", function() {
         it("Should trigger conversations:change event", function() {
             spyOn(conversation, "_triggerAsync");
             conversation.__updateParticipants([userIdentity1, userIdentity2], [userIdentity2, userIdentity3, userIdentity4]);
-            expect(conversation._triggerAsync).toHaveBeenCalledWith('conversations:change', {
+            expect(conversation._triggerAsync).toHaveBeenCalledWith('change', {
                 property: 'participants',
                 oldValue: [userIdentity2, userIdentity3, userIdentity4],
                 newValue: [userIdentity1, userIdentity2],
@@ -1246,7 +1246,7 @@ describe("The Conversation Class", function() {
 
             conversation.__updateParticipants([], [client.user, userIdentity3, userIdentity4]);
             expect(conversation.isCurrentParticipant).toBe(false);
-            expect(conversation._triggerAsync).toHaveBeenCalledWith('conversations:change', {
+            expect(conversation._triggerAsync).toHaveBeenCalledWith('change', {
                 property: "isCurrentParticipant",
                 newValue: false,
                 oldValue: true,
@@ -1255,7 +1255,7 @@ describe("The Conversation Class", function() {
 
             conversation.__updateParticipants([client.user, userIdentity3, userIdentity4], []);
             expect(conversation.isCurrentParticipant).toBe(true);
-            expect(conversation._triggerAsync).toHaveBeenCalledWith('conversations:change', {
+            expect(conversation._triggerAsync).toHaveBeenCalledWith('change', {
                 property: "isCurrentParticipant",
                 newValue: true,
                 oldValue: false,
@@ -1273,13 +1273,13 @@ describe("The Conversation Class", function() {
                 ],
                 target: userIdentity1
             });
-            expect(conversation._triggerAsync).toHaveBeenCalledWith('conversations:change', {
+            expect(conversation._triggerAsync).toHaveBeenCalledWith('change', {
                 property: 'participants.displayName',
                 oldValue: 'fred',
                 newValue: 'freddy',
                 identity: userIdentity1
             });
-            expect(conversation._triggerAsync).toHaveBeenCalledWith('conversations:change', {
+            expect(conversation._triggerAsync).toHaveBeenCalledWith('change', {
                 property: 'participants.firstName',
                 oldValue: 'fred1',
                 newValue: 'freddy1',
@@ -1414,7 +1414,7 @@ describe("The Conversation Class", function() {
         it("Should trigger conversations:delete", function() {
             spyOn(conversation, "trigger");
             conversation._deleted();
-            expect(conversation.trigger).toHaveBeenCalledWith("conversations:delete");
+            expect(conversation.trigger).toHaveBeenCalledWith("delete");
         });
     });
 
@@ -1433,7 +1433,7 @@ describe("The Conversation Class", function() {
           // Posttest
           expect(conversation.isDestroyed).toBe(true);
           expect(m.isDestroyed).toBe(true);
-          expect(conversation.trigger).toHaveBeenCalledWith("conversations:delete");
+          expect(conversation.trigger).toHaveBeenCalledWith("delete");
         });
 
         it("Should destroy the conversation if mode is all_participants", function() {
@@ -1448,7 +1448,7 @@ describe("The Conversation Class", function() {
           // Posttest
           expect(conversation.isDestroyed).toBe(true);
           expect(m.isDestroyed).toBe(true);
-          expect(conversation.trigger).toHaveBeenCalledWith("conversations:delete");
+          expect(conversation.trigger).toHaveBeenCalledWith("delete");
         });
 
         it("Should not destroy the object if from_position has a lesser value", function() {
@@ -1571,7 +1571,7 @@ describe("The Conversation Class", function() {
 
             // Posttest
             expect(conversation._triggerAsync)
-            .toHaveBeenCalledWith("conversations:change", jasmine.objectContaining({
+            .toHaveBeenCalledWith("change", jasmine.objectContaining({
                 oldValue: {hey: "ho"},
                 newValue: {hey: "ho", a: {b: {c: "fred"}, d: "wilma"}},
                 property: "metadata",
@@ -1719,7 +1719,7 @@ describe("The Conversation Class", function() {
 
             // Posttest
             expect(conversation._triggerAsync)
-            .toHaveBeenCalledWith("conversations:change", {
+            .toHaveBeenCalledWith("change", {
                 oldValue: {ho: "hum", a: {b: {c: "fred"}}},
                 newValue: {ho: "hum", a: {b: {}}},
                 property: "metadata",
@@ -1894,7 +1894,7 @@ describe("The Conversation Class", function() {
         conversation.__unreadCount = 10;
         spyOn(conversation, "_triggerAsync");
         conversation._updateUnreadCountEvent();
-        expect(conversation._triggerAsync).toHaveBeenCalledWith('conversations:change', {
+        expect(conversation._triggerAsync).toHaveBeenCalledWith('change', {
           newValue: 10,
           oldValue: 5,
           property: 'unreadCount'
@@ -1923,7 +1923,7 @@ describe("The Conversation Class", function() {
       it("Should trigger an event if Message ID changes", function() {
         spyOn(conversation, "_triggerAsync");
         conversation.__updateLastMessage({id: "1"}, {id: "2"});
-        expect(conversation._triggerAsync).toHaveBeenCalledWith("conversations:change", {
+        expect(conversation._triggerAsync).toHaveBeenCalledWith("change", {
           property: "lastMessage",
           newValue: {id: "1"},
           oldValue: {id: "2"}

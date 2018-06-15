@@ -109,7 +109,7 @@ class Container extends Syncable {
     // IDs change if the server returns a matching Container
     if (id !== this.id) {
       Client._updateContainerId(this, id);
-      this._triggerAsync(`${this.constructor.eventPrefix}:change`, {
+      this._triggerAsync('change', {
         oldValue: id,
         newValue: this.id,
         property: 'id',
@@ -148,7 +148,7 @@ class Container extends Syncable {
     } else if (data.id === 'conflict') {
       this._createResultConflict(data);
     } else {
-      this.trigger(this.constructor.eventPrefix + ':sent-error', { error: data });
+      this.trigger('sent-error', { error: data });
       this.destroy();
     }
   }
@@ -164,7 +164,7 @@ class Container extends Syncable {
   _createSuccess(data) {
     const id = this.id;
     this._populateFromServer(data);
-    this._triggerAsync(this.constructor.eventPrefix + ':sent', {
+    this._triggerAsync('sent', {
       result: id === this.id ? Container.CREATED : Container.FOUND,
     });
   }
@@ -395,18 +395,8 @@ class Container extends Syncable {
     return this;
   }
 
-  _triggerAsync(evtName, args) {
-    this._clearObject();
-    super._triggerAsync(evtName, args);
-  }
-
-  trigger(evtName, args) {
-    this._clearObject();
-    return super.trigger(evtName, args);
-  }
-
   __updateCreatedAt(newValue, oldValue) {
-    this._triggerAsync(`${this.constructor.eventPrefix}:change`, {
+    this._triggerAsync('change', {
       property: 'createdAt',
       newValue,
       oldValue,
@@ -428,7 +418,7 @@ class Container extends Syncable {
   __updateMetadata(newValue, oldValue, paths) {
     if (this._inLayerParser) return;
     if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
-      this._triggerAsync(`${this.constructor.eventPrefix}:change`, {
+      this._triggerAsync('change', {
         property: 'metadata',
         newValue,
         oldValue,

@@ -138,7 +138,7 @@ module.exports = {
         Client._addMessage(this);
 
         // allow for modification of message before sending
-        const evt = this.trigger('messages:sending', { notification, cancelable: true });
+        const evt = this.trigger('sending', { notification, cancelable: true });
         if (evt.canceled) {
           return;
         }

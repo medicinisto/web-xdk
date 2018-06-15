@@ -684,7 +684,7 @@ describe("Websocket tests", function() {
 
             // Posttest
             expect(c2.unreadCount).toEqual(999);
-            expect(c2._triggerAsync).toHaveBeenCalledWith("conversations:change", jasmine.objectContaining({
+            expect(c2._triggerAsync).toHaveBeenCalledWith("change", jasmine.objectContaining({
                 oldValue: 0,
                 newValue: 999,
                 property: "unreadCount"

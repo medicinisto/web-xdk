@@ -122,7 +122,7 @@ class ConversationMessage extends Message {
         if (!oldStatus) oldStatus = {};
         const usersStateUpdatedToRead = userHasRead && oldStatus[id] !== Constants.RECEIPT_STATE.READ;
         if (usersStateUpdatedToRead || isSender) {
-          this._triggerAsync('messages:change', {
+          this._triggerAsync('change', {
             oldValue: oldStatus,
             newValue: status,
             property: 'recipientStatus',
@@ -248,12 +248,12 @@ class ConversationMessage extends Message {
    */
   _triggerMessageRead() {
     const value = this.isRead;
-    this._triggerAsync('messages:change', {
+    this._triggerAsync('change', {
       property: 'isRead',
       oldValue: !value,
       newValue: value,
     });
-    this._triggerAsync('messages:change', {
+    this._triggerAsync('change', {
       property: 'isUnread',
       oldValue: value,
       newValue: !value,

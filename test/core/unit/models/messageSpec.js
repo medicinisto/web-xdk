@@ -547,14 +547,14 @@ describe("The Message class", function() {
             Layer.Utils.defer.flush();
 
             // Posttest
-            expect(message._triggerAsync).toHaveBeenCalledWith('messages:change', {
+            expect(message._triggerAsync).toHaveBeenCalledWith('change', {
                 property: 'parts.body',
                 oldValue: 'ho',
                 newValue: 'howdy',
                 part: part
             });
-            expect(message._triggerAsync).not.toHaveBeenCalledWith('messages:part-removed', jasmine.any(Object));
-            expect(message._triggerAsync).not.toHaveBeenCalledWith('messages:part-added', jasmine.any(Object));
+            expect(message._triggerAsync).not.toHaveBeenCalledWith('part-removed', jasmine.any(Object));
+            expect(message._triggerAsync).not.toHaveBeenCalledWith('part-added', jasmine.any(Object));
         });
 
         it("Should trigger part removed and added events if the mime type changes", function() {
@@ -567,10 +567,10 @@ describe("The Message class", function() {
             Layer.Utils.defer.flush();
 
             // Posttest
-            expect(message._triggerAsync).toHaveBeenCalledWith('messages:part-removed', {
+            expect(message._triggerAsync).toHaveBeenCalledWith('part-removed', {
                 part: part
             });
-            expect(message._triggerAsync).toHaveBeenCalledWith('messages:part-added', {
+            expect(message._triggerAsync).toHaveBeenCalledWith('part-added', {
                 part: part
             });
         });
@@ -798,7 +798,7 @@ describe("The Message class", function() {
             };
 
             // Posttest
-            expect(m._triggerAsync).toHaveBeenCalledWith("messages:change", {
+            expect(m._triggerAsync).toHaveBeenCalledWith("change", {
                 oldValue: oldValue,
                 newValue: {
                     "layer:///identities/999": "read",
@@ -855,7 +855,7 @@ describe("The Message class", function() {
             m.recipientStatus = newValue;
 
             // Posttest
-            expect(m._triggerAsync).toHaveBeenCalledWith("messages:change", {
+            expect(m._triggerAsync).toHaveBeenCalledWith("change", {
                 oldValue: oldValue,
                 newValue: newValue,
                 property: "recipientStatus"
@@ -1064,12 +1064,12 @@ describe("The Message class", function() {
             m.isRead = true;
 
             // Posttest
-            expect(m._triggerAsync).toHaveBeenCalledWith("messages:change", {
+            expect(m._triggerAsync).toHaveBeenCalledWith("change", {
               property: 'isRead',
               oldValue: false,
               newValue: true
             });
-            expect(m._triggerAsync).toHaveBeenCalledWith("messages:change", {
+            expect(m._triggerAsync).toHaveBeenCalledWith("change", {
               property: 'isUnread',
               oldValue: true,
               newValue: false
@@ -1220,12 +1220,12 @@ describe("The Message class", function() {
             m.sendReceipt("read");
 
             // Posttest
-            expect(m._triggerAsync).toHaveBeenCalledWith("messages:change", {
+            expect(m._triggerAsync).toHaveBeenCalledWith("change", {
               property: 'isRead',
               oldValue: false,
               newValue: true
             });
-            expect(m._triggerAsync).toHaveBeenCalledWith("messages:change", {
+            expect(m._triggerAsync).toHaveBeenCalledWith("change", {
               property: 'isUnread',
               oldValue: true,
               newValue: false
@@ -1482,7 +1482,7 @@ describe("The Message class", function() {
             Layer.Utils.defer.flush();
 
             // Posttest
-            expect(m.trigger).toHaveBeenCalledWith("messages:sending", {
+            expect(m.trigger).toHaveBeenCalledWith("sending", {
                 notification: undefined,
                 cancelable: true,
             });
@@ -1842,7 +1842,7 @@ describe("The Message class", function() {
             });
 
             // Posttest
-            expect(m.trigger).toHaveBeenCalledWith("messages:sent-error", { error: "Doh!" });
+            expect(m.trigger).toHaveBeenCalledWith("sent-error", { error: "Doh!" });
             expect(m.destroy).toHaveBeenCalled();
         });
 
@@ -1872,7 +1872,7 @@ describe("The Message class", function() {
             });
 
             // Posttest
-            expect(m._triggerAsync).toHaveBeenCalledWith("messages:sent");
+            expect(m._triggerAsync).toHaveBeenCalledWith("sent");
         });
 
         it("Should do nothing if isDestroyed", function() {
@@ -2014,7 +2014,7 @@ describe("The Message class", function() {
             m.delete(Layer.Constants.DELETION_MODE.ALL);
 
             // Posttest
-            expect(m.trigger).toHaveBeenCalledWith("messages:delete");
+            expect(m.trigger).toHaveBeenCalledWith("delete");
         });
 
         it("Should destroy the message", function() {
@@ -2326,7 +2326,7 @@ describe("The Message class", function() {
             });
 
             // Posttest
-            expect(m._triggerAsync).toHaveBeenCalledWith("messages:change", {
+            expect(m._triggerAsync).toHaveBeenCalledWith("change", {
                 oldValue: position,
                 newValue: 35,
                 property: 'position'
@@ -2664,7 +2664,7 @@ describe("The Message class", function() {
             var m = Layer.Core.Message.ConversationMessage._createFromServer(data);
 
             // Posttest
-            expect(client._triggerAsync).not.toHaveBeenCalledWith('messages:notify', { message: m });
+            expect(client._triggerAsync).not.toHaveBeenCalledWith('notify', { message: m });
         });
 
         it("Should not trigger a messages:notify event if message is read", function() {
@@ -2690,7 +2690,7 @@ describe("The Message class", function() {
             var m = Layer.Core.Message.ConversationMessage._createFromServer(data);
 
             // Posttest
-            expect(client._triggerAsync).not.toHaveBeenCalledWith('messages:notify', { message: m });
+            expect(client._triggerAsync).not.toHaveBeenCalledWith('notify', { message: m });
         });
 
         it("Should setup a parent that is a Conversation", function() {

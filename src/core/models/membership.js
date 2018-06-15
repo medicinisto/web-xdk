@@ -48,16 +48,6 @@ class Membership extends Syncable {
     super.destroy();
   }
 
-  _triggerAsync(evtName, args) {
-    this._clearObject();
-    super._triggerAsync(evtName, args);
-  }
-
-  trigger(evtName, args) {
-    this._clearObject();
-    super.trigger(evtName, args);
-  }
-
   /**
    * Populates this instance using server-data.
    *
@@ -82,7 +72,7 @@ class Membership extends Syncable {
 
     this.identity = membership.identity ? client._createObject(membership.identity) : client.user;
     this.identity.on('identities:change', (evt) => {
-      this.trigger('members:change', {
+      this.trigger('change', {
         property: 'identity',
       });
     }, this);
@@ -106,7 +96,7 @@ class Membership extends Syncable {
     if (value === null || value === undefined) value = '';
     if (this[key] !== value) {
       if (!this.isInitializing) {
-        this._triggerAsync('members:change', {
+        this._triggerAsync('change', {
           property: key,
           oldValue: this[key],
           newValue: value,

@@ -109,7 +109,7 @@ class Syncable extends Root {
    * @protected
    */
   _deleted() {
-    this.trigger(this.constructor.eventPrefix + ':delete');
+    this.trigger('delete');
   }
 
 
@@ -168,7 +168,7 @@ class Syncable extends Root {
           if (syncItem.isDestroyed) return;
           if (item) {
             syncItem._populateFromServer(item);
-            syncItem.trigger(typeName + ':loaded');
+            syncItem.trigger('loaded');
           } else if (!Client.isReady) {
             syncItem.syncState = SYNC_STATE.LOADING;
             Client.once('ready', () => syncItem._load(), syncItem);
@@ -204,17 +204,16 @@ class Syncable extends Root {
 
   _loadResult(result) {
     if (this.isDestroyed) return;
-    const prefix = this.constructor.eventPrefix;
     if (!result.success) {
       this.syncState = SYNC_STATE.NEW;
-      this._triggerAsync(prefix + ':loaded-error', { error: result.data });
+      this._triggerAsync('loaded-error', { error: result.data });
       setTimeout(() => {
         if (!this.isDestroyed) this.destroy();
       }, 100); // Insure destroyed AFTER loaded-error event has triggered
     } else {
       this._populateFromServer(result.data);
       this._loaded(result.data);
-      this.trigger(prefix + ':loaded');
+      this.trigger('loaded');
     }
   }
 
@@ -280,6 +279,9 @@ class Syncable extends Root {
   // Any time there is an event triggered, assume that its state has changed and clear its cached object.
   // See parent class for docs
   _triggerAsync(evtName, args) {
+    if (!this.supportsEvent(evtName) && evtName.indexOf(':') === -1) {
+      evtName = this.constructor.eventPrefix + ':' + evtName;
+    }
     this._clearObject();
     super._triggerAsync(evtName, args);
   }
@@ -287,6 +289,9 @@ class Syncable extends Root {
   // Any time there is an event triggered, assume that its state has changed and clear its cached object.
   // See parent class for docs
   trigger(evtName, args) {
+    if (!this.supportsEvent(evtName) && evtName.indexOf(':') === -1) {
+      evtName = this.constructor.eventPrefix + ':' + evtName;
+    }
     this._clearObject();
     return super.trigger(evtName, args);
   }

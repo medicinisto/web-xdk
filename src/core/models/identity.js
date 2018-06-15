@@ -157,7 +157,7 @@ class Identity extends Syncable {
     if (pointer[lastKey] !== value) {
       if (!this.isInitializing) {
         if (keys[0] === '_presence') keys = [keys[1]];
-        this._triggerAsync('identities:change', {
+        this._triggerAsync('change', {
           property: keys.join('.'),
           oldValue: pointer[lastKey],
           newValue: value,
@@ -205,7 +205,7 @@ class Identity extends Syncable {
     // and if your online, lastSeenAt isn't all that significant.
     // The only time changes to `lastSeenAt` should be triggered as an event is when status changes to offline
     if (changes.length !== 1 || changes[0].property !== 'lastSeenAt') {
-      changes.forEach(change => this._triggerAsync('identities:change', change));
+      changes.forEach(change => this._triggerAsync('change', change));
     }
   }
 
@@ -335,7 +335,7 @@ class Identity extends Syncable {
       ['firstName', 'lastName', 'emailAddress', 'phoneNumber', 'metadata', 'publicKey', 'isFullIdentity', 'type']
         .forEach(key => delete this[key]);
     }
-    this._triggerAsync('identities:unfollow');
+    this._triggerAsync('unfollow');
   }
 
   /**

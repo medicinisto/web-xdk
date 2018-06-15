@@ -318,7 +318,7 @@ describe("The MessageParts class", function() {
             setTimeout(function() {
 
                 // Posttest
-                expect(message._triggerAsync).toHaveBeenCalledWith("messages:change", {
+                expect(message._triggerAsync).toHaveBeenCalledWith("change", {
                     property: "parts.body",
                     oldValue: null,
                     newValue: 'Hey Ho',
@@ -453,7 +453,7 @@ describe("The MessageParts class", function() {
 
             setTimeout(function() {
                 // Posttest
-                expect(message._triggerAsync).toHaveBeenCalledWith("messages:change", {
+                expect(message._triggerAsync).toHaveBeenCalledWith("change", {
                     oldValue: '',
                     newValue: "hey",
                     property: "parts.url",

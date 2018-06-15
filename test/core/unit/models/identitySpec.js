@@ -238,32 +238,32 @@ function deleteTables(done) {
             user_id: "i",
             id: "layer:///identities/i"
           });
-          expect(identity._triggerAsync).toHaveBeenCalledWith("identities:change", {
+          expect(identity._triggerAsync).toHaveBeenCalledWith("change", {
             property: "displayName",
             oldValue: '',
             newValue: 'a'
           });
-          expect(identity._triggerAsync).toHaveBeenCalledWith("identities:change", {
+          expect(identity._triggerAsync).toHaveBeenCalledWith("change", {
             property: "avatarUrl",
             oldValue: '',
             newValue: 'z'
           });
-          expect(identity._triggerAsync).toHaveBeenCalledWith("identities:change", {
+          expect(identity._triggerAsync).toHaveBeenCalledWith("change", {
             property: "firstName",
             oldValue: '',
             newValue: 'b'
           });
-          expect(identity._triggerAsync).toHaveBeenCalledWith("identities:change", {
+          expect(identity._triggerAsync).toHaveBeenCalledWith("change", {
             property: "phoneNumber",
             oldValue: '',
             newValue: 'd'
           });
-          expect(identity._triggerAsync).toHaveBeenCalledWith("identities:change", {
+          expect(identity._triggerAsync).toHaveBeenCalledWith("change", {
             property: "metadata",
             oldValue: {},
             newValue: {hey: "ho"}
           });
-          expect(identity._triggerAsync).toHaveBeenCalledWith("identities:change", {
+          expect(identity._triggerAsync).toHaveBeenCalledWith("change", {
             property: "publicKey",
             oldValue: '',
             newValue: 'h'
@@ -397,12 +397,12 @@ function deleteTables(done) {
             ['presence.status', 'presence.last_seen_at']);
             expect(identity._presence.status).toEqual('available'); // not updated
             expect(identity._presence.lastSeenAt.toISOString().substring(0, 10)).toEqual('2010-01-01'); // updated
-          expect(identity._triggerAsync).toHaveBeenCalledWith('identities:change', {
+          expect(identity._triggerAsync).toHaveBeenCalledWith('change', {
             property: 'status',
             oldValue: 'away',
             newValue: 'available'
           });
-          expect(identity._triggerAsync).toHaveBeenCalledWith('identities:change', {
+          expect(identity._triggerAsync).toHaveBeenCalledWith('change', {
             property: 'lastSeenAt',
             oldValue: new Date('2020-01-01'),
             newValue: new Date('2010-01-01')
@@ -584,7 +584,7 @@ function deleteTables(done) {
         it("Should trigger identities:unfollow", function() {
           spyOn(identity, '_triggerAsync');
           identity._handleWebsocketDelete(null);
-          expect(identity._triggerAsync).toHaveBeenCalledWith('identities:unfollow');
+          expect(identity._triggerAsync).toHaveBeenCalledWith('unfollow');
         });
       });
 
@@ -600,7 +600,7 @@ function deleteTables(done) {
           spyOn(identity, '_triggerAsync');
           identity._updateValue(['firstName'], 'They call me First Name');
           expect(identity.firstName).toEqual('They call me First Name');
-          expect(identity._triggerAsync).toHaveBeenCalledWith('identities:change', {
+          expect(identity._triggerAsync).toHaveBeenCalledWith('change', {
             property: 'firstName',
             oldValue: 'first',
             newValue: 'They call me First Name'
@@ -612,7 +612,7 @@ function deleteTables(done) {
           spyOn(identity, '_triggerAsync');
           identity._updateValue(['_presence', 'status'], 'annoyed');
           expect(identity._presence.status).toEqual('annoyed');
-          expect(identity._triggerAsync).toHaveBeenCalledWith('identities:change', {
+          expect(identity._triggerAsync).toHaveBeenCalledWith('change', {
             property: 'status',
             oldValue: 'away',
             newValue: 'annoyed'

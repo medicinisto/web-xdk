@@ -91,7 +91,7 @@ describe("The Syncable Class", function() {
 
             // Posttest
             expect(ident._populateFromServer).toHaveBeenCalledWith({parts: []});
-            expect(ident.trigger).toHaveBeenCalledWith('messages:loaded');
+            expect(ident.trigger).toHaveBeenCalledWith('loaded');
         });
 
         it("Should call _load", function() {
@@ -176,7 +176,7 @@ describe("The Syncable Class", function() {
 
             // Posttest
             expect(ident._populateFromServer).toHaveBeenCalledWith({parts: []});
-            expect(ident.trigger).toHaveBeenCalledWith('messages:loaded');
+            expect(ident.trigger).toHaveBeenCalledWith('loaded');
         });
 
         it("Should call _load", function() {
@@ -210,7 +210,7 @@ describe("The Syncable Class", function() {
 
             // Posttest
             expect(ident._populateFromServer).toHaveBeenCalledWith({participants: []});
-            expect(ident.trigger).toHaveBeenCalledWith('conversations:loaded');
+            expect(ident.trigger).toHaveBeenCalledWith('loaded');
         });
 
         it("Should call _load", function() {
@@ -244,7 +244,7 @@ describe("The Syncable Class", function() {
 
             // Posttest
             expect(ident._populateFromServer).toHaveBeenCalledWith({display_name: "hey ho"});
-            expect(ident.trigger).toHaveBeenCalledWith('identities:loaded');
+            expect(ident.trigger).toHaveBeenCalledWith('loaded');
         });
 
         it("Should call _load", function() {
@@ -319,7 +319,7 @@ describe("The Syncable Class", function() {
 
             // Posttest
             expect(message._triggerAsync).toHaveBeenCalledWith(
-                "messages:loaded-error", {
+                "loaded-error", {
                     error: "Argh"
                 });
         });
@@ -333,7 +333,7 @@ describe("The Syncable Class", function() {
 
             // Posttest
             expect(announcement._triggerAsync).toHaveBeenCalledWith(
-                "messages:loaded-error", {
+                "loaded-error", {
                     error: "Argh"
                 });
         });
@@ -347,7 +347,7 @@ describe("The Syncable Class", function() {
 
             // Posttest
             expect(conversation._triggerAsync).toHaveBeenCalledWith(
-                "conversations:loaded-error", {
+                "loaded-error", {
                     error: "Argh"
                 });
         });
@@ -435,7 +435,7 @@ describe("The Syncable Class", function() {
             });
 
             // Posttest
-            expect(conversation.trigger).toHaveBeenCalledWith("conversations:loaded");
+            expect(conversation.trigger).toHaveBeenCalledWith("loaded");
         });
 
         it("Should trigger messages:loaded if success", function() {
@@ -449,7 +449,7 @@ describe("The Syncable Class", function() {
             });
 
             // Posttest
-            expect(message.trigger).toHaveBeenCalledWith("messages:loaded");
+            expect(message.trigger).toHaveBeenCalledWith("loaded");
         });
 
 

@@ -95,7 +95,7 @@ describe("Conversation Integration Tests", function() {
 
 
       // Posttest
-      expect(conversation._triggerAsync).toHaveBeenCalledWith("conversations:change", jasmine.objectContaining({
+      expect(conversation._triggerAsync).toHaveBeenCalledWith("change", jasmine.objectContaining({
         oldValue: [client.user, userIdentity],
         newValue: client._fixIdentities(responses.conversation1.participants),
         property: "participants"
@@ -122,7 +122,7 @@ describe("Conversation Integration Tests", function() {
 
 
       // Posttest
-      expect(conversation._triggerAsync).toHaveBeenCalledWith("conversations:change", jasmine.objectContaining({
+      expect(conversation._triggerAsync).toHaveBeenCalledWith("change", jasmine.objectContaining({
         oldValue: initialMetadata,
         newValue: responses.conversation1.metadata,
         property: "metadata"

@@ -184,7 +184,7 @@ class Channel extends Container {
     } else {
       this.syncState = Constants.SYNC_STATE.NEW;
       this._syncCounter = 0;
-      this.trigger('channels:sent-error', { error: data });
+      this.trigger('sent-error', { error: data });
     }
 
     this._inPopulateFromServer = false;
@@ -214,7 +214,7 @@ class Channel extends Container {
    * @param  {string} oldValue
    */
   __updateName(newValue, oldValue) {
-    this._triggerAsync('channels:change', {
+    this._triggerAsync('change', {
       property: 'name',
       oldValue,
       newValue,

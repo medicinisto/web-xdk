@@ -247,7 +247,7 @@ class Conversation extends Container {
     this._sendDistinctEvent = null;
 
     // delay so there is time to setup an event listener on this conversation
-    this._triggerAsync('conversations:sent', evt);
+    this._triggerAsync('sent', evt);
     return this;
   }
 
@@ -340,7 +340,7 @@ class Conversation extends Container {
 
   _createResultConflict(data) {
     this._populateFromServer(data.data);
-    this._triggerAsync(this.constructor.eventPrefix + ':sent', {
+    this._triggerAsync('sent', {
       result: Conversation.FOUND_WITHOUT_REQUESTED_METADATA,
     });
   }
@@ -666,7 +666,7 @@ class Conversation extends Container {
     this._oldUnreadCount = undefined;
 
     if (newValue === oldValue) return;
-    this._triggerAsync('conversations:change', {
+    this._triggerAsync('change', {
       newValue,
       oldValue,
       property: 'unreadCount',
@@ -687,7 +687,7 @@ class Conversation extends Container {
    */
   __updateLastMessage(newValue, oldValue) {
     if (newValue && oldValue && newValue.id === oldValue.id) return;
-    this._triggerAsync('conversations:change', {
+    this._triggerAsync('change', {
       property: 'lastMessage',
       newValue,
       oldValue,
@@ -715,13 +715,13 @@ class Conversation extends Container {
       change.property = 'participants';
       change.oldValue = oldValue;
       change.newValue = newValue;
-      this._triggerAsync('conversations:change', change);
+      this._triggerAsync('change', change);
     }
 
     const isParticipant = newValue.indexOf(client.user) !== -1;
     if (isParticipant !== this.isCurrentParticipant) {
       this.isCurrentParticipant = isParticipant;
-      this._triggerAsync('conversations:change', {
+      this._triggerAsync('change', {
         property: 'isCurrentParticipant',
         oldValue: !this.isCurrentParticipant,
         newValue: this.isCurrentParticipant,
@@ -731,7 +731,7 @@ class Conversation extends Container {
 
   _handleParticipantChangeEvent(evt) {
     evt.changes.forEach((change) => {
-      this._triggerAsync('conversations:change', {
+      this._triggerAsync('change', {
         property: 'participants.' + change.property,
         identity: evt.target,
         oldValue: change.oldValue,

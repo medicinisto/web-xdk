@@ -200,7 +200,7 @@ describe("The Channel Class", function() {
         spyOn(channel, "trigger");
         spyOn(channel, "_createSuccess");
         channel._createResultConflict({data: null});
-        expect(channel.trigger).toHaveBeenCalledWith('channels:sent-error', {error: {data: null}});
+        expect(channel.trigger).toHaveBeenCalledWith('sent-error', {error: {data: null}});
         expect(channel._createSuccess).not.toHaveBeenCalled();
         expect(channel.isNew()).toBe(true);
       });
@@ -228,7 +228,7 @@ describe("The Channel Class", function() {
         spyOn(channel, "_triggerAsync");
 
         channel.name = "fred";
-        expect(channel._triggerAsync).toHaveBeenCalledWith('channels:change', {
+        expect(channel._triggerAsync).toHaveBeenCalledWith('change', {
           property: 'name',
           oldValue: '',
           newValue: 'fred'
@@ -270,7 +270,7 @@ describe("The Channel Class", function() {
             channel._populateFromServer(c);
 
             // Posttest
-            expect(channel._triggerAsync).toHaveBeenCalledWith("channels:change", jasmine.any(Object));
+            expect(channel._triggerAsync).toHaveBeenCalledWith("change", jasmine.any(Object));
         });
 
         it("Should trigger ID change events", function() {
@@ -283,7 +283,7 @@ describe("The Channel Class", function() {
 
             // Posttest
             expect(channel._triggerAsync)
-                .toHaveBeenCalledWith('channels:change', {
+                .toHaveBeenCalledWith('change', {
                     oldValue: initialId,
                     newValue: channel.id,
                     property: 'id',
@@ -300,7 +300,7 @@ describe("The Channel Class", function() {
 
             // Posttest
             expect(channel._triggerAsync)
-                .toHaveBeenCalledWith('channels:change', {
+                .toHaveBeenCalledWith('change', {
                     oldValue: 'a',
                     newValue: c.name,
                     property: 'name',
@@ -371,7 +371,7 @@ describe("The Channel Class", function() {
         channel._createResult({success: true, data: {
           id: channel.id
         }});
-        expect(channel._triggerAsync).toHaveBeenCalledWith('channels:sent', {
+        expect(channel._triggerAsync).toHaveBeenCalledWith('sent', {
           result: Layer.Core.Channel.CREATED
         });
       });
@@ -388,7 +388,7 @@ describe("The Channel Class", function() {
             }
           }
         }});
-        expect(channel._triggerAsync).toHaveBeenCalledWith('channels:sent', {
+        expect(channel._triggerAsync).toHaveBeenCalledWith('sent', {
           result: Layer.Core.Channel.FOUND
         });
         expect(channel.metadata).toEqual({
@@ -404,7 +404,7 @@ describe("The Channel Class", function() {
         channel._createResult({success: false, data: {
           id: 'doh!'
         }});
-        expect(channel.trigger).toHaveBeenCalledWith('channels:sent-error', {
+        expect(channel.trigger).toHaveBeenCalledWith('sent-error', {
           error: {
             id: 'doh!'
           }

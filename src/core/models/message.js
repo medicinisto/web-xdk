@@ -274,12 +274,12 @@ class Message extends Syncable {
       mPart.on('messageparts:change', this._onMessagePartChange, this);
       if (!part.id) part.id = `${this.id}/parts/${part._tmpUUID || Util.generateUUID()}`;
       this._addToMimeAttributesMap(mPart);
-      this.trigger('messages:change', {
+      this.trigger('change', {
         property: 'parts',
         oldValue,
         newValue: this.parts,
       });
-      this.trigger('messages:part-added', { part: mPart });
+      this.trigger('part-added', { part: mPart });
     }
     return this;
   }
@@ -295,7 +295,7 @@ class Message extends Syncable {
    */
   _onMessagePartChange(evt) {
     evt.changes.forEach((change) => {
-      this._triggerAsync('messages:change', {
+      this._triggerAsync('change', {
         property: 'parts.' + change.property,
         oldValue: change.oldValue,
         newValue: change.newValue,
@@ -304,8 +304,8 @@ class Message extends Syncable {
 
       // A MIME Type change is equivalent to removing the old part and adding a new part for some use cases
       if (change.property === 'mimeType') {
-        this._triggerAsync('messages:part-removed', { part: evt.target });
-        this._triggerAsync('messages:part-added', { part: evt.target });
+        this._triggerAsync('part-removed', { part: evt.target });
+        this._triggerAsync('part-added', { part: evt.target });
       }
     });
   }
@@ -388,14 +388,14 @@ class Message extends Syncable {
 
     if (success) {
       this._populateFromServer(data);
-      this._triggerAsync('messages:sent');
-      this._triggerAsync('messages:change', {
+      this._triggerAsync('sent');
+      this._triggerAsync('change', {
         property: 'syncState',
         oldValue: Constants.SYNC_STATE.SAVING,
         newValue: Constants.SYNC_STATE.SYNCED,
       });
     } else {
-      this.trigger('messages:sent-error', { error: data });
+      this.trigger('sent-error', { error: data });
       this.destroy();
     }
     this._setSynced();
@@ -519,7 +519,7 @@ class Message extends Syncable {
     this._setSynced();
 
     if (oldPosition && oldPosition !== this.position) {
-      this._triggerAsync('messages:change', {
+      this._triggerAsync('change', {
         oldValue: oldPosition,
         newValue: this.position,
         property: 'position',
@@ -738,7 +738,7 @@ class Message extends Syncable {
       addedParts.forEach(part => this.addPart(part));
 
       // TODO: Should fire "messages:change" event
-      removedParts.forEach(partObj => this.trigger('messages:part-removed', { part: partObj }));
+      removedParts.forEach(partObj => this.trigger('part-removed', { part: partObj }));
     }
     this._inLayerParser = true;
   }
@@ -782,18 +782,6 @@ class Message extends Syncable {
    * @return {string}
    * @removed
    */
-
-  // See Root class
-  _triggerAsync(evtName, args) {
-    this._clearObject();
-    super._triggerAsync(evtName, args);
-  }
-
-  // See Root class
-  trigger(evtName, args) {
-    this._clearObject();
-    return super.trigger(evtName, args);
-  }
 
   /**
    * Identifies whether a Message receiving the specified patch data should be loaded from the server.
