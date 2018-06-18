@@ -87,11 +87,16 @@ If using `npm link`, note that after cloning this repo, run:
 * `grunt develop`: Starts a webserver for running tests or sample apps, and watches for changes, rebuilding source and theme on any change
 * `grunt docs`: Generate API Reference docs into folder `~/docs`; you may need to run `gem install jsduck` first. *Warning*: Use Ruby `2.0`; later versions log too many errors.
 * `grunt theme`: Generate CSS files from the `.less` files
-* `grunt debug`: Generate all lib folders and basic build files.
-* `grunt build`: Run's `grunt debug` and `grunt theme` and then generates all minified files
+* `grunt generate-npm`: Generates all files for `npm`
+* `grunt generate-build-file`: Generates `build/layer-xdk.js`
+* `grunt build`: runs `generate-npm`, `generate-build-file` and builds `build/layer-xdk.min.js` as well as `build/themes`
 * `grunt coverage`: Generate a coverage test build; additional steps shown below for running a coverage test
 
 ## Coverage Tests
+
+> *Note*:
+>
+> Coverage tests are currently broken
 
 To run coverage tests:
 

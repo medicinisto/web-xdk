@@ -6,6 +6,29 @@ var HTML_HEAD = fs.readFileSync('./jsduck-config/head.html').toString();
 var CSS = fs.readFileSync('./jsduck-config/style.css').toString();
 var babel = require('babel-core');
 
+function extractClassDef(text) {
+  const result = {
+    code: '',
+    def: ''
+  };
+  var indexOfClass = text.indexOf('@class');
+  var indexOfClassCodeBlock = (indexOfClass !== -1) ? text.lastIndexOf('/**', indexOfClass) : -1;
+  if (indexOfClassCodeBlock !== -1) {
+    var endOfClassCodeBlock = text.indexOf('*/', indexOfClassCodeBlock);
+    if (endOfClassCodeBlock !== -1) {
+      endOfClassCodeBlock += 2;
+      var prefix = text.substring(0, indexOfClassCodeBlock);
+      var classComment = text.substring(indexOfClassCodeBlock, endOfClassCodeBlock);
+      classComment = classComment.replace(/\n\s*\*/g, '\n *') + '\n';
+      var postfix =  text.substring(endOfClassCodeBlock);
+      result.code = prefix + postfix;
+      result.def = classComment;
+    }
+  }
+  if (!result.code) result.code = text;
+  return result;
+}
+
 module.exports = function (grunt) {
   var saucelabsTests = require('./sauce-gruntfile')(grunt, version);
   var doingIstanbul = false;
@@ -13,11 +36,52 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    webcomponents: {
+    commonjsify: {
       build: {
         files: [
           {
-            src: ['src/ui/**/*.js', '!src/ui/**/test.js', '!src/ui/**/tests/*.js']
+            src: [
+              'src/*.js', // Root level files
+              'src/core/**/*.js', // Core files
+              'src/utils/**/*.js', // Util files
+              'src/ui/**/*.js', // UI files
+              '!tmp/commonjs/ui/**/test.js', '!tmp/commonjs/ui/**/tests/*.js' // skip UI test files
+            ],
+            dest: 'tmp/commonjs/src'
+          }
+        ]
+      }
+    },
+    "full-babel": {
+      es5files: {
+        files: [
+          {
+            src: [
+              'tmp/commonjs/*.js',
+              'tmp/commonjs/**/*.js'
+            ],
+            dest: 'tmp/es5/src'
+          }
+        ]
+      },
+      build: {
+        files: [
+          {
+            src: [
+              'build/layer-xdk.js'
+            ],
+            dest: 'build/layer-xdk.js'
+          }
+        ]
+      }
+    },
+
+    "optimize-webcomponents": {
+      build: {
+        files: [
+          {
+            src: ['tmp/commonjs/src/ui/**/*.js'],
+            dest: 'tmp/commonjs/src'
           }
         ],
         options: {
@@ -35,18 +99,7 @@ module.exports = function (grunt) {
         }
       }
     },
-    custom_babel: {
-      dist: {
-        files: [
-          {
-            src: ['lib-es6/**/*.js'],
-            dest: 'lib-es5'
-          }
-        ],
-        options: {
-        }
-      }
-    },
+
     remove: {
       build: {
         dirList: ['build', 'npm', 'themes/build']
@@ -54,15 +107,9 @@ module.exports = function (grunt) {
       theme: {
         dirList: ['themes/build']
       },
-      lib: {
-        dirList: ['lib']
-      },
-      libes5: {
-        dirList: ['lib-es5']
-      },
-      libes6: {
-        dirList: ['lib-es6']
-      },
+      tmp: {
+        dirList: ['tmp']
+      }
     },
     browserify: {
       options: {
@@ -89,21 +136,14 @@ module.exports = function (grunt) {
         files: [
           {
             dest: 'build/layer-xdk.js',
-            src: 'lib/index-all.js'
+            src: 'tmp/commonjs/src/index-all.js'
           }
         ]
       },
-      core: {
-        files: [
-          {
-            dest: 'build/layer-xdk-core.js',
-            src: 'lib/index-core.js'
-          }
-        ]
-      },
+
       coverage: {
         files: {
-          'test/coverage-build.js': ['lib/index-all.js']
+          'test/coverage-build.js': ['npm/index-all.js']
         },
         options: {
           transform: [[fixBrowserifyForIstanbul], ["istanbulify"]],
@@ -138,39 +178,30 @@ module.exports = function (grunt) {
     less: {
       themes: {
         files: [
-          {src: ['themes/src/layer-basic-blue/theme.less'], dest: 'themes/build/layer-basic-blue.css'},
-          {src: ['themes/src/layer-groups/theme.less'], dest: 'themes/build/layer-groups.css'}
+          {src: ['themes/src/layer-basic-blue/theme.less'], dest: 'npm/themes/layer-basic-blue.css'},
+          {src: ['themes/src/layer-groups/theme.less'], dest: 'npm/themes/layer-groups.css'}
         ]
       }
     },
 
-    custom_copy: {
-      src: {
-        src: ['src/core/*', 'src/*.js', 'src/utils'],
-        dest: 'lib-es6/'
-      },
-    },
     copy: {
       npm: {
         files: [
-          {src: ['**'], cwd: 'lib/', dest: 'npm/', expand: true},
+          {src: ['**'], cwd: 'tmp/es5/src', dest: 'npm/', expand: true},
           {src: 'package.json', dest: 'npm/package.json'},
           {src: 'README.md', dest: 'npm/README.md'},
           {src: 'LICENSE', dest: 'npm/LICENSE'}
         ]
       },
-      npmthemes: {
+      npmthemesrc: {
         files: [
-          {src: ['**'], cwd: 'themes/build/', dest: 'npm/themes/', expand: true},
           {src: ['**'], cwd: 'themes/src/', dest: 'npm/themes/src/', expand: true}
         ]
       },
-
-      themes: {
-        src: ["themes/src/*/**.html", "themes/src/*/**.js"],
-        dest: "themes/build/",
-        flatten: true,
-        expand: true
+      buildthemes: {
+        files: [
+          {src: ['*.css'], cwd: 'npm/themes', dest: 'build/themes/', expand: true}
+        ]
       },
 
       // Adds support for the ignoreFiles parameter, which is needed for removing generated files from the result
@@ -179,18 +210,12 @@ module.exports = function (grunt) {
         dest: "node_modules/grunt-template-jasmine-istanbul/src/main/js/template.js"
       }
     },
-    move: {
-      lib: {
-        src: 'lib-es5',
-        dest: 'lib'
-      }
-    },
 
     cssmin: {
       build: {
         files: [
-          {src: ['themes/build/layer-basic-blue.css'], dest: 'themes/build/layer-basic-blue.min.css'},
-          {src: ['themes/build/layer-groups.css'], dest: 'themes/build/layer-groups.min.css'}
+          {src: ['npm/themes/layer-basic-blue.css'], dest: 'npm/themes/layer-basic-blue.min.css'},
+          {src: ['npm/themes/layer-groups.css'], dest: 'npm/themes/layer-groups.min.css'}
         ]
       }
     },
@@ -208,7 +233,7 @@ module.exports = function (grunt) {
           }
         }
       },
-      debug: {
+      dev: {
         files: [{
           src: ['src/**.js', 'src/**/*.js', '!src/**/tests/*.js', '!src/**/test.js', '!src/**/samples.js']
         }],
@@ -225,7 +250,7 @@ module.exports = function (grunt) {
     // Documentation
     jsduck: {
       build: {
-        src: ["lib/**/*.js"],
+        src: ["tmp/es5/src/**/*.js"],
         dest: 'docs',
         options: {
           'builtin-classes': false,
@@ -275,7 +300,7 @@ module.exports = function (grunt) {
       }
     },
     'generate-specrunner': {
-      debug: {
+      dev: {
         files: [
           {
             src: ['src/ui/components/test.js', 'src/ui/**/test.js', 'src/ui/**/tests/**.js', 'test/core/unit/**.js', 'test/core/unit/*/**.js', 'test/core/integration/**.js']
@@ -284,7 +309,7 @@ module.exports = function (grunt) {
       }
     },
     'generate-quicktests': {
-      debug: {
+      dev: {
         files: [
           {
             src: ['src/ui/components/test.js', 'src/ui/**/test.js', 'src/ui/**/tests/**.js', 'test/core/unit/**.js', 'test/core/unit/*/**.js', 'test/core/integration/**.js']
@@ -293,7 +318,7 @@ module.exports = function (grunt) {
       }
     },
     'generate-smalltests': {
-      debug: {
+      dev: {
         files: [
           {
             src: ['src/ui/components/test.js', 'src/ui/**/test.js', 'src/ui/**/tests/**.js', 'test/core/unit/**.js', 'test/core/unit/*/**.js', 'test/core/integration/**.js']
@@ -315,10 +340,33 @@ module.exports = function (grunt) {
         }
       }
     },
+    parallel: {
+      dev: {
+        options: {
+          grunt: true,
+          stream: true
+        },
+        tasks: ['watch:dev', 'watch:themes']
+      },
+      test: {
+        options: {
+          grunt: true,
+          stream: true
+        },
+        tasks: ['watch:test', 'watch:themes']
+      }
+    },
     watch: {
-      js: {
+      dev: {
         files: ['package.json', 'Gruntfile.js', 'src/**', '!src/**/test.js', '!src/ui/**/tests/**.js', '!src/version.js'],
-        tasks: ['wait', 'debug', 'notify:watch', 'eslint:debug'],
+        tasks: ['wait', 'generate-npm', 'notify:watch', 'eslint:dev'],
+        options: {
+          interrupt: false
+        }
+      },
+      test: {
+        files: ['package.json', 'Gruntfile.js', 'src/**', '!src/**/test.js', '!src/ui/**/tests/**.js', '!src/version.js'],
+        tasks: ['wait', 'generate-build-file', 'notify:watch', 'eslint:dev'],
         options: {
           interrupt: false
         }
@@ -418,7 +466,7 @@ module.exports = function (grunt) {
       this.files.forEach(function(fileGroup) {
         fileGroup.src.forEach(function(file, index) {
           var template = grunt.file.read(file);
-          var srcFilePath = file.replace(/src/, 'lib').replace(/\.html/, '.js');
+          var srcFilePath = file.replace(/src/, 'n').replace(/\.html/, '.js');
           var srcFile = grunt.file.read(srcFilePath);
           var startIndex = srcFile.indexOf("@class");
 
@@ -428,7 +476,7 @@ module.exports = function (grunt) {
             });
 
             srcFile = srcFile.substring(0, startIndex) +
-            `### Templates\n\n * You can see the template for the latest template version at [${file.replace(/^.*\//, '')}](https://github.com/layerhq/web-xdk/blob/master/src/${srcFilePath.replace(/^.*lib/,'').replace(/\.js$/, '.html')})  \n * \n * The following layer-id attributes are expected in templates for this component: \n * \n * * ${layerIds.join('\n * * ')} \n` + srcFile.substring(startIndex);
+            `### Templates\n\n * You can see the template for the latest template version at [${file.replace(/^.*\//, '')}](https://github.com/layerhq/web-xdk/blob/master/src/${srcFilePath.replace(/^.*npm/,'').replace(/\.js$/, '.html')})  \n * \n * The following layer-id attributes are expected in templates for this component: \n * \n * * ${layerIds.join('\n * * ')} \n` + srcFile.substring(startIndex);
             grunt.file.write(srcFilePath, srcFile);
           }
         });
@@ -473,37 +521,33 @@ module.exports = function (grunt) {
     });
   });
 
-  // Don't recall all the reasons we don't just use a Grunt Babel task, but this does give us more direct
-  // control over parameters, as well as progress reporting and error reporting
-  grunt.registerMultiTask('custom_babel', 'Babelifying all files in src/core', function() {
+  // Replace each file with a conversion that really should only replace `import/export` with `require/export`
+  // Any really experimental ES6 should not be used in the XDK code but if it is, will get converted here too.
+  grunt.registerMultiTask('commonjsify', 'Babelifying all files in src/core', function() {
     var options = this.options();
 
     function convert(file, outputPath) {
       try {
+        //console.log("Read " + file + " and write " + outputPath);
         var output = grunt.file.read(file);
         var outputFolder = path.dirname(outputPath);
         if (!grunt.file.exists(outputFolder)) {
           grunt.file.mkdir(outputFolder);
         }
-        var babelResult = babel.transform(output, {
-          presets: ["babel-preset-es2015"],
-          auxiliaryCommentBefore: doingIstanbul ? 'istanbul ignore next' : ''
-        });
-        var result = babelResult.code;
 
-        var indexOfClass = result.indexOf('@class');
-        var indexOfClassCodeBlock = (indexOfClass !== -1) ? result.lastIndexOf('/**', indexOfClass) : -1;
-        if (indexOfClassCodeBlock !== -1) {
-          var endOfClassCodeBlock = result.indexOf('*/', indexOfClassCodeBlock);
-          if (endOfClassCodeBlock !== -1) {
-            endOfClassCodeBlock += 2;
-            var prefix = result.substring(0, indexOfClassCodeBlock);
-            var classComment = result.substring(indexOfClassCodeBlock, endOfClassCodeBlock);
-            classComment = classComment.replace(/\n\s*\*/g, '\n *') + '\n';
-            var postfix =  result.substring(endOfClassCodeBlock);
-            result = classComment + prefix + postfix;
-          }
-        }
+        const { code, def } = extractClassDef(output);
+
+        var babelResult = babel.transform(code, {
+          presets: [["env", {
+            "targets": {
+              "browsers": [
+                "Chrome > 64"
+              ]
+            }
+          }]],
+          compact: false
+        });
+        var result = def + babelResult.code;
 
         grunt.file.write(outputPath, result);
       } catch(e) {
@@ -516,9 +560,60 @@ module.exports = function (grunt) {
     this.files.forEach(function(fileGroup) {
       fileGroup.src.forEach(function(file, index) {
         files.push(file);
-        // TODO: Generalize this to not only work with lib-es6
         try {
-          convert(file, file.replace(/^lib-es6/, fileGroup.dest));
+          convert(file, file.replace(/^.*?\//, fileGroup.dest + '/'));
+        } catch(e) {
+          console.error('Failed to convert ' + file + ' to babel');
+          throw(e);
+        }
+      });
+    });
+  });
+
+  grunt.registerMultiTask('full-babel', 'Babelifying all files in src/core', function() {
+    var options = this.options();
+
+    function convert(file, outputPath) {
+      try {
+        //console.log("Read " + file + " and write " + outputPath);
+        var output = grunt.file.read(file);
+        var outputFolder = path.dirname(outputPath);
+        if (!grunt.file.exists(outputFolder)) {
+          grunt.file.mkdir(outputFolder);
+        }
+
+        const { code, def } = extractClassDef(output);
+
+        var babelResult = babel.transform(code, {
+          presets: [["env", {
+            "targets": {
+              "browsers": [
+                "Chrome > 64",
+                "Safari >= 11",
+                "Firefox >= 58",
+                "last 2 Edge versions",
+                "IE 11"
+              ]
+            }
+          }]],
+          compact: false
+        });
+        var result = def + babelResult.code;
+
+        grunt.file.write(outputPath, result);
+      } catch(e) {
+        grunt.log.writeln('Failed to process ' + file + '; ', e);
+      }
+    }
+
+    var files = [];
+    // Iterate over each file set and generate the build file specified for that set
+    this.files.forEach(function(fileGroup) {
+      fileGroup.src.forEach(function(file, index) {
+        files.push(file);
+        try {
+          var dest = file.replace(/^.*?\/src/, fileGroup.dest);
+          convert(file, dest);
         } catch(e) {
           console.error('Failed to convert ' + file + ' to babel');
           throw(e);
@@ -528,7 +623,11 @@ module.exports = function (grunt) {
   });
 
 
-  grunt.registerMultiTask('webcomponents', 'Building Web Components', function() {
+  /*
+   * Take the Webcomponent definitions, and optimize away stuff we don't need...
+   * like comments and whitespace in the CSS and HTML template strings.
+   */
+  grunt.registerMultiTask('optimize-webcomponents', 'Building Web Components', function() {
     var options = this.options();
 
     function optimizeStrings(contents, name, commentExpr) {
@@ -543,59 +642,26 @@ module.exports = function (grunt) {
       return contents.substring(0, startIndex) + stringToOptimize + contents.substring(endIndex);
     }
 
-    function createCombinedComponentFile(file, outputPathES5, outputPathES6) {
+    function optimizeWebcomponent(file, dest) {
       try {
-      // Extract the class name; TODO: class name should be same as file name.
-      var jsFileName = file.replace(/^.*\//, '');
-      var className = jsFileName.replace(/\.js$/, '');
+        // Extract the class name; TODO: class name should be same as file name.
+        var jsFileName = file.replace(/^.*\//, '');
+        var className = jsFileName.replace(/\.js$/, '');
 
-      if (jsFileName === 'test.js') return;
+        if (jsFileName === 'test.js') return;
 
-      var output = grunt.file.read(file);
-      output = optimizeStrings(output, 'style', /\/\*[\s\S]*?\*\//mg);
-      output = optimizeStrings(output, 'template', /<!--[\s\S]*?-->/mg);
+        var output = grunt.file.read(file);
+        output = optimizeStrings(output, 'style', /\/\*[\s\S]*?\*\//mg);
+        output = optimizeStrings(output, 'template', /<!--[\s\S]*?-->/mg);
 
-      var outputFolderES6 = path.dirname(outputPathES6);
-      var outputFolderES5 = path.dirname(outputPathES5);
+        var destFolder = path.dirname(dest);
 
-      // Find the template file by checking for an html file of the same name as the js file in the same folder.
-      var parentFolder = path.dirname(file);
-
-      //var outputES5 = output.replace(/\/\*[\s\S]*?\*\//g, '');
-      var outputES5 = output;
-
-      if (!grunt.file.exists(outputFolderES6)) {
-        grunt.file.mkdir(outputFolderES6);
-      }
-      grunt.file.write(outputPathES6, output);
-
-      if (!grunt.file.exists(outputFolderES5)) {
-        grunt.file.mkdir(outputFolderES5);
-      }
-
-      var babelResult = babel.transform(outputES5, {
-        presets: ['babel-preset-es2015']
-      });
-      outputES5 = babelResult.code;
-
-      // Babel sometimes moves our jsduck comments defining the class to the end of the file, causing JSDuck to quack.
-      // Move it back to the top so that JSDuck knows what class all the properties and methods belong to.
-      var indexOfClass = outputES5.indexOf('@class');
-      var indexOfClassCodeBlock = (indexOfClass !== -1) ? outputES5.lastIndexOf('/**', indexOfClass) : -1;
-      if (indexOfClassCodeBlock !== -1) {
-        var endOfClassCodeBlock = outputES5.indexOf('*/', indexOfClassCodeBlock);
-        if (endOfClassCodeBlock !== -1) {
-          endOfClassCodeBlock += 2;
-          var prefix = outputES5.substring(0, indexOfClassCodeBlock);
-          var classComment = outputES5.substring(indexOfClassCodeBlock, endOfClassCodeBlock);
-          classComment = classComment.replace(/\n\s*\*/g, '\n *') + '\n';
-          var postfix =  outputES5.substring(endOfClassCodeBlock);
-          outputES5 = classComment + prefix + postfix;
+        if (!grunt.file.exists(destFolder)) {
+          grunt.file.mkdir(destFolder);
         }
-      }
 
-      grunt.file.write(outputPathES5, outputES5);
-      //grunt.log.writeln("Wrote " + outputPath + "; success: " + grunt.file.exists(outputPath));
+        //console.log("Write " + dest);
+        grunt.file.write(dest, output);
       } catch(e) {
         grunt.log.writeln('Failed to process ' + file + '; ', e);
       }
@@ -606,9 +672,8 @@ module.exports = function (grunt) {
     this.files.forEach(function(fileGroup) {
       fileGroup.src.forEach(function(file, index) {
         files.push(file);
-        var outputPathES5 = file.replace(/^src/, 'lib');
-        var outputPathES6 = file.replace(/^src/, 'lib-es6');
-        createCombinedComponentFile(file, outputPathES5, outputPathES6);
+        var dest = file.replace(/^.*?\/src/, fileGroup.dest);
+        optimizeWebcomponent(file, dest);
       });
     });
     inWebcomponents = false;
@@ -647,13 +712,13 @@ module.exports = function (grunt) {
       reference.push('@return {' + duckClassName + '} return.' + componentName + '    ' + description);
     });
 
-    var reactAdaptor = grunt.file.read('lib/ui/adapters/react.js');
+    var reactAdaptor = grunt.file.read('tmp/es5/src/ui/adapters/react.js');
     var adapterStartIndex = reactAdaptor.indexOf('/**');
     var adapterEndIndex = reactAdaptor.indexOf('*/', adapterStartIndex);
     reactAdaptor = reactAdaptor.substring(0, adapterEndIndex) +
     '* ' + reference.join('\n * ') + "\n" +
     reactAdaptor.substring(adapterEndIndex);
-    grunt.file.write('lib/ui/adapters/react.js', reactAdaptor);
+    grunt.file.write('tmp/es5/src/ui/adapters/react.js', reactAdaptor);
   });
 
 
@@ -877,35 +942,62 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-remove');
-  grunt.loadNpmTasks('grunt-move');
   grunt.loadNpmTasks('grunt-eslint');
+  grunt.loadNpmTasks('grunt-parallel');
 
 
-  grunt.registerTask('coverage', ['copy:fixIstanbul', 'remove:libes6','custom_copy:src', 'remove:lib', 'remove:libes5', 'custom_babel', 'move:lib', 'browserify:coverage']);
+  grunt.registerTask('coverage', ['copy:fixIstanbul', 'remove:tmp', 'commonjsify', 'optimize-webcomponents', 'browserify:coverage']);
 
-  grunt.registerTask("test", ["debug", "connect:saucelabs","saucelabs-jasmine:quicktests", "saucelabs-jasmine:smalltests"]);
+  grunt.registerTask("test", ["generate-build-file", "connect:saucelabs","saucelabs-jasmine:quicktests", "saucelabs-jasmine:smalltests"]);
 
   grunt.registerTask("retest", ["connect:saucelabs", "saucelabs-jasmine:smalltests"]);
 
-  grunt.registerTask('docs', ['debug', 'jsduck-adapters', 'jsduck', 'jsduckfixes']);
+  grunt.registerTask('docs', ['generate-npm', 'jsduck-adapters', 'jsduck', 'jsduckfixes']);
 
   // Basic Code/theme building
-  // We are not going to publish lib-es6 as this risks importing of files from both lib and lib-es6 by accident and getting multiple definitions of classes
-  grunt.registerTask('debug', [
-    'version', 'remove:libes6', 'webcomponents', 'custom_copy:src', 'remove:libes5',
-    'custom_babel', 'remove:lib', 'move:lib',
-    'copy:npm', 'theme', 'copy:npmthemes','fix-npm-package', 'notify:npm',
-    'browserify:build', 'notify:browserify', "generate-quicktests", "generate-smalltests"]);
+  grunt.registerTask('generate-npm', [
+    'remove:tmp', // cleanup old build
+    'version',  // Verify version.js is up to date
+    'commonjsify', // Replace es6 import/export with something that browserify can work with; write to tmp/commonjs
+    'optimize-webcomponents', // Strip out comments/white-space from webcomponents (overwrite tmp/commonjs)
+    'full-babel:es5files', // write tmp/es5 with code that jsduck and IE11 can understand
+    'copy:npm', // Copy es5 into npm
+    'theme', // build the theme and write it to npm
+    'fix-npm-package', 'notify:npm', // Setup the npm folder package.json
+  ]);
 
-  grunt.registerTask('build', ['remove:build', 'eslint:build', 'debug', 'uglify', 'theme', 'cssmin', 'copy:npmthemes']);
-  grunt.registerTask('prepublish', ['build', 'refuse-to-publish']);
+  grunt.registerTask('generate-build-file', [
+    'remove:tmp', // cleanup old build
+    'version',  // Verify version.js is up to date
+    'commonjsify', // Replace es6 import/export with something that browserify can work with; write to tmp/commonjs
+    'optimize-webcomponents', // Strip out comments/white-space from webcomponents (overwrite tmp/commonjs)
+    'browserify:build', // Generate a build file from the optimized webcomponents and commonjsified files
+    'full-babel:build', // Update build file with babelified version
+    'notify:browserify',
+    "generate-quicktests", "generate-smalltests" // Update SpecRunner to run new test files
+  ]);
 
-  grunt.registerTask('samples', ['version', 'remove:libes6', 'webcomponents', 'custom_copy:src', 'remove:libes5',
-  'custom_babel', 'remove:lib', 'move:lib',
-  'browserify:samples',  "generate-quicktests", "generate-smalltests", 'remove:libes6', 'copy:npm', 'copy:npmthemes','fix-npm-package']);
-  grunt.registerTask('theme', ['remove:theme', 'less', 'copy:themes', 'copy:npmthemes']),
-  grunt.registerTask('default', ['build']);
+  grunt.registerTask('build', [
+    'eslint:build', // Verify we are ready to build
+    'remove:build', // Delete the build folder
+    'generate-npm', // Here only because people will probably run build and expect Everything not just the build folder
+    'generate-build-file', // Generate all build artifacts
+    'uglify', // Generate layer-xdk.min.js
+    'copy:buildthemes' // Copy theme files in for CDN deploy
+  ]);
+
+
+  grunt.registerTask('prepublish', ['generate-npm', 'refuse-to-publish']);
+
+  grunt.registerTask('samples', ['version', 'remove:tmp', 'optimize-webcomponents', 'custom_copy:src', 'commonjsify', 'browserify:samples']);
+
+  // Build the theme and write them to npm folder
+  grunt.registerTask('theme', ['remove:theme', 'less', 'cssmin', 'copy:npmthemesrc']),
+
+
+  grunt.registerTask('default', ['build', 'generate-npm']);
 
   // Open a port for running tests and rebuild whenever anything interesting changes
-  grunt.registerTask("develop", ["connect:develop", "debug", "watch"]);
+  grunt.registerTask("developnpm", ["generate-npm", "parallel:dev"]);
+  grunt.registerTask("developtests", ["connect:develop", "generate-build-file", "parallel:test"]);
 };

@@ -45,9 +45,7 @@ samples/react/bundle.js*
 **/LayerConfiguration.json
 test/coverage-build.js
 
-/lib
-/lib-es6
-/lib-es5
+/tmp
 build
 /npm
 test/CoverageRunner.html

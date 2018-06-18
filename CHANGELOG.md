@@ -132,6 +132,7 @@ Impact of this change:
 * DOM structural and rendering changes to:
     * Dialog Close Button
     * File Upload Button
+* Updated babel settings, updated build process
 
 ## 4.0.4
 
