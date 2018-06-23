@@ -36,6 +36,31 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    'generate-structures-from-jsduck': {
+      build: {
+        files: [
+          {
+            src: [
+              'src/**/*.js',
+              '!tmp/commonjs/ui/**/test.js', '!tmp/commonjs/ui/**/tests/*.js' // skip UI test files
+            ],
+            dest: 'tmp/duck.json'
+          }
+        ]
+      }
+    },
+    'generate-typescript-from-jsduck-structures': {
+      build: {
+        files: [
+          {
+            src: [
+              'tmp/duck.json'
+            ],
+            dest: 'tmp/typescript'
+          }
+        ]
+      }
+    },
     commonjsify: {
       build: {
         files: [
@@ -441,6 +466,7 @@ module.exports = function (grunt) {
       }
     }
 
+
     grunt.registerMultiTask('jsduckfixes', 'Fixing Docs', function() {
       var options = this.options();
 
@@ -724,6 +750,22 @@ module.exports = function (grunt) {
     grunt.file.write('tmp/es5/src/ui/adapters/react.js', reactAdaptor);
   });
 
+  grunt.registerMultiTask('generate-structures-from-jsduck', 'Generating structures from JSDuck Comments', function generate() {
+    const defs = {};
+    const generateStructuresFromJSDuck = require('./grunt-scripts/generate-structures-from-jsduck');
+
+    this.files.forEach((fileGroup) => {
+      generateStructuresFromJSDuck(grunt, fileGroup.src, fileGroup.dest);
+    });
+  });
+
+  grunt.registerMultiTask('generate-typescript-from-jsduck-structures', 'Generating Typescript Definitions from JSDuck Comments', function generate() {
+    const generateTypescript = require('./grunt-scripts/generate-typescript-from-jsduck-structures');
+
+    this.files.forEach((fileGroup) => {
+      generateTypescript(grunt, fileGroup.src, fileGroup.dest);
+    });
+  });
 
   grunt.registerMultiTask('generate-specrunner', 'Building SpecRunner.html', function() {
     var options = this.options();
@@ -932,7 +974,6 @@ module.exports = function (grunt) {
     }, waitTime);
   });
 
-
   // Building
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -998,10 +1039,12 @@ module.exports = function (grunt) {
   // Build the theme and write them to npm folder
   grunt.registerTask('theme', ['remove:theme', 'less', 'cssmin', 'copy:npmthemesrc']),
 
+  grunt.registerTask('typescript', ['generate-structures-from-jsduck', 'generate-typescript-from-jsduck-structures']);
 
   grunt.registerTask('default', ['build', 'generate-npm']);
 
   // Open a port for running tests and rebuild whenever anything interesting changes
   grunt.registerTask("developnpm", ["generate-npm", "parallel:dev"]);
   grunt.registerTask("developtests", ["connect:develop", "generate-build-file", "parallel:test"]);
+
 };

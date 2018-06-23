@@ -72,14 +72,14 @@ class TextModel extends MessageTypeModel {
 /**
  * The text of the Text Message.
  *
- * @property {String}
+ * @property {String} text
  */
 TextModel.prototype.text = '';
 
 /**
  * Not yet supported
  *
- * @property {String}
+ * @property {String} summary
  */
 TextModel.prototype.summary = '';
 
@@ -87,14 +87,14 @@ TextModel.prototype.summary = '';
  * The author of the Text Message; used as the Footer in the
  * Layer.UI.messages.StandardMessageViewContainer.
  *
- * @property {String}
+ * @property {String} author
  */
 TextModel.prototype.author = '';
 
 /**
  * The title to show under the text of the Text Message.
  *
- * @property {String}
+ * @property {String} title
  */
 TextModel.prototype.title = '';
 
@@ -102,14 +102,14 @@ TextModel.prototype.title = '';
  * Subtitle for the Text Message, used as the Description by
  * Layer.UI.messages.StandardMessageViewContainer.
  *
- * @property {String}
+ * @property {String} subtitle
  */
 TextModel.prototype.subtitle = '';
 
 /**
  * Not yet supported
  *
- * @property {String}
+ * @property {String} [mimeType=text/plain]
  */
 TextModel.prototype.mimeType = 'text/plain';
 

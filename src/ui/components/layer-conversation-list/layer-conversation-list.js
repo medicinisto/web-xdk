@@ -387,7 +387,7 @@ registerComponent('layer-conversation-list', {
      * }
      * ```
      *
-     * @property {Object}
+     * @property {Object} dateFormat
      */
     dateFormat: {},
 

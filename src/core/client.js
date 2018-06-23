@@ -415,7 +415,7 @@ class Client extends Root {
  *    * Layer.Constants.LOG.INFO
  *    * Layer.Constants.LOG.DEBUG
  *
- * @property {number}
+ * @property {number} logLevel
  */
 Object.defineProperty(Client.prototype, 'logLevel', {
   enumerable: false,

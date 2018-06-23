@@ -113,7 +113,7 @@ registerComponent('layer-avatar', {
      *
      * Can use {@link #item} to set this instead.
      *
-     * @property {Layer.Core.Identity[]} [users=[]}
+     * @property {Layer.Core.Identity[]} [users=[]]
      */
     users: {
       value: [],
@@ -174,7 +174,7 @@ registerComponent('layer-avatar', {
     /**
      * Render the users represented by this widget.
      *
-     * @method
+     * @method onRender
      * @private
      */
     onRender() {
@@ -280,7 +280,7 @@ registerComponent('layer-avatar', {
      * });
      * ```
      *
-     * @method
+     * @method onGenerateInitials
      * @param {Layer.Core.Identity} user
      * @returns {String}
      */

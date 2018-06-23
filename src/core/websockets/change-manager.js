@@ -20,7 +20,7 @@ class WebsocketChangeManager {
    *          socketManager: client.Websockets.SocketManager
    *      });
    *
-   * @method
+   * @method constructor
    * @param  {Object} options
    * @param {Layer.Core.Websockets.SocketManager} socketManager
    * @returns {Layer.Core.Websockets.ChangeManager}

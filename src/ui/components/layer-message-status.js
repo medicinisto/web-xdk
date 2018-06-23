@@ -215,7 +215,7 @@ registerComponent('layer-message-status', {
      *
      * See Layer.UI.components.ConversationView.messageStatusRenderer to customize this.
      *
-     * @method
+     * @method onRerender
      * @private
      * @param {Event} evt
      */

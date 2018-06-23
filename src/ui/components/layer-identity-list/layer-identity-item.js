@@ -257,7 +257,7 @@ registerComponent('layer-identity-item', {
      * Run a filter on this item, and hide it if it doesn't match the filter.
      *
      * @method _runFilter
-     * @param {String/RegExp/Function} filter
+     * @param {String | RegExp | Function} filter
      */
     _runFilter(filter) {
       const identity = this.properties.item;

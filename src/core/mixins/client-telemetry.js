@@ -15,7 +15,7 @@ module.exports = {
      * Primarily used so that the Telemetry component can monitor and report on
      * system activity.
      *
-     * @event
+     * @event state-change
      * @private
      */
     'state-change',
@@ -39,14 +39,14 @@ module.exports = {
      * No content nor identifiable information is gathered, only
      * usage and performance metrics.
      *
-     * @property {Boolean}
+     * @property {Boolean} [telemetryEnabled=true]
      */
     telemetryEnabled: true,
 
     /**
      * Gather usage and responsiveness statistics
      *
-     * @property {Layer.Core.TelemetryMonitor}
+     * @property {Layer.Core.TelemetryMonitor} telemetryMonitor
      * @private
      */
     telemetryMonitor: null,

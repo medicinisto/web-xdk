@@ -44,7 +44,7 @@ module.exports = {
      *          });
      *      });
      *
-     * @event
+     * @event conversations:remove
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Conversation[]} evt.conversations - Array of conversations removed
      */
@@ -79,7 +79,7 @@ module.exports = {
      *          }
      *      });
      *
-     * @event
+     * @event conversations:sent
      * @param {Layer.Core.LayerEvent} event
      * @param {string} event.result
      * @param {Layer.Core.Conversation} target
@@ -93,7 +93,7 @@ module.exports = {
      *          alert(evt.data.message);
      *      });
      *
-     * @event
+     * @event conversations:sent-error
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.LayerEvent} evt.data
      * @param {Layer.Core.Conversation} target
@@ -119,7 +119,7 @@ module.exports = {
      *
      * NOTE: Typically such rendering is done using Events on Layer.Core.Query.
      *
-     * @event
+     * @event conversations:change
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Conversation} evt.target
      * @param {Object[]} evt.changes
@@ -142,7 +142,7 @@ module.exports = {
      * });
      * ```
      *
-     * @event
+     * @event conversations:loaded
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Conversation} evt.target
      */
@@ -158,7 +158,7 @@ module.exports = {
      *          myView.removeConversation(evt.target);
      *      });
      *
-     * @event
+     * @event conversations:delete
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Conversation} evt.target
      */
@@ -392,7 +392,7 @@ module.exports = {
      *
      * @method createConversation
      * @param  {Object} options
-     * @param {string[]/Layer.Core.Identity[]} [options.participants] - Array of UserIDs or UserIdentities
+     * @param {string[] | Layer.Core.Identity[]} [options.participants] - Array of UserIDs or UserIdentities
      * @param {Boolean} [options.distinct=true] Is this a distinct Conversation?
      * @param {Object} [options.metadata={}] Metadata for your Conversation
      * @return {Layer.Core.Conversation}

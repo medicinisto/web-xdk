@@ -283,7 +283,7 @@ registerComponent('layer-conversation-item', {
      * that only requerying the server will restore the data.
      *
      * @method _runFilter
-     * @param {String/RegExp/Function} filter
+     * @param {String | RegExp | Function} filter
      */
     _runFilter(filter) {
       const conversation = this.properties.item;

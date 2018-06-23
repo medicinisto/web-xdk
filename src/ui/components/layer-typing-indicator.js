@@ -148,7 +148,7 @@ registerComponent('layer-typing-indicator', {
     /**
      * Render typing indicator text listing the users who are typing.
      *
-     * @method
+     * @method _showAsTyping
      * @private
      * @param {Layer.Core.Identity[]} identities
      */

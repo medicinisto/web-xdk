@@ -4,6 +4,7 @@
  * Any class using this mixin must provide an {@link #onKeyDown} method that takes no parameters.
  *
  * @class Layer.UI.mixins.FocusOnKeydown
+ * @ismixin
  */
 import mixins from './index';
 

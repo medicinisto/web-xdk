@@ -262,7 +262,7 @@ OnlineStateManager.prototype.isClientReady = false;
 /**
  * A Websocket manager whose 'message' event we will listen to
  * in order to know that we are still online.
- * @property {Layer.Core.Websockets.SocketManager}
+ * @property {Layer.Core.Websockets.SocketManager} socketManager
  */
 OnlineStateManager.prototype.socketManager = null;
 
@@ -270,7 +270,7 @@ OnlineStateManager.prototype.socketManager = null;
  * Number of test requests we've been offline for.
  *
  * Will stop growing once the number is suitably large (10-20).
- * @property {Number}
+ * @property {Number} [offlineCounter=0]
  */
 OnlineStateManager.prototype.offlineCounter = 0;
 
@@ -281,37 +281,37 @@ OnlineStateManager.prototype.offlineCounter = 0;
  * to see if we are online again. This value determines the maximum wait; any higher value returned by exponential backoff
  * are ignored and this value used instead.
  * Value is measured in seconds.
- * @property {Number}
+ * @property {Number} [maxOfflineWait=60]
  */
 OnlineStateManager.prototype.maxOfflineWait = 60;
 
 /**
  * Minimum wait between tries in ms.
- * @property {Number}
+ * @property {Number} [minBackoffWait=100]
  */
 OnlineStateManager.prototype.minBackoffWait = 100;
 
 /**
  * Time that the last successful message was observed.
- * @property {Date}
+ * @property {Date} [lastMessageTime]
  */
 OnlineStateManager.prototype.lastMessageTime = null;
 
 /**
  * For debugging, tracks the last time we checked if we are online.
- * @property {Date}
+ * @property {Date} [_lastCheckOnlineStatus]
  */
 OnlineStateManager.prototype._lastCheckOnlineStatus = null;
 
 /**
  * Are we currently online?
- * @property {Boolean}
+ * @property {Boolean} [isOnline=false]
  */
 OnlineStateManager.prototype.isOnline = false;
 
 /**
  * setTimeoutId for the next checkOnlineStatus() call.
- * @property {Number}
+ * @property {Number} [onlineCheckId]
  */
 OnlineStateManager.prototype.onlineCheckId = 0;
 
@@ -322,7 +322,7 @@ OnlineStateManager.prototype.onlineCheckId = 0;
  * Measured in miliseconds. NOTE: Websocket has a separate ping which mostly makes
  * this one unnecessary.  May end up removing this one... though we'd keep the
  * ping for when our state is offline.
- * @property {Number}
+ * @property {Number} [pingFrequency=100000]
  */
 OnlineStateManager.prototype.pingFrequency = 100 * 1000;
 

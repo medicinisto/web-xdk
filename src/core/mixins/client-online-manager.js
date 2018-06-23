@@ -49,7 +49,7 @@ module.exports = {
   properties: {
     /**
      * Service for managing online/offline state and events
-     * @property {Layer.Core.OnlineStateManager}
+     * @property {Layer.Core.OnlineStateManager} onlineManager
      */
     onlineManager: null,
 
@@ -60,7 +60,7 @@ module.exports = {
      *
      * Typically used in conjunction with the `online` event.
      *
-     * @property {boolean}
+     * @property {boolean} [isOnline=false]
      * @readonly
      */
     isOnline: false,

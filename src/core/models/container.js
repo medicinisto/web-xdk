@@ -27,7 +27,7 @@ class Container extends Syncable {
    * @method constructor
    * @protected
    * @param  {Object} options
-   * @param {string[]/Layer.Core.Identity[]} options.participants - Array of Participant IDs or Layer.Core.Identity instances
+   * @param {string[] | Layer.Core.Identity[]} options.participants - Array of Participant IDs or Layer.Core.Identity instances
    * @param {boolean} [options.distinct=true] - Is the conversation distinct
    * @param {Object} [options.metadata] - An object containing Conversation Metadata.
    * @return {Layer.Core.Conversation}
@@ -470,7 +470,7 @@ class Container extends Syncable {
 /**
  * Time that the conversation was created on the server.
  *
- * @property {Date}
+ * @property {Date} createdAt
  */
 Container.prototype.createdAt = null;
 
@@ -479,7 +479,7 @@ Container.prototype.createdAt = null;
  *
  * Metadata values can be plain objects and strings, but
  * no arrays, numbers, booleans or dates.
- * @property {Object}
+ * @property {Object} metadata
  */
 Container.prototype.metadata = null;
 
@@ -496,7 +496,7 @@ Container.prototype.metadata = null;
  *
  * Read and Delivery receipts will fail on any Message in such a Conversation.
  *
- * @property {Boolean}
+ * @property {Boolean} [isCurrentParticipant=true]
  */
 Container.prototype.isCurrentParticipant = true;
 
@@ -509,14 +509,14 @@ Container.prototype.isCurrentParticipant = true;
  * specific events detailing the results.  Results
  * may be determined locally or on the server, but same Event may be needed.
  *
- * @property {Layer.Core.LayerEvent}
+ * @property {Layer.Core.LayerEvent} [_sendDistinctEvent]
  * @private
  */
 Container.prototype._sendDistinctEvent = null;
 
 /**
  * Caches last result of toObject()
- * @property {Object}
+ * @property {Object} [_toObject]
  * @private
  */
 Container.prototype._toObject = null;
@@ -525,7 +525,7 @@ Container.prototype._toObject = null;
  * The Conversation/Channel that was requested has been created.
  *
  * Used in `conversations:sent` events.
- * @property {String}
+ * @property {String} [CREATED=Created]
  * @static
  */
 Container.CREATED = 'Created';
@@ -536,7 +536,7 @@ Container.CREATED = 'Created';
  * This means that it did not need to be created.
  *
  * Used in `conversations:sent` events.
- * @property {String}
+ * @property {String} [FOUND=Found]
  * @static
  */
 Container.FOUND = 'Found';
@@ -549,7 +549,7 @@ Container.FOUND = 'Found';
  * was returned but does not exactly match your request.
  *
  * Used in `conversations:sent` events.
- * @property {String}
+ * @property {String} [FOUND_WITHOUT_REQUESTED_METADATA=FoundMismatch]
  * @static
  */
 Container.FOUND_WITHOUT_REQUESTED_METADATA = 'FoundMismatch';

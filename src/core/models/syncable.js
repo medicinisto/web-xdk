@@ -378,14 +378,14 @@ class Syncable extends Root {
 /**
  * Unique identifier.
  *
- * @property {string}
+ * @property {string} id
  */
 Syncable.prototype.id = '';
 
 /**
  * URL to access the object on the server.
  *
- * @property {string}
+ * @property {string} url
  * @readonly
  * @protected
  */
@@ -397,14 +397,14 @@ Syncable.prototype.url = '';
  * This value is not tied to when it was first created on the server.  Creating a new instance
  * based on server data will result in a new `localCreateAt` value.
  *
- * @property {Date}
+ * @property {Date} localCreatedAt
  */
 Syncable.prototype.localCreatedAt = null;
 
 /**
  * Temporary property indicating that the instance was loaded from local database rather than server.
  *
- * @property {boolean}
+ * @property {boolean} _fromDB
  * @private
  */
 Syncable.prototype._fromDB = false;
@@ -420,7 +420,7 @@ Syncable.prototype._fromDB = false;
  *  * Layer.Constants.SYNC_STATE.SYNCED: Exists on both client and server and is synced.
  *  * Layer.Constants.SYNC_STATE.LOADING: Exists on server; loading it into client.
  *
- * @property {string}
+ * @property {string} [syncState=Layer.Constants.SYNC_STATE.NEW]
  */
 Syncable.prototype.syncState = SYNC_STATE.NEW;
 
@@ -430,7 +430,7 @@ Syncable.prototype.syncState = SYNC_STATE.NEW;
  * Counts down to zero; once it reaches zero, all sync
  * requests have been completed.
  *
- * @property {Number}
+ * @property {Number} _syncCounter
  * @private
  */
 Syncable.prototype._syncCounter = 0;
@@ -461,6 +461,8 @@ Syncable.prototype._loadType = 'queried';
 
 /**
  * Prefix to use when triggering events
+ *
+ * @property {String} [eventPrefix]
  * @private
  * @static
  */
@@ -471,7 +473,7 @@ Syncable.enableOpsIfNew = false;
 /**
  * Is the object loading from the server?
  *
- * @property {boolean}
+ * @property {boolean} [isLoading=false]
  */
 Object.defineProperty(Syncable.prototype, 'isLoading', {
   enumerable: true,

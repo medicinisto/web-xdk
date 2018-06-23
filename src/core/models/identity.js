@@ -391,7 +391,7 @@ class Identity extends Syncable {
 
 /**
  * Display name for the User or System Identity.
- * @property {string}
+ * @property {string} displayName
  */
 Identity.prototype.displayName = '';
 
@@ -402,7 +402,7 @@ Identity.prototype.displayName = '';
  *
  * Note: This is a CAPI only concept and may get moved to a mixin for the Identity class
  *
- * @property {boolean}
+ * @property {boolean} [isMine=false]
  */
 Identity.prototype.isMine = false;
 
@@ -410,19 +410,19 @@ Identity.prototype.isMine = false;
  * Is this a Full Identity or Basic Identity?
  *
  * Note that Service Identities are always considered to be Basic.
- * @property {boolean}
+ * @property {boolean} [isFullIdentity=false]
  */
 Identity.prototype.isFullIdentity = false;
 
 /**
  * Unique ID for this User.
- * @property {string}
+ * @property {string} userId
  */
 Identity.prototype.userId = '';
 
 /**
  * Optional URL for the user's icon.
- * @property {string}
+ * @property {string} avatarUrl
  */
 Identity.prototype.avatarUrl = '';
 
@@ -431,7 +431,7 @@ Identity.prototype.avatarUrl = '';
  *
  * Full Identities Only.
  *
- * @property {string}
+ * @property {string} firstName
  */
 Identity.prototype.firstName = '';
 
@@ -440,7 +440,7 @@ Identity.prototype.firstName = '';
  *
  * Full Identities Only.
  *
- * @property {string}
+ * @property {string} lastName
  */
 Identity.prototype.lastName = '';
 
@@ -449,7 +449,7 @@ Identity.prototype.lastName = '';
  *
  * Full Identities Only.
  *
- * @property {string}
+ * @property {string} emailAddress
  */
 Identity.prototype.emailAddress = '';
 
@@ -458,7 +458,7 @@ Identity.prototype.emailAddress = '';
  *
  * Full Identities Only.
  *
- * @property {string}
+ * @property {string} phoneNumber
  */
 Identity.prototype.phoneNumber = '';
 
@@ -467,7 +467,7 @@ Identity.prototype.phoneNumber = '';
  *
  * Full Identities Only.
  *
- * @property {Object}
+ * @property {Object} metadata
  */
 Identity.prototype.metadata = null;
 
@@ -476,19 +476,19 @@ Identity.prototype.metadata = null;
  *
  * Full Identities Only.
  *
- * @property {string}
+ * @property {string} publicKey
  */
 Identity.prototype.publicKey = '';
 
 /**
  * @static
- * @property {string} The Identity represents a user.  Value used in the Layer.Core.Identity.type field.
+ * @property {string} [UserType=user] The Identity represents a user.  Value used in the Layer.Core.Identity.type field.
  */
 Identity.UserType = 'user';
 
 /**
  * @static
- * @property {string} The Identity represents a bot.  Value used in the Layer.Core.Identity.type field.
+ * @property {string} [BotType=bot] The Identity represents a bot.  Value used in the Layer.Core.Identity.type field.
  */
 Identity.BotType = 'bot';
 
@@ -497,7 +497,7 @@ Identity.BotType = 'bot';
  *
  * * A bot? Use Layer.Core.Identity.BotType
  * * A User? Use Layer.Core.Identity.UserType
- * @property {string}
+ * @property {string} [type=user]
  */
 Identity.prototype.type = Identity.UserType;
 

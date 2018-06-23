@@ -62,7 +62,7 @@ if (typeof global !== 'undefined') global.Layer = global.layer = module.exports;
  * ```
  *
  * @method init
- * @returns Layer.Core.Client
+ * @returns {Layer.Core.Client}
  */
 
 /**

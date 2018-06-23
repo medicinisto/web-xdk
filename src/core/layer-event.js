@@ -155,7 +155,7 @@ class LayerEvent {
  * If the event name ends with ':change' then
  * it is treated as a change event;  such
  * events are assumed to come with `newValue`, `oldValue` and `property` in the Layer.Core.LayerEvent.changes property.
- * @property {Boolean}
+ * @property {Boolean} [isChange=false]
  */
 LayerEvent.prototype.isChange = false;
 
@@ -169,7 +169,7 @@ LayerEvent.prototype.isChange = false;
  * * newValue
  * * property
  *
- * @property {Object[]}
+ * @property {Object[]} [changes]
  */
 LayerEvent.prototype.changes = null;
 
@@ -181,7 +181,7 @@ LayerEvent.prototype.changes = null;
  *      obj.trigger('event');
  *
  * then obj will be the target.
- * @property {Layer.Core.Root}
+ * @property {Layer.Core.Root} [target]
  */
 LayerEvent.prototype.target = null;
 
@@ -194,7 +194,7 @@ LayerEvent.prototype.target = null;
  *
  * then eventName = 'myevent'
  *
- * @property {String}
+ * @property {String} eventName
  */
 LayerEvent.prototype.eventName = '';
 
@@ -217,7 +217,7 @@ LayerEvent.prototype.cancelable = false;
 /**
  * Value provided to this event by an event listener
  *
- * @property {Mixed} returnedValue
+ * @property {Mixed} [returnedValue]
  */
 LayerEvent.prototype.returnedValue = null;
 

@@ -2,6 +2,7 @@
  * A Mixin for main components that can receive or generate a Query.
  *
  * @class Layer.UI.mixins.HasQuery
+ * @ismixin
  */
 import { client as Client } from '../../settings';
 import Core from '../../core/namespace';
@@ -127,7 +128,7 @@ mixins.HasQuery = module.exports = {
      *
      * This method tests to see if it expects or has a Query, and creates one if needed.
      *
-     * @method
+     * @method _setupGeneratedQuery
      * @private
      */
     _setupGeneratedQuery() {

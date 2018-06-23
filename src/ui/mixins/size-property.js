@@ -18,6 +18,7 @@
  * This will set the CSS class on that node to `layer-size-massive`.
  *
  * @class Layer.UI.mixins.SizeProperty
+ * @ismixin
  */
 import { registerComponent } from '../components/component';
 import { logger } from '../../utils';

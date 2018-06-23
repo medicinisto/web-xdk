@@ -87,7 +87,7 @@ class LayerError {
  * A string name for the event; these names are paired with codes.
  *
  * Codes can be looked up at https://docs.layer.com/reference/client_api/errors
- * @property {String}
+ * @property {String} errType
  */
 LayerError.prototype.errType = '';
 
@@ -95,25 +95,25 @@ LayerError.prototype.errType = '';
  * Numerical error code.
  *
  * https://docs.layer.com/reference/client_api/errors
- * @property {Number}
+ * @property {Number} [code=0]
  */
 LayerError.prototype.code = 0;
 
 /**
  * URL to go to for more information on this error.
- * @property {String}
+ * @property {String} [url]
  */
 LayerError.prototype.url = '';
 
 /**
  * Detailed description of the error.
- * @property {String}
+ * @property {String} message
  */
 LayerError.prototype.message = '';
 
 /**
  * Http error code; no value if its a websocket response.
- * @property {Number}
+ * @property {Number} [httpStatus=0]
  */
 LayerError.prototype.httpStatus = 0;
 
@@ -124,19 +124,19 @@ LayerError.prototype.httpStatus = 0;
  *  * data: xhr.data,
  *  * xhr: XMLHttpRequest object
  *
- * @property {Object}
+ * @property {Object} [request]
  */
 LayerError.prototype.request = null;
 
 /**
  * Any additional details about the error sent as additional properties.
- * @property {Object}
+ * @property {Object} [data]
  */
 LayerError.prototype.data = null;
 
 /**
  * Pointer to the xhr object that fired the actual request and contains the response.
- * @property {XMLHttpRequest}
+ * @property {XMLHttpRequest} [xhr]
  */
 LayerError.prototype.xhr = null;
 

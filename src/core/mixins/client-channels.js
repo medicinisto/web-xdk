@@ -24,7 +24,7 @@ module.exports = {
      *          });
      *      });
      *
-     * @event
+     * @event channels:add
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Channel[]} evt.channels - Array of channels added
      */
@@ -45,7 +45,7 @@ module.exports = {
      *          });
      *      });
      *
-     * @event
+     * @event channels:remove
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Channel[]} evt.channels - Array of channels removed
      */
@@ -70,7 +70,7 @@ module.exports = {
      *
      * NOTE: Typically such rendering is done using Events on Layer.Core.Query.
      *
-     * @event
+     * @event channels:change
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Channel} evt.target
      * @param {Object[]} evt.changes
@@ -83,7 +83,7 @@ module.exports = {
     /**
      * A call to Layer.Core.Channel.load has completed successfully
      *
-     * @event
+     * @event channels:loaded
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Channel} evt.target
      */
@@ -99,7 +99,7 @@ module.exports = {
      *          myView.removeChannel(evt.target);
      *      });
      *
-     * @event
+     * @event channels:delete
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Channel} evt.target
      */
@@ -130,7 +130,7 @@ module.exports = {
      *          }
      *      });
      *
-     * @event
+     * @event channels:sent
      * @param {Layer.Core.LayerEvent} event
      * @param {string} event.result
      * @param {Layer.Core.Channel} target
@@ -144,7 +144,7 @@ module.exports = {
      *          alert(evt.data.message);
      *      });
      *
-     * @event
+     * @event channels:sent-error
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.LayerEvent} evt.data
      * @param {Layer.Core.Channel} target
@@ -384,7 +384,7 @@ module.exports = {
      *
      * @method createChannel
      * @param  {Object} options
-     * @param {string[]/Layer.Core.Identity[]} options.members - Array of UserIDs or UserIdentities
+     * @param {string[] | Layer.Core.Identity[]} options.members - Array of UserIDs or UserIdentities
      * @param {String} options.name - The unique name for this Channel
      * @param {Object} [options.metadata={}] Metadata for your Channel
      * @return {Layer.Core.Channel}

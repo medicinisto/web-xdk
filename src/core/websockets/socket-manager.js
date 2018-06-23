@@ -31,7 +31,7 @@ class SocketManager extends Root {
    *
    *      var socketManager = new Layer.Core.Websockets.SocketManager({});
    *
-   * @method
+   * @method constructor
    * @param  {Object} options
    * @return {Layer.Core.Websockets.SocketManager}
    */
@@ -724,21 +724,21 @@ class SocketManager extends Root {
 
 /**
  * Is the websocket connection currently open?
- * @property {Boolean}
+ * @property {Boolean} [isOpen=false]
  */
 SocketManager.prototype.isOpen = false;
 
 /**
  * setTimeout ID for calling connect()
  * @private
- * @property {Number}
+ * @property {Number} _reconnectId
  */
 SocketManager.prototype._reconnectId = 0;
 
 /**
  * setTimeout ID for calling _connectionFailed()
  * @private
- * @property {Number}
+ * @property {Number} _connectionFailedId
  */
 SocketManager.prototype._connectionFailedId = 0;
 
@@ -756,7 +756,7 @@ SocketManager.prototype._lastGetCounterId = 0;
 
 /**
  * Time in miliseconds since the last call to _validateSessionBeforeReconnect
- * @property {Number}
+ * @property {Number} _lastValidateSessionRequest
  */
 SocketManager.prototype._lastValidateSessionRequest = 0;
 
@@ -764,33 +764,33 @@ SocketManager.prototype._lastValidateSessionRequest = 0;
  * Frequency with which the websocket checks to see if any websocket notifications
  * have been missed.  This test is done by calling `getCounter`
  *
- * @property {Number}
+ * @property {Number} [pingFrequency=30000]
  */
 SocketManager.prototype.pingFrequency = 30000;
 
 /**
  * Delay between reconnect attempts
  *
- * @property {Number}
+ * @property {Number} [maxDelaySecondsBetweenReconnect=30]
  */
 SocketManager.prototype.maxDelaySecondsBetweenReconnect = 30;
 
 /**
  * The Socket Connection instance
- * @property {Websocket}
+ * @property {Websocket} _socket
  */
 SocketManager.prototype._socket = null;
 
 /**
  * Is the websocket connection being closed by a call to close()?
  * If so, we can ignore any errors that signal the socket as closing.
- * @property {Boolean}
+ * @property {Boolean} [_closing=false]
  */
 SocketManager.prototype._closing = false;
 
 /**
  * Number of failed attempts to reconnect.
- * @property {Number}
+ * @property {Number} _lostConnectionCount
  */
 SocketManager.prototype._lostConnectionCount = 0;
 

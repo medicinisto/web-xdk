@@ -2,6 +2,7 @@
  * A Mixin that provides common patterns for rendering any Message Type Model.
  *
  * @class Layer.UI.messages.MessageViewMixin
+ * @ismixin
  */
 
 import mixins from '../mixins';

@@ -14,7 +14,7 @@ module.exports = {
     /**
      * A call to Layer.Core.Identity.load has completed successfully
      *
-     * @event
+     * @event identities:loaded
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Identity} evt.target
      */
@@ -23,7 +23,7 @@ module.exports = {
     /**
      * A call to Layer.Core.Identity.load has failed
      *
-     * @event
+     * @event identities:loaded-error
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.LayerEvent} evt.error
      */
@@ -41,7 +41,7 @@ module.exports = {
      *          }
      *      });
      *
-     * @event
+     * @event identities:change
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Identity} evt.target
      * @param {Object[]} evt.changes
@@ -63,7 +63,7 @@ module.exports = {
                 });
             });
     *
-    * @event
+    * @event identities:add
     * @param {Layer.Core.LayerEvent} evt
     * @param {Layer.Core.Identity[]} evt.identities
     */
@@ -80,7 +80,7 @@ module.exports = {
                 });
             });
     *
-    * @event
+    * @event identities:remove
     * @param {Layer.Core.LayerEvent} evt
     * @param {Layer.Core.Identity[]} evt.identities
     */
@@ -92,7 +92,8 @@ module.exports = {
      * We do not delete such Identities entirely from the Client as
      * there are still Messages from these Identities to be rendered,
      * but we do downgrade them from Full Identity to Basic Identity.
-     * @event
+     *
+     * @event identities:unfollow
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Identity} evt.target
      */

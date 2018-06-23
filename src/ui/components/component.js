@@ -388,6 +388,7 @@
  * ```
  *
  * @class Layer.UI.Component
+ * @mixin HTMLElement
  */
 /* eslint-disable no-use-before-define */
 
@@ -604,7 +605,7 @@ function setupEvent(classDef, eventName) {
 /*
  * Get an array of property descriptions.
  *
- * @method
+ * @method getPropArray
  * @private
  * @param {Object} classDef
  */
@@ -1059,7 +1060,7 @@ function _registerComponent(tagName) {
    *
    * This calls `onAttach` which is where custom components can customize and mixins can add behaviors.
    *
-   * @method
+   * @method attachedCallback
    * @private
    */
   classDef.attachedCallback = {
@@ -1840,7 +1841,7 @@ const standardClassMethods = {
    *
    * TODO: Need to test against raw JS and various frameworks to insure we always have a css class 'layer-replaceable-content' div
    *
-   * @method
+   * @method _onProcessReplaceableContent
    * @private
    */
   _onProcessReplaceableContent() {},

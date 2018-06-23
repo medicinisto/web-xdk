@@ -424,7 +424,7 @@ class ConversationMessage extends Message {
  *      m.isRead = true;
  *
  * This will automatically notify the server that the message was read by your user.
- * @property {Boolean}
+ * @property {Boolean} [isRead=false]
  */
 ConversationMessage.prototype.isRead = false;
 
@@ -439,7 +439,7 @@ ConversationMessage.prototype.isRead = false;
  * * Layer.Constants.RECEIPT_STATE.READ
  * * Layer.Constants.RECEIPT_STATE.PENDING
  *
- * @property {Object}
+ * @property {Object} recipientStatus
  */
 ConversationMessage.prototype.recipientStatus = null;
 
@@ -456,7 +456,7 @@ ConversationMessage.prototype.recipientStatus = null;
  *
  * See Layer.Core.Message.ConversationMessage.recipientStatus for a more detailed report.
  *
- * @property {String}
+ * @property {String} readStatus
  */
 ConversationMessage.prototype.readStatus = '';
 
@@ -474,7 +474,7 @@ ConversationMessage.prototype.readStatus = '';
  * See Layer.Core.Message.ConversationMessage.recipientStatus for a more detailed report.
  *
  *
- * @property {String}
+ * @property {String} deliveryStatus
  */
 ConversationMessage.prototype.deliveryStatus = '';
 

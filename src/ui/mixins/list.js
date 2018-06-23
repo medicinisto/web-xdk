@@ -4,6 +4,7 @@
  * @class Layer.UI.mixins.List
  * @mixin Layer.UI.mixins.HasQuery
  * @mixin Layer.UI.mixins.Throttler
+ * @ismixin
  */
 import { client } from '../../settings';
 import Layer from '../../core/namespace';
@@ -81,7 +82,7 @@ mixins.List = module.exports = {
      * Note that this is for quick local searches of items; to actually filter data that should not be shown
      * to users, see {@link #queryFilter}
      *
-     * @property {String/RegExp/Function} [filter='']
+     * @property {String | RegExp | Function} [filter='']
      */
     filter: {
       set(value) {
@@ -284,7 +285,7 @@ mixins.List = module.exports = {
      * This is intended for Mixins to hook into; apps wanting to do processing on rendered
      * items should use `onRenderListItem`.
      *
-     * @method
+     * @method onGenerateListItem
      * @param {Layer.UI.mixins.ListItem} widget
      */
     onGenerateListItem(widget) {

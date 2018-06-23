@@ -601,7 +601,7 @@ registerComponent('layer-notifier', {
      * });
      * ```
      *
-     * @method
+     * @method onDesktopClick
      * @param {Layer.Core.Message} message
      */
     onDesktopClick(message) {

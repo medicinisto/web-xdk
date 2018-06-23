@@ -119,9 +119,11 @@ registerComponent('layer-choice-button', {
     /**
      * When clicked, find the associated Layer.UI.messages.MessageViewer and call its `_runAction` method.
      *
+     * @method _onClick
      * @param {Object} boundData
      * @param {Object} choice   The choice represented by this button
      * @param {Event} evt
+     * @private
      */
     _onClick({ choice }, evt) {
       evt.preventDefault();

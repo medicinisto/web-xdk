@@ -29,7 +29,7 @@ module.exports = {
      * });
      * ```
      *
-     * @event
+     * @event message-type-model:change
      * @param {Layer.Core.LayerEvent} evt
      */
     'message-type-model:change',
@@ -46,7 +46,7 @@ module.exports = {
      * });
      * ```
      *
-     * @event
+     * @event message-type-model:has-new-message
      * @param {Layer.Core.LayerEvent} evt
      */
     'message-type-model:has-new-message',
@@ -69,7 +69,7 @@ module.exports = {
      * });
      * ```
      *
-     * @event
+     * @event message-type-model:sending-response-message
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.MessageTypeModel} evt.respondingToModel
      * @param {Layer.UI.messages.ResponseMessageModel} evt.responseModel
@@ -93,7 +93,7 @@ module.exports = {
      * >
      * > Calling {@link Layer.Core.Message#send} bypasses this event.
      *
-     * @event
+     * @event message-type-model:notification
      * @param {Layer.Core.LayerEvent} evt
      */
     'message-type-model:notification',

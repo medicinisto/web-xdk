@@ -468,7 +468,7 @@ class Channel extends Container {
    * @static
    * @protected
    * @param  {Object} options
-   * @param  {string[]/Layer.Core.Identity[]} options.members - Array of Participant IDs or Layer.Core.Identity objects to create a channel with.
+   * @param  {string[] | Layer.Core.Identity[]} options.members - Array of Participant IDs or Layer.Core.Identity objects to create a channel with.
    * @param {boolean} [options.private=false] - Create a private channel
    * @param {Object} [options.metadata={}] - Initial metadata for Channel
    * @return {Layer.Core.Channel}
@@ -520,7 +520,7 @@ Channel.prototype.name = '';
  *     "lastUnreadMessageId: "layer:///messages/UUID"
  * }
  * ```
- * @property {Object}
+ * @property {Object} membership
  */
 Channel.prototype.membership = null;
 
@@ -534,7 +534,7 @@ Channel.nextPosition = 18446744073709552000;
 
 /**
  * Prefix to use when generating an ID for instances of this class
- * @property {String}
+ * @property {String} [prefixUUID=layer:///channels]
  * @static
  * @private
  */
@@ -551,7 +551,7 @@ Channel._supportedEvents = [
    * * Channel.CREATED: A new Channel has been created
    * * Channel.FOUND: A matching named Channel has been found
    *
-   * @event
+   * @event channels:sent
    * @param {Layer.Core.LayerEvent} event
    * @param {string} event.result
    */
@@ -559,7 +559,7 @@ Channel._supportedEvents = [
 
   /**
    * An attempt to send this channel to the server has failed.
-   * @event
+   * @event channels:sent-error
    * @param {Layer.Core.LayerEvent} event
    * @param {Layer.Core.LayerEvent} event.error
    */
@@ -570,7 +570,8 @@ Channel._supportedEvents = [
    *
    * Note that this is only used in response to the Layer.Core.Channel.load() method.
    * from the server.
-   * @event
+   *
+   * @event channels:loaded
    * @param {Layer.Core.LayerEvent} event
    */
   'channels:loaded',
@@ -579,7 +580,7 @@ Channel._supportedEvents = [
    * An attempt to load this conversation from the server has failed.
    *
    * Note that this is only used in response to the Layer.Core.Channel.load() method.
-   * @event
+   * @event channels:loaded-error
    * @param {Layer.Core.LayerEvent} event
    * @param {Layer.Core.LayerEvent} event.error
    */
@@ -590,7 +591,7 @@ Channel._supportedEvents = [
    *
    * Caused by either a successful call to delete() on this instance
    * or by a remote user.
-   * @event
+   * @event channels:delete
    * @param {Layer.Core.LayerEvent} event
    */
   'channels:delete',
@@ -598,7 +599,7 @@ Channel._supportedEvents = [
   /**
    * This channel has changed.
    *
-   * @event
+   * @event channels:change
    * @param {Layer.Core.LayerEvent} event
    * @param {Object[]} event.changes - Array of changes reported by this event
    * @param {Mixed} event.changes.newValue

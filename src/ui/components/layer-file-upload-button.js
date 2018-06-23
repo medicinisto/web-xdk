@@ -97,17 +97,6 @@ registerComponent('layer-file-upload-button', {
         this.nodes.input.multiple = newValue;
       },
     },
-
-    /**
-     * Any File with one of these MIME Types will have a Layer.UI.messages.VideoMessageModel generated.
-     *
-     * Use this property to customize what MIME Types to watch for and treat as Videos.
-     *
-     * @property {String[]}
-     */
-    videoTypes: {
-      value: ['video/mp4'],
-    },
   },
   methods: {
 
@@ -130,7 +119,7 @@ registerComponent('layer-file-upload-button', {
      * If adding a mixin here to change behaviors on selecting a file, you can use `this.nodes.input.files` to access
      * the selected files.
      *
-     * @method
+     * @method onChange
      */
     onChange() {
       const files = Array.prototype.slice.call(this.nodes.input.files);

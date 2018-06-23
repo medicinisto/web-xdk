@@ -125,32 +125,32 @@ class Content extends Root {
 
 /**
  * Server generated identifier
- * @property {string}
+ * @property {string} id
  */
 Content.prototype.id = '';
 
 /**
  * Server generated url for downloading the content
- * @property {string}
+ * @property {string} [downloadUrl]
  */
 Content.prototype.downloadUrl = '';
 
 /**
  * Url for refreshing the downloadUrl after it has expired
- * @property {string}
+ * @property {string} [refreshUrl]
  */
 Content.prototype.refreshUrl = '';
 
 /**
  * Size of the content.
  *
- * @property {number}
+ * @property {number} [size]
  */
 Content.prototype.size = 0;
 
 /**
  * Expiration date for the downloadUrl
- * @property {Date}
+ * @property {Date} [expiration]
  */
 Content.prototype.expiration = null;
 

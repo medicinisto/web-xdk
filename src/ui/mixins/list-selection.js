@@ -7,6 +7,7 @@
  * The selection event is controled by the {@link #_selectedItemEventName} provided by each user of this Mixin.
  *
  * @class Layer.UI.mixins.ListSelection
+ * @ismixin
  */
 import { client } from '../../settings';
 import Clickable from './clickable';

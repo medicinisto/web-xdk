@@ -25,7 +25,7 @@ module.exports.itemSeparatorParentClassName = 'layer-list-item-separator-parent'
  * }
  * ```
  * @method createItemSeparator
- * @returns HTMLElement
+ * @returns {HTMLElement}
  */
 module.exports.createItemSeparator = () => {
   const node = document.createElement('div');

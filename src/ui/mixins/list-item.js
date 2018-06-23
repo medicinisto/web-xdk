@@ -12,6 +12,7 @@
  * ```
  *
  * @class Layer.UI.mixins.ListItem
+ * @ismixin
  */
 import { registerComponent } from '../components/component';
 import { ComponentsHash } from '../component-services';

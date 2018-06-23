@@ -24,7 +24,7 @@ module.exports = {
      *          }
      *      });
      *
-     * @event
+     * @event typing-indicator-change
      * @param {Layer.Core.LayerEvent} evt
      * @param {string} conversationId - ID of the Conversation users are typing into
      * @param {string[]} typing - Array of user IDs who are currently typing

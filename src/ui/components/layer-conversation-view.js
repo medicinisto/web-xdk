@@ -445,7 +445,7 @@ registerComponent('layer-conversation-view', {
      * }
      * ```
      *
-     * @property {Layer.Core.Container}
+     * @property {Layer.Core.Container} conversation
      */
     conversation: {
       set(value) {
@@ -771,7 +771,7 @@ registerComponent('layer-conversation-view', {
      * widget.disable = true;
      * ```
      *
-     * @property {Boolean}
+     * @property {Boolean} [disable=false]
      */
     disable: {
       type: Boolean,
@@ -974,7 +974,7 @@ registerComponent('layer-conversation-view', {
      * widget.focusText();
      * ```
      *
-     * @method
+     * @method focusText
      */
     focusText() {
       this.nodes.composer.focus();
@@ -988,7 +988,7 @@ registerComponent('layer-conversation-view', {
      * widget.send(); // send the current text in the textarea
      * ```
      *
-     * @method
+     * @method send
      */
     send() {
       this.nodes.composer.send();

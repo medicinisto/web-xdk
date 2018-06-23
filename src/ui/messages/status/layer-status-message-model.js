@@ -52,7 +52,7 @@ class StatusModel extends MessageTypeModel {
 /**
  * The text of the Status Message.
  *
- * @property {String}
+ * @property {String} text
  */
 StatusModel.prototype.text = '';
 

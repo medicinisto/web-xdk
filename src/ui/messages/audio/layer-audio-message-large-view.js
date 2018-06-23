@@ -469,6 +469,8 @@ registerComponent('layer-audio-message-large-view', {
 
     /**
      * Any time playback pauses (paused event received) either call onEnded, or update rendering associated with playing to `false`
+     *
+     * @method onPause
      */
     onPause() {
       if (this.properties.audio.duration === this.properties.audio.currentTime) {
@@ -480,6 +482,8 @@ registerComponent('layer-audio-message-large-view', {
 
     /*
      * Resize content on attaching this to the document, if needed; onAfterCreate already tried to do this.
+     *
+     * @method onAttach
      */
     onAttach() {
       if (!this.isHeightAllocated) this._resizeContent();

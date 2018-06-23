@@ -197,7 +197,7 @@ registerComponent('layer-message-list', {
      * whenever it is changed.  Typically this is used to provide the Layer.Core.Conversation to the
      * `<layer-start-of-conversation />` widget.
      *
-     * @property {Layer.Core.Conversation}
+     * @property {Layer.Core.Conversation} conversation
      */
     conversation: {
       propagateToChildren: true,
@@ -838,8 +838,8 @@ registerComponent('layer-message-list', {
      *
      * @method _inSameGroup
      * @private
-     * @param {Layer.UI.Component} message-item1
-     * @param {Layer.UI.Component} message-item2
+     * @param {Layer.UI.Component} messageItem1
+     * @param {Layer.UI.Component} messageItem2
      * @returns {Boolean}
      */
     _inSameGroup(m1, m2) {

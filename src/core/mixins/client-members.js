@@ -15,7 +15,7 @@ module.exports = {
     /**
      * A call to Layer.Core.Membership.load has completed successfully
      *
-     * @event
+     * @event members:loaded
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Membership} evt.target
      */
@@ -33,7 +33,7 @@ module.exports = {
      *          }
      *      });
      *
-     * @event
+     * @event members:change
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Membership} evt.target
      * @param {Object[]} evt.changes
@@ -55,7 +55,7 @@ module.exports = {
                 });
             });
     *
-    * @event
+    * @event members:add
     * @param {Layer.Core.LayerEvent} evt
     * @param {Layer.Core.Membership[]} evt.membership
     */
@@ -72,7 +72,7 @@ module.exports = {
                 });
             });
     *
-    * @event
+    * @event members:remove
     * @param {Layer.Core.LayerEvent} evt
     * @param {Layer.Core.Membership[]} evt.membership
     */

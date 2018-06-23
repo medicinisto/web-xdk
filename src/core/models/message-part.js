@@ -815,7 +815,7 @@ class MessagePart extends Root {
 
 /**
  * Server generated identifier for the part
- * @property {string}
+ * @property {string} id
  */
 MessagePart.prototype.id = '';
 
@@ -827,7 +827,7 @@ MessagePart.prototype.id = '';
  * If this is `null` then most likely Layer.Core.Message.hasContent is true, and you
  * can either use the Layer.Core.MessagePart.url property or the Layer.Core.MessagePart.fetchContent method.
  *
- * @property {string}
+ * @property {string} body
  */
 MessagePart.prototype.body = null;
 
@@ -836,21 +836,21 @@ MessagePart.prototype.body = null;
  *
  * This will be automatically created for you if your Layer.Core.MessagePart.body
  * is large.
- * @property {Layer.Core.Content}
+ * @property {Layer.Core.Content} [_content]
  * @private
  */
 MessagePart.prototype._content = null;
 
 /**
  * The Part has rich content
- * @property {Boolean}
+ * @property {Boolean} [hasContent=false]
  */
 MessagePart.prototype.hasContent = false;
 
 /**
  * The Message Part is currently loading its Rich Content from the server.
  *
- * @property {Boolean}
+ * @property {Boolean} [isFiring=false]
  */
 MessagePart.prototype.isFiring = false;
 
@@ -862,7 +862,7 @@ MessagePart.prototype.isFiring = false;
  * Will contain an expiring url at initialization time and be refreshed with calls to `Layer.Core.MessagePart.fetchStream()`.
  * Will contain a non-expiring url to a local resource if `Layer.Core.MessagePart.fetchContent()` is called.
  *
- * @property {Layer.Core.Content}
+ * @property {String} url
  */
 Object.defineProperty(MessagePart.prototype, 'url', {
   enumerable: true,
@@ -885,7 +885,7 @@ Object.defineProperty(MessagePart.prototype, 'url', {
  * if there is Rich Content, then its the type of Content that needs to be
  * downloaded.
  *
- * @property {String}
+ * @property {String} mimeType
  */
 MessagePart.prototype.mimeType = 'text/plain';
 
@@ -894,7 +894,7 @@ MessagePart.prototype.mimeType = 'text/plain';
  *
  * These attributes are removed from the mimeType and moved into a hash.
  *
- * @property {Object}
+ * @property {Object} mimeAttributes
  */
 MessagePart.prototype.mimeAttributes = null;
 
@@ -904,7 +904,7 @@ MessagePart.prototype.mimeAttributes = null;
  * If the part was created after the message was sent, or the part was updated after the
  * part was sent then this will have a value.
  *
- * @property {Date}
+ * @property {Date} updatedAt
  */
 MessagePart.prototype.updatedAt = null;
 
@@ -914,7 +914,7 @@ MessagePart.prototype.updatedAt = null;
  * Will be set for you if not provided.
  * Only needed for use with rich content.
  *
- * @property {number}
+ * @property {number} size
  */
 MessagePart.prototype.size = 0;
 
@@ -932,7 +932,7 @@ MessagePart.prototype.size = 0;
  * var parentNode = message.getRootPart();
  * ```
  *
- * @property {String}
+ * @property {String} parentId
  */
 MessagePart.prototype.parentId = '';
 
@@ -942,14 +942,14 @@ MessagePart.prototype.parentId = '';
  *
  * This nodeId will typically be based off of the MessagePart's `id` property.
  *
- * @property {String}
+ * @property {String} nodeId
  */
 MessagePart.prototype.nodeId = '';
 
 /**
  * Every Message Part within the MessagePart Heirarchy has a role within that structure; get that role.
  *
- * @property {String}
+ * @property {String} role
  */
 MessagePart.prototype.role = '';
 
@@ -979,7 +979,7 @@ MessagePart.prototype._message = null;
  * ```
  *
  * @static
- * @property {Mixed[]}
+ * @property {Mixed[]} TextualMimeTypes
  */
 MessagePart.TextualMimeTypes = [
   /^text\/.+$/, /^application\/json(\+.+)?$/, /\+json$/, /-json$/, /^application\/xml/, /\+xml$/,
@@ -988,7 +988,7 @@ MessagePart.TextualMimeTypes = [
 /**
  * Number of retry attempts to make before giving up on uploading Rich Content to Google Cloud Storage.
  *
- * @property {Number}
+ * @property {Number} [MaxRichContentRetryCount=3]
  */
 MessagePart.MaxRichContentRetryCount = 3;
 

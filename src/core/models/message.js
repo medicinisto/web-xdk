@@ -260,7 +260,7 @@ class Message extends Syncable {
    * ```
    *
    * @method addPart
-   * @param  {Layer.Core.MessagePart/Object} part - A Layer.Core.MessagePart instance or a `{mimeType: 'text/plain', body: 'Hello'}` formatted Object.
+   * @param  {Layer.Core.MessagePart | Object} part - A Layer.Core.MessagePart instance or a `{mimeType: 'text/plain', body: 'Hello'}` formatted Object.
    * @returns {Layer.Core.Message} this
    */
   addPart(part) {
@@ -807,7 +807,7 @@ class Message extends Syncable {
 /**
  * Conversation ID or Channel ID that this Message belongs to.
  *
- * @property {string}
+ * @property {string} conversationId
  * @readonly
  */
 Message.prototype.conversationId = '';
@@ -817,7 +817,7 @@ Message.prototype.conversationId = '';
  *
  * Use {@link #addPart} to modify this Set.
  *
- * @property {Layer.Core.MessagePart[]}
+ * @property {Layer.Core.MessagePart[]} parts
  * @readonly
  */
 Message.prototype.parts = null;
@@ -830,7 +830,7 @@ Message.prototype.parts = null;
  * to account for `null` values.  Sending the Message may cause a slight change
  * in the `sentAt` value.
  *
- * @property {Date}
+ * @property {Date} sentAt
  * @readonly
  */
 Message.prototype.sentAt = null;
@@ -838,7 +838,7 @@ Message.prototype.sentAt = null;
 /**
  * Time that the first delivery receipt was sent by your
  * user acknowledging receipt of the message.
- * @property {Date}
+ * @property {Date} [receivedAt]
  * @readonly
  */
 Message.prototype.receivedAt = null;
@@ -855,7 +855,7 @@ Message.prototype.receivedAt = null;
  *        {message.sender.displayName || message.sender.name}
  *      </span>
  *
- * @property {Layer.Core.Identity}
+ * @property {Layer.Core.Identity} sender
  * @readonly
  */
 Message.prototype.sender = null;
@@ -870,7 +870,7 @@ Message.prototype.sender = null;
  * all claim the same position)
  * 3. Each successive message within a conversation should expect a higher position.
  *
- * @property {Number}
+ * @property {Number} position
  * @readonly
  */
 Message.prototype.position = 0;
@@ -878,14 +878,14 @@ Message.prototype.position = 0;
 /**
  * Hint used by Layer.Core.Client on whether to trigger a messages:notify event.
  *
- * @property {boolean}
+ * @property {boolean} _notify
  * @private
  */
 Message.prototype._notify = false;
 
 /**
  * This property is here for convenience only; it will always be the opposite of isRead.
- * @property {Boolean}
+ * @property {Boolean} isUnread
  * @readonly
  */
 Object.defineProperty(Message.prototype, 'isUnread', {
@@ -915,7 +915,7 @@ Object.defineProperty(Message.prototype, 'isUnread', {
  *    attributeName2: [...]
  * }
  * ```
- * @property {Object}
+ * @property {Object} _mimeAttributeMap
  * @private
  */
 Message.prototype._mimeAttributeMap = null;
@@ -926,7 +926,7 @@ Message.prototype._mimeAttributeMap = null;
  * If the part was created after the message was sent, or the part was updated after the
  * part was sent then this will have a value.
  *
- * @property {Date}
+ * @property {Date} updatedAt
  */
 Message.prototype.updatedAt = null;
 
@@ -967,7 +967,7 @@ Message._supportedEvents = [
    * myrender(m); // render a placeholder for m until the details of m have loaded
    * ```
    *
-   * @event
+   * @event messages:loaded
    * @param {Layer.Core.LayerEvent} evt
    */
   'messages:loaded',
@@ -976,7 +976,8 @@ Message._supportedEvents = [
    * The load method failed to load the message from the server.
    *
    * Note that this is only used in response to the Layer.Core.Message.load() method.
-   * @event
+   *
+   * @event messages:loaded-error
    * @param {Layer.Core.LayerEvent} evt
    */
   'messages:loaded-error',
@@ -985,8 +986,9 @@ Message._supportedEvents = [
    * Message deleted from the server.
    *
    * Caused by a call to Layer.Core.Message.delete() or a websocket event.
+   *
    * @param {Layer.Core.LayerEvent} evt
-   * @event
+   * @event messages:delete
    */
   'messages:delete',
 
@@ -1023,7 +1025,7 @@ Message._supportedEvents = [
    * });
    * ```
    *
-   * @event
+   * @event messages:sending
    * @param {Layer.Core.LayerEvent} evt
    * @param {Layer.Core.Message} evt.target
    * @param {Object} evt.detail
@@ -1038,7 +1040,7 @@ Message._supportedEvents = [
    *
    * It does NOT indicate messages sent by other users.
    *
-   * @event
+   * @event messages:sent
    * @param {Layer.Core.LayerEvent} evt
    */
   'messages:sent',
@@ -1048,7 +1050,7 @@ Message._supportedEvents = [
    *
    * Message will be deleted immediately after firing this event.
    *
-   * @event
+   * @event messages:sent-error
    * @param {Layer.Core.LayerEvent} evt
    * @param {Layer.Core.LayerEvent} evt.error
    */
@@ -1060,7 +1062,7 @@ Message._supportedEvents = [
    * This happens in response to an update
    * from the server... but is also caused by marking the current user as having read
    * or received the message.
-   * @event
+   * @event messages:change
    * @param {Layer.Core.LayerEvent} evt
    */
   'messages:change',
@@ -1068,7 +1070,7 @@ Message._supportedEvents = [
   /**
    * A new Message Part has been added
    *
-   * @event
+   * @event messages:part-added
    * @param {Layer.Core.LayerEvent} evt
    * @param {Layer.Core.MessagePart} evt.part
    */
@@ -1077,7 +1079,7 @@ Message._supportedEvents = [
   /**
    * A new Message Part has been removed
    *
-   * @event
+   * @event messages:part-removed
    * @param {Layer.Core.LayerEvent} evt
    * @param {Layer.Core.MessagePart} evt.part
    */

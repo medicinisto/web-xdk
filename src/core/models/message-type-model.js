@@ -1315,14 +1315,14 @@ class MessageTypeModel extends Root {
  * This typically happens when a Message Type Model is represented by only a small part of a Message Part, and that Message Part
  * actually represents some Parent Model.
  *
- * @property {Boolean}
+ * @property {Boolean} [isAnonymous=false]
  */
 MessageTypeModel.prototype.isAnonymous = false;
 
 /**
  * Unique identifier, derived from the associated Part ID.
  *
- * @property {string}
+ * @property {string} id
  */
 MessageTypeModel.prototype.id = '';
 
@@ -1330,14 +1330,14 @@ MessageTypeModel.prototype.id = '';
  * Property to reference the Parent node this model's Message Part's Parent Message Part within the Message Part Tree.
  *
  * @protected
- * @property {String}
+ * @property {String} parentId
  */
 MessageTypeModel.prototype.parentId = null;
 
 /**
  * Property to access the Parent Model of this model
  *
- * @property {Layer.Core.MessageTypeModel}
+ * @property {Layer.Core.MessageTypeModel} parentModel
  */
 MessageTypeModel.prototype.parentModel = null;
 
@@ -1345,21 +1345,21 @@ MessageTypeModel.prototype.parentModel = null;
  * Node Identifier to uniquely identify this Message Part such that a Parent ID can reference it.
  *
  * @readonly
- * @property {String}
+ * @property {String} nodeId
  */
 MessageTypeModel.prototype.nodeId = null;
 
 /**
  * Message for this Message Model
  *
- * @property {Layer.Core.Message}
+ * @property {Layer.Core.Message} message
  */
 MessageTypeModel.prototype.message = null;
 
 /**
  * Root Part defining this Model
  *
- * @property {Layer.Core.MessagePart}
+ * @property {Layer.Core.MessagePart} [part]
  */
 MessageTypeModel.prototype.part = null;
 
@@ -1369,7 +1369,7 @@ MessageTypeModel.prototype.part = null;
  * The role is defined by the MessagePart for this Model, and
  * determines what this Model means to its Parent Model in the Model tree.
  *
- * @property {String}
+ * @property {String} role
  */
 MessageTypeModel.prototype.role = null;
 
@@ -1378,7 +1378,7 @@ MessageTypeModel.prototype.role = null;
  *
  * It is assumed to be used by this model if they are its children in the MessagePart tree.
  *
- * @property {Layer.Core.MessagePart[]}
+ * @property {Layer.Core.MessagePart[]} childParts
  */
 MessageTypeModel.prototype.childParts = null;
 
@@ -1391,7 +1391,7 @@ MessageTypeModel.prototype.childParts = null;
  * >
  * > childModels is *not* initialized if creating a model without a Message (even if you later call `generateMessage()`)
  *
- * @property {Layer.Core.MessageTypeModel[]}
+ * @property {Layer.Core.MessageTypeModel[]} childModels
  */
 MessageTypeModel.prototype.childModels = null;
 
@@ -1409,7 +1409,7 @@ MessageTypeModel.prototype.childModels = null;
  * For example, you might stick Product IDs into your Product Message so that when your server receives
  * a Product Message it has all the info needed to lookup the full details.
  *
- * @property {Object}
+ * @property {Object} [customData={}]
  */
 MessageTypeModel.prototype.customData = null;
 
@@ -1427,7 +1427,7 @@ MessageTypeModel.prototype.customData = null;
  * });
  * ```
  *
- * @property {Object}
+ * @property {Object} [action={}]
  */
 MessageTypeModel.prototype.action = null;
 
@@ -1437,7 +1437,7 @@ MessageTypeModel.prototype.action = null;
  * Actions are strings that are put into events and which are intercepted and
  * interpreted either by `<layer-message-viewer />` or by the app.
  *
- * @property {String}
+ * @property {String} [actionEvent]
  */
 MessageTypeModel.prototype.actionEvent = '';
 
@@ -1449,7 +1449,7 @@ MessageTypeModel.prototype.actionEvent = '';
  * This can be used to provide a product-id to buy if showing a Product with an Image Message instead of a Product Message.
  * This can be used to provide the properties used by the action where the values in the model itself aren't suitable/available.
  *
- * @property {Object}
+ * @property {Object} [actionData]
  */
 MessageTypeModel.prototype.actionData = null;
 
@@ -1461,7 +1461,7 @@ MessageTypeModel.prototype.actionData = null;
  * > 'brain-eating-musically-inclined-zombie'
  * ```
  *
- * @property {Layer.Core.MessageTypeResponseSummary}
+ * @property {Layer.Core.MessageTypeResponseSummary} responses
  */
 MessageTypeModel.prototype.responses = null;
 
@@ -1482,7 +1482,7 @@ MessageTypeModel.prototype.responses = null;
  * }
  * ```
  *
- * @property {String}
+ * @property {String} currentMessageRenderer
  */
 MessageTypeModel.prototype.currentMessageRenderer = '';
 
@@ -1503,7 +1503,7 @@ MessageTypeModel.prototype.currentMessageRenderer = '';
  * }
  * ```
  *
- * @property {String}
+ * @property {String} currentLargeMessageRenderer
  */
 MessageTypeModel.prototype.currentLargeMessageRenderer = '';
 
@@ -1537,7 +1537,7 @@ MessageTypeModel.prototype.messageSentAt = null;
  * * Layer.Constants.RECEIPT_STATE.READ
  * * Layer.Constants.RECEIPT_STATE.PENDING
  *
- * @property {Object}
+ * @property {Object} messageRecipientStatus
  */
 MessageTypeModel.prototype.messageRecipientStatus = null;
 
@@ -1591,7 +1591,7 @@ MessageTypeModel.MIMEType = '';
  * Typically used when there are MIME Type changes but the rendering of older messages can still be handled by the latest class.
  *
  * @static
- * @property {String[]}
+ * @property {String[]} AltMIMETypes
  */
 MessageTypeModel.AltMIMETypes = [];
 
@@ -1640,7 +1640,7 @@ MessageTypeModel._supportedEvents = [
    * });
    * ```
    *
-   * @event
+   * @event message-type-model:change
    * @param {Layer.Core.LayerEvent} evt
    */
   'message-type-model:change',
@@ -1648,7 +1648,7 @@ MessageTypeModel._supportedEvents = [
   /**
    * Any event used to customize the behavior of a Message Type Model.
    *
-   * @event
+   * @event message-type-model:customization
    * @param {Layer.Core.LayerEvent} evt
    */
   'message-type-model:customization',
@@ -1687,7 +1687,7 @@ MessageTypeModel._supportedEvents = [
    *
    * This event is solely for controlling state. If you want to add Message Parts, or otherwise manipulate message-level data, use the `messages:sending` event instead.
    *
-   * @event
+   * @event message-type-model:sending-response-message
    * @param {Layer.Core.LayerEvent} evt
    * @param {Layer.Core.MessageTypeModel} evt.respondingToModel
    * @param {Layer.UI.messages.ResponseMessageModel} evt.responseModel
@@ -1705,7 +1705,7 @@ MessageTypeModel._supportedEvents = [
    * });
    * ```
    *
-   * @event
+   * @event message-type-model:notification
    * @param {Layer.Core.LayerEvent} evt
    */
   'message-type-model:notification',
@@ -1721,7 +1721,7 @@ MessageTypeModel._supportedEvents = [
    * model.send({ conversation });
    * ```
    *
-   * @event
+   * @event message-type-model:has-new-message
    * @param {Layer.Core.LayerEvent} evt
    */
   'message-type-model:has-new-message',

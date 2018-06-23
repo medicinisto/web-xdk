@@ -124,6 +124,7 @@
  * @class Layer.UI.components.MessageListPanel.Item
  * @mixins Layer.UI.mixins.ListItem
  * @extends Layer.UI.Component
+ * @ismixin
  */
 import Constants from '../../../constants';
 import Util, { logger } from '../../../utils';
@@ -301,7 +302,7 @@ module.exports = {
      *
      * Use that tagName to create a DOM Node to render the MessageParts.
      *
-     * @method
+     * @method _applyContentTag
      * @private
      */
     _applyContentTag() {

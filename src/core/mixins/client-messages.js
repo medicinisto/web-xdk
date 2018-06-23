@@ -25,7 +25,7 @@ module.exports = {
                 myNotify(evt.message);
             })
     *
-    * @event
+    * @event messages:notify
     * @param {Layer.Core.LayerEvent} evt
     * @param {Layer.Core.Message} evt.Message
     */
@@ -50,7 +50,7 @@ module.exports = {
     *
     * NOTE: Such rendering would typically be done using events on Layer.Core.Query.
     *
-    * @event
+    * @event messages:add
     * @param {Layer.Core.LayerEvent} evt
     * @param {Layer.Core.Message[]} evt.messages
     */
@@ -73,7 +73,7 @@ module.exports = {
      *
      * NOTE: Such rendering would typically be done using events on Layer.Core.Query.
      *
-     * @event
+     * @event messages:remove
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Message} evt.message
      */
@@ -86,7 +86,7 @@ module.exports = {
      *          alert(evt.target.getText() + ' has been sent');
      *      });
      *
-     * @event
+     * @event messages:sent
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Message} evt.target
      */
@@ -126,7 +126,7 @@ module.exports = {
      * });
      * ```
      *
-     * @event
+     * @event messages:sending
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Message} evt.target
      * @param {Object} evt.detail
@@ -137,7 +137,7 @@ module.exports = {
     /**
      * Server failed to receive a Message.
      *
-     * @event
+     * @event messages:sent-error
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.LayerEvent} evt.error
      */
@@ -158,7 +158,7 @@ module.exports = {
      *
      * NOTE: Such rendering would typically be done using events on Layer.Core.Query.
      *
-     * @event
+     * @event messages:change
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Message} evt.target
      * @param {Object[]} evt.changes
@@ -171,7 +171,7 @@ module.exports = {
     /**
      * This event is a more specific version of messages:change (which will also fire when a part is added)
      *
-     * @event
+     * @event messages:part-added
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Message} evt.target
      * @param {Layer.Core.MessagePart} evt.part    The Part that was added
@@ -181,7 +181,7 @@ module.exports = {
     /**
      * This event is a more specific version of messages:change (should also fire when a part is removed)
      *
-     * @event
+     * @event messages:part-removed
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Message} evt.target
      * @param {Layer.Core.MessagePart} evt.part    The Part that was removed
@@ -191,7 +191,7 @@ module.exports = {
     /**
      * A call to Layer.Core.Message.load has completed successfully
      *
-     * @event
+     * @event messages:loaded
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Message} evt.target
      */
@@ -207,7 +207,7 @@ module.exports = {
      *          myView.removeMessage(evt.target);
      *      });
      *
-     * @event
+     * @event messages:delete
      * @param {Layer.Core.LayerEvent} evt
      * @param {Layer.Core.Message} evt.target
      */

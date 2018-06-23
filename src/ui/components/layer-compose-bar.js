@@ -269,7 +269,7 @@ registerComponent('layer-compose-bar', {
     /**
      * Whenever the value changes, trigger a `layer-compose-bar-change-value` event.
      *
-     * @method
+     * @method _triggerChange
      * @private
      * @param {String} newValue   The current value
      * @param {String} oldValue   The prior value
@@ -305,7 +305,7 @@ registerComponent('layer-compose-bar', {
      *
      * Note that this may or may not cause mobile soft-keyboards to open up, but most likely will not.
      *
-     * @method
+     * @method focus
      */
     focus() {
       this.nodes.input.focus();
@@ -320,7 +320,7 @@ registerComponent('layer-compose-bar', {
      * Update the Typing Listener's `conversation` property so that it reports typing activity
      * to the correct Conversation.
      *
-     * @method
+     * @method _setTypingListenerConversation
      * @private
      */
     _setTypingListenerConversation() {
@@ -354,7 +354,7 @@ registerComponent('layer-compose-bar', {
      * widget.send(); // send the current text in the textarea
      * ```
      *
-     * @method
+     * @method send
      */
     send() {
       if (this.nodes.input.value) {
@@ -506,7 +506,7 @@ registerComponent('layer-compose-bar', {
     /**
      * MIXIN HOOK: Called just before sending a message.
      *
-     * @method
+     * @method onSend
      * @param {Layer.Core.MessageTypeModel} model
      * @param {Object} notification   See Layer.Core.Message.send for details on the notification object
      */
@@ -520,7 +520,7 @@ registerComponent('layer-compose-bar', {
     /**
      * On ENTER call `send()`; on TAB enter some spacing rather than leaving the text area.
      *
-     * @method
+     * @method _onKeyDown
      * @private
      */
     _onKeyDown(event) {
@@ -554,7 +554,7 @@ registerComponent('layer-compose-bar', {
     /**
      * On any change in value, recalculate our height and lineHeight to fit the input text.
      *
-     * @method
+     * @method onRender
      * @private
      */
     onRender() {

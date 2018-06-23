@@ -351,14 +351,14 @@ class TelemetryMonitor extends Root {
 /**
  * The URL to `POST` telemetry data to.
  *
- * @property {String}
+ * @property {String} [telemetryUrl=https://telemetry.layer.com]
  */
 TelemetryMonitor.prototype.telemetryUrl = 'https://telemetry.layer.com';
 
 /**
  * ID for the `window.setInterval` operation
  *
- * @property {Number}
+ * @property {Number} _intervalId
  */
 TelemetryMonitor.prototype._intervalId = 0;
 
@@ -376,14 +376,14 @@ TelemetryMonitor.prototype.reportingInterval = 1000 * 60 * 60;
 /**
  * To avoid performance issues, we only write changes asynchronously; this timeoutId tracks that this has been scheduled.
  *
- * @property {Number}
+ * @property {Number} _writeTimeoutId
  */
 TelemetryMonitor.prototype._writeTimeoutId = 0;
 
 /**
  * Constructor sets this to be the key within localStorage for accessing the cached telemetry data.
  *
- * @property {String}
+ * @property {String} storageKey
  */
 TelemetryMonitor.prototype.storageKey = '';
 
@@ -395,7 +395,7 @@ TelemetryMonitor.prototype.storageKey = '';
  *
  * Sending records causes them to be removed from the state.
  *
- * @property {Object}
+ * @property {Object} state
  */
 TelemetryMonitor.prototype.state = null;
 
@@ -404,14 +404,14 @@ TelemetryMonitor.prototype.state = null;
  *
  * Each key has a value representing a timestamp.  Events are removed once they are completed.
  *
- * @property {Object}
+ * @property {Object} tempState
  */
 TelemetryMonitor.prototype.tempState = null;
 
 /**
  * Telemetry defaults to enabled, but can be disabled by setting this to `false`
  *
- * @property {Boolean}
+ * @property {Boolean} [enabled=true]
  */
 TelemetryMonitor.prototype.enabled = true;
 
@@ -421,7 +421,7 @@ TelemetryMonitor.prototype.enabled = true;
  * This id is written to localStorage so that it can persist across sessions.
  *
  * @static
- * @property {String}
+ * @property {String} [prefixUUID=layer:///telemetry/']
  */
 TelemetryMonitor.prefixUUID = 'layer:///telemetry/';
 

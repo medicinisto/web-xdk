@@ -22,7 +22,7 @@ class WebsocketRequestManager {
    *          socketManager: client.Websockets.SocketManager
    *      });
    *
-   * @method
+   * @method constructor
    * @param  {Object} options
    * @param {Layer.Core.Websockets.SocketManager} socketManager
    * @returns {Layer.Core.Websockets.RequestManager}
@@ -151,7 +151,7 @@ class WebsocketRequestManager {
    * @param  {Object} options.data                     Data to send to the server
    * @param  {Function} [options.callback=null]       Handler for success/failure callback
    * @param  {Boolean} [options.isChangesArray=false] Response contains a changes array that can be fed directly to change-manager.
-   * @returns the request callback object if there is one; primarily for use in testing.
+   * @returns {Function} the request callback object if there is one; primarily for use in testing.
    */
   sendRequest({ data, callback, isChangesArray = false }) {
     if (!this._isOpen()) {

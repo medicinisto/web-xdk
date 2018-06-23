@@ -81,7 +81,7 @@ class SyncEvent {
  *
  * Either GET, PATCH, DELETE, POST or PUT
  *
- * @property {String}
+ * @property {String} operation
  */
 SyncEvent.prototype.operation = '';
 
@@ -97,7 +97,7 @@ SyncEvent.prototype.createdAt = 0;
  * * set to false on completion by Layer.Core.SyncManager.
  * * set to false automatically after 2 minutes
  *
- * @property {Boolean}
+ * @property {Boolean} isFiring
  */
 Object.defineProperty(SyncEvent.prototype, 'isFiring', {
   enumerable: true,
@@ -114,7 +114,7 @@ Object.defineProperty(SyncEvent.prototype, 'isFiring', {
  * Indicates whether this request currently being validated to insure it wasn't read
  * from IndexedDB and fired by another tab.
  *
- * @property {Boolean}
+ * @property {Boolean} _isValidating
  */
 Object.defineProperty(SyncEvent.prototype, '_isValidating', {
   enumerable: true,
@@ -134,7 +134,7 @@ SyncEvent.prototype.id = '';
  * Indicates whether the request completed successfully.
  *
  * Set by Layer.Core.SyncManager.
- * @property {Boolean}
+ * @property {Boolean} success
  */
 SyncEvent.prototype.success = null;
 
@@ -146,7 +146,7 @@ SyncEvent.prototype.success = null;
  * a persistence layer that persists the SyncManager's queue
  * must have serializable callbacks (object id + method name; not a function)
  * or must accept that callbacks are not always fired.
- * @property {Function}
+ * @property {Function} callback
  */
 SyncEvent.prototype.callback = null;
 
@@ -155,7 +155,7 @@ SyncEvent.prototype.callback = null;
  *
  * Retries are only counted if its a 502 or 503
  * error.  Set and managed by Layer.Core.SyncManager.
- * @property {Number}
+ * @property {Number} retryCount
  */
 SyncEvent.prototype.retryCount = 0;
 
@@ -163,7 +163,7 @@ SyncEvent.prototype.retryCount = 0;
  * The target of the request.
  *
  * Any Component; typically a Conversation or Message.
- * @property {Layer.Core.Root}
+ * @property {Layer.Core.Root} target
  */
 SyncEvent.prototype.target = null;
 
@@ -174,19 +174,19 @@ SyncEvent.prototype.target = null;
  * Conversation fails to get created.
  *
  * NOTE: May prove redundant with the target property and needs further review.
- * @property {Layer.Core.Root[]}
+ * @property {Layer.Core.Root[]} depends
  */
 SyncEvent.prototype.depends = null;
 
 /**
  * Data field of the xhr call; can be an Object or string (including JSON string)
- * @property {Object}
+ * @property {Object} data
  */
 SyncEvent.prototype.data = null;
 
 /**
  * Disable writing of these requests to the database when offline
- * @property {Boolean}
+ * @property {Boolean} isPersistenceDisabled
  */
 SyncEvent.prototype.isPersistenceDisabled = false;
 
@@ -195,7 +195,7 @@ SyncEvent.prototype.isPersistenceDisabled = false;
  * consider it to no longer be firing.  Under normal conditions, firing will be set to false explicitly.
  * This check insures that any failure of that process does not leave us stuck with a firing request
  * blocking the queue.
- * @property {number}
+ * @property {number} [FIRING_EXPIRATION=15000]
  * @static
  */
 SyncEvent.FIRING_EXPIRATION = 1000 * 15;
@@ -203,7 +203,7 @@ SyncEvent.FIRING_EXPIRATION = 1000 * 15;
 /**
  * After checking the database to see if this event has been claimed by another browser tab,
  * how long to wait before flagging it as failed, in the event of no-response.  Measured in ms.
- * @property {number}
+ * @property {number} [VALIDATION_EXPIRATION=500]
  * @static
  */
 SyncEvent.VALIDATION_EXPIRATION = 500;
@@ -277,6 +277,7 @@ XHRSyncEvent.prototype.timeout = 15000;
 
 /**
  * URL to send the request to
+ * @property {String} url
  */
 XHRSyncEvent.prototype.url = '';
 
@@ -285,22 +286,27 @@ XHRSyncEvent.prototype.url = '';
  *
  * If this number becomes high in a short time period, its probably
  * failing due to a CORS error.
+ *
+ * @property {Number} [returnToOnlineCount=0]
  */
 XHRSyncEvent.prototype.returnToOnlineCount = 0;
 
 /**
  * Headers for the request
+ * @property {Object} headers
  */
 XHRSyncEvent.prototype.headers = null;
 
 /**
  * Request method.
+ * @property {String} [method=GET]
  */
 XHRSyncEvent.prototype.method = 'GET';
 
 
 /**
  * Telemetry data to go with the request.
+ * @property {Object} telemetry
  */
 XHRSyncEvent.prototype.telemetry = null;
 
@@ -335,6 +341,8 @@ class WebsocketSyncEvent extends SyncEvent {
 
 /**
  * Does this websocket request return a changes array to be processed by the request-manager?
+ *
+ * @property {Boolean} [returnChangesArray=false]
  */
 WebsocketSyncEvent.prototype.returnChangesArray = false;
 

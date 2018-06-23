@@ -20,7 +20,7 @@ exports.defer = getNativeSupport('setImmediate');
 /**
  * Generate a random UUID
  *
- * @method
+ * @method generateUUID
  * @return {string}
  */
 exports.generateUUID = uuid.v4;
@@ -28,7 +28,7 @@ exports.generateUUID = uuid.v4;
 /**
  * Generate a random UUID as a Uint8Array array
  *
- * @method
+ * @method generateUUIDBytes
  * @return {Uint8Array[]}
  */
 exports.generateUUIDBytes = () => {
@@ -51,7 +51,7 @@ exports.generateUUIDBytes = () => {
  *
  * Does not currently handle Layer App IDs.
  *
- * @method
+ * @method typeFromID
  * @param  {string} id
  * @return {string}
  */
@@ -63,7 +63,7 @@ exports.typeFromID = (id) => {
 /**
  * Returns the UUID portion of a Layer ID
  *
- * @method
+ * @method uuid
  * @param  {string} id
  * @return {string}
  */
@@ -103,7 +103,7 @@ exports.hyphenate = (str, separator = '-') =>
  *          return value.v;
  *      }, false);
  *
- * @method
+ * @method sortBy
  * @param  {Mixed[]}   inArray      Array to sort
  * @param  {Function} fn            Function that will return a value to compare
  * @param  {Function} fn.value      Current value from inArray we are comparing, and from which a value should be extracted
@@ -131,7 +131,7 @@ exports.sortBy = (inArray, fn, reverse) => {
  *
  *      var newObj = Utils.clone(oldObj);
  *
- * @method
+ * @method clone
  * @param  {Object}     Object to clone
  * @return {Object}     New Object
  */
@@ -142,7 +142,7 @@ exports.clone = obj => JSON.parse(JSON.stringify(obj));
  *
  *      var newObj = Utils.shallowClone(oldObj);
  *
- * @method
+ * @method shallowClone
  * @param  {Object}     Object to clone
  * @return {Object}     New Object
  */
@@ -172,7 +172,7 @@ exports.strictEncodeURI =
  *
  * @method decode
  * @param {String} str   base64 string
- * @return str   Decoded string
+ * @return {String}   Decoded string
  */
 /* istanbul ignore next */
 exports.decode = (str) => {
@@ -367,7 +367,7 @@ exports.randomString = (size) => {
  *          alert('These two metadata objects are the same');
  *      }
  *
- * @method
+ * @method doesObjectMatch
  * @param  {Object} requestedData
  * @param  {Object} actualData
  * @return {boolean}
@@ -419,6 +419,7 @@ exports.includes = (items, value) => items.indexOf(value) !== -1;
 
 /**
  * Some ASCII art when client initializes
+ * @property {String} asciiInit
  */
 exports.asciiInit = (version) => {
   if (!version) return 'Missing version';

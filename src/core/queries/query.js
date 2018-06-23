@@ -768,7 +768,7 @@ Query.Identity = 'Identity';
  * Query for Members of a Channel.
  *
  * Use this value in the Layer.Core.Query.model property.
- * @property {String}
+ * @property {String} Membership
  * @static
  * @ignore
  */
@@ -778,7 +778,7 @@ Query.Membership = 'Membership';
  * Query whose data is managed by the app rather than by querying Layer's servers.
  *
  * Use this value in the Layer.Core.Query.model property.
- * @property {String}
+ * @property {String} Manual
  * @static
  */
 Query.Manual = 'Manual';
@@ -788,7 +788,7 @@ Query.Manual = 'Manual';
  *
  * This value of Layer.Core.Query.dataType will cause your Query data and events to provide Messages/Conversations as immutable objects.
  *
- * @property {String}
+ * @property {String} ObjectDataType
  * @static
  */
 Query.ObjectDataType = 'object';
@@ -798,7 +798,7 @@ Query.ObjectDataType = 'object';
  *
  * This value of Layer.Core.Query.dataType will cause your Query data and events to provide Messages/Conversations as instances.
  *
- * @property {String}
+ * @property {String} InstanceDataType
  * @static
  */
 Query.InstanceDataType = 'instance';
@@ -806,7 +806,7 @@ Query.InstanceDataType = 'instance';
 /**
  * Set the maximum page size for queries.
  *
- * @property {number}
+ * @property {number} [MaxPageSize=100]
  * @static
  */
 Query.MaxPageSize = 100;
@@ -814,7 +814,7 @@ Query.MaxPageSize = 100;
 /**
  * Access the number of results currently loaded.
  *
- * @property {Number}
+ * @property {Number} size
  * @readonly
  */
 Object.defineProperty(Query.prototype, 'size', {
@@ -828,7 +828,7 @@ Object.defineProperty(Query.prototype, 'size', {
  *
  * Will be 0 until the first query has successfully loaded results.
  *
- * @property {Number}
+ * @property {Number} totalSize
  * @readonly
  */
 Query.prototype.totalSize = 0;
@@ -839,7 +839,7 @@ Query.prototype.totalSize = 0;
  * Array of data resulting from the Query; either a Layer.Core.Root subclass.
  *
  * or plain Objects
- * @property {Object[]}
+ * @property {Object[]} data
  * @readonly
  */
 Query.prototype.data = null;
@@ -857,7 +857,7 @@ Query.prototype.data = null;
  *
  * Value can be set via constructor and Layer.Core.Query.update().
  *
- * @property {String}
+ * @property {String} model
  * @readonly
  */
 Query.prototype.model = '';
@@ -876,7 +876,7 @@ Query.prototype.model = '';
  * This Query API is designed only for use with 'object' at this time; waiting for updates to server for
  * this functionality.
  *
- * @property {String}
+ * @property {String} [returnType=object]
  * @readonly
  */
 Query.prototype.returnType = 'object';
@@ -885,10 +885,11 @@ Query.prototype.returnType = 'object';
  * Specify what kind of data array your application requires.
  *
  * Used to specify query dataType.  One of
+ *
  * * Query.ObjectDataType
  * * Query.InstanceDataType
  *
- * @property {String}
+ * @property {String} [dataType=Query.InstanceDataType]
  * @readonly
  */
 Query.prototype.dataType = Query.InstanceDataType;
@@ -908,7 +909,7 @@ Query.prototype.dataType = Query.InstanceDataType;
  *
  * Note that the server will only permit 100 at a time.
  *
- * @property {Number}
+ * @property {Number} [paginationWindow=100]
  * @readonly
  */
 Query.prototype.paginationWindow = 100;
@@ -934,7 +935,7 @@ Query.prototype.paginationWindow = 100;
  * Why such limitations? Why this structure?  The server will be exposing a Query API at which point the
  * above sort options will make a lot more sense, and full sorting will be provided.
  *
- * @property {String}
+ * @property {String} sortBy
  * @readonly
  */
 Query.prototype.sortBy = null;
@@ -942,7 +943,7 @@ Query.prototype.sortBy = null;
 /**
  * This value tells us what to reset the paginationWindow to when the query is redefined.
  *
- * @property {Number}
+ * @property {Number} _initialPaginationWindow
  * @private
  */
 Query.prototype._initialPaginationWindow = 100;
@@ -959,7 +960,7 @@ Query.prototype._initialPaginationWindow = 100;
  *
  * Note that both ' and " are supported.
  *
- * @property {String}
+ * @property {String} predicate
  * @readonly
  */
 Query.prototype.predicate = null;
@@ -967,7 +968,7 @@ Query.prototype.predicate = null;
 /**
  * Tracks whether this Query has ever been run
  *
- * @property {Boolean}
+ * @property {Boolean} _firstRun
  * @private
  */
 Query.prototype._firstRun = true;
@@ -986,7 +987,7 @@ Query.prototype._firstRun = true;
  * };
  * ```
  *
- * @property {Function}
+ * @property {Function} filter
  */
 Query.prototype.filter = null;
 
@@ -999,16 +1000,18 @@ Query.prototype.filter = null;
  *
  * Recommended pattern is:
  *
- *      query.update({paginationWindow: 50});
- *      if (!query.isFiring) {
- *        alert("Done");
- *      } else {
- *          query.once("change", function(evt) {
- *            if (evt.type == "data") alert("Done");
- *          });
- *      }
+ * ```
+ * query.update({paginationWindow: 50});
+ * if (!query.isFiring) {
+ *   alert("Done");
+ * } else {
+ *     query.once("change", function(evt) {
+ *       if (evt.type == "data") alert("Done");
+ *     });
+ * }
+ * ```
  *
- * @property {Boolean}
+ * @property {Boolean} [isFiring=false]
  * @readonly
  */
 Query.prototype.isFiring = false;
@@ -1016,7 +1019,7 @@ Query.prototype.isFiring = false;
 /**
  * True if we have reached the last result, and further paging will just return []
  *
- * @property {Boolean}
+ * @property {Boolean} [pagedToEnd=false]
  * @readonly
  */
 Query.prototype.pagedToEnd = false;
@@ -1026,7 +1029,7 @@ Query.prototype.pagedToEnd = false;
  *
  * If multiple requests are inflight, the response
  * matching this request is the ONLY response we will process.
- * @property {String}
+ * @property {String} _firingRequest
  * @private
  */
 Query.prototype._firingRequest = '';
@@ -1040,7 +1043,7 @@ Query.prototype._firingRequest = '';
  * belongs at the end despite skipping over other items of data.  Paging should not be from this new item, but
  * only the last item pulled via this query from the server.
  *
- * @property {String}
+ * @property {String} _nextServerFromId
  */
 Query.prototype._nextServerFromId = '';
 
@@ -1053,7 +1056,7 @@ Query.prototype._nextServerFromId = '';
  * belongs at the end despite skipping over other items of data.  Paging should not be from this new item, but
  * only the last item pulled via this query from the database.
  *
- * @property {String}
+ * @property {String} _nextDBFromId
  */
 Query.prototype._nextDBFromId = '';
 

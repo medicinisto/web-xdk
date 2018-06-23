@@ -17,7 +17,7 @@ module.exports = {
      *
      * Used for custom/complex operations that cannot be handled via `udpate` requests.
      *
-     * @event
+     * @event websocket:operation
      * @private
      */
     'websocket:operation',
@@ -50,19 +50,19 @@ module.exports = {
   properties: {
     /**
      * Web Socket Manager
-     * @property {Layer.Core.Websockets.SocketManager}
+     * @property {Layer.Core.Websockets.SocketManager} socketManager
      */
     socketManager: null,
 
     /**
      * Web Socket Request Manager
-     * @property {Layer.Core.Websockets.RequestManager}
+     * @property {Layer.Core.Websockets.RequestManager} socketRequestManager
      */
     socketRequestManager: null,
 
     /**
      * Web Socket Manager
-     * @property {Layer.Core.Websockets.ChangeManager}
+     * @property {Layer.Core.Websockets.ChangeManager} socketChangeManager
      */
     socketChangeManager: null,
   },

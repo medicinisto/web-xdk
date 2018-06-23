@@ -60,7 +60,7 @@ registerComponent('layer-conversation-title', {
     /**
      * Rerender the widget any time a new conversation is assigned or that conversation has a relevant change event.
      *
-     * @method
+     * @method onRerender
      * @private
      * @param {Event} evt
      */

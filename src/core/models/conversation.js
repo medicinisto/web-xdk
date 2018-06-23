@@ -73,7 +73,7 @@ class Conversation extends Container {
    * @method constructor
    * @protected
    * @param  {Object} options
-   * @param {string[]/Layer.Core.Identity[]} [options.participants] - Array of Participant IDs or Layer.Core.Identity instances
+   * @param {string[] | Layer.Core.Identity[]} [options.participants] - Array of Participant IDs or Layer.Core.Identity instances
    * @param {boolean} [options.distinct=true] - Is the conversation distinct
    * @param {Object} [options.metadata] - An object containing Conversation Metadata.
    * @return {Layer.Core.Conversation}
@@ -356,7 +356,7 @@ class Conversation extends Container {
    * TODO WEB-967: Roll participants back on getting a server error
    *
    * @method addParticipants
-   * @param  {string[]/Layer.Core.Identity[]} participants - Array of Participant IDs or Identity objects
+   * @param  {string[] | Layer.Core.Identity[]} participants - Array of Participant IDs or Identity objects
    * @returns {Layer.Core.Conversation} this
    */
   addParticipants(participants) {
@@ -380,7 +380,7 @@ class Conversation extends Container {
    * TODO  WEB-967: Roll participants back on getting a server error
    *
    * @method removeParticipants
-   * @param  {string[]/Layer.Core.Identity[]} participants - Array of Participant IDs or Identity objects
+   * @param  {string[] | Layer.Core.Identity[]} participants - Array of Participant IDs or Identity objects
    * @returns {Layer.Core.Conversation} this
    */
   removeParticipants(participants) {
@@ -408,7 +408,7 @@ class Conversation extends Container {
    * TODO WEB-967: Roll participants back on getting a server error
    *
    * @method replaceParticipants
-   * @param  {string[]/Layer.Core.Identity[]} participants - Array of Participant IDs or Identity objects
+   * @param  {string[] | Layer.Core.Identity[]} participants - Array of Participant IDs or Identity objects
    * @returns {Layer.Core.Conversation} this
    */
   replaceParticipants(participants) {
@@ -783,7 +783,7 @@ class Conversation extends Container {
    * @static
    * @protected
    * @param  {Object} options
-   * @param  {string[]/Layer.Core.Identity[]} options.participants - Array of Participant IDs or Layer.Core.Identity objects to create a conversation with.
+   * @param  {string[] | Layer.Core.Identity[]} options.participants - Array of Participant IDs or Layer.Core.Identity objects to create a conversation with.
    * @param {boolean} [options.distinct=true] - Create a distinct conversation
    * @param {Object} [options.metadata={}] - Initial metadata for Conversation
    * @return {Layer.Core.Conversation}
@@ -853,7 +853,7 @@ class Conversation extends Container {
  * use addParticipants, removeParticipants and replaceParticipants
  * to manipulate the array.
  *
- * @property {Layer.Core.Identity[]}
+ * @property {Layer.Core.Identity[]} participants
  */
 Conversation.prototype.participants = null;
 
@@ -861,7 +861,7 @@ Conversation.prototype.participants = null;
 /**
  * Number of unread messages in the conversation.
  *
- * @property {number}
+ * @property {number} unreadCount
  */
 Conversation.prototype.unreadCount = 0;
 
@@ -872,7 +872,7 @@ Conversation.prototype.unreadCount = 0;
  * There are no limits to how many non-distinct Conversations you have have
  * among a set of participants.
  *
- * @property {boolean}
+ * @property {boolean} [distinct=true]
  */
 Conversation.prototype.distinct = true;
 
@@ -880,7 +880,7 @@ Conversation.prototype.distinct = true;
  * The last Layer.Core.Message.ConversationMessage to be sent/received for this Conversation.
  *
  * Value may be a Message that has been locally created but not yet received by server.
- * @property {Layer.Core.Message.ConversationMessage}
+ * @property {Layer.Core.Message.ConversationMessage} lastMessage
  */
 Conversation.prototype.lastMessage = null;
 
@@ -891,7 +891,7 @@ Conversation.prototype.lastMessage = null;
  * Used in the event that lastMessage has been deleted.
  *
  * @private
- * @property {Number}
+ * @property {Number} _lastMessagePosition
  */
 Conversation.prototype._lastMessagePosition = 0;
 
@@ -899,7 +899,7 @@ Conversation.prototype._lastMessagePosition = 0;
  * Indicates if we are currently processing a markAllAsRead operation
  *
  * @private
- * @property {Boolean}
+ * @property {Boolean} _inMarkAllAsRead
  */
 Conversation.prototype._inMarkAllAsRead = false;
 
@@ -913,7 +913,7 @@ Conversation.eventPrefix = 'conversations';
  * was returned but does not exactly match your request.
  *
  * Used in `conversations:sent` events.
- * @property {String}
+ * @property {String} [FOUND_WITHOUT_REQUESTED_METADATA=FoundMismatch]
  * @static
  */
 Conversation.FOUND_WITHOUT_REQUESTED_METADATA = 'FoundMismatch';
@@ -921,7 +921,7 @@ Conversation.FOUND_WITHOUT_REQUESTED_METADATA = 'FoundMismatch';
 
 /**
  * Prefix to use when generating an ID for instances of this class
- * @property {String}
+ * @property {String} [prefixUUID=layer:///conversations/]
  * @static
  * @private
  */
@@ -943,7 +943,7 @@ Conversation._supportedEvents = [
    * copied into your Conversation object.  That means your metadata property may no
    * longer be its initial value; it may be the value found on the server.
    *
-   * @event
+   * @event conversations:sent
    * @param {Layer.Core.LayerEvent} event
    * @param {string} event.result
    */
@@ -951,7 +951,7 @@ Conversation._supportedEvents = [
 
   /**
    * An attempt to send this conversation to the server has failed.
-   * @event
+   * @event conversations:sent-error
    * @param {Layer.Core.LayerEvent} event
    * @param {Layer.Core.LayerEvent} event.error
    */
@@ -962,7 +962,7 @@ Conversation._supportedEvents = [
    *
    * Note that this is only used in response to the Layer.Core.Conversation.load() method.
    * from the server.
-   * @event
+   * @event conversations:loaded
    * @param {Layer.Core.LayerEvent} event
    */
   'conversations:loaded',
@@ -971,7 +971,7 @@ Conversation._supportedEvents = [
    * An attempt to load this conversation from the server has failed.
    *
    * Note that this is only used in response to the Layer.Core.Conversation.load() method.
-   * @event
+   * @event conversations:loaded-error
    * @param {Layer.Core.LayerEvent} event
    * @param {Layer.Core.LayerEvent} event.error
    */
@@ -982,7 +982,7 @@ Conversation._supportedEvents = [
    *
    * Caused by either a successful call to delete() on this instance
    * or by a remote user.
-   * @event
+   * @event conversations:delete
    * @param {Layer.Core.LayerEvent} event
    */
   'conversations:delete',
@@ -990,7 +990,7 @@ Conversation._supportedEvents = [
   /**
    * This conversation has changed.
    *
-   * @event
+   * @event conversations:change
    * @param {Layer.Core.LayerEvent} event
    * @param {Object[]} event.changes - Array of changes reported by this event
    * @param {Mixed} event.changes.newValue

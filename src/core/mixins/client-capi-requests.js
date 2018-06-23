@@ -34,7 +34,7 @@ module.exports = {
   properties: {
     /**
      * Service for managing online as well as offline server requests
-     * @property {Layer.Core.SyncManager}
+     * @property {Layer.Core.SyncManager} syncManager
      */
     syncManager: null,
 
@@ -42,7 +42,7 @@ module.exports = {
      * URL to Layer's Web API server.
      *
      * Only muck with this if told to by Layer Staff.
-     * @property {String}
+     * @property {String} [url=https://api.layer.com]
      */
     url: 'https://api.layer.com',
 
@@ -50,7 +50,7 @@ module.exports = {
      * URL to Layer's Websocket server.
      *
      * Only muck with this if told to by Layer Staff.
-     * @property {String}
+     * @property {String} [websocketUrl=wss://websockets.layer.com]
      */
     websocketUrl: 'wss://websockets.layer.com',
 

@@ -80,13 +80,13 @@ module.exports = {
      *        }
      *      });
      *
-     * @property {Object}
+     * @property {Object} [persistenceFeatures]
      */
     persistenceFeatures: null,
 
     /**
      * Database Manager for read/write to IndexedDB
-     * @property {Layer.Core.DbManager}
+     * @property {Layer.Core.DbManager} dbManager
      */
     dbManager: null,
   },

@@ -64,6 +64,7 @@
  * ```
  *
  * @class Layer.UI.mixins.MessageHandler
+ * @ismixin
  * @deprecated
  */
 import { registerComponent } from '../components/component';

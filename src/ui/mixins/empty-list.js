@@ -2,6 +2,7 @@
  * A helper mixin for Lists that detect and indicate when the list is Empty.
  *
  * @class Layer.UI.mixins.EmptyList
+ * @ismixin
  */
 import mixins from './index';
 

@@ -108,7 +108,7 @@ registerComponent('layer-location-message-view', {
     /**
      * Deterimne the image dimensions and fetch them from google maps service by setting an `<img src />` property.
      *
-     * @method
+     * @method _resizeContent
      * @private
      */
     _resizeContent() {

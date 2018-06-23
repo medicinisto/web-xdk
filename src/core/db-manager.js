@@ -1317,7 +1317,7 @@ DbManager.prototype._permission_identities = false;
 DbManager.prototype._permission_syncQueue = false;
 
 /**
- * @property IDBDatabase
+ * @property {IDBDatabase} db
  */
 DbManager.prototype.db = null;
 

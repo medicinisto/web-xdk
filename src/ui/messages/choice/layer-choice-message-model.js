@@ -661,7 +661,7 @@ class ChoiceModel extends MessageTypeModel {
  * choiceModel.enabledFor = "layer:///identities/frodo-the-dodo";
  * ```
  *
- * @property {String}
+ * @property {String} enabledFor
  */
 ChoiceModel.prototype.enabledFor = null;
 
@@ -822,7 +822,7 @@ ChoiceModel.prototype.name = '';
  * setTimeout id used to insure that changes made to the UI and changes generated from the server
  * don't conflict with each other.
  *
- * @property {Number}
+ * @property {Number} _pauseUpdateTimeout
  * @private
  */
 ChoiceModel.prototype._pauseUpdateTimeout = 0;

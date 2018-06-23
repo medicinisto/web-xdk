@@ -46,7 +46,7 @@ registerComponent('layer-start-of-conversation', {
     /**
      * Conversation that we are at the start of.
      *
-     * @property {Layer.Core.Conversation}
+     * @property {Layer.Core.Conversation} conversation
      */
     conversation: {
       set(value) {

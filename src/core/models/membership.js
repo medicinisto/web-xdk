@@ -133,14 +133,14 @@ class Membership extends Syncable {
 /**
  * User ID that the Membership describes.
  *
- * @property {string}
+ * @property {string} userId
  */
 Membership.prototype.userId = '';
 
 /**
  * Channel ID that the membership describes.
  *
- * @property {string}
+ * @property {string} channelId
  */
 Membership.prototype.channelId = '';
 
@@ -148,14 +148,14 @@ Membership.prototype.channelId = '';
  * The user's role within the channel
  *
  * @ignore
- * @property {Layer.Core.Role}
+ * @property {Layer.Core.Role} role
  */
 Membership.prototype.role = null;
 
 /**
  * Identity associated with the membership
  *
- * @property {Layer.Core.Identity}
+ * @property {Layer.Core.Identity} identity
  */
 Membership.prototype.identity = '';
 

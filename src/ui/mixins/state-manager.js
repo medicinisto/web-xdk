@@ -5,6 +5,7 @@
  * vs having the data retrieved from a single module and add change listeners.
  *
  * @class Layer.UI.mixins.StateManager
+ * @ismixin
  */
 import mixins from './index';
 

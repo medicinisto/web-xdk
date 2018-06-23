@@ -14,7 +14,7 @@ registerComponent('layer-message-unknown', {
     /**
      * Render a message that is both polite and mildly annoying.
      *
-     * @method
+     * @method onRender
      * @private
      */
     onRender() {

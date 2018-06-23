@@ -192,7 +192,7 @@ class ResponseModel extends MessageTypeModel {
 /**
  * Array of changes to be sent to the server; add them using {@link #addOperations}
  *
- * @property {Layer.Core.CRDT.Changes[]}
+ * @property {Layer.Core.CRDT.Changes[]} operations
  */
 ResponseModel.prototype.operations = null;
 
@@ -234,7 +234,7 @@ ResponseModel.prototype.responseToNodeId = '';
 /**
  * The displayable portion of this message that is shown to users, represented as a Message Model.
  *
- * @property {Layer.Core.MessageTypeModel}
+ * @property {Layer.Core.MessageTypeModel} displayModel
  */
 ResponseModel.prototype.displayModel = null;
 
@@ -275,7 +275,7 @@ ResponseModel.MIMEType = 'application/vnd.layer.response-v2+json';
  * Misc MIME Types accepted by this Model
  *
  * @static
- * @property {String[]}
+ * @property {String[]} AltMIMETypes
  */
 ResponseModel.AltMIMETypes = ['application/vnd.layer.response+json'];
 

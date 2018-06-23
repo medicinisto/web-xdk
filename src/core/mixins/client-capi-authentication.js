@@ -27,7 +27,7 @@ module.exports = {
      *          renderMyUI();
      *      });
      *
-     * @event
+     * @event ready
      */
     'ready',
 
@@ -143,7 +143,7 @@ module.exports = {
     /**
      * State variable; indicates that client is currently authenticated by the server.
      * Should never be true if isConnected is false.
-     * @property {Boolean}
+     * @property {Boolean} [isAuthenticated=false]
      * @readonly
      */
     isAuthenticated: false,
@@ -151,7 +151,7 @@ module.exports = {
     /**
      * State variable; indicates that client is currently connected to server
      * (may not be authenticated yet)
-     * @property {Boolean}
+     * @property {Boolean} [isConnected=false]
      * @readonly
      */
     isConnected: false,
@@ -160,7 +160,7 @@ module.exports = {
      * State variable; indicates that client is ready for the app to use.
      * Use the 'ready' event to be notified when this value changes to true.
      *
-     * @property {boolean}
+     * @property {boolean} [isReady=false]
      * @readonly
      */
     isReady: false,
@@ -172,7 +172,7 @@ module.exports = {
      * and has not called `logout()`.  A client that is connected will receive reauthentication
      * events in the form of `challenge` events.
      *
-     * @property {boolean}
+     * @property {boolean} [_wantsToBeAuthenticated=false]
      * @readonly
      */
     _wantsToBeAuthenticated: false,
@@ -182,14 +182,14 @@ module.exports = {
      *
      * To find your Layer Application ID, see your Layer Developer Dashboard.
      *
-     * @property {String}
+     * @property {String} appId
      */
     appId: '',
 
     /**
      * Your current session token that authenticates your requests.
      *
-     * @property {String}
+     * @property {String} [sessionToken]
      * @readonly
      */
     sessionToken: '',
@@ -197,14 +197,14 @@ module.exports = {
     /**
      * Time that the last challenge was issued
      *
-     * @property {Number}
+     * @property {Number} [_lastChallengeTime=0]
      * @private
      */
     _lastChallengeTime: 0,
 
     /**
      * If this is a trusted device, then we can write personal data to persistent memory.
-     * @property {boolean}
+     * @property {boolean} [isTrustedDevice=false]
      */
     isTrustedDevice: false,
   },

@@ -11,14 +11,14 @@ module.exports = {
     /**
      * Identity information about the authenticated user.
      *
-     * @property {Layer.Core.Identity}
+     * @property {Layer.Core.Identity} user
      */
     user: null,
 
     /**
      * Indicates that this Client Instance supports/expects a User property to be populated
      *
-     * @property {Boolean}
+     * @property {Boolean} [needsUserContext=false]
      */
     needsUserContext: true,
 
@@ -32,7 +32,7 @@ module.exports = {
     /**
      * If a display name is not loaded for the session owner, use this name.
      *
-     * @property {string}
+     * @property {string} [defaultOwnerDisplayName=You]
      */
     defaultOwnerDisplayName: 'You',
 

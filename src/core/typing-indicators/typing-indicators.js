@@ -13,21 +13,21 @@ import Core from '../namespace';
 module.exports = Core.TypingIndicators = {
   /**
    * Typing has started/resumed
-   * @property {String}
+   * @property {String} [STARTED=started]
    * @static
    */
   STARTED: 'started',
 
   /**
    * Typing has paused
-   * @property {String}
+   * @property {String} [PAUSED=paused]
    * @static
    */
   PAUSED: 'paused',
 
   /**
    * Typing has finished
-   * @property {String}
+   * @property {String} [FINISHED=finished]
    * @static
    */
   FINISHED: 'finished',

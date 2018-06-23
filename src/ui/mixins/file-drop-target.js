@@ -4,6 +4,7 @@
  * Must be mixed in with a Component that defines a `conversation` property.
  *
  * @class Layer.UI.mixins.FileDropTarget
+ * @ismixin
  */
 import ImageModel from '../messages/image/layer-image-message-model';
 import FileModel from '../messages/file/layer-file-message-model';
@@ -76,7 +77,7 @@ mixins.FileDropTarget = module.exports = {
      * prevent it.  Why? Well, one of the more annoying thing it may do
      * is navigate away from your app to show this file.
      *
-     * @method
+     * @method _ignoreDrop
      * @private
      */
     _ignoreDrop(evt) {
@@ -91,7 +92,7 @@ mixins.FileDropTarget = module.exports = {
     /**
      * On hovering with a file, add a css class
      *
-     * @method
+     * @method _onDragOver
      * @private
      */
     _onDragOver(evt) {
@@ -104,7 +105,7 @@ mixins.FileDropTarget = module.exports = {
     /**
      * On un-hovering with a file, remove a css class
      *
-     * @method
+     * @method _onDragEnd
      * @private
      */
     _onDragEnd(evt) {
