@@ -9,7 +9,7 @@
  *
  * @class Layer.UI.mixins.Clickable
  * @protected
- * @ismixin
+ * @typescript ismixin
  */
 import mixins from './index';
 import { isIOS } from '../../utils';

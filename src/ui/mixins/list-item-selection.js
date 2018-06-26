@@ -2,7 +2,7 @@
  * A List Item Mixin that adds an {@link #isSelected} property to a List.
  *
  * @class Layer.UI.mixins.ListItemSelection
- * @ismixin
+ * @typescript ismixin
  */
 import mixins from './index';
 

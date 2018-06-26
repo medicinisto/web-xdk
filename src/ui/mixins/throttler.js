@@ -10,7 +10,7 @@
  * ```
  *
  * @class Layer.UI.mixins.Throttler
- * @ismixin
+ * @typescript ismixin
  */
 import mixins from './index';
 

@@ -121,7 +121,6 @@ registerComponent('layer-typing-indicator', {
      * Whenever there is a typing indicator event, rerender our UI
      *
      * @method onRerender
-     * @param {Layer.Core.LayerEvent} evt
      */
     onRerender: {
       conditional: function onCanRerender(evt) {

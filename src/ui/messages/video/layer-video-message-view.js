@@ -131,7 +131,6 @@ registerComponent('layer-video-message-view', {
      * After we have a parent node and some clue as to our width/height, setup the preview display.
      *
      * @method onAttach
-     * @private
      */
     onAttach() {
       // resizeContent should already have triggered, but if onAfterCreate was called when the parent

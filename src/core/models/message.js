@@ -553,7 +553,7 @@ class Message extends Syncable {
    *
    * @method filterParts
    * @param {Function} fn
-   * @param {Set} [optionalParts]   If searching on parts from somewhere other than `this.parts`
+   * @param {Set<Layer.Core.MessagePart>} [optionalParts]   If searching on parts from somewhere other than `this.parts`
    */
   filterParts(fn, optionalParts) {
     const result = [];
@@ -607,7 +607,7 @@ class Message extends Syncable {
    *
    * @method mapParts
    * @param {Function} fn
-   * @param {Set} [optionalParts]   If searching on parts from somewhere other than `this.parts`
+   * @param {Set<Layer.Core.MessagePart>} [optionalParts]   If searching on parts from somewhere other than `this.parts`
    */
   mapParts(fn, optionalParts) {
     const result = [];
@@ -817,7 +817,7 @@ Message.prototype.conversationId = '';
  *
  * Use {@link #addPart} to modify this Set.
  *
- * @property {Layer.Core.MessagePart[]} parts
+ * @property {Set<Layer.Core.MessagePart>} parts
  * @readonly
  */
 Message.prototype.parts = null;

@@ -31,7 +31,7 @@ module.exports = {
      * Array of items to be checked to see if they can be uncached.
      *
      * @private
-     * @property {Layer.Core.Root[]}
+     * @property {Layer.Core.Root[]} _scheduleCheckAndPurgeCacheItems
      */
     _scheduleCheckAndPurgeCacheItems: null,
 
@@ -39,7 +39,7 @@ module.exports = {
      * Time that the next call to _runCheckAndPurgeCache() is scheduled for in ms since 1970.
      *
      * @private
-     * @property {number}
+     * @property {number} _scheduleCheckAndPurgeCacheAt
      */
     _scheduleCheckAndPurgeCacheAt: 0,
   },

@@ -2,7 +2,7 @@
  * A Mixin for main components that can receive or generate a Query.
  *
  * @class Layer.UI.mixins.HasQuery
- * @ismixin
+ * @typescript ismixin
  */
 import { client as Client } from '../../settings';
 import Core from '../../core/namespace';

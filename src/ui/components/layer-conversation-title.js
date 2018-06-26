@@ -61,8 +61,6 @@ registerComponent('layer-conversation-title', {
      * Rerender the widget any time a new conversation is assigned or that conversation has a relevant change event.
      *
      * @method onRerender
-     * @private
-     * @param {Event} evt
      */
     onRerender(evt) {
       if (!evt || evt.hasProperty('metadata') || evt.hasProperty('participants')) {

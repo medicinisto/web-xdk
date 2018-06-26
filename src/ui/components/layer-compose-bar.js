@@ -250,7 +250,6 @@ registerComponent('layer-compose-bar', {
      * Constructor.
      *
      * @method onCreate
-     * @private
      */
     onCreate() {
       // Set here rather than via cssClassList as this is dynamic
@@ -555,7 +554,6 @@ registerComponent('layer-compose-bar', {
      * On any change in value, recalculate our height and lineHeight to fit the input text.
      *
      * @method onRender
-     * @private
      */
     onRender() {
       setTimeout(() => {

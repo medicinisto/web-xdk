@@ -13,7 +13,7 @@
  *      });
  *
  * @class Layer.Core.TypingIndicators.TypingIndicatorListener
- * @extends {Layer.Core.Root}
+ * @extends Layer.Core.Root
  */
 import Core from '../namespace';
 import Root from '../root';

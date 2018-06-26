@@ -533,7 +533,7 @@ MessageTypeModel.DefineFileBehaviors({
  * If width/height of an image we are sending is greater than this, we create a preview at this size.
  *
  * @static
- * @property {Number} {MaxPreviewDimesion=768}
+ * @property {Number} [MaxPreviewDimesion=768]
  */
 ImageModel.MaxPreviewDimension = 768;
 
@@ -547,7 +547,7 @@ ImageModel.MaxPreviewDimension = 768;
  * * 0%: I have not dared to try this
  *
  * @static
- * @property {Number} {PreviewQuality=0.5}
+ * @property {Number} [PreviewQuality=0.5]
  */
 ImageModel.PreviewQuality = 0.5;
 

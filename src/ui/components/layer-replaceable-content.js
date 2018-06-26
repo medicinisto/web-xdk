@@ -52,7 +52,7 @@ registerComponent('layer-replaceable-content', {
      *
      * @method _gatherParentComponents
      * @private
-     * @returns [Layer.UI.Component[]]
+     * @returns {Layer.UI.Component[]}
      */
     _gatherParentComponents() {
       let node = this;
@@ -70,7 +70,7 @@ registerComponent('layer-replaceable-content', {
      * Called by Layer.UI.Component._onAfterCreate as part of creating every Component; but only really implemented by this component.
      *
      * @method _onProcessReplaceableContent
-     * @private
+     * @protected
      */
     _onProcessReplaceableContent() {
       if (!this.name) throw new Error('Unnamed replaceable content detected');

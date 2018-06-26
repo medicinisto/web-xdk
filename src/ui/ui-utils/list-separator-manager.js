@@ -65,7 +65,7 @@ module.exports.createItemSeparator = () => {
  *
  * @method addListItemSeparator
  * @param {Layer.UI.mixins.ListItem} listItem    The List Item that the separator is associated with
- * @param {String/HTMLElement} content          The content to put in the separator
+ * @param {String | HTMLElement} content          The content to put in the separator
  * @param {String} contentClass                 Create a div with this class to put the content into; this allows us to see
  *                                               if there is already a node of that class.
  * @param {Boolean} isAboveItem                 If true, `listItem.customNodeAbove` is used, else `listItem.customNodeBelow`

@@ -34,7 +34,6 @@ class StatusModel extends MessageTypeModel {
    * Used for Sending the Status Message.
    *
    * @method generateParts
-   * @private
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
    */

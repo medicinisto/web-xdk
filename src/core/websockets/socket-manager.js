@@ -777,7 +777,7 @@ SocketManager.prototype.maxDelaySecondsBetweenReconnect = 30;
 
 /**
  * The Socket Connection instance
- * @property {Websocket} _socket
+ * @property {WebSocket} _socket
  */
 SocketManager.prototype._socket = null;
 

@@ -4,7 +4,7 @@
  * Must be mixed in with a Component that defines a `conversation` property.
  *
  * @class Layer.UI.mixins.FileDropTarget
- * @ismixin
+ * @typescript ismixin
  */
 import ImageModel from '../messages/image/layer-image-message-model';
 import FileModel from '../messages/file/layer-file-message-model';

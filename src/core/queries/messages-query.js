@@ -24,7 +24,7 @@
  * * `conversation.id = 'layer:///conversations/UUIUD'`
  * * `channel.id = 'layer:///channels/UUIUD'`
  *
- * @class  Layer.Core.MessagesQuery
+ * @class  Layer.Core.Query.MessagesQuery
  * @extends Layer.Core.Query
  */
 import { client } from '../../settings';

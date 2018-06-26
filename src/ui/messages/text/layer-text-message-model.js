@@ -48,7 +48,6 @@ class TextModel extends MessageTypeModel {
    * @method generateParts
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
-   * @private
    */
   generateParts(callback) {
     const body = this.initBodyWithMetadata(['text', 'author', 'summary', 'title', 'subtitle']);

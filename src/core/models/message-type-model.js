@@ -24,6 +24,7 @@
  *
  * @class  Layer.Core.MessageTypeModel
  * @extends Layer.Core.Root
+ * @abstract
  */
 import { client } from '../../settings';
 import Core, { MessagePart } from '../namespace';
@@ -1212,6 +1213,7 @@ class MessageTypeModel extends Root {
    *
    * @method _processDelayedTriggers
    * @private
+   * @ignore
    */
   _processDelayedTriggers() {
     if (this.isDestroyed) return;

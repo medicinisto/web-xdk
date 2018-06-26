@@ -28,7 +28,7 @@
  *      });
  *
  *
- * @class  Layer.Core.ConversationsQuery
+ * @class  Layer.Core.Query.ConversationsQuery
  * @extends Layer.Core.Query
  */
 import { client } from '../../settings';

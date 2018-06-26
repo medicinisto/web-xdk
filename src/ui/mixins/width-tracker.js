@@ -11,7 +11,7 @@
  * Each UI Component that uses this must define these widthXXXStart properties
  *
  * @class Layer.UI.mixins.WidthTracker
- * @ismixin
+ * @typescript ismixin
  */
 import mixins from './index';
 import Throttler from './throttler';

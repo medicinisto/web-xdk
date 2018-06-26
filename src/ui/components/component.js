@@ -388,7 +388,7 @@
  * ```
  *
  * @class Layer.UI.Component
- * @mixin HTMLElement
+ * @extends CustomHTMLElement
  */
 /* eslint-disable no-use-before-define */
 
@@ -1842,7 +1842,7 @@ const standardClassMethods = {
    * TODO: Need to test against raw JS and various frameworks to insure we always have a css class 'layer-replaceable-content' div
    *
    * @method _onProcessReplaceableContent
-   * @private
+   * @protected
    */
   _onProcessReplaceableContent() {},
 

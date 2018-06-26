@@ -74,7 +74,6 @@ registerComponent('layer-membership-item', {
      * Render/rerender changes to the Identity object or Membership object.
      *
      * @method onRerender
-     * @private
      */
     onRerender() {
       this.nodes.title.innerHTML = this.item.identity.displayName || 'User ID ' + this.item.identity.userId;

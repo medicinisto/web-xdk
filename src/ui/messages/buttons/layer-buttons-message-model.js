@@ -108,7 +108,6 @@ class ButtonsModel extends MessageTypeModel {
    * Used for Sending the Buttons Message.
    *
    * @method generateParts
-   * @private
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
    */

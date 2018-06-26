@@ -74,7 +74,6 @@ class ProductModel extends MessageTypeModel {
    * Used for Sending the Product Message.
    *
    * @method generateParts
-   * @private
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
    */

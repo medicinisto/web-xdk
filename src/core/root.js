@@ -324,7 +324,7 @@ class Root extends EventClass {
    * @param  {String} name - Name of the event
    * @param  {Function} handler - Event handler
    * @param  {Layer.Core.LayerEvent} handler.event - Event object delivered to the handler
-   * @param  {Object} context - This pointer AND link to help with cleanup
+   * @param  {Object} [context] - This pointer AND link to help with cleanup
    * @return {Layer.Core.Root} this
    */
   on(name, handler, context) {
@@ -337,6 +337,10 @@ class Root extends EventClass {
    * Subscribe to the first occurance of the specified event.
    *
    * @method once
+   * @param  {String} name - Name of the event
+   * @param  {Function} handler - Event handler
+   * @param  {Layer.Core.LayerEvent} handler.event - Event object delivered to the handler
+   * @param  {Object} [context] - This pointer AND link to help with cleanup
    * @return {Layer.Core.Root} this
    */
   once(name, handler, context) {
@@ -478,9 +482,8 @@ class Root extends EventClass {
    *
    * @method _triggerAsync
    * @private
-   * @param {string} eventName    Name of the event that one should subscribe to in order to receive this event
-   * @param {Mixed} arg           Values that will be placed within a Layer.Core.LayerEvent
-   * @return {Layer.Core.Root} this
+   * @param {String} eventName    Name of the event that one should subscribe to in order to receive this event
+   * @param {Mixed} [data]           Values that will be placed within a Layer.Core.LayerEvent
    */
   _triggerAsync(...args) {
     if (this.isDestroyed) return;
@@ -565,6 +568,7 @@ class Root extends EventClass {
    *
    * @method _processDelayedTriggers
    * @private
+   * @ignore
    */
   _processDelayedTriggers() {
     if (this.isDestroyed) return;

@@ -416,7 +416,6 @@ registerComponent('layer-message-list', {
      * Cleanup all pointers to self created by registering event handlers.
      *
      * @method onDestroy
-     * @private
      */
     onDestroy() {
       if (this.properties._stylesNode) {

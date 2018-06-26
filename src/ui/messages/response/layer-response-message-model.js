@@ -41,7 +41,6 @@ class ResponseModel extends MessageTypeModel {
    * Used for Sending the Response Message.
    *
    * @method generateParts
-   * @private
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
    */
@@ -78,7 +77,6 @@ class ResponseModel extends MessageTypeModel {
    * On receiving a new Layer.Core.Message, parse it and setup this Model's properties.
    *
    * @method parseModelChildParts
-   * @private
    */
   parseModelChildParts({ changes, init }) {
     super.parseModelChildParts({ changes, init });

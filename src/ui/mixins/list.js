@@ -4,7 +4,7 @@
  * @class Layer.UI.mixins.List
  * @mixin Layer.UI.mixins.HasQuery
  * @mixin Layer.UI.mixins.Throttler
- * @ismixin
+ * @typescript ismixin
  */
 import { client } from '../../settings';
 import Layer from '../../core/namespace';

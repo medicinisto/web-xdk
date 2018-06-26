@@ -6,7 +6,7 @@
  * This mixin requires "layer-id=loadIndicator" to exist in the template for any component using this mixin.
  *
  * @class Layer.UI.mixins.ListLoadIndicator
- * @ismixin
+ * @typescript ismixin
  */
 import '../components/layer-loading-indicator';
 import mixins from './index';

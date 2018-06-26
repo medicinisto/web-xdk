@@ -67,7 +67,6 @@ class LinkModel extends MessageTypeModel {
    * @method generateParts
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
-   * @private
    */
   generateParts(callback) {
     const body = this.initBodyWithMetadata(['imageUrl', 'author', 'title', 'description', 'url']);

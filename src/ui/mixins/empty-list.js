@@ -2,7 +2,7 @@
  * A helper mixin for Lists that detect and indicate when the list is Empty.
  *
  * @class Layer.UI.mixins.EmptyList
- * @ismixin
+ * @typescript ismixin
  */
 import mixins from './index';
 
@@ -39,8 +39,6 @@ mixins.EmptyList = module.exports = {
      * Call this on any Query change events and update the {@link #isEmptyList} value
      *
      * @method onRerender
-     * @private
-     * @param {Event} evt
      */
     onRerender(evt = {}) {
       if (this.query.isDestroyed) {

@@ -332,7 +332,7 @@ class VideoModel extends MessageTypeModel {
    *
    * @method testIfVideoOnlyFile
    * @static
-   * @param {File/Blob} file
+   * @param {File | Blob} file
    * @param {Function} callback
    * @param {Boolean} callback.result
    */

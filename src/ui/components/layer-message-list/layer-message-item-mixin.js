@@ -124,7 +124,7 @@
  * @class Layer.UI.components.MessageListPanel.Item
  * @mixins Layer.UI.mixins.ListItem
  * @extends Layer.UI.Component
- * @ismixin
+ * @typescript ismixin
  */
 import Constants from '../../../constants';
 import Util, { logger } from '../../../utils';

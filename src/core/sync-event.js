@@ -24,7 +24,6 @@ class SyncEvent {
    * Create a Layer.Core.SyncEvent.  See Layer.Core.ClientAuthenticator for examples of usage.
    *
    * @method  constructor
-   * @private
    * @return {Layer.Core.SyncEvent}
    */
   constructor(options) {

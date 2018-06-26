@@ -318,6 +318,7 @@ class Client extends Root {
    *
    * @method _processDelayedTriggers
    * @private
+   * @ignore
    */
   _processDelayedTriggers() {
     if (this.isDestroyed) return;

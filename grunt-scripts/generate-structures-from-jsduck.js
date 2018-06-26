@@ -17,8 +17,11 @@ function processClassDef({ tags, docblock }, currentDef) {
       case 'mixin':
         currentDef.mixins.push(tag.details);
         break;
-      case 'ismixin':
-        currentDef.isMixin = true;
+      case 'abstract':
+        currentDef.abstract = true;
+        break;
+      case 'typescript':
+        currentDef.instructions = tag.details;
         break;
     }
   });
@@ -28,7 +31,7 @@ function parseProperty(propertyDef, isReturn) {
   let tagMatches = propertyDef.match(/^{(.*?)}\s+\[(.+?)(=.*)?\](\s+.*)?$/);
   let type;
   let name;
-  let required;
+  let required = true;
   let value;
   let description;
   try {
@@ -39,14 +42,14 @@ function parseProperty(propertyDef, isReturn) {
       value = (tagMatches[3] || '').substring(1);
       description = tagMatches[4] || '';
     } else if (isReturn) {
-      const thisMatch = propertyDef.match(/this\s*(.*)/);
+      const thisMatch = propertyDef.match(/^({.*?}\s+)?this\s*(.*)/);
       if (thisMatch) {
         name = 'this';
-        description = thisMatch[1];
+        description = thisMatch[2];
       } else if (propertyDef.match(/{.*?}\s*$/)) {
         type = propertyDef.match(/{(.*?)}\s*$/)[1];
       } else {
-        tagMatches = propertyDef.match(/^{(.*?)}\s*(return\.\S+)?(\s+.*)?$/);
+        tagMatches = propertyDef.match(/^{(.*?)}\s*(returns?\.\S+)?(\s+.*)?$/);
         type = tagMatches[1];
         name = tagMatches[2] || '';
         description = tagMatches[3];
@@ -102,6 +105,7 @@ function processPropertyDef({ tags, docblock }, currentDef) {
   const hiddenTags = tags.filter(tag => ['hidden', 'hide', 'removed'].indexOf(tag.tagName) !== -1);
   if (hiddenTags.length) return;
 
+  let funcName;
   tags.forEach((tag) => {
     switch (tag.tagName) {
       case 'private':
@@ -118,8 +122,13 @@ function processPropertyDef({ tags, docblock }, currentDef) {
       case 'readonly':
         propertyDef.readonly = true;
         break;
+      case 'param':
       case 'property': {
         let { type, name, required, value, description } = parseProperty(tag.details, false);
+        if (tag.tagName === 'param' && funcName) {
+          name = funcName + '.' + name;
+        }
+
         description = (description || '').trim().replace(/^[\s\-]*/, '');
         if (name.indexOf('.') === -1) {
           propertyDef.type = type;
@@ -132,6 +141,9 @@ function processPropertyDef({ tags, docblock }, currentDef) {
             propertyDef.private = name.indexOf('_') === 0;
           }
           if (propertyDef.name) currentDef.properties.push(propertyDef);
+          if (type === 'Function') {
+            funcName = name;
+          }
         } else {
           const nameParts = name.split('.');
           let def = propertyDef;
@@ -175,8 +187,9 @@ function processMethodDef({ tags, name, docblock }, currentDef) {
     name: name.trim(),
     static: false,
     description: '',
+    abstract: false,
   };
-  const hiddenTags = tags.filter(tag => ['hidden', 'hide', 'removed'].indexOf(tag.tagName) !== -1);
+  const hiddenTags = tags.filter(tag => ['hidden', 'hide', 'removed', 'ignore'].indexOf(tag.tagName) !== -1);
   if (hiddenTags.length) {
     return;
   }
@@ -191,15 +204,22 @@ function processMethodDef({ tags, name, docblock }, currentDef) {
         methodDef.protected = true;
         methodDef.private = false;
         break;
+      case 'abstract':
+        methodDef.abstract = true;
+        break;
       case 'static':
         methodDef.static = true;
         break;
       case 'method':
         break;
       case 'param': {
-        let { type, name, required, value, description } = parseProperty(tag.details, false);
-
-        const nameParts = name.split('.');
+        const parsedProp = parseProperty(tag.details, false);
+        const type = parsedProp.type;
+        const paramName = parsedProp.name;
+        const required = parsedProp.required;
+        const value = parsedProp.value;
+        const description = parsedProp.description;
+        const nameParts = paramName.split('.');
 
         const propertyDef = {
           subproperties: {},
@@ -223,10 +243,15 @@ function processMethodDef({ tags, name, docblock }, currentDef) {
       }
       case 'return':
       case 'returns': {
-        const { type, name, required, value, description } = parseProperty(tag.details, true);
-        const chainable = (name === 'this');
+        const parsedProp = parseProperty(tag.details, true);
+        const type = parsedProp.type;
+        const paramName = parsedProp.name;
+        const required = parsedProp.required;
+        const value = parsedProp.value;
+        const description = parsedProp.description;
+        const chainable = (paramName === 'this');
 
-        const nameParts = (name || '').split('.');
+        const nameParts = (paramName || '').split('.');
 
         const propertyDef = {
           subproperties: {},
@@ -322,32 +347,34 @@ function processFile(file, defs, grunt) {
 
     const docblocks = contents.match(/\/\*\*[\s\S]+?\*\//gm);
     if (!docblocks) return;
-
-    const classNameMatch = contents.match(/\*\s+@class\s+(\S+)/m)
-    if (!classNameMatch) return;
-
-    const className = classNameMatch[1];
-    if (!defs[className]) {
-      defs[className] = {
-        docblock: '',
-        extends: '',
-        mixins: [],
-        isMixin: false,
-        properties: [],
-        methods: [],
-        staticProperties: [],
-        staticMethods: [],
-        events: [],
-        private: false,
-        singelton: false,
-        name: className,
-      };
-    }
-    const currentDef = defs[className];
-
-    docblocks.forEach((docblock) => {
+    let className;
+    let currentDef;
+    docblocks.forEach((docblock, index) => {
+      const classNameMatch = docblock.match(/\*\s+@class\s+(\S+)/m);
+      if (classNameMatch) {
+        className = classNameMatch[1];
+        if (!defs[className]) {
+          defs[className] = {
+            docblock: '',
+            extends: '',
+            mixins: [],
+            properties: [],
+            methods: [],
+            staticProperties: [],
+            staticMethods: [],
+            events: [],
+            private: false,
+            singelton: false,
+            abstract: false,
+            name: className,
+          };
+        }
+        currentDef = defs[className];
+      } else if (!currentDef) {
+        return;
+      }
       try {
-        const tagStrList = docblock.match(/\*\s+@(\S+)\s+(.*)$/mg);
+        const tagStrList = docblock.match(/\*\s+@(\S+)([^\n]*)$/mg);
         const tagsObj = { docblock, tags: [] };
         if (!tagStrList) throw new Error('Empty docblock not allowed!');
         tagStrList.forEach((tag) => {
@@ -388,6 +415,8 @@ function processFile(file, defs, grunt) {
             throw e;
           }
         });
+
+        if (!currentDef) console.error("No currentDef for " + docblock);
 
         if (tagsObj.class) {
           processClassDef(tagsObj, currentDef);

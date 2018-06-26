@@ -20,7 +20,7 @@
  *        console.error(error.message);
  *     });
  *
- * @class Layer.Core.LayerEvent
+ * @class Layer.Core.LayerError
  */
 import Core from './namespace';
 import { logger } from '../utils';

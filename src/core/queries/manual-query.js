@@ -41,7 +41,7 @@
  * and accessable via `client.getIdentity()`, `client.getConversation()` or `client.getMessage()` until the data
  * is removed from the Query.
  *
- * @class  Layer.Core.ManualQuery
+ * @class  Layer.Core.Query.ManualQuery
  * @extends Layer.Core.Query
  */
 import { client } from '../../settings';

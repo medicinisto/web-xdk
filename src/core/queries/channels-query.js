@@ -16,7 +16,7 @@
  *
  *      query.destroy();
  *
- * @class  Layer.Core.ChannelsQuery
+ * @class  Layer.Core.Query.ChannelsQuery
  * @extends Layer.Core.Query
  */
 import { client } from '../../settings';

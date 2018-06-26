@@ -63,6 +63,7 @@ class Container extends Syncable {
    * @method send
    * @param {Layer.Core.Message} [message]  Message being sent while creating the new resource
    * @returns this
+   * @ignore
    */
   send(message) {
     if (this.isNew()) {

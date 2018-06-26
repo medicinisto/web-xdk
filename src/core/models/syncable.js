@@ -223,7 +223,7 @@ class Syncable extends Root {
    * Typically used to register the object and cleanup any properties not handled by _populateFromServer.
    *
    * @method _loaded
-   * @private
+   * @protected
    * @param  {Object} data - Response data from server
    */
   _loaded(data) {

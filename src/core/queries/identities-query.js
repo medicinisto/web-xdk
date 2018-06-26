@@ -16,7 +16,7 @@
  *
  *      query.destroy();
  *
- * @class  Layer.Core.IdentitiesQuery
+ * @class  Layer.Core.Query.IdentitiesQuery
  * @extends Layer.Core.Query
  */
 import { client } from '../../settings';

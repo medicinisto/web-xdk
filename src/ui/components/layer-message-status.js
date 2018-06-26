@@ -201,7 +201,7 @@ registerComponent('layer-message-status', {
   },
   methods: {
 
-    /**
+    /*
      * Constructor.
      *
      * @method onCreate
@@ -216,8 +216,6 @@ registerComponent('layer-message-status', {
      * See Layer.UI.components.ConversationView.messageStatusRenderer to customize this.
      *
      * @method onRerender
-     * @private
-     * @param {Event} evt
      */
     onRerender(evt) {
       if (this.item && !this.item.isDestroyed &&

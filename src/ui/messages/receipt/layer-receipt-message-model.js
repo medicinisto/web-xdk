@@ -41,6 +41,7 @@
  */
 import Core, { MessagePart, MessageTypeModel, Root } from '../../../core/namespace';
 import Util from '../../../utils';
+import from '../location/layer-locationmessage-model';
 
 class ReceiptModel extends MessageTypeModel {
 
@@ -53,7 +54,6 @@ class ReceiptModel extends MessageTypeModel {
    * @method generateParts
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
-   * @private
    */
   generateParts(callback) {
     // Put the basic fields into the body
