@@ -56,7 +56,7 @@ module.exports = function (grunt) {
             src: [
               'tmp/duck.json'
             ],
-            dest: 'tmp/typescript'
+            dest: 'npm'
           }
         ]
       }
@@ -955,6 +955,7 @@ module.exports = function (grunt) {
   grunt.registerTask('fix-npm-package', function() {
     var contents = JSON.parse(grunt.file.read('npm/package.json'));
     contents.main = 'index.js'
+    contents.types = 'index-all.d.ts';
     delete contents.scripts.prepublishOnly;
     grunt.file.write('npm/package.json', JSON.stringify(contents, null, 4));
   });
@@ -1008,7 +1009,9 @@ module.exports = function (grunt) {
     'remove:npm', // Insure we have a clean npm folder
     'copy:npm', // Copy es5 into npm
     'theme', // build the theme and write it to npm
-    'fix-npm-package', 'notify:npm', // Setup the npm folder package.json
+    'fix-npm-package',
+    'typescript',
+    'notify:npm', // Setup the npm folder package.json
   ]);
 
   grunt.registerTask('generate-build-file', [

@@ -2,7 +2,7 @@
  * Do not diretly import this; instead import one of `index-web`, `index-node`, `index-all`, etc...
  *
  * @class Layer.Core
- * @typescript importnamespace
+ * @typescript importnamespace Import all classes within the Layer.Core namespace into the typescript definitions file
  */
 import Core from './namespace';
 import './root';

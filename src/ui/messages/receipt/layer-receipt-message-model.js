@@ -41,7 +41,7 @@
  */
 import Core, { MessagePart, MessageTypeModel, Root } from '../../../core/namespace';
 import Util from '../../../utils';
-import from '../location/layer-locationmessage-model';
+import '../location/layer-location-message-model';
 
 class ReceiptModel extends MessageTypeModel {
 
