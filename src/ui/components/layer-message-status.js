@@ -216,6 +216,8 @@ registerComponent('layer-message-status', {
      * See Layer.UI.components.ConversationView.messageStatusRenderer to customize this.
      *
      * @method onRerender
+     * @typescript public
+     * @private
      */
     onRerender(evt) {
       if (this.item && !this.item.isDestroyed &&

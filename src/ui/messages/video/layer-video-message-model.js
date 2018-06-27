@@ -53,6 +53,8 @@ class VideoModel extends MessageTypeModel {
    * @protected
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
+   * @typescript public
+   * @private
    */
   generateParts(callback) {
     super.generateParts(callback);

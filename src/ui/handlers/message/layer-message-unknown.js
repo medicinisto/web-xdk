@@ -15,6 +15,8 @@ registerComponent('layer-message-unknown', {
      * Render a message that is both polite and mildly annoying.
      *
      * @method onRender
+     * @typescript public
+     * @private
      */
     onRender() {
       const mimeTypes = this.message.mapParts(part => part.mimeType)

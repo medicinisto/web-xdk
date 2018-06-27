@@ -54,6 +54,8 @@ class ReceiptModel extends MessageTypeModel {
    * @method generateParts
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
+   * @typescript public
+   * @private
    */
   generateParts(callback) {
     // Put the basic fields into the body

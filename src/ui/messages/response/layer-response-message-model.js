@@ -43,6 +43,8 @@ class ResponseModel extends MessageTypeModel {
    * @method generateParts
    * @param {Function} callback
    * @param {Layer.Core.MessagePart[]} callback.parts
+   * @typescript public
+   * @private
    */
   generateParts(callback) {
     if (!this.operations || !this.operations.length) {

@@ -39,6 +39,8 @@ mixins.EmptyList = module.exports = {
      * Call this on any Query change events and update the {@link #isEmptyList} value
      *
      * @method onRerender
+     * @typescript public
+     * @private
      */
     onRerender(evt = {}) {
       if (this.query.isDestroyed) {

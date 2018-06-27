@@ -1842,7 +1842,8 @@ const standardClassMethods = {
    * TODO: Need to test against raw JS and various frameworks to insure we always have a css class 'layer-replaceable-content' div
    *
    * @method _onProcessReplaceableContent
-   * @protected
+   * @private
+   * @typescript protected
    */
   _onProcessReplaceableContent() {},
 

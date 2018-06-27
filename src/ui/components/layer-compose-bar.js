@@ -250,6 +250,8 @@ registerComponent('layer-compose-bar', {
      * Constructor.
      *
      * @method onCreate
+     * @typescript public
+     * @private
      */
     onCreate() {
       // Set here rather than via cssClassList as this is dynamic

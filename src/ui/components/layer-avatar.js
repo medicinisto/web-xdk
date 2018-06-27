@@ -175,6 +175,8 @@ registerComponent('layer-avatar', {
      * Render the users represented by this widget.
      *
      * @method onRender
+     * @private
+     * @typescript public
      */
     onRender() {
       const users = this.users.length === 1 ? this.users : this.users.filter(user => !user.isMine);

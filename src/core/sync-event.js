@@ -12,7 +12,7 @@
  *
  * Applications typically do not interact with these objects.
  *
- * @class  Layer.Core.SyncEvent
+ * @class Layer.Core.SyncEvent
  * @extends Layer.Core.Root
  */
 import { client } from '../settings';
@@ -212,6 +212,7 @@ SyncEvent.VALIDATION_EXPIRATION = 500;
  *
  * @class Layer.Core.SyncEvent.XHRSyncEvent
  * @extends Layer.Core.SyncEvent
+ * @typescript ignore
  */
 class XHRSyncEvent extends SyncEvent {
 
@@ -314,6 +315,7 @@ XHRSyncEvent.prototype.telemetry = null;
  *
  * @class Layer.Core.SyncEvent.WebsocketSyncEvent
  * @extends Layer.Core.SyncEvent
+ * @typescript ignore
  */
 class WebsocketSyncEvent extends SyncEvent {
 

@@ -124,7 +124,9 @@ module.exports = function (grunt) {
         }
       }
     },
-
+    clean: {
+      typescript: ['npm/**.d.ts', 'npm/*/**.d.ts']
+    },
     remove: {
       build: {
         dirList: ['build', 'npm', 'themes/build']
@@ -137,7 +139,10 @@ module.exports = function (grunt) {
       },
       tmp: {
         dirList: ['tmp']
-      }
+      },
+      typescript: {
+        fileList: ['npm/*/*.d.ts']
+      },
     },
     browserify: {
       options: {
@@ -987,6 +992,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-remove');
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-parallel');
 
@@ -1042,7 +1048,7 @@ module.exports = function (grunt) {
   // Build the theme and write them to npm folder
   grunt.registerTask('theme', ['remove:theme', 'less', 'cssmin', 'copy:npmthemesrc']),
 
-  grunt.registerTask('typescript', ['generate-structures-from-jsduck', 'generate-typescript-from-jsduck-structures']);
+  grunt.registerTask('typescript', ['clean:typescript', 'generate-structures-from-jsduck', 'generate-typescript-from-jsduck-structures']);
 
   grunt.registerTask('default', ['build', 'generate-npm']);
 

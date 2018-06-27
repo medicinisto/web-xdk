@@ -451,6 +451,8 @@ registerComponent('layer-identity-list', {
      * This updates the selectedIdentities after doing standard query update
      *
      * @method onRerender
+     * @typescript public
+     * @private
      */
     onRerender(evt = {}) {
       switch (evt.type) {

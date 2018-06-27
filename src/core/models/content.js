@@ -32,10 +32,10 @@ class Content extends Root {
    *
    * @method constructor
    * @param  {Object} options
-   * @param  {string} options.id - Identifier for the content
-   * @param  {string} [options.downloadUrl=null] - Url to download the content from
+   * @param  {String} options.id - Identifier for the content
+   * @param  {String} [options.downloadUrl=null] - Url to download the content from
    * @param  {Date} [options.expiration] - Expiration date for the url
-   * @param  {string} [options.refreshUrl] - Url to access to get a new downloadUrl after it has expired
+   * @param  {String} [options.refreshUrl] - Url to access to get a new downloadUrl after it has expired
    *
    * @return {Layer.Core.Content}
    */
@@ -54,7 +54,7 @@ class Content extends Root {
    * Note that typically one should use Layer.Core.MessagePart.fetchContent() rather than Layer.Core.Content.loadContent()
    *
    * @method loadContent
-   * @param {string} mimeType - Mime type for the Blob
+   * @param {String} mimeType - Mime type for the Blob
    * @param {Function} callback
    * @param {Blob} callback.data - A Blob instance representing the data downloaded.  If Blob object is not available, then may use other format.
    */
@@ -125,26 +125,26 @@ class Content extends Root {
 
 /**
  * Server generated identifier
- * @property {string} id
+ * @property {String} id
  */
 Content.prototype.id = '';
 
 /**
  * Server generated url for downloading the content
- * @property {string} [downloadUrl]
+ * @property {String} [downloadUrl]
  */
 Content.prototype.downloadUrl = '';
 
 /**
  * Url for refreshing the downloadUrl after it has expired
- * @property {string} [refreshUrl]
+ * @property {String} [refreshUrl]
  */
 Content.prototype.refreshUrl = '';
 
 /**
  * Size of the content.
  *
- * @property {number} [size]
+ * @property {Number} [size]
  */
 Content.prototype.size = 0;
 

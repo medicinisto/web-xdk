@@ -34,6 +34,9 @@ function processClassDef({ tags, docblock }) {
         break;
       case 'typescript':
         currentClassDefinition.instructions = tag.details;
+        if (tag.details === 'ignore') {
+          delete classDefinitions[currentClassDefinition.name];
+        }
         break;
     }
   });
@@ -237,6 +240,9 @@ function processPropertyDef({ tags, docblock }) {
       case 'readonly':
         propertyDef.readonly = true;
         break;
+      case 'typescript':
+        propertyDef.instructions = tag.details;
+        break;
       case 'param':
       case 'property': {
         const options = { tag, propertyDef, funcName };
@@ -363,6 +369,9 @@ function processMethodDef({ tags, name, docblock }) {
       case 'return':
       case 'returns':
         parseMethodReturns({ tag, methodDef });
+        break;
+      case 'typescript':
+        methodDef.instructions = tag.details;
         break;
       default:
         console.log('ignore: ' + tag.tagName + ': ' + tag.details);

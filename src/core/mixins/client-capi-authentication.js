@@ -174,6 +174,7 @@ module.exports = {
      *
      * @property {boolean} [_wantsToBeAuthenticated=false]
      * @readonly
+     * @private
      */
     _wantsToBeAuthenticated: false,
 

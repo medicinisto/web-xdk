@@ -361,6 +361,8 @@ registerComponent('layer-audio-message-view', {
      * This should never be called directly.
      *
      * @method onDetach
+     * @typescript public
+     * @private
      */
     onDetach() {
       if (this.properties.audio) {

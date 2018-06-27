@@ -70,7 +70,8 @@ registerComponent('layer-replaceable-content', {
      * Called by Layer.UI.Component._onAfterCreate as part of creating every Component; but only really implemented by this component.
      *
      * @method _onProcessReplaceableContent
-     * @protected
+     * @typescript protected
+     * @private
      */
     _onProcessReplaceableContent() {
       if (!this.name) throw new Error('Unnamed replaceable content detected');

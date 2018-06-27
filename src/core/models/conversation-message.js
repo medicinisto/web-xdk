@@ -54,7 +54,8 @@ class ConversationMessage extends Message {
    * On loading this one item from the server, after _populateFromServer has been called, due final setup.
    *
    * @method _loaded
-   * @protected
+   * @private
+   * @typescript protected
    * @param {Object} data  Data from server
    */
   _loaded(data) {

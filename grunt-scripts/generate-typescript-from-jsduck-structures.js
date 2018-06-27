@@ -118,6 +118,21 @@ function processMethod(classTypescriptData, methodDef) {
 
   try {
     let returnType;
+    switch (methodDef.instructions) {
+      case 'private':
+        methodDef.private = true;
+        methodDef.protected = false;
+        break;
+      case 'protected':
+        methodDef.protected = true;
+        methodDef.private = false;
+        break;
+      case 'public':
+        methodDef.protected = false;
+        methodDef.private = false;
+        break;
+    }
+
 
     // If the method is one of our Root Class event handling methods, those will be processed in processAllEvents; so skip them
     if (StandardEventMethodNames.indexOf(methodDef.name) !== -1 && isRootClass(classDef, allClasses)) {
@@ -326,6 +341,22 @@ function processProperties(classTypescriptData, processedMixins = {}, addedProps
 function processProperty(classTypescriptData, propDef) {
   const { classDef, lines } = classTypescriptData;
   try {
+    switch (propDef.instructions) {
+      case 'private':
+        propDef.private = true;
+        propDef.protected = false;
+        break;
+      case 'protected':
+        propDef.protected = true;
+        propDef.private = false;
+        break;
+      case 'public':
+        propDef.protected = false;
+        propDef.private = false;
+        break;
+    }
+
+
     // Get the locally defined name for the type, which may be of the form `LayerCoreRoot` based on an import of `import LayerCoreRoot from './root'`
     let type = setupType(classTypescriptData, propDef.type);
 
@@ -447,10 +478,9 @@ function importNamespace(classTypescriptData) {
  * Given a Class Definition A that needs to import Class Definition B, return the path needed by an `import` to get from one to the other.
  */
 function generatePathFromAtoB(classDefA, classDefB) {
-  const pathA = classDefA.path.replace(/\/.*?$/, '');
+  const pathA = classDefA.path.indexOf('/') === -1 ? '' : classDefA.path.replace(/\/[^\/]*?$/, '');
   const pathB = classDefB.path.replace(/\.js$/, '');
-
-  const pathToRoot = pathA.split('/').map(item => '..').join('/');
+  const pathToRoot = pathA.length === 0 ? './' : pathA.replace(/[^/]*\.js/, '').split('/').map(item => '..').join('/');
   return pathToRoot + '/' + pathB;
 }
 
@@ -463,7 +493,7 @@ function processClass(name, allClasses, destFolder) {
   const className = classParts[classParts.length - 1];
   const extendsParts = (classDef.extends || '').split('.');
   const extendsClassName = extendsParts[extendsParts.length - 1] || '';
-  const imports = [`import { AnObject, CustomHTMLElement } from ${generatePathFromAtoB(classDef, { path: 'misc' })}';`];
+  const imports = [`import { AnObject, CustomHTMLElement } from '${generatePathFromAtoB(classDef, { path: 'misc' })}';`];
   const lines = [];
   const interfaces = [];
 
