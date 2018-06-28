@@ -410,6 +410,7 @@ describe("The MessagesQuery Class", function() {
               query: query,
               data: [conversation.lastMessage],
               target: client,
+              pagedToEnd: false
             });
         });
     });

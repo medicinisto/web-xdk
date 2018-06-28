@@ -90,6 +90,7 @@
  *   if (evt.type === 'data') {
  *      var newData = evt.data;
  *      var allData = query.data;
+ *      var isPagedToEnd = evt.pagedToEnd; // End of results
  *   }
  * });
  * ```
@@ -500,6 +501,7 @@ class Query extends Root {
     // Trigger the change event
     this._triggerChange({
       type: 'data',
+      pagedToEnd: this.pagedToEnd,
       data: finalResults.map(item => this._getData(item)),
       query: this,
       target: client,

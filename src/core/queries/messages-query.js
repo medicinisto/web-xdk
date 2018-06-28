@@ -166,6 +166,7 @@ class MessagesQuery extends Query {
         // Trigger the change event
         this._triggerChange({
           type: 'data',
+          pagedToEnd: this.pagedToEnd,
           data: [this._getData(conversation.lastMessage)],
           query: this,
           target: client,
