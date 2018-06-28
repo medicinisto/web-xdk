@@ -39,8 +39,21 @@ registerComponent('layer-image-message-view', {
     layer-message-viewer.layer-image-message-view > * {
       cursor: pointer;
     }
+
+    layer-image-message-view.layer-loading-data {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+    }
+    layer-image-message-view.layer-loading-data img {
+      display: none;
+    }
+    layer-image-message-view:not(.layer-loading-data) layer-loading-indicator {
+      display: none;
+    }
  `,
-  template: '<img layer-id="image" />',
+  template: '<img layer-id="image" /><layer-loading-indicator></layer-loading-indicator>',
   properties: {
 
     minWidth: {
@@ -87,6 +100,8 @@ registerComponent('layer-image-message-view', {
   methods: {
     onCreate() {
       this.nodes.image.addEventListener('load', evt => this._imageLoaded(evt.target));
+      this.nodes.image.addEventListener('error', evt => this._imageError(evt.target));
+      this.classList.add('layer-loading-data');
 
       // Image Message heights aren't known until the metadata has been parsed; and cannot be scaled
       // unless we know how much space is available in the Message List
@@ -159,16 +174,27 @@ registerComponent('layer-image-message-view', {
      *
      * @param {HTMLElement} img
      */
-    _imageLoaded() {
+    _imageLoaded(img) {
       if (this.properties._internalState.onDestroyCalled) return;
+      this.classList.remove('layer-loading-data');
+
       if (!this.properties.usingCanvas) {
-        const img = this.nodes.image;
         this.model.previewWidth = img.naturalWidth;
         this.model.previewHeight = img.naturalHeight;
         this._resizeContent();
       }
     },
 
+    /**
+     * Handle case where image fails to load (invalid image? network problems)?
+     *
+     * TODO: Do more than just hide the loading indicator.
+     *
+     * @param {HTMLElement} img
+     */
+    _imageError(img) {
+      this.classList.remove('layer-loading-data');
+    },
 
     /**
      * Generate a Canvas to render our image in order to enforce exif orientation which is ignored by browser "img" tag.
