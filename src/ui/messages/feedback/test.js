@@ -271,11 +271,11 @@ describe('Feedback Message Components', function() {
     it("Should show selected stars", function() {
       model.rating = 3;
       el.nodes.ui.onRerender();
-      expect(el.nodes.ui.childNodes[0].innerHTML).toEqual("★");
-      expect(el.nodes.ui.childNodes[1].innerHTML).toEqual("★");
-      expect(el.nodes.ui.childNodes[2].innerHTML).toEqual("★");
-      expect(el.nodes.ui.childNodes[3].innerHTML).toEqual("☆");
-      expect(el.nodes.ui.childNodes[4].innerHTML).toEqual("☆");
+      expect(el.nodes.ui.childNodes[0].firstChild.tagName.toLowerCase()).toEqual("svg");
+      expect(el.nodes.ui.childNodes[1].firstChild.tagName.toLowerCase()).toEqual("svg");
+      expect(el.nodes.ui.childNodes[2].firstChild.tagName.toLowerCase()).toEqual("svg");
+      expect(el.nodes.ui.childNodes[3].firstChild.tagName.toLowerCase()).toEqual("svg");
+      expect(el.nodes.ui.childNodes[4].firstChild.tagName.toLowerCase()).toEqual("svg");
     });
 
     it("Should set rating and call runAction if editable", function() {
@@ -340,11 +340,11 @@ describe('Feedback Message Components', function() {
     it("Should show selected stars", function() {
       model.rating = 3;
       ui.onRerender();
-      expect(ui.nodes.ratings.childNodes[0].innerHTML).toEqual("★");
-      expect(ui.nodes.ratings.childNodes[1].innerHTML).toEqual("★");
-      expect(ui.nodes.ratings.childNodes[2].innerHTML).toEqual("★");
-      expect(ui.nodes.ratings.childNodes[3].innerHTML).toEqual("☆");
-      expect(ui.nodes.ratings.childNodes[4].innerHTML).toEqual("☆");
+      expect(ui.nodes.ratings.childNodes[0].firstChild.tagName.toLowerCase()).toEqual("svg");
+      expect(ui.nodes.ratings.childNodes[1].firstChild.tagName.toLowerCase()).toEqual("svg");
+      expect(ui.nodes.ratings.childNodes[2].firstChild.tagName.toLowerCase()).toEqual("svg");
+      expect(ui.nodes.ratings.childNodes[3].firstChild.tagName.toLowerCase()).toEqual("svg");
+      expect(ui.nodes.ratings.childNodes[4].firstChild.tagName.toLowerCase()).toEqual("svg");
     });
 
     it("Should show the specified prompt", function() {

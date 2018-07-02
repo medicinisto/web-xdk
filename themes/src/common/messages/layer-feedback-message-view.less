@@ -7,9 +7,6 @@ layer-message-viewer.layer-feedback-message-view {
   cursor: pointer;
 }
 
-layer-feedback-message-view, layer-feedback-message-large-view {
-
-}
 
 layer-feedback-message-large-view:not(.layer-feedback-enabled), layer-feedback-message-view:not(.layer-feedback-enabled) {
   .layer-feedback-message-view-ratings span {
@@ -40,6 +37,23 @@ layer-feedback-message-large-view:not(.layer-feedback-enabled) {
   padding: 4px 0px;
   min-height: 40px;
 
+  span {
+    width: 32px;
+    height: 48px;
+    display: inline-block;
+    .layer-star-path {
+        stroke: @color-black;
+        fill: @color-black;
+      }
+
+    &.layer-feedback-selector-unselected .layer-star-path {
+      fill-opacity: 0;
+    }
+    &.layer-feedback-selector-selected .layer-star-path {
+      fill-opacity: 1;
+    }
+  }
+
   span + span {
     margin-left: 1.5rem;
   }
@@ -60,10 +74,18 @@ layer-feedback-message-view {
 
 layer-message-viewer.layer-feedback-message-view {
   &.layer-feedback-enabled .layer-card-top {
-    color: @color-blue5;
     background-color: @color-white;
-    span:hover {
-      color: @color-blue6;
+
+    span {
+      .layer-star-path {
+        stroke: @color-blue5;
+        fill: @color-blue5;
+      }
+
+      &:hover .layer-star-path {
+        stroke: @color-blue6;
+        fill: @color-blue6;
+      }
     }
   }
 
@@ -78,10 +100,18 @@ layer-feedback-message-large-view {
   background-color: @color-g1;
   &.layer-feedback-enabled {
     .layer-feedback-message-view-ratings {
-      color: @color-blue5;
       background-color: @color-white;
-      span:hover {
-        color: @color-blue6;
+
+      span {
+        .layer-star-path {
+          stroke: @color-blue5;
+          fill: @color-blue5;
+        }
+
+        &:hover .layer-star-path {
+          stroke: @color-blue6;
+          fill: @color-blue6;
+        }
       }
     }
   }

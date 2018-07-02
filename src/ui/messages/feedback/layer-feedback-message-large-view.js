@@ -25,6 +25,7 @@
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import Clickable from '../../mixins/clickable';
+import Star from '../../ui-utils/graphics/star';
 
 // Snippet from https://stackoverflow.com/questions/2848462/count-bytes-in-textarea-using-javascript/12206089#12206089
 function getUTF8Length(s) {
@@ -116,7 +117,8 @@ registerComponent('layer-feedback-message-large-view', {
 
       let text = '';
       for (let i = 1; i <= 5; i++) {
-        text += '<span>' + ((i <= this.model.rating) ? '\u2605' : '\u2606') + '</span>';
+        text += `<span class=${i <= this.model.rating ? 'layer-feedback-selector-selected' : 'layer-feedback-selector-unselected'}>${Star}</span>`;
+
       }
       this.nodes.ratings.innerHTML = text;
       this.nodes.input.disabled = !this.model.isEditable();
@@ -130,7 +132,7 @@ registerComponent('layer-feedback-message-large-view', {
     _onClick(evt) {
       if (!this.model.isEditable()) return;
       let target = evt.target;
-      if (target.tagName !== 'SPAN') target = target.parentNode;
+      while (this.contains(target) && target.tagName !== 'SPAN') target = target.parentNode;
       if (target.tagName === 'SPAN') {
         const spans = Array.prototype.slice.call(this.nodes.ratings.childNodes);
         const index = spans.indexOf(target);

@@ -21,6 +21,7 @@ import FeedbackModel from './layer-feedback-message-model';
 import MessageViewMixin from '../message-view-mixin';
 import Clickable from '../../mixins/clickable';
 import './layer-feedback-message-large-view';
+import Star from '../../ui-utils/graphics/star';
 
 registerComponent('layer-feedback-message-view', {
   mixins: [MessageViewMixin, Clickable],
@@ -65,7 +66,7 @@ registerComponent('layer-feedback-message-view', {
       this.messageViewer.toggleClass('layer-feedback-enabled', this.model.isEditable());
       let text = '';
       for (let i = 1; i <= 5; i++) {
-        text += '<span>' + ((i <= rating) ? '\u2605' : '\u2606') + '</span>';
+        text += `<span class="${i <= rating ? 'layer-feedback-selector-selected' : 'layer-feedback-selector-unselected'}">${Star}</span>`;
       }
       this.innerHTML = text;
     },
@@ -73,7 +74,7 @@ registerComponent('layer-feedback-message-view', {
     _onClick(evt) {
       if (!this.model.isEditable()) return;
       let target = evt.target;
-      if (target.tagName !== 'SPAN') target = target.parentNode;
+      while (this.contains(target) && target.tagName !== 'SPAN') target = target.parentNode;
       if (target.tagName === 'SPAN') {
         const spans = Array.prototype.slice.call(this.childNodes);
         const index = spans.indexOf(target);
