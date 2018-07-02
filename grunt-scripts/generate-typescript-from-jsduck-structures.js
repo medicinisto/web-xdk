@@ -170,8 +170,8 @@ function processMethod(classTypescriptData, methodDef) {
 
     // Generate the method definition
     lines.push(`
-      ${methodDef.docblock.split(/\n\s*/).join('\n    ')}
-      ${declarationType} ${methodDef.static ? 'static ' : ''}${methodDef.name}(${params.join(', ')})${methodDef.name === 'constructor' ? '' : ': ' + returnType};
+   ${methodDef.docblock.split(/\n\s*/m).join('\n    ')}
+    ${declarationType} ${methodDef.static ? 'static ' : ''}${methodDef.name}(${params.join(', ')})${methodDef.name === 'constructor' ? '' : ': ' + returnType};
     `);
     return methodDef.name;
   } catch (e) {
@@ -375,7 +375,7 @@ function processProperty(classTypescriptData, propDef) {
     type = setupFunctionIfNeeded(classTypescriptData, type, propDef);
 
     // Add the property definition to the typescript class
-    lines.push(`    ${propDef.docblock.split(/\n\s*/).join('\n    ')}\n    ${declarationType} ${propDef.static ? 'static ' : ''}${propDef.readonly ? 'readonly ' : ''}${propDef.name}: ${type};\n`);
+    lines.push(`   ${propDef.docblock.split(/\n\s*/m).join('\n    ')}\n    ${declarationType} ${propDef.static ? 'static ' : ''}${propDef.readonly ? 'readonly ' : ''}${propDef.name}: ${type};\n`);
 
     // Return the property name so we know that this name is now part of the class definition.
     return propDef.name;
@@ -454,7 +454,7 @@ function processAllEvents(classTypescriptData, processedMixins = {}) {
  */
 function importNamespace(classTypescriptData) {
   const { classDef, allClasses, typeSet, lines, imports } = classTypescriptData;
-console.log("IMPORTING NAMESPACE");
+
   // Gather all the names that are within this class' namespace
   const name = classDef.name;
   const childNames = Object.keys(allClasses).filter(className =>
@@ -462,7 +462,6 @@ console.log("IMPORTING NAMESPACE");
 
   // For each class name, generate an import for it (if one hasn't already been setup for it)
   childNames.forEach((className) => {
-    console.log("IMPORT " + className);
     let type;
     if (typeSet[className]) {
       type = typeSet[className];
@@ -482,7 +481,8 @@ function generatePathFromAtoB(classDefA, classDefB) {
   const pathA = classDefA.path.indexOf('/') === -1 ? '' : classDefA.path.replace(/\/[^\/]*?$/, '');
   const pathB = classDefB.path.replace(/\.js$/, '');
   const pathToRoot = pathA.length === 0 ? '.' : pathA.replace(/[^/]*\.js/, '').split('/').map(item => '..').join('/');
-  return pathToRoot + '/' + pathB;
+  const result = pathToRoot + '/' + pathB;
+  return result;
 }
 
 /**
