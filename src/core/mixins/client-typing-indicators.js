@@ -2,6 +2,7 @@
  * Adds APIs to the Layer Client for working with Typing Indicators
  *
  * @class Layer.Core.Client
+ * @typescript extendclass
  */
 
 import Core from '../namespace';

@@ -1,6 +1,6 @@
 /**
  * @class Layer.UI
- * @static
+ * @typescript extendclass
  */
 
 

@@ -454,7 +454,7 @@ function processAllEvents(classTypescriptData, processedMixins = {}) {
  */
 function importNamespace(classTypescriptData) {
   const { classDef, allClasses, typeSet, lines, imports } = classTypescriptData;
-
+console.log("IMPORTING NAMESPACE");
   // Gather all the names that are within this class' namespace
   const name = classDef.name;
   const childNames = Object.keys(allClasses).filter(className =>
@@ -462,6 +462,7 @@ function importNamespace(classTypescriptData) {
 
   // For each class name, generate an import for it (if one hasn't already been setup for it)
   childNames.forEach((className) => {
+    console.log("IMPORT " + className);
     let type;
     if (typeSet[className]) {
       type = typeSet[className];
@@ -480,7 +481,7 @@ function importNamespace(classTypescriptData) {
 function generatePathFromAtoB(classDefA, classDefB) {
   const pathA = classDefA.path.indexOf('/') === -1 ? '' : classDefA.path.replace(/\/[^\/]*?$/, '');
   const pathB = classDefB.path.replace(/\.js$/, '');
-  const pathToRoot = pathA.length === 0 ? './' : pathA.replace(/[^/]*\.js/, '').split('/').map(item => '..').join('/');
+  const pathToRoot = pathA.length === 0 ? '.' : pathA.replace(/[^/]*\.js/, '').split('/').map(item => '..').join('/');
   return pathToRoot + '/' + pathB;
 }
 
@@ -524,7 +525,7 @@ function processClass(name, allClasses, destFolder) {
   processMethods(classTypescriptData);
 
   // Handle any custom `@typescript SomeInstruction` instruction on the Class definition documentation block
-  switch (classDef.instructions) {
+  switch ((classDef.instructions || '').replace(/\s+.*/, '')) {
     case 'importnamespace':
       importNamespace(classTypescriptData);
       break;

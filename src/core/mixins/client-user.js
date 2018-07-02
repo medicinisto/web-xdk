@@ -2,6 +2,7 @@
  * Adds APIs and properties to the Layer Client for accessing/using an authenticated User
  *
  * @class Layer.Core.Client
+ * @typescript extendclass
  */
 
 import Core from '../namespace';

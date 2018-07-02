@@ -2120,6 +2120,7 @@ const standardClassMethods = {
 
 /**
  * @class Layer.UI
+ * @typescript extendclass
  */
 
 /**

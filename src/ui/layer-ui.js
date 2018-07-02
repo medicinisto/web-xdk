@@ -1,7 +1,4 @@
 /**
- * @class Layer.UI
- * @static
- *
  * The layerUI contains utilities for working with the layerUI components.
  *
  * The key method to know here is the `init()` method.  Any use of the library will need a call:
@@ -25,6 +22,9 @@
  * It is not required to use an adapter, but it solves many inconsistencies in how these frameworks handle webcomponents built using this framework.
  *
  * While there are many other methods defined here, for new projects ignore everything except layerUI.settings, Layer.UI.init and layerUI.adapters.
+ *
+ * @class Layer.UI
+ * @static
  */
 
 import { registerComponent, _registerAll, unregisterComponent } from './components/component';
@@ -41,23 +41,97 @@ import UIUtils from './ui-utils/index';
 import { ErrorDictionary } from '../core/layer-error';
 
 const LayerUI = {
+
+  /**
+   * UI Constants
+   *
+   * @property {Layer.UI.Constants} Constants
+   */
   Constants,
+
+  /**
+   * XDK Settings
+   *
+   * @property {Layer.Settings} settings
+   */
   settings: Settings,
+
+  /*
+   * Register component (jsduck in component.js)
+   */
   registerComponent,
+
+  /*
+   * Register all components (jsduck in component.js)
+   */
   _registerAll,
+
+  /*
+   * Unregister component (jsduck in component.js)
+   */
   unregisterComponent,
+
+  /*
+   * Setup styles for a UI Component (jsduck in component-services.js)
+   */
   buildStyle: ComponentServices.buildStyle,
+
+  /*
+   * Setup template from a string for a UI Component (jsduck in component-services.js)
+   */
   buildAndRegisterTemplate: ComponentServices.buildAndRegisterTemplate,
+
+  /*
+   * Setup template from a <template /> for a UI Component (jsduck in component-services.js)
+   */
   registerTemplate: ComponentServices.registerTemplate,
+
+  /**
+   * Handlers for text and message:
+   *
+   * @property {Object} handlers
+   * @property {Layer.UI.handlers.message} message
+   * @property {Layer.UI.handlers.text} text
+   */
   handlers: {
     message: MessageHandlers,
     text: TextHandlers,
   },
   components: ComponentsHash, // backwards compatability
+
+  /**
+   * Hash of all UI Component definitions
+   *
+   * @property {Object} ComponentsHash
+   */
   ComponentsHash,
+
+  /**
+   * Tools for managing List Separators
+   *
+   * @property {Layer.UI.UIUtils.ListSeparatorManager} ListSeparatorManager
+   */
   ListSeparatorManager,
+
+  /**
+   * Adapters that your project has imported
+   *
+   * @property {Layer.UI.adapters} adapters
+   */
   adapters: Adapters,
+
+  /**
+   * UI-specific utilities
+   *
+   * @property {Layer.UI.UIUtils} UIUtils
+   */
   UIUtils,
+
+  /**
+   * Actions for Messages, used when user taps/clicks on Messages
+   *
+   * @property {Layer.UI.MessageActions} MessageActions
+   */
   MessageActions,
 };
 
@@ -78,7 +152,6 @@ const LayerUI = {
  * See layerUI.settings for more options to Layer.UI.init.
  *
  * @method init
- * @static
  */
 let initRun = false;
 LayerUI.init = function init() {

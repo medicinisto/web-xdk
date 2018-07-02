@@ -9,6 +9,7 @@
  *   events get processed, not knowing minute details of the objects.
  *
  * @class Layer.Core.Client
+ * @typescript extendclass
  */
 
 import Util, { logger } from '../../utils';

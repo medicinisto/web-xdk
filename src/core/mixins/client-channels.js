@@ -2,6 +2,7 @@
  * Adds Channel handling to the Layer.Core.Client.
  *
  * @class Layer.Core.Client
+ * @typescript extendclass
  */
 
 import Channel from '../models/channel';

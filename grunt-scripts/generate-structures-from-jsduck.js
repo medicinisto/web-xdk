@@ -11,8 +11,9 @@ let currentClassDefinition;
 /**
  * Parse the tags for a class definition documentation block and setup the class definition
  */
-function processClassDef({ tags, docblock }) {
+function processClassDef({ tags, docblock }, file) {
   currentClassDefinition.docblock = docblock;
+  let isExtendedDefinition = false;
   tags.forEach((tag) => {
     switch (tag.tagName) {
       case 'extends':
@@ -34,12 +35,21 @@ function processClassDef({ tags, docblock }) {
         break;
       case 'typescript':
         currentClassDefinition.instructions = tag.details;
-        if (tag.details === 'ignore') {
-          delete classDefinitions[currentClassDefinition.name];
+        switch (tag.details) {
+          case 'ignore':
+            delete classDefinitions[currentClassDefinition.name];
+            break;
+          case 'extendclass':
+            isExtendedDefinition = true;
+            break;
         }
         break;
     }
   });
+
+  if (!currentClassDefinition.path && !isExtendedDefinition) {
+    currentClassDefinition.path = file.replace(/src\//, '');
+  }
 }
 
 /**
@@ -466,7 +476,7 @@ function parseClassDefFromDocblock(file, docblock) {
     const className = classNameMatch[1];
     if (!classDefinitions[className]) {
       classDefinitions[className] = {
-        path: file.replace(/src\//, ''),
+        path: '',
         docblock: '',
         extends: '',
         mixins: [],
@@ -574,7 +584,7 @@ function processFile(file) {
 
         // Process the tags as a class, method, property or event
         if (tagsObj.class) {
-          processClassDef(tagsObj);
+          processClassDef(tagsObj, file);
         } else if (tagsObj.method) {
           processMethodDef(tagsObj);
         } else if (tagsObj.property) {

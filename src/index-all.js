@@ -27,28 +27,28 @@ if (typeof global !== 'undefined') global.Layer = global.layer = module.exports;
 /**
  * Access the XDK-UI Library
  *
- * @property {Object} UI
+ * @property {Layer.UI} UI
  * @readonly
  */
 
 /**
  * Access the XDK-Core Library
  *
- * @property {Object} Core
+ * @property {Layer.Core} Core
  * @readonly
  */
 
 /**
  * Access the XDK Utils Library
  *
- * @property {Object} Utils
+ * @property {Layer.Utils} Utils
  * @readonly
  */
 
 /**
  * Access the XDK Constants  {@link Layer.Constants}
  *
- * @property {Object} Constants
+ * @property {Layer.Constants} Constants
  * @readonly
  */
 
@@ -62,6 +62,7 @@ if (typeof global !== 'undefined') global.Layer = global.layer = module.exports;
  * ```
  *
  * @method init
+ * @param {Layer.Settings} settings
  * @returns {Layer.Core.Client}
  */
 

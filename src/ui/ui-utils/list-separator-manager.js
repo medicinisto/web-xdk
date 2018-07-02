@@ -1,7 +1,7 @@
 /**
  * Helps manage separators between List Items.
  *
- * @class Layer.UI.UIUtils
+ * @class Layer.UI.UIUtils.ListSeparatorManager
  * @static
  */
 

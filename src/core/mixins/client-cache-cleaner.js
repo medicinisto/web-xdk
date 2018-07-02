@@ -2,6 +2,7 @@
  * Adds APIs to the Layer Client for managing cached Models
  *
  * @class Layer.Core.Client
+ * @typescript extendclass
  */
 
 import Core from '../namespace';

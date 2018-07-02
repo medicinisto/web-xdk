@@ -2,6 +2,7 @@
  * Adds a Telemetry Monitor to the Layer Client
  *
  * @class Layer.Core.Client
+ * @typescript extendclass
  */
 
 import TelemetryMonitor from '../telemetry-monitor';

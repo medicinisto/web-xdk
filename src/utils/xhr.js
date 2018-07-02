@@ -17,7 +17,7 @@
       }
     });
  *
- * @class Layer.utils.xhr
+ * @class Layer.Utils.xhr
  * @private
  */
 

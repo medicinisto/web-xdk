@@ -4,6 +4,7 @@
  * Useful for Hybrid/Cordova/React Native apps
  *
  * @class Layer.Core.Client
+ * @typescript extendclass
  */
 
 import Core from '../namespace';

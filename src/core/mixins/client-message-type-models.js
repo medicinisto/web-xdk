@@ -7,6 +7,7 @@
  *    Potential definition of in-use: its in the DOM
  *
  * @class Layer.Core.Client
+ * @typescript extendclass
  */
 import { ErrorDictionary } from '../layer-error';
 import Core from '../namespace';

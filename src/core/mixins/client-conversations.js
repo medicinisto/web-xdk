@@ -2,6 +2,7 @@
  * Adds Conversation handling to the Layer.Core.Client.
  *
  * @class Layer.Core.Client
+ * @typescript extendclass
  */
 
 import Conversation from '../models/conversation';

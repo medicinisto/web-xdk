@@ -18,7 +18,7 @@
         "classes": [
           "Layer.Core.LayerEvent",
           "Layer.Core.Root",
-          "Layer.utils",
+          "Layer.Utils",
           "Layer.Constants"
         ]
       },

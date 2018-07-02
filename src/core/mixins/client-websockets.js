@@ -2,6 +2,7 @@
  * Adds use of websocket classes to the Client
  *
  * @class Layer.Core.Client
+ * @typescript extendclass
  */
 
 import Core from '../namespace';

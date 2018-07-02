@@ -2,6 +2,7 @@
  * Adds CAPI REST and Websocket request APIs
  *
  * @class Layer.Core.Client
+ * @typescript extendclass
  */
 
 import { xhr, logger, generateUUID } from '../../utils';

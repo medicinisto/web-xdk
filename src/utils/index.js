@@ -1,7 +1,7 @@
 /**
  * Utility methods
  *
- * @class Layer.utils
+ * @class Layer.Utils
  */
 /* eslint-disable no-restricted-properties */
 

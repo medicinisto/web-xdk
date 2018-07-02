@@ -1,5 +1,6 @@
 /**
- * @class Layer.utils
+ * @class Layer.Utils
+ * @typescript extendclass
  */
 /**
  * Run the Layer Parser on the request.

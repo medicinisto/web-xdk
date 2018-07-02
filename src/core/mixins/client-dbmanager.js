@@ -2,6 +2,7 @@
  * Adds use of a database to the Client's behaviors and properties
  *
  * @class Layer.Core.Client
+ * @typescript extendclass
  */
 
 import Core from '../namespace';

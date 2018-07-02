@@ -1,5 +1,5 @@
 /**
- * @class Layer.UI
+ * @class Layer.UI.Settings
  */
 
 /**

@@ -1,5 +1,6 @@
 /**
- * @class Layer.utils
+ * @class Layer.Utils
+ * @typescript extendclass
  */
 /**
  * Execute this function immediately after current processing is complete (setImmediate replacement).
