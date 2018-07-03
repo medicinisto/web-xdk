@@ -54,7 +54,7 @@ import { register } from './index';
  * evaluate at the correct time, correct order, and only evaluate once.
  *
  * ### Importing
- *
+ *f
  * Not included with the standard build. To import:
  *
  * ```
@@ -62,10 +62,11 @@ import { register } from './index';
  * ```
  *
  * @class Layer.UI.adapters.react
- * @singleton
+ * @static
  * @param {Object} React  Pass in the reactJS library
  * @param {Object} ReactDom  Pass in the ReactDom library
  * @return {Object} All the React Components that are imported (some listed below will not show unless application explicitly imports them)
+ * @typescript foreach-ui-component {"imports": "import { Component } from 'react'", "interfaces": "declare class ${className} extends Component<${propsInterfaceName}, void> {}"}
  */
 let libraryResult;
 function initReact(React, ReactDom) {
@@ -123,7 +124,7 @@ function initReact(React, ReactDom) {
         }
       }
 
-      /**
+      /*
        * On mounting, copy in all properties, and optionally setup a Query.
        *
        * Delay added to prevent Webcomponents property setters from being blown away in safari and firefox
@@ -168,7 +169,7 @@ function initReact(React, ReactDom) {
         this._setupStandardProps();
       }
 
-      /**
+      /*
        * Copy all properties into the dom node, but never let React recreate this widget.
        *
        * @method shouldComponentUpdate
@@ -213,7 +214,7 @@ function initReact(React, ReactDom) {
         }
       }
 
-      /**
+      /*
        * If the property type is HTMLElement, assume the value is a function that generates React Components, or it IS a React Component that need to be wrapped in an HTMLElement and set as the property value.
        *
        * @method handleReactDom
@@ -248,7 +249,7 @@ function initReact(React, ReactDom) {
       }
 
 
-      /**
+      /*
        * Render method should only be called once and creates the React element with the webcomponent.
        *
        * @method render

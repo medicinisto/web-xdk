@@ -31,6 +31,7 @@
     "xhr2": "^0.1.4"
   },
   "devDependencies": {
+    "@types/react": "^16.4.6",
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babelify": "^7.3.0",

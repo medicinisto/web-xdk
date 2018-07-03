@@ -339,7 +339,7 @@ function processProperties(classTypescriptData, processedMixins = {}, addedProps
  * Add a property to the typescript class, doing any neccessary imports needed to achieve that.
  */
 function processProperty(classTypescriptData, propDef) {
-  const { classDef, lines } = classTypescriptData;
+  const { classDef, lines, isInterface } = classTypescriptData;
   try {
     switch (propDef.instructions) {
       case 'private':
@@ -366,7 +366,7 @@ function processProperty(classTypescriptData, propDef) {
     let declarationType = 'public';
     if (propDef.private) declarationType = 'private';
     if (propDef.protected) declarationType = 'protected';
-    if (classDef.isMixin) declarationType = '';
+    if (classDef.isMixin || isInterface) declarationType = '';
 
     // Does our type need an interface generated for it? If so, get the type name for that Interface.
     type = setupInterfaceIfNeeded(classTypescriptData, type, propDef);
@@ -474,6 +474,56 @@ function importNamespace(classTypescriptData) {
   });
 }
 
+function generateClassesWithTemplate(classTypescriptData, classTemplate) {
+  const { lines, classDef, allClasses, typeSet, interfaces, imports } = classTypescriptData;
+
+  const classTemplateObj = JSON.parse(classTemplate);
+  const uiComponents = Object.keys(allClasses).map(classDefName => allClasses[classDefName]).filter(innerClassDef => innerClassDef.uiClassName);
+
+  if (classTemplateObj.imports) imports.push(classTemplateObj.imports);
+
+  uiComponents.forEach((aClassDef) => {
+    const className = aClassDef.uiClassName;
+    const shortName = className.substring(0, 1).toUpperCase() +
+      className.substring(1)
+        .replace(/-(.)/g, (str, value) => value.toUpperCase())
+      .replace(/^Layer/, '');
+    const interfaceName = shortName + 'Interface';
+
+    const aClassTypescriptData = {
+      classDef: aClassDef,
+      lines: [],
+      imports,
+      typeSet,
+      interfaces,
+      allClasses,
+      isInterface: true,
+    };
+
+    const tmpPath = aClassDef.path;
+    aClassDef.path = classDef.path;
+    classTypescriptData.classDef = aClassDef;
+    processProperties(aClassTypescriptData);
+    aClassDef.path = tmpPath;
+
+    interfaces.push(`interface ${interfaceName} {
+${aClassTypescriptData.lines.join('\n')}
+}`);
+
+    const subclassDef = classTemplateObj.interfaces.replace(/\$\{(.*?)\}/g, (fullStr, str) => {
+      switch (str) {
+        case 'propsInterfaceName':
+          return interfaceName;
+        case 'className':
+          return shortName;
+      }
+      return '';
+    });
+    interfaces.push(subclassDef + '\n');
+    lines.push(`    ${shortName}: ${shortName};\n`);
+  });
+}
+
 /**
  * Given a Class Definition A that needs to import Class Definition B, return the path needed by an `import` to get from one to the other.
  */
@@ -528,6 +578,9 @@ function processClass(name, allClasses, destFolder) {
   switch ((classDef.instructions || '').replace(/\s+.*/, '')) {
     case 'importnamespace':
       importNamespace(classTypescriptData);
+      break;
+    case 'foreach-ui-component':
+      generateClassesWithTemplate(classTypescriptData, classDef.instructions.replace(/^\S*\s*/, ''));
       break;
   }
 

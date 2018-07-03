@@ -11,7 +11,7 @@ let currentClassDefinition;
 /**
  * Parse the tags for a class definition documentation block and setup the class definition
  */
-function processClassDef({ tags, docblock }, file) {
+function processClassDef({ tags, docblock }, code, file) {
   currentClassDefinition.docblock = docblock;
   let isExtendedDefinition = false;
   tags.forEach((tag) => {
@@ -46,6 +46,13 @@ function processClassDef({ tags, docblock }, file) {
         break;
     }
   });
+
+  const uiComponentName = code.match(/registerComponent\('(.*?)'/m);
+  if (uiComponentName && uiComponentName[1]) {
+    currentClassDefinition.uiClassName = uiComponentName[1];
+  } else {
+    currentClassDefinition.uiClassName = '';
+  }
 
   if (!currentClassDefinition.path && !isExtendedDefinition) {
     currentClassDefinition.path = file.replace(/src\//, '');
@@ -568,6 +575,7 @@ function processFile(file) {
     const contents = grunt.file.read(file);
 
     const docblocks = contents.match(/\/\*\*[\s\S]+?\*\//gm);
+    const code = contents.replace(/\/\*\*[\s\S]+?\*\//gm, '');
     if (!docblocks) return;
     currentClassDefinition = null;
     docblocks.forEach((docblock, index) => {
@@ -584,7 +592,7 @@ function processFile(file) {
 
         // Process the tags as a class, method, property or event
         if (tagsObj.class) {
-          processClassDef(tagsObj, file);
+          processClassDef(tagsObj, code, file);
         } else if (tagsObj.method) {
           processMethodDef(tagsObj);
         } else if (tagsObj.property) {

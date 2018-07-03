@@ -16,7 +16,7 @@
  * model.send({ conversation });
  * ```
  *
- * @class Layer.UI.messages.ChoiceMessageModel
+ * @class Layer.UI.messages.ChoiceTilesMessageView
  * @extends Layer.Core.MessageTypeModel
  */
 import { registerComponent } from '../../components/component';
