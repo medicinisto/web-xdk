@@ -65,19 +65,20 @@
  * @author Michael Kantor
  */
 import ContentTypeParser from '../../utils/content-type-parser';
-import { client as Client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Content from './content';
-import LayerError, { ErrorDictionary } from '../layer-error';
+import { LayerError, ErrorDictionary } from '../layer-error';
 import Util, { logger, xhr } from '../../utils';
 import { getNativeSupport } from '../../utils/native-support';
 import { STANDARD_MIME_TYPES } from '../../constants';
 
+const { getClient } = Settings;
 const Blob = getNativeSupport('Blob');
 const URL = getNativeSupport('URL');
 
-class MessagePart extends Root {
+export default class MessagePart extends Root {
 
   /**
    * Constructor
@@ -182,8 +183,8 @@ class MessagePart extends Root {
   _getMessage() {
     if (this._message) {
       return this._message;
-    } else if (Client) {
-      return Client.getMessage(this.id.replace(/\/parts.*$/, ''));
+    } else if (getClient()) {
+      return getClient().getMessage(this.id.replace(/\/parts.*$/, ''));
     }
     return null;
   }
@@ -441,7 +442,7 @@ class MessagePart extends Root {
         this.trigger('parts:send', obj);
       });
     } else {
-      this._generateContentAndSend(Client);
+      this._generateContentAndSend(getClient());
     }
   }
 
@@ -461,7 +462,7 @@ class MessagePart extends Root {
       body = this.body;
     }
     const url = this._getPostContentURL();
-    Client.xhr({
+    getClient().xhr({
       url,
       method: 'POST',
       headers: {
@@ -532,8 +533,8 @@ class MessagePart extends Root {
    */
   _processContentUploadResponse(uploadResult, contentResponse, body, retryCount) {
     if (!uploadResult.success) {
-      if (!Client.onlineManager.isOnline) {
-        Client.onlineManager.once('connected', this._processContentResponse.bind(this, contentResponse), this);
+      if (!getClient().onlineManager.isOnline) {
+        getClient().onlineManager.once('connected', this._processContentResponse.bind(this, contentResponse), this);
       } else if (retryCount < MessagePart.MaxRichContentRetryCount) {
         this._processContentResponse(contentResponse, body, retryCount + 1);
       } else {
@@ -664,10 +665,10 @@ class MessagePart extends Root {
    * @returns {Layer.Core.MessageTypeModel}
    */
   createModel() {
-    if (!this._messageTypeModel && Client) {
+    if (!this._messageTypeModel && getClient()) {
       const message = this._getMessage();
       if (message) {
-        this._messageTypeModel = Client.createMessageTypeModel(message, this);
+        this._messageTypeModel = getClient().createMessageTypeModel(message, this);
       }
     } else if (this._messageTypeModel && !this._messageTypeModel.message) {
       this._messageTypeModel.message = this._getMessage();
@@ -1004,4 +1005,3 @@ MessagePart.mixins = Core.mixins.MessagePart;
 
 Root.initClass.apply(MessagePart, [MessagePart, 'MessagePart', Core]);
 
-module.exports = MessagePart;

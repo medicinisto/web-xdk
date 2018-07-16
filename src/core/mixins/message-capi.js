@@ -14,13 +14,15 @@
  */
 
 import Core from '../namespace';
-import { client as Client } from '../../settings';
+import Settings from '../../settings';
 import Util from '../../utils';
 import { ErrorDictionary } from '../layer-error';
-import Constants from '../../constants';
+import { SYNC_STATE } from '../../constants';
 import ContentTypeParser from '../../utils/content-type-parser';
 
-module.exports = {
+const { getClient } = Settings;
+
+const Message = {
   methods: {
     /**
      * Your unsent Message will show up in Query results and be rendered in Message Lists.
@@ -57,14 +59,14 @@ module.exports = {
         throw new Error(ErrorDictionary.conversationMissing);
       }
 
-      if (this.syncState !== Constants.SYNC_STATE.NEW) {
+      if (this.syncState !== SYNC_STATE.NEW) {
         throw new Error(ErrorDictionary.alreadySent);
       }
       conversation._setupMessage(this);
 
       // Make sure all data is in the right format for being rendered
       this._readAllBlobs(() => {
-        Client._addMessage(this);
+        getClient()._addMessage(this);
       });
       return this;
     },
@@ -102,7 +104,7 @@ module.exports = {
         throw new Error(ErrorDictionary.conversationMissing);
       }
 
-      if (this.syncState !== Constants.SYNC_STATE.NEW) {
+      if (this.syncState !== SYNC_STATE.NEW) {
         throw new Error(ErrorDictionary.alreadySent);
       }
 
@@ -135,7 +137,7 @@ module.exports = {
       this._readAllBlobs(() => {
         // Calling this will add this to any listening Queries... so position needs to have been set first;
         // handled in conversation.send(this)
-        Client._addMessage(this);
+        getClient()._addMessage(this);
 
         // allow for modification of message before sending
         const evt = this.trigger('sending', { notification, cancelable: true });
@@ -167,14 +169,14 @@ module.exports = {
     _send(data) {
       const conversation = this.getConversation(false);
 
-      Client._triggerAsync('state-change', {
+      getClient()._triggerAsync('state-change', {
         started: true,
         type: 'send_' + Util.typeFromID(this.id),
         telemetryId: 'send_' + Util.typeFromID(this.id) + '_time',
         id: this.id,
       });
       this.sentAt = new Date();
-      Client.sendSocketRequest({
+      getClient().sendSocketRequest({
         method: 'POST',
         body: {
           method: 'Message.create',
@@ -204,4 +206,5 @@ module.exports = {
     },
   },
 };
-Core.mixins.Message.push(module.exports);
+export default Message;
+Core.mixins.Message.push(Message);

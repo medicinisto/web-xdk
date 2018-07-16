@@ -10,7 +10,7 @@ import { ErrorDictionary } from '../layer-error';
 import { WebsocketSyncEvent } from '../sync-event';
 import Core from '../namespace';
 
-module.exports = {
+const ClientIdentity =  {
   events: [
     /**
      * A call to Layer.Core.Identity.load has completed successfully
@@ -296,5 +296,5 @@ module.exports = {
     },
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClientIdentity;
+Core.mixins.Client.push(ClientIdentity);

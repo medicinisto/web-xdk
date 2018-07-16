@@ -26,8 +26,8 @@
  * @extends Layer.Core.Root
  * @abstract
  */
-import { client } from '../../settings';
-import Core, { MessagePart } from '../namespace';
+import Settings from '../../settings';
+import Core from '../namespace';
 import Util from '../../utils';
 import Root from '../root';
 import Identity from './identity';
@@ -35,7 +35,9 @@ import MessageTypeResponseSummary from './message-type-response-summary/message-
 import { get as getResponseSummaryClass } from './message-type-response-summary';
 import { STANDARD_MIME_TYPES } from '../../constants';
 
-class MessageTypeModel extends Root {
+const { getClient } = Settings;
+
+export default class MessageTypeModel extends Root {
   /**
    * Create a Model representing/abstracting a Message's data.
    *
@@ -55,7 +57,7 @@ class MessageTypeModel extends Root {
 
     if (this.part) {
       this.id = MessageTypeModel.prefixUUID + this.part.id.replace(/^.*messages\//, '');
-      client._addMessageTypeModel(this);
+      getClient()._addMessageTypeModel(this);
     }
 
     if (this.isAnonymous) {
@@ -331,7 +333,7 @@ class MessageTypeModel extends Root {
     const data = this[fileBehaviorDef.propertyName];
     if (data) {
       // Generate a Message Part from the File/Blob and add it to our Child Parts with a suitable role
-      const part = new MessagePart(data);
+      const part = new Core.MessagePart(data);
       this.addChildPart(part, fileBehaviorDef.roleName);
       this[fileBehaviorDef.propertyName] = part;
 
@@ -470,7 +472,7 @@ class MessageTypeModel extends Root {
     this.message.on('destroy', this.destroy, this);
 
     // Register this model so that it can be retrieved instead of re-instantiated
-    client._addMessageTypeModel(this);
+    getClient()._addMessageTypeModel(this);
   }
 
   /**
@@ -984,12 +986,12 @@ class MessageTypeModel extends Root {
    * @method _getBubbleEventsTo
    */
   _getBubbleEventsTo() {
-    return client;
+    return getClient();
   }
 
   // Parent method docuemnts this
   destroy() {
-    client._removeMessageTypeModel(this);
+    getClient()._removeMessageTypeModel(this);
     delete this.message;
     super.destroy();
   }
@@ -1168,7 +1170,7 @@ class MessageTypeModel extends Root {
 
   // See messageSender property docs below
   __getMessageSender() {
-    return this.message ? this.message.sender : client.user;
+    return this.message ? this.message.sender : getClient().user;
   }
 
   // See messageSentAt property docs below
@@ -1732,5 +1734,3 @@ MessageTypeModel._supportedEvents = [
 MessageTypeModel.mixins = Core.mixins.MessageTypeModel;
 
 Root.initClass.apply(MessageTypeModel, [MessageTypeModel, 'MessageTypeModel', Core]);
-
-module.exports = MessageTypeModel;

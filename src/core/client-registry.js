@@ -6,6 +6,7 @@
  *
  * @class  Layer.Core.ClientRegistry
  * @private
+ * @deprecated
  */
 
 import { defer } from '../utils';
@@ -83,7 +84,7 @@ function removeListener(listener) {
 }
 
 
-module.exports = {
+export {
   get,
   getAll,
   register,

@@ -9,13 +9,15 @@
 import Core from '../../namespace';
 import Syncable from '../syncable';
 import Root from '../../root';
-import { client } from '../../../settings';
+import Settings from '../../../settings';
 import CRDTMultiIdentityTracker from '../../crdt/multi-identity-state-tracker';
 import { logger, randomString } from '../../../utils';
 import { ErrorDictionary } from '../../layer-error';
 import { register } from './index';
 
-class MessageTypeResponseSummary extends Root {
+const { getClient } = Settings;
+
+export default class MessageTypeResponseSummary extends Root {
   constructor(options) {
     super(options);
     this._trackers = {};
@@ -79,10 +81,10 @@ class MessageTypeResponseSummary extends Root {
     if (operations && operations.length) {
       const evt = {
         property: 'responses.' + name,
-        newValue: this.getState(name, client.user.id),
+        newValue: this.getState(name, getClient().user.id),
         addedValue: operations[0].value,
         oldValue: operations[0].oldValue,
-        identityId: client.user.id,
+        identityId: getClient().user.id,
       };
       this._addOperations(operations, evt);
       this.parentModel._triggerAsync('message-type-model:change', evt);
@@ -133,14 +135,14 @@ class MessageTypeResponseSummary extends Root {
    * @param {String} value
    */
   removeState(name, value) {
-    const oldValue = this.getState(name, client.user.id);
+    const oldValue = this.getState(name, getClient().user.id);
     const operations = this._trackers[name].removeValue(value);
     if (operations && operations.length) {
       const evt = {
         property: 'responses.' + name,
-        newValue: this.getState(name, client.user.id),
+        newValue: this.getState(name, getClient().user.id),
         oldValue,
-        identityId: client.user.id,
+        identityId: getClient().user.id,
       };
       this._addOperations(operations, evt);
       this.parentModel._triggerAsync('message-type-model:change', evt);
@@ -412,5 +414,4 @@ MessageTypeResponseSummary.inObjectIgnore = Root.inObjectIgnore;
 Root.initClass.apply(MessageTypeResponseSummary,
   [MessageTypeResponseSummary, 'MessageTypeResponseSummary', Core]);
 Syncable.subclasses.push(MessageTypeResponseSummary);
-module.exports = MessageTypeResponseSummary;
 register('application/vnd.layer.responsesummary-v2+json', MessageTypeResponseSummary);

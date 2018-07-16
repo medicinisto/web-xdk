@@ -244,5 +244,4 @@ if (global && global.document) {
 }
 
 
-module.exports = LayerUI;
-
+export default LayerUI;

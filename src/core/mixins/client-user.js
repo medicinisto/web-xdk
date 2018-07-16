@@ -7,7 +7,7 @@
 
 import Core from '../namespace';
 
-module.exports = {
+const ClientUser = {
   properties: {
     /**
      * Identity information about the authenticated user.
@@ -52,5 +52,5 @@ module.exports = {
     },
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClientUser;
+Core.mixins.Client.push(ClientUser);

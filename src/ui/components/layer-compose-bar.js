@@ -46,10 +46,11 @@
  */
 import Core from '../../core/namespace';
 import { registerComponent } from './component';
-import Settings, { client } from '../../settings';
+import Settings from '../../settings';
 import { logger } from '../../utils';
 import IsUrl from '../ui-utils/is-url';
 
+const { getClient } = Settings;
 const ErrorDictionary = Core.LayerError.ErrorDictionary;
 const ENTER = 13;
 const TAB = 9;
@@ -326,7 +327,7 @@ registerComponent('layer-compose-bar', {
      */
     _setTypingListenerConversation() {
       if (!this.properties.typingListener) {
-        this.properties.typingListener = client.createTypingListener(this.nodes.input);
+        this.properties.typingListener = getClient().createTypingListener(this.nodes.input);
       }
       this.properties.typingListener.setConversation(this.conversation);
     },

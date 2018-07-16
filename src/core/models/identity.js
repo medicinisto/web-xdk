@@ -28,9 +28,11 @@ import Root from '../root';
 import { SYNC_STATE } from '../../constants';
 import { ErrorDictionary } from '../layer-error';
 import { strictEncodeURI } from '../../utils';
-import { client } from '../../settings';
+import Settings from '../../settings';
 
-class Identity extends Syncable {
+const { getClient } = Settings;
+
+export default class Identity extends Syncable {
   constructor(options = {}) {
     // Make sure the ID from handle fromServer parameter is used by the Root.constructor
     if (options.fromServer) {
@@ -66,14 +68,14 @@ class Identity extends Syncable {
     }
 
     if (!this.url && this.id) {
-      this.url = `${client.url}/${this.id.substring(9)}`;
+      this.url = `${getClient().url}/${this.id.substring(9)}`;
     } else if (!this.url) {
       this.url = '';
     }
-    client._addIdentity(this);
+    getClient()._addIdentity(this);
 
-    if (client.supportsEvent('online')) {
-      client.on('online', (evt) => {
+    if (getClient().supportsEvent('online')) {
+      getClient().on('online', (evt) => {
         if (!evt.isOnline) this._updateValue(['_presence', 'status'], Identity.STATUS.OFFLINE);
       }, this);
     }
@@ -82,7 +84,7 @@ class Identity extends Syncable {
   }
 
   destroy() {
-    if (client) client._removeIdentity(this);
+    if (getClient()) getClient()._removeIdentity(this);
     super.destroy();
   }
 
@@ -125,14 +127,14 @@ class Identity extends Syncable {
     }
 
     if (!this.url && this.id) {
-      this.url = client.url + this.id.substring(8);
+      this.url = getClient().url + this.id.substring(8);
     }
 
     this._disableEvents = false;
 
     // See if we have the Full Identity Object in database
-    if (!this.isFullIdentity && client.isAuthenticated && client.dbManager) {
-      client.dbManager.getObjects('identities', [this.id], (result) => {
+    if (!this.isFullIdentity && getClient().isAuthenticated && getClient().dbManager) {
+      getClient().dbManager.getObjects('identities', [this.id], (result) => {
         if (result.length) this._populateFromServer(result[0]);
       });
     }
@@ -260,7 +262,7 @@ class Identity extends Syncable {
     if (status === Identity.STATUS.INVISIBLE) status = Identity.STATUS.OFFLINE; // these are equivalent; only one supported by server
 
     const oldValue = this._presence.status;
-    client.sendSocketRequest({
+    getClient().sendSocketRequest({
       method: 'PATCH',
       body: {
         method: 'Presence.update',
@@ -295,12 +297,12 @@ class Identity extends Syncable {
    * @param {string} userId
    */
   _setUserId(userId) {
-    client._removeIdentity(this);
+    getClient()._removeIdentity(this);
     this.__userId = userId;
     const encoded = strictEncodeURI(userId);
     this.id = Identity.prefixUUID + encoded;
-    this.url = `${client.url}/identities/${encoded}`;
-    client._addIdentity(this);
+    this.url = `${getClient().url}/identities/${encoded}`;
+    getClient()._addIdentity(this);
   }
 
   /**
@@ -330,8 +332,8 @@ class Identity extends Syncable {
   */
   // Turn a Full Identity into a Basic Identity and delete the Full Identity from the database
   _handleWebsocketDelete(data) {
-    if (client.dbManager) {
-      client.dbManager.deleteObjects('identities', [this]);
+    if (getClient().dbManager) {
+      getClient().dbManager.deleteObjects('identities', [this]);
       ['firstName', 'lastName', 'emailAddress', 'phoneNumber', 'metadata', 'publicKey', 'isFullIdentity', 'type']
         .forEach(key => delete this[key]);
     }
@@ -616,6 +618,3 @@ Identity.mixins = Core.mixins.Identity;
 
 Root.initClass.apply(Identity, [Identity, 'Identity', Core]);
 Syncable.subclasses.push(Identity);
-
-
-module.exports = Identity;

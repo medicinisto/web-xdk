@@ -15,9 +15,11 @@
  * @class Layer.Core.SyncEvent
  * @extends Layer.Core.Root
  */
-import { client } from '../settings';
+import Settings from '../settings';
 import Util from '../utils';
 import Core from './namespace';
+
+const { getClient } = Settings;
 
 class SyncEvent {
   /**
@@ -58,7 +60,7 @@ class SyncEvent {
    */
   _updateData() {
     if (!this.target) return;
-    const target = client.getObject(this.target);
+    const target = getClient().getObject(this.target);
     if (target && this.operation === 'POST' && target._getSendData) {
       this.data = target._getSendData(this.data);
     }
@@ -250,7 +252,7 @@ class XHRSyncEvent extends SyncEvent {
    */
   _updateUrl() {
     if (!this.target) return;
-    const target = client.getObject(this.target);
+    const target = getClient().getObject(this.target);
     if (target && !this.url.match(/^http(s):\/\//)) {
       this.url = target._getUrl(this.url);
     }
@@ -347,7 +349,7 @@ class WebsocketSyncEvent extends SyncEvent {
  */
 WebsocketSyncEvent.prototype.returnChangesArray = false;
 
-module.exports = { SyncEvent, XHRSyncEvent, WebsocketSyncEvent };
+export { SyncEvent, XHRSyncEvent, WebsocketSyncEvent };
 Core.SyncEvent = SyncEvent;
 Core.XHRSyncEvent = XHRSyncEvent;
 Core.WebsocketSyncEvent = WebsocketSyncEvent;

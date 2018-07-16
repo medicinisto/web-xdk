@@ -1,8 +1,10 @@
-import { client } from '../../settings';
+import Settings from '../../settings';
 import { CRDTStateTracker } from './state-tracker';
 import Core from '../namespace';
 import { CRDT_TYPES } from '../../constants';
 import { ErrorDictionary } from '../layer-error';
+
+const { getClient } = Settings;
 
 /**
  * The Multi Identity tracker class tracks all state related to a given named state across all users.
@@ -12,7 +14,7 @@ import { ErrorDictionary } from '../layer-error';
  *
  * @class Layer.Core.CRDT.MultiIdentityStateTracker
  */
-class CRDTMultiIdentityStateTracker {
+export default class CRDTMultiIdentityStateTracker {
 
   /**
    *
@@ -112,7 +114,7 @@ class CRDTMultiIdentityStateTracker {
    * @returns {Layer.Core.CRDT.Changes[]}
    */
   addValue(value) {
-    const identityId = client.user.id;
+    const identityId = getClient().user.id;
     this._addUser(identityId);
     return this.users[identityId].add(value);
   }
@@ -125,7 +127,7 @@ class CRDTMultiIdentityStateTracker {
    * @returns {Layer.Core.CRDT.Changes[]}
    */
   removeValue(value) {
-    const identityId = client.user.id;
+    const identityId = getClient().user.id;
     this._addUser(identityId);
     return this.users[identityId].remove(value);
   }
@@ -151,8 +153,6 @@ class CRDTMultiIdentityStateTracker {
     return changes;
   }
 }
-
-module.exports = CRDTMultiIdentityStateTracker;
 
 if (!Core.CRDT) Core.CRDT = {};
 Core.CRDT.CRDTMultiIdentityStateTracker = CRDTMultiIdentityStateTracker;

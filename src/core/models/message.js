@@ -124,16 +124,18 @@
  * @class  Layer.Core.Message
  * @extends Layer.Core.Syncable
  */
-import { client as Client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Syncable from './syncable';
 import MessagePart from './message-part';
-import Constants from '../../constants';
+import { SYNC_STATE } from '../../constants';
 import Util from '../../utils';
 import Identity from './identity';
 
-class Message extends Syncable {
+const { getClient } = Settings;
+
+export default class Message extends Syncable {
   /**
    * See Layer.Core.Conversation.createMessage()
    *
@@ -165,7 +167,7 @@ class Message extends Syncable {
       this.__updateParts(this.parts);
     } else {
       this.parts = parts || new Set();
-      if (Client) this.sender = Client.user;
+      if (getClient()) this.sender = getClient().user;
       this.sentAt = new Date();
     }
     this._regenerateMimeAttributesMap();
@@ -203,7 +205,7 @@ class Message extends Syncable {
         if (part instanceof MessagePart) {
           result = part;
         } else if (part.mime_type && !part.mimeType) {
-          result = Client._createObject(part);
+          result = getClient()._createObject(part);
         } else {
           result = new MessagePart(part);
         }
@@ -377,7 +379,7 @@ class Message extends Syncable {
     * @param {Object} messageData - Server description of the message
     */
   _sendResult({ success, data }) {
-    Client._triggerAsync('state-change', {
+    getClient()._triggerAsync('state-change', {
       ended: true,
       type: 'send_' + Util.typeFromID(this.id),
       telemetryId: 'send_' + Util.typeFromID(this.id) + '_time',
@@ -391,8 +393,8 @@ class Message extends Syncable {
       this._triggerAsync('sent');
       this._triggerAsync('change', {
         property: 'syncState',
-        oldValue: Constants.SYNC_STATE.SAVING,
-        newValue: Constants.SYNC_STATE.SYNCED,
+        oldValue: SYNC_STATE.SAVING,
+        newValue: SYNC_STATE.SYNCED,
       });
     } else {
       this.trigger('sent-error', { error: data });
@@ -442,7 +444,7 @@ class Message extends Syncable {
    * @method destroy
    */
   destroy() {
-    Client._removeMessage(this);
+    getClient()._removeMessage(this);
     this.parts.forEach(part => part.destroy());
     this.__parts = null;
 
@@ -507,7 +509,7 @@ class Message extends Syncable {
 
     let sender;
     if (message.sender.id) {
-      sender = Client.getIdentity(message.sender.id);
+      sender = getClient().getIdentity(message.sender.id);
     }
 
     // Because there may be no ID, we have to bypass client._createObject and its switch statement.
@@ -731,8 +733,8 @@ class Message extends Syncable {
     } else if (paths[0] === 'parts') {
       oldValue = this.filterParts(null, oldValue);// transform to array
       newValue = this.filterParts(null, newValue);
-      const oldValueParts = oldValue.map(part => Client.getMessagePart(part.id)).filter(part => part);
-      const removedParts = oldValue.filter(part => !Client.getMessagePart(part.id));
+      const oldValueParts = oldValue.map(part => getClient().getMessagePart(part.id)).filter(part => part);
+      const removedParts = oldValue.filter(part => !getClient().getMessagePart(part.id));
       const addedParts = newValue.filter(part => oldValueParts.indexOf(part) === -1);
 
       addedParts.forEach(part => this.addPart(part));
@@ -1090,5 +1092,3 @@ Message.mixins = Core.mixins.Message;
 
 Root.initClass.apply(Message, [Message, 'Message', Core]);
 Syncable.subclasses.push(Message);
-
-module.exports = Message;

@@ -44,7 +44,7 @@
  * @class  Layer.Core.Query.ManualQuery
  * @extends Layer.Core.Query
  */
-import { client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Query from './query';
@@ -53,21 +53,23 @@ import Message from '../models/message';
 import Conversation from '../models/conversation';
 import Identity from '../models/identity';
 
-class ManualQuery extends Query {
+const { getClient } = Settings;
+
+export default class ManualQuery extends Query {
   _prepareItem(item) {
     if (!(item instanceof Root)) {
       switch (Util.typeFromID(item.id || '')) {
         case 'messages':
           item = new Message.ConversationMessage(item);
-          client._addMessage(item);
+          getClient()._addMessage(item);
           break;
         case 'conversations':
           item = new Conversation(item);
-          client._addConversation(item);
+          getClient()._addConversation(item);
           break;
         case 'identities':
           item = new Identity(item);
-          client._addIdentity(item);
+          getClient()._addIdentity(item);
           break;
       }
     }
@@ -138,5 +140,3 @@ ManualQuery.MaxPageSize = 500;
 ManualQuery.prototype.model = Query.Manual;
 
 Root.initClass.apply(ManualQuery, [ManualQuery, 'ManualQuery', Core.Query]);
-
-module.exports = ManualQuery;

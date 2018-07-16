@@ -64,7 +64,6 @@ import './queries/query-builder';
 import './layer-error';
 import './layer-event';
 import './sync-manager';
-import './sync-event';
 import './websockets/socket-manager';
 import './websockets/request-manager';
 import './websockets/change-manager';
@@ -73,4 +72,4 @@ import './typing-indicators/typing-indicators';
 import './typing-indicators/typing-listener';
 import './typing-indicators/typing-publisher';
 
-module.exports = Core;
+export default Core;

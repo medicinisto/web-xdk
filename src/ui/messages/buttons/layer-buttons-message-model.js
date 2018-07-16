@@ -90,10 +90,12 @@
  * @class Layer.UI.messages.ButtonsMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import { Client, MessagePart, MessageTypeModel, Root, MessageTypeModels } from '../../../core/namespace';
+import Core from '../../../core/namespace';
 import { hyphenate, camelCase, clone } from '../../../utils';
 import ChoiceModel from '../choice/layer-choice-message-model';
 import ChoiceItem from '../choice/layer-choice-message-model-item';
+
+const { Client, MessagePart, MessageTypeModel, Root, MessageTypeModels } = Core;
 
 class ButtonsModel extends MessageTypeModel {
 

@@ -31,20 +31,22 @@
  * @class  Layer.Core.Query.ConversationsQuery
  * @extends Layer.Core.Query
  */
-import { client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Util from '../../utils';
 import { SYNC_STATE } from '../../constants';
 import Query from './query';
 
-class ConversationsQuery extends Query {
+const { getClient } = Settings;
+
+export default class ConversationsQuery extends Query {
 
   _fetchData(pageSize) {
     const sortBy = this._getSortField();
 
-    if (client.dbManager) {
-      client.dbManager.loadConversations(sortBy, this._nextDBFromId, pageSize, (conversations) => {
+    if (getClient().dbManager) {
+      getClient().dbManager.loadConversations(sortBy, this._nextDBFromId, pageSize, (conversations) => {
         if (conversations.length) this._appendResults({ data: conversations }, true);
       });
     }
@@ -55,7 +57,7 @@ class ConversationsQuery extends Query {
     if (newRequest !== this._firingRequest) {
       this.isFiring = true;
       this._firingRequest = newRequest;
-      client.xhr({
+      getClient().xhr({
         telemetry: {
           name: 'conversation_query_time',
         },
@@ -306,5 +308,3 @@ ConversationsQuery.MaxPageSize = 100;
 ConversationsQuery.prototype.model = Query.Conversation;
 
 Root.initClass.apply(ConversationsQuery, [ConversationsQuery, 'ConversationsQuery', Core.Query]);
-
-module.exports = ConversationsQuery;

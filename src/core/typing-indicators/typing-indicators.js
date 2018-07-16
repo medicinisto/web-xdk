@@ -10,25 +10,27 @@
  */
 import Core from '../namespace';
 
-module.exports = Core.TypingIndicators = {
-  /**
-   * Typing has started/resumed
-   * @property {String} [STARTED=started]
-   * @static
-   */
-  STARTED: 'started',
 
-  /**
-   * Typing has paused
-   * @property {String} [PAUSED=paused]
-   * @static
-   */
-  PAUSED: 'paused',
+/**
+ * Typing has started/resumed
+ * @property {String} [STARTED=started]
+ * @static
+ */
+const STARTED = 'started';
 
-  /**
-   * Typing has finished
-   * @property {String} [FINISHED=finished]
-   * @static
-   */
-  FINISHED: 'finished',
-};
+/**
+ * Typing has paused
+ * @property {String} [PAUSED=paused]
+ * @static
+ */
+const PAUSED = 'paused';
+
+/**
+ * Typing has finished
+ * @property {String} [FINISHED=finished]
+ * @static
+ */
+const FINISHED = 'finished';
+
+Core.TypingIndicators = { STARTED, PAUSED, FINISHED };
+export { STARTED, PAUSED, FINISHED };

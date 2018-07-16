@@ -6,15 +6,17 @@
  * And have that callback either called by the correct websocket server response, or
  * be called with a timeout.
  */
-import { client as Client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../namespace';
 import Util, { logger } from '../../utils';
-import LayerError from '../layer-error';
+import { LayerError } from '../layer-error';
+
+const { getClient } = Settings;
 
 // Wait 15 seconds for a response and then give up
 const DELAY_UNTIL_TIMEOUT = 15 * 1000;
 
-class WebsocketRequestManager {
+export default class WebsocketRequestManager {
   /**
    * Create a new websocket change manager
    *
@@ -127,7 +129,7 @@ class WebsocketRequestManager {
    * @param {Object[]} changes   "create", "update", and "delete" requests from server.
    */
   _handleChangesArray(changes) {
-    changes.forEach(change => Client.socketChangeManager._processChange(change));
+    changes.forEach(change => getClient().socketChangeManager._processChange(change));
   }
 
 
@@ -309,5 +311,4 @@ WebsocketRequestManager.prototype._callbackCleanupId = 0;
 
 WebsocketRequestManager.prototype.socketManager = null;
 
-module.exports = Core.Websockets.RequestManager = WebsocketRequestManager;
-
+Core.Websockets.RequestManager = WebsocketRequestManager;

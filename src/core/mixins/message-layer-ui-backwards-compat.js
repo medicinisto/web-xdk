@@ -59,7 +59,7 @@ function convertToImage(message) {
   }
 }
 
-module.exports = {
+const Compat = {
   lifecycle: {
     'populate-from-server': function populateFromServer(message) {
       if (isPlainText(message)) {
@@ -70,4 +70,5 @@ module.exports = {
     },
   },
 };
-Core.mixins.Message.push(module.exports);
+export default Compat;
+Core.mixins.Message.push(Compat);

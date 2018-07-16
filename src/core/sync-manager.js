@@ -17,15 +17,17 @@
  * Applications do not typically interact with this class, but may subscribe to its events
  * to get richer detailed information than is available from the Layer.Core.Client instance.
  */
-import { client as Client } from '../settings';
+import Settings from '../settings';
 import Core from './namespace';
 import Root from './root';
 import { WebsocketSyncEvent } from './sync-event';
 import Util, { logger, xhr } from '../utils';
 
+const { getClient } = Settings;
+
 const MAX_RECEIPT_CONNECTIONS = 4;
 
-class SyncManager extends Root {
+export default class SyncManager extends Root {
   /**
    * Creates a new SyncManager.
    *
@@ -54,7 +56,7 @@ class SyncManager extends Root {
     super(options);
 
     // Note we do not store a pointer to client... it is not needed.
-    Client.on('ready', () => {
+    getClient().on('ready', () => {
       this._processNextRequest();
       this._loadPersistedQueue();
     }, this);
@@ -146,8 +148,8 @@ class SyncManager extends Root {
   _processNextRequest(requestEvt) {
     // Fire the request if there aren't any existing requests already firing
     if (this.queue.length && !this.queue[0].isFiring) {
-      if (requestEvt && Client.dbManager && !requestEvt.isPersistenceDisabled) {
-        Client.dbManager.writeSyncEvents([requestEvt], () => this._processNextStandardRequest());
+      if (requestEvt && getClient().dbManager && !requestEvt.isPersistenceDisabled) {
+        getClient().dbManager.writeSyncEvents([requestEvt], () => this._processNextStandardRequest());
       } else {
         this._processNextStandardRequest();
       }
@@ -155,8 +157,8 @@ class SyncManager extends Root {
 
     // If we have anything in the receipts queue, fire it
     if (this.receiptQueue.length) {
-      if (requestEvt && Client.dbManager && !requestEvt.isPersistenceDisabled) {
-        Client.dbManager.writeSyncEvents([requestEvt], () => this._processNextReceiptRequest());
+      if (requestEvt && getClient().dbManager && !requestEvt.isPersistenceDisabled) {
+        getClient().dbManager.writeSyncEvents([requestEvt], () => this._processNextReceiptRequest());
       } else {
         this._processNextReceiptRequest();
       }
@@ -190,7 +192,7 @@ class SyncManager extends Root {
    * @private
    */
   _processNextStandardRequest() {
-    if (this.isDestroyed || !Client.isAuthenticated) return;
+    if (this.isDestroyed || !getClient().isAuthenticated) return;
     const requestEvt = this.queue[0];
     if (this.isOnline() && requestEvt && !requestEvt.isFiring && !requestEvt._isValidating) {
       requestEvt._isValidating = true;
@@ -257,11 +259,11 @@ class SyncManager extends Root {
   _fireRequestXHR(requestEvt) {
     requestEvt.isFiring = true;
     if (!requestEvt.headers) requestEvt.headers = {};
-    requestEvt.headers.authorization = 'Layer session-token="' + Client.sessionToken + '"';
+    requestEvt.headers.authorization = 'Layer session-token="' + getClient().sessionToken + '"';
     logger.info('Sync-Manager: XHR Request Firing ',
       `${requestEvt.operation} ${requestEvt.target} at ${new Date().toISOString()}`,
       requestEvt.toObject());
-    xhr(requestEvt._getRequestData(Client), result => this._xhrResult(result, requestEvt));
+    xhr(requestEvt._getRequestData(getClient()), result => this._xhrResult(result, requestEvt));
   }
 
   /**
@@ -277,7 +279,7 @@ class SyncManager extends Root {
         requestEvt.toObject());
       requestEvt.isFiring = true;
       this.requestManager.sendRequest({
-        data: requestEvt._getRequestData(Client),
+        data: requestEvt._getRequestData(getClient()),
         callback: result => this._xhrResult(result, requestEvt),
         isChangesArray: requestEvt.returnChangesArray,
       });
@@ -301,10 +303,10 @@ class SyncManager extends Root {
    * @private
    */
   _validateRequest(syncEvent, callback) {
-    if (!Client.dbManager || syncEvent.isPersistenceDisabled) {
+    if (!getClient().dbManager || syncEvent.isPersistenceDisabled) {
       callback(true);
     } else {
-      Client.dbManager.claimSyncEvent(syncEvent, isFound => callback(isFound));
+      getClient().dbManager.claimSyncEvent(syncEvent, isFound => callback(isFound));
     }
   }
 
@@ -638,7 +640,7 @@ class SyncManager extends Root {
     const queue = requestEvt.operation === 'RECEIPT' ? this.receiptQueue : this.queue;
     const index = queue.indexOf(requestEvt);
     if (index !== -1) queue.splice(index, 1);
-    if (deleteDB && Client.dbManager) Client.dbManager.deleteObjects('syncQueue', [requestEvt]);
+    if (deleteDB && getClient().dbManager) getClient().dbManager.deleteObjects('syncQueue', [requestEvt]);
   }
 
   /**
@@ -697,8 +699,8 @@ class SyncManager extends Root {
    * @private
    */
   _loadPersistedQueue() {
-    if (Client.dbManager) {
-      Client.dbManager.loadSyncQueue((data) => {
+    if (getClient().dbManager) {
+      getClient().dbManager.loadSyncQueue((data) => {
         if (data.length) {
           this.queue = this.queue.concat(data.filter(item => item.operation !== 'RECEIPT'));
           this._processNextRequest();
@@ -869,4 +871,3 @@ SyncManager._supportedEvents = [
 ].concat(Root._supportedEvents);
 
 Root.initClass.apply(SyncManager, [SyncManager, 'SyncManager', Core]);
-module.exports = SyncManager;

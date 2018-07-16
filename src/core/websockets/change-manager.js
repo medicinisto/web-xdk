@@ -5,14 +5,15 @@
  * This class listens for `change` events from the websocket server,
  * and processes them.
  */
-import { client as Client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../namespace';
 import Util, { logger } from '../../utils';
 import Message from '../models/message';
 import Container from '../models/container';
 
+const { getClient } = Settings;
 
-class WebsocketChangeManager {
+export default class WebsocketChangeManager {
   /**
    * Create a new websocket change manager
    *
@@ -40,7 +41,7 @@ class WebsocketChangeManager {
     if (evt.data.type === 'change') {
       this._processChange(evt.data.body);
     } else if (evt.data.type === 'operation') {
-      Client.trigger('websocket:operation', { data: evt.data.body });
+      getClient().trigger('websocket:operation', { data: evt.data.body });
     }
   }
 
@@ -83,7 +84,7 @@ class WebsocketChangeManager {
    */
   _handleCreate(msg) {
     msg.data.fromWebsocket = true;
-    const obj = Client._createObject(msg.data);
+    const obj = getClient()._createObject(msg.data);
     if (obj) obj._loadType = 'websocket';
   }
 
@@ -130,11 +131,11 @@ class WebsocketChangeManager {
       switch (Util.typeFromID(msg.object.id)) {
         case 'channels':
         case 'conversations':
-          if (Container._loadResourceForPatch(msg.data)) Client.getObject(msg.object.id, true);
+          if (Container._loadResourceForPatch(msg.data)) getClient().getObject(msg.object.id, true);
           break;
 
         case 'messages':
-          if (Message._loadResourceForPatch(msg.data)) Client.getMessage(msg.object.id, true);
+          if (Message._loadResourceForPatch(msg.data)) getClient().getMessage(msg.object.id, true);
           break;
         case 'announcements':
           break;
@@ -151,7 +152,7 @@ class WebsocketChangeManager {
    * @return {Layer.Core.Root}
    */
   getObject(msg) {
-    return Client.getObject(msg.object.id);
+    return getClient().getObject(msg.object.id);
   }
 
   /**
@@ -162,4 +163,4 @@ class WebsocketChangeManager {
   }
 }
 
-module.exports = Core.Websockets.ChangeManager = WebsocketChangeManager;
+Core.Websockets.ChangeManager = WebsocketChangeManager;

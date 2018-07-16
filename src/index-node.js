@@ -1,6 +1,6 @@
 /* eslint-disable import/first */
 import './utils/native-support/node';
-import { Core, Utils, Constants, init, onInit, version, client, Settings } from './index-core';
+import { Core, Utils, Constants, init, onInit, version, Settings } from './index-core';
 import './ui/messages/index-models';
 
 module.exports = {
@@ -10,7 +10,7 @@ module.exports = {
   init,
   onInit,
   version: version + '-node',
-  client,
+  get client() { return Settings.getClient(); },
   Settings,
 };
 if (typeof global !== 'undefined') global.Layer = global.layer = module.exports;

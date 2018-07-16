@@ -14,7 +14,7 @@ import ManualQuery from '../queries/manual-query';
 import { ErrorDictionary } from '../layer-error';
 import Core from '../namespace';
 
-module.exports = {
+const ClientQueries = {
   events: [
 
   ],
@@ -141,5 +141,5 @@ module.exports = {
     },
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClientQueries;
+Core.mixins.Client.push(ClientQueries);

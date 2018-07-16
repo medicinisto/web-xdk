@@ -25,7 +25,7 @@
  * @extends Layer.Core.Root
  *
  */
-import { client } from '../settings';
+import Settings from '../settings';
 import Core from './namespace';
 import Root from './root';
 import Util, { logger, xhr } from '../utils';
@@ -33,7 +33,9 @@ import { getNativeSupport } from '../utils/native-support';
 import { ACCEPT } from '../constants';
 import version from '../version';
 
-class OnlineStateManager extends Root {
+const { getClient } = Settings;
+
+export default class OnlineStateManager extends Root {
   /**
    * Creates a new OnlineStateManager.
    *
@@ -183,12 +185,12 @@ class OnlineStateManager extends Root {
    */
   checkOnlineStatus(callback) {
     this._clearCheck();
-    if (client.isReady) {
+    if (getClient().isReady) {
       logger.info('OnlineStateManager: Firing XHR for online check');
       this._lastCheckOnlineStatus = new Date();
       // Ping the server and see if we're connected.
       xhr({
-        url: `${client.url}/ping?client=${version}`,
+        url: `${getClient().url}/ping?client=${version}`,
         method: 'HEAD',
         headers: {
           accept: ACCEPT,
@@ -341,4 +343,3 @@ OnlineStateManager._supportedEvents = [
   'disconnected',
 ].concat(Root._supportedEvents);
 Root.initClass.apply(OnlineStateManager, [OnlineStateManager, 'OnlineStateManager', Core]);
-module.exports = OnlineStateManager;

@@ -19,9 +19,11 @@ import MessageViewMixin from '../message-view-mixin';
 import Throttler from '../../mixins/throttler';
 import Clickable from '../../mixins/clickable';
 import { isMobile } from '../../../utils';
-import { client } from '../../../settings';
+import Settings from '../../../settings';
 import './layer-carousel-message-model';
 import { getWhereClicked } from '../../ui-utils/analytics';
+
+const { getClient } = Settings;
 
 registerComponent('layer-carousel-message-view', {
   template: `
@@ -562,7 +564,7 @@ registerComponent('layer-carousel-message-view', {
 
       // Generate analytics events
       if (lastIndex !== index) {
-        client._triggerAsync('analytics', {
+        getClient()._triggerAsync('analytics', {
           type: 'carousel-scrolled',
           size: this.messageViewer.size,
           where: getWhereClicked(this.messageViewer),

@@ -9,14 +9,15 @@ import { xhr, logger, generateUUID } from '../../utils';
 import Core from '../namespace';
 import SyncManager from '../sync-manager';
 import { XHRSyncEvent, WebsocketSyncEvent } from '../sync-event';
-import { timeBetweenReauths } from '../../settings';
-import LayerError from '../layer-error';
+import Settings from '../../settings';
+import { LayerError } from '../layer-error';
 import { LOCALSTORAGE_KEYS, ACCEPT } from '../../constants';
 import version from '../../version';
 
+const { timeBetweenReauths } = Settings;
 const MAX_XHR_RETRIES = 3;
 
-module.exports = {
+const ClientCapiRequest =  {
   lifecycle: {
 
     // Listen for any websocket operations and call our handler
@@ -317,5 +318,5 @@ module.exports = {
     },
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClientCapiRequest;
+Core.mixins.Client.push(ClientCapiRequest);

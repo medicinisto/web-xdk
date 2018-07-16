@@ -7,13 +7,15 @@
  * @experimental This feature is incomplete, and available as Preview only.
  * @extends Layer.Core.Syncable
  */
-import { client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../namespace';
 import Syncable from './syncable';
 import Root from '../root';
-import Constants from '../../constants';
+import { SYNC_STATE } from '../../constants';
 
-class Membership extends Syncable {
+const { getClient } = Settings;
+
+export default class Membership extends Syncable {
   constructor(options = {}) {
     // Make sure the ID from handle fromServer parameter is used by the Root.constructor
     if (options.fromServer) {
@@ -34,17 +36,17 @@ class Membership extends Syncable {
     }
 
     if (!this.url && this.id) {
-      this.url = `${client.url}/${this.id.substring(9)}`;
+      this.url = `${getClient().url}/${this.id.substring(9)}`;
     } else if (!this.url) {
       this.url = '';
     }
-    client._addMembership(this);
+    getClient()._addMembership(this);
 
     this.isInitializing = false;
   }
 
   destroy() {
-    if (client) client._removeMembership(this);
+    if (getClient()) getClient()._removeMembership(this);
     super.destroy();
   }
 
@@ -61,16 +63,16 @@ class Membership extends Syncable {
 
     // Disable events if creating a new Membership
     // We still want property change events for anything that DOES change
-    this._disableEvents = (this.syncState === Constants.SYNC_STATE.NEW);
+    this._disableEvents = (this.syncState === SYNC_STATE.NEW);
 
     this._setSynced();
 
-    this.userId = membership.identity ? membership.identity.user_id || '' : client.user.userId;
+    this.userId = membership.identity ? membership.identity.user_id || '' : getClient().user.userId;
     this.channelId = membership.channel.id;
 
-    // this.role = client._createObject(membership.role);
+    // this.role = getClient()._createObject(membership.role);
 
-    this.identity = membership.identity ? client._createObject(membership.identity) : client.user;
+    this.identity = membership.identity ? getClient()._createObject(membership.identity) : getClient().user;
     this.identity.on('identities:change', (evt) => {
       this.trigger('change', {
         property: 'identity',
@@ -78,7 +80,7 @@ class Membership extends Syncable {
     }, this);
 
     if (!this.url && this.id) {
-      this.url = client.url + this.id.substring(8);
+      this.url = getClient().url + this.id.substring(8);
     }
 
     this._disableEvents = false;
@@ -172,5 +174,3 @@ Membership.prefixUUID = '/members/';
 
 Root.initClass.apply(Membership, [Membership, 'Membership', Core]);
 Syncable.subclasses.push(Membership);
-
-module.exports = Membership;

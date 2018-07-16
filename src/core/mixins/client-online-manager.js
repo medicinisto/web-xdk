@@ -7,10 +7,10 @@
 
 import Core from '../namespace';
 import OnlineManager from '../online-state-manager';
-import { resetAfterOfflineDuration } from '../../settings';
+import Settings from '../../settings';
 
 
-module.exports = {
+const ClientOnline = {
   events: [
     /**
      * @event online
@@ -85,7 +85,7 @@ module.exports = {
       const isOnline = evt.eventName === 'connected';
       const obj = { isOnline };
       if (isOnline) {
-        obj.reset = duration > resetAfterOfflineDuration;
+        obj.reset = duration > Settings.resetAfterOfflineDuration;
 
         // TODO: Use a cached nonce if it hasn't expired
         if (!this.isAuthenticated) this._connect();
@@ -94,5 +94,5 @@ module.exports = {
     },
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClientOnline;
+Core.mixins.Client.push(ClientOnline);

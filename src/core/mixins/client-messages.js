@@ -11,7 +11,7 @@ import MessagePart from '../models/message-part';
 import { ErrorDictionary } from '../layer-error';
 import Core from '../namespace';
 
-module.exports = {
+const ClientMessage = {
   events: [
     /**
      * A new message has been received for which a notification may be suitable.
@@ -397,5 +397,5 @@ module.exports = {
     },
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClientMessage;
+Core.mixins.Client.push(ClientMessage);

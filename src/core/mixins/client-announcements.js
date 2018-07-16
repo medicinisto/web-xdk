@@ -9,7 +9,7 @@ import Announcements from '../models/announcement';
 import AnnouncementsQuery from '../queries/announcements-query';
 import Core from '../namespace';
 
-module.exports = {
+const ClientAnnouncement = {
   methods: {
     _createAnnouncementFromServer(obj) {
       return Announcements._createFromServer(obj);
@@ -19,5 +19,5 @@ module.exports = {
     },
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClientAnnouncement;
+Core.mixins.Client.push(ClientAnnouncement);

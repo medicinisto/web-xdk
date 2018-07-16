@@ -9,7 +9,7 @@
 
 import Core from '../namespace';
 
-module.exports = {
+const ClientTokens = {
   methods: {
 
     /**
@@ -83,5 +83,5 @@ module.exports = {
     },
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClientTokens;
+Core.mixins.Client.push(ClientTokens);

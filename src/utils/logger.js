@@ -4,10 +4,11 @@
  *
  */
 /* eslint-disable no-console */
-import Constants from '../constants';
-import { logSize } from '../settings';
+import { LOG } from '../constants';
+import Settings from '../settings';
 
-const { TIMING, DEBUG, INFO, WARN, ERROR, NONE } = Constants.LOG;
+const { logSize } = Settings;
+const { TIMING, DEBUG, INFO, WARN, ERROR, NONE } = LOG;
 
 const Timezone = new Date().toLocaleTimeString('en-US', {
   timeZoneName: 'short',

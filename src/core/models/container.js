@@ -6,14 +6,16 @@
  * @extends Layer.Core.Syncable
  * @author  Michael Kantor
  */
-import { client as Client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../namespace';
 import Syncable from './syncable';
 import Util from '../../utils';
-import Constants from '../../constants';
+import { DELETION_MODE } from '../../constants';
 import Root from '../root';
 
-class Container extends Syncable {
+const { getClient } = Settings;
+
+export default class Container extends Syncable {
 
   /**
    * Create a new conversation.
@@ -72,13 +74,13 @@ class Container extends Syncable {
       // Update the syncState
       this._setSyncing();
 
-      Client._triggerAsync('state-change', {
+      getClient()._triggerAsync('state-change', {
         started: true,
         type: 'send_' + Util.typeFromID(this.id),
         telemetryId: 'send_' + Util.typeFromID(this.id) + '_time',
         id: this.id,
       });
-      Client.sendSocketRequest({
+      getClient().sendSocketRequest({
         method: 'POST',
         body: {}, // see _getSendData
         sync: {
@@ -109,7 +111,7 @@ class Container extends Syncable {
 
     // IDs change if the server returns a matching Container
     if (id !== this.id) {
-      Client._updateContainerId(this, id);
+      getClient()._updateContainerId(this, id);
       this._triggerAsync('change', {
         oldValue: id,
         newValue: this.id,
@@ -137,7 +139,7 @@ class Container extends Syncable {
    * @param  {Object} result
    */
   _createResult({ success, data }) {
-    Client._triggerAsync('state-change', {
+    getClient()._triggerAsync('state-change', {
       ended: true,
       type: 'send_' + Util.typeFromID(this.id),
       telemetryId: 'send_' + Util.typeFromID(this.id) + '_time',
@@ -348,8 +350,8 @@ class Container extends Syncable {
   }
 
   _handleWebsocketDelete(data) {
-    if (data.mode === Constants.DELETION_MODE.MY_DEVICES && data.from_position) {
-      Client._purgeMessagesByPosition(this.id, data.from_position);
+    if (data.mode === DELETION_MODE.MY_DEVICES && data.from_position) {
+      getClient()._purgeMessagesByPosition(this.id, data.from_position);
     } else {
       super._handleWebsocketDelete();
     }
@@ -557,4 +559,3 @@ Container.FOUND_WITHOUT_REQUESTED_METADATA = 'FoundMismatch';
 
 Root.initClass.apply(Container, [Container, 'Container', Core]);
 Syncable.subclasses.push(Container);
-module.exports = Container;

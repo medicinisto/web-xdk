@@ -54,7 +54,7 @@
  * @mixin Layer.UI.mixins.Clickable
  */
 import NotifyLib from 'notifyjs';
-import { client } from '../../settings';
+import Settings from '../../settings';
 import { isInBackground as IsInBackground } from '../ui-utils';
 import { registerComponent } from './component';
 import Clickable from '../mixins/clickable';
@@ -62,6 +62,7 @@ import './layer-avatar';
 import './layer-prompt';
 import { hasLocalStorage } from '../../utils';
 
+const { getClient } = Settings;
 let Notify = NotifyLib;
 if ('default' in Notify) Notify = Notify.default; // Annoying difference between webpack and browserify...
 
@@ -398,7 +399,7 @@ registerComponent('layer-notifier', {
 
     // Lifecycle method depends upon `client` property
     onAfterCreate() {
-      client.on('messages:notify', this._notify.bind(this));
+      getClient().on('messages:notify', this._notify.bind(this));
 
       // Prompt the user to enable permissions if it is required
       if (this.properties.needsDesktopNotificationPermission) {

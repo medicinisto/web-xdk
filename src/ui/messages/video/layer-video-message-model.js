@@ -39,9 +39,11 @@
  */
 
 
-import Core, { MessagePart, MessageTypeModel, Root } from '../../../core/namespace';
+import Core from '../../../core/namespace';
 import { logger } from '../../../utils';
 import { humanFileSize } from '../../ui-utils';
+
+const { MessagePart, MessageTypeModel, Root } = Core;
 
 class VideoModel extends MessageTypeModel {
 

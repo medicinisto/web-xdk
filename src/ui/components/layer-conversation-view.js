@@ -124,7 +124,7 @@
  * @mixin Layer.UI.mixins.FileDropTarget
  * @mixin Layer.UI.mixins.WidthTracker
  */
-import { client, conversationViewWidths } from '../../settings';
+import Settings from '../../settings';
 import Core from '../../core/namespace';
 import UIConstants from '../constants';
 import { registerComponent } from './component';
@@ -135,6 +135,8 @@ import Utils from '../../utils';
 import './layer-message-list';
 import './layer-compose-bar';
 import './layer-typing-indicator';
+
+const { getClient, conversationViewWidths } = Settings;
 
 registerComponent('layer-conversation-view', {
   mixins: [HasQuery, 'FocusOnKeydown', 'FileDropTarget', WidthTracker],
@@ -395,13 +397,13 @@ registerComponent('layer-conversation-view', {
     conversationId: {
       set(value) {
         if (value && value.indexOf('layer:///conversations') !== 0 && value.indexOf('layer:///channels') !== 0) this.properties.conversationId = '';
-        if (client) {
+        if (getClient()) {
           if (this.conversationId) {
-            if (client.isReady && !client.isDestroyed) {
-              this.conversation = client.getObject(this.conversationId, true);
+            if (getClient().isReady && !getClient().isDestroyed) {
+              this.conversation = getClient().getObject(this.conversationId, true);
             } else {
-              client.once('ready', () => {
-                if (this.conversationId) this.conversation = client.getObject(this.conversationId, true);
+              getClient().once('ready', () => {
+                if (this.conversationId) this.conversation = getClient().getObject(this.conversationId, true);
               }, this);
             }
           } else {
@@ -452,7 +454,7 @@ registerComponent('layer-conversation-view', {
         if (value && !(value instanceof Core.Conversation || value instanceof Core.Channel)) {
           this.properties.conversation = null;
         }
-        if (client) this._setupConversation();
+        if (getClient()) this._setupConversation();
       },
     },
 
@@ -460,7 +462,7 @@ registerComponent('layer-conversation-view', {
     hasGeneratedQuery: {
       type: Boolean,
       set(value) {
-        if (value && this.conversation && client) this._setupQuery();
+        if (value && this.conversation && getClient()) this._setupQuery();
       },
     },
 
@@ -1004,10 +1006,10 @@ registerComponent('layer-conversation-view', {
       const conversation = this.properties.conversation;
 
       // Client not ready yet? retry once authenticated.
-      if (client && !client.isReady) {
-        client.once('ready', this._setupConversation, this);
+      if (getClient() && !getClient().isReady) {
+        getClient().once('ready', this._setupConversation, this);
         return;
-      } else if (!client) {
+      } else if (!getClient()) {
         return;
       }
 

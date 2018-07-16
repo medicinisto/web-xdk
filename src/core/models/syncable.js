@@ -18,9 +18,11 @@ import Core from '../namespace';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
 import { SYNC_STATE } from '../../constants';
-import { client as Client } from '../../settings';
+import Settings from '../../settings';
 
-class Syncable extends Root {
+const { getClient } = Settings;
+
+export default class Syncable extends Root {
   constructor(options = {}) {
     super(options);
     this.localCreatedAt = new Date();
@@ -58,7 +60,7 @@ class Syncable extends Root {
       this._setSyncing();
     }
 
-    Client.xhr(options, (result) => {
+    getClient().xhr(options, (result) => {
       if (result.success && options.method !== 'GET' && !this.isDestroyed) {
         this._setSynced();
       }
@@ -68,7 +70,7 @@ class Syncable extends Root {
   }
 
   _getBubbleEventsTo() {
-    return Client;
+    return getClient();
   }
 
   /**
@@ -137,7 +139,7 @@ class Syncable extends Root {
 
     const obj = {
       id,
-      url: Client.url + id.substring(8),
+      url: getClient().url + id.substring(8),
     };
 
     if (!Syncable.sortedSubclasses) {
@@ -156,22 +158,22 @@ class Syncable extends Root {
     const typeName = ConstructorClass.eventPrefix;
 
     if (typeName) {
-      if (!Client.dbManager) {
-        if (!Client.isReady) {
+      if (!getClient().dbManager) {
+        if (!getClient().isReady) {
           syncItem.syncState = SYNC_STATE.LOADING;
-          Client.once('ready', () => syncItem._load(), syncItem);
+          getClient().once('ready', () => syncItem._load(), syncItem);
         } else {
           syncItem._load();
         }
       } else {
-        Client.dbManager.getObject(typeName, id, (item) => {
+        getClient().dbManager.getObject(typeName, id, (item) => {
           if (syncItem.isDestroyed) return;
           if (item) {
             syncItem._populateFromServer(item);
             syncItem.trigger('loaded');
-          } else if (!Client.isReady) {
+          } else if (!getClient().isReady) {
             syncItem.syncState = SYNC_STATE.LOADING;
-            Client.once('ready', () => syncItem._load(), syncItem);
+            getClient().once('ready', () => syncItem._load(), syncItem);
           } else {
             syncItem._load();
           }
@@ -493,5 +495,4 @@ Syncable.subclasses = [];
 
 Syncable._supportedEvents = [].concat(Root._supportedEvents);
 Syncable.inObjectIgnore = Root.inObjectIgnore;
-module.exports = Syncable;
 Core.Syncable = Syncable;

@@ -111,7 +111,7 @@ const eventSplitter = /\s+/;
  * @abstract
  * @author Michael Kantor
  */
-class Root extends EventClass {
+export default class Root extends EventClass {
 
   /**
    * Superclass constructor handles copying in properties and registering event handlers.
@@ -626,6 +626,82 @@ class Root extends EventClass {
   toString() {
     return '[' + this.internalId + (this.isDestroyed ? '.destroyed' : '') + ']';
   }
+
+  /**
+   * Initialize a class definition that is a subclass of Root.
+   *
+   * ```
+   * class myClass extends Root {
+   * }
+   * Root.initClass(myClass, 'myClass');
+   * console.log(Layer.Core.myClass);
+   * ```
+   *
+   * With namespace:
+   * ```
+   * const MyNameSpace = {};
+   * class myClass extends Root {
+   * }
+   * Root.initClass(myClass, 'myClass', MyNameSpace);
+   * console.log(MyNameSpace.myClass);
+   * ```
+   *
+   * Defining a class without calling this method means
+   *
+   * * none of the property getters/setters/adjusters will work;
+   * * Mixins won't be used
+   * * _supportedEvents won't be setup which means no events can be subscribed to on this class
+   *
+   *
+   * @method initClass
+   * @static
+   * @param {Function} newClass    Class definition
+   * @param {String} className     Class name
+   * @param {Object} [namespace=]  Object to write this class definition to
+   */
+  static initClass(newClass, className, namespace) {
+    // Make sure our new class has a name property
+    try {
+      if (newClass.name !== className) newClass.altName = className;
+    } catch (e) {
+      // No-op
+    }
+
+    // Make sure our new class has a _supportedEvents, _ignoredEvents, _inObjectIgnore and EVENTS properties
+    if (!newClass._supportedEvents) newClass._supportedEvents = Root._supportedEvents;
+    if (!newClass._ignoredEvents) newClass._ignoredEvents = Root._ignoredEvents;
+
+    if (newClass.mixins) {
+      newClass.mixins.forEach((mixin) => {
+        if (mixin.events) newClass._supportedEvents = newClass._supportedEvents.concat(mixin.events);
+        Object.keys(mixin.staticMethods || {})
+          .forEach(methodName => (newClass[methodName] = mixin.staticMethods[methodName]));
+
+        if (mixin.properties) {
+          Object.keys(mixin.properties).forEach((key) => {
+            newClass.prototype[key] = mixin.properties[key];
+          });
+        }
+        if (mixin.methods) {
+          Object.keys(mixin.methods).forEach((key) => {
+            newClass.prototype[key] = mixin.methods[key];
+          });
+        }
+      });
+    }
+
+    // Generate a list of properties for this class; we don't include any
+    // properties from Layer.Core.Root
+    const keys = Object.keys(newClass.prototype).filter(key =>
+      newClass.prototype.hasOwnProperty(key) &&
+      !Root.prototype.hasOwnProperty(key) &&
+      typeof newClass.prototype[key] !== 'function');
+
+    // Define getters/setters for any property that has __adjust or __update methods defined
+    keys.forEach(name => defineProperty(newClass, name));
+
+    if (namespace) namespace[className] = newClass;
+  }
 }
 
 function defineProperty(newClass, propertyName) {
@@ -661,82 +737,6 @@ function defineProperty(newClass, propertyName) {
       },
     });
   }
-}
-
-/**
- * Initialize a class definition that is a subclass of Root.
- *
- * ```
- * class myClass extends Root {
- * }
- * Root.initClass(myClass, 'myClass');
- * console.log(Layer.Core.myClass);
- * ```
- *
- * With namespace:
- * ```
- * const MyNameSpace = {};
- * class myClass extends Root {
- * }
- * Root.initClass(myClass, 'myClass', MyNameSpace);
- * console.log(MyNameSpace.myClass);
- * ```
- *
- * Defining a class without calling this method means
- *
- * * none of the property getters/setters/adjusters will work;
- * * Mixins won't be used
- * * _supportedEvents won't be setup which means no events can be subscribed to on this class
- *
- *
- * @method initClass
- * @static
- * @param {Function} newClass    Class definition
- * @param {String} className     Class name
- * @param {Object} [namespace=]  Object to write this class definition to
- */
-function initClass(newClass, className, namespace) {
-  // Make sure our new class has a name property
-  try {
-    if (newClass.name !== className) newClass.altName = className;
-  } catch (e) {
-    // No-op
-  }
-
-  // Make sure our new class has a _supportedEvents, _ignoredEvents, _inObjectIgnore and EVENTS properties
-  if (!newClass._supportedEvents) newClass._supportedEvents = Root._supportedEvents;
-  if (!newClass._ignoredEvents) newClass._ignoredEvents = Root._ignoredEvents;
-
-  if (newClass.mixins) {
-    newClass.mixins.forEach((mixin) => {
-      if (mixin.events) newClass._supportedEvents = newClass._supportedEvents.concat(mixin.events);
-      Object.keys(mixin.staticMethods || {})
-        .forEach(methodName => (newClass[methodName] = mixin.staticMethods[methodName]));
-
-      if (mixin.properties) {
-        Object.keys(mixin.properties).forEach((key) => {
-          newClass.prototype[key] = mixin.properties[key];
-        });
-      }
-      if (mixin.methods) {
-        Object.keys(mixin.methods).forEach((key) => {
-          newClass.prototype[key] = mixin.methods[key];
-        });
-      }
-    });
-  }
-
-  // Generate a list of properties for this class; we don't include any
-  // properties from Layer.Core.Root
-  const keys = Object.keys(newClass.prototype).filter(key =>
-    newClass.prototype.hasOwnProperty(key) &&
-    !Root.prototype.hasOwnProperty(key) &&
-    typeof newClass.prototype[key] !== 'function');
-
-  // Define getters/setters for any property that has __adjust or __update methods defined
-  keys.forEach(name => defineProperty(newClass, name));
-
-  if (namespace) namespace[className] = newClass;
 }
 
 /**
@@ -789,5 +789,4 @@ Root.prototype._disableEvents = false;
 Root._supportedEvents = ['destroy', 'all'];
 Root._ignoredEvents = [];
 module.exports = Root;
-module.exports.initClass = initClass;
 Core.Root = Root;

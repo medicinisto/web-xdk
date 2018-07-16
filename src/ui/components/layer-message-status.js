@@ -68,7 +68,7 @@
  * @class Layer.UI.components.MessageStatus
  * @extends Layer.UI.Component
  */
-import Constants from '../../constants';
+import { RECEIPT_STATE, RECIPIENT_STATE } from '../../constants';
 import { registerComponent } from './component';
 
 registerComponent('layer-message-status', {
@@ -244,7 +244,7 @@ registerComponent('layer-message-status', {
         }
 
         // Message has been acknowledged by the server, but has not been delivered to anyone
-        else if (message.deliveryStatus === Constants.RECIPIENT_STATE.NONE) {
+        else if (message.deliveryStatus === RECIPIENT_STATE.NONE) {
           html = this.sentTemplate;
         }
 
@@ -255,7 +255,7 @@ registerComponent('layer-message-status', {
 
         // One-on-One Conversations
         else if (message.getConversation().participants.length === 2) {
-          if (message.readStatus === Constants.RECIPIENT_STATE.NONE) {
+          if (message.readStatus === RECIPIENT_STATE.NONE) {
             html = this.deliveredDMTemplate;
           } else {
             html = this.readDMTemplate;
@@ -263,15 +263,15 @@ registerComponent('layer-message-status', {
         }
 
         // Group Conversations
-        else if (message.readStatus === Constants.RECIPIENT_STATE.NONE) {
+        else if (message.readStatus === RECIPIENT_STATE.NONE) {
           const count = Object.keys(message.recipientStatus)
             .filter(id =>
-              message.recipientStatus[id] === Constants.RECEIPT_STATE.DELIVERED ||
-              message.recipientStatus[id] === Constants.RECEIPT_STATE.READ).length - 1;
+              message.recipientStatus[id] === RECEIPT_STATE.DELIVERED ||
+              message.recipientStatus[id] === RECEIPT_STATE.READ).length - 1;
           html = this.deliveredGroupTemplate.replace(/(\$\{.*?\})/g, match => count);
         } else {
           const count = Object.keys(message.recipientStatus)
-            .filter(id => message.recipientStatus[id] === Constants.RECEIPT_STATE.READ).length - 1;
+            .filter(id => message.recipientStatus[id] === RECEIPT_STATE.READ).length - 1;
           html = this.readGroupTemplate.replace(/(\$\{.*?\})/g, match => count);
         }
         this.innerHTML = html;

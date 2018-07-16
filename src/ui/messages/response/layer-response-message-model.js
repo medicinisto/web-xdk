@@ -24,10 +24,13 @@
  * @class Layer.UI.messages.ResponseMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import Core, { MessagePart, MessageTypeModel } from '../../../core/namespace';
+import Core from '../../../core/namespace';
 import { registerStatusModel } from '../../ui-utils';
 import { ErrorDictionary } from '../../../core/layer-error';
-import { client } from '../../../settings';
+import Settings from '../../../settings';
+
+const { getClient } = Settings;
+const { MessagePart, MessageTypeModel } = Core;
 
 class ResponseModel extends MessageTypeModel {
   constructor(options) {
@@ -179,7 +182,7 @@ class ResponseModel extends MessageTypeModel {
    * @returns {Layer.Core.MessageTypeResponseSummary}
    */
   getResponseSummary() {
-    const message = this.responseTo ? client.getMessage(this.responseTo) : null;
+    const message = this.responseTo ? getClient().getMessage(this.responseTo) : null;
     const part = (message && this.responseToNodeId) ? message.getPartById(`${message.id}/parts/${this.responseToNodeId}`) : null;
     if (part) {
       const model = part.createModel();

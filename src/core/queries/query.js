@@ -196,13 +196,15 @@
  * @extends Layer.Core.Root
  *
  */
-import { client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
 import { logger } from '../../utils';
 
-class Query extends Root {
+const { getClient } = Settings;
+
+export default class Query extends Root {
 
   constructor(options) {
     if (typeof options.build === 'function') options = options.build();
@@ -220,10 +222,10 @@ class Query extends Root {
 
     this.data = [];
     this._initialPaginationWindow = this.paginationWindow;
-    client.on('all', this._handleEvents, this);
+    getClient().on('all', this._handleEvents, this);
 
-    if (!client.isReady) {
-      client.once('ready', () => this._run(), this);
+    if (!getClient().isReady) {
+      getClient().once('ready', () => this._run(), this);
     } else {
       this._run();
     }
@@ -240,8 +242,8 @@ class Query extends Root {
       data: [],
       type: 'reset',
     });
-    client.off(null, null, this);
-    client._removeQuery(this);
+    getClient().off(null, null, this);
+    getClient()._removeQuery(this);
     this.data = null;
     super.destroy();
   }
@@ -353,7 +355,7 @@ class Query extends Root {
     this.totalSize = 0;
     const data = this.data;
     this.data = [];
-    client._checkAndPurgeCache(data);
+    getClient()._checkAndPurgeCache(data);
     this.isFiring = false;
     this._predicate = null;
     this._nextDBFromId = '';
@@ -394,7 +396,7 @@ class Query extends Root {
     if (pageSize < 0) {
       const removedData = this.data.slice(this.paginationWindow);
       this.data = this.data.slice(0, this.paginationWindow);
-      client._checkAndPurgeCache(removedData);
+      getClient()._checkAndPurgeCache(removedData);
       this.pagedToEnd = false;
       this._triggerAsync('change', { data: [] });
     } else if (pageSize === 0 || this.pagedToEnd) {
@@ -444,7 +446,7 @@ class Query extends Root {
       this._appendResults(results, false);
       this._firstRun = false;
     } else if (results.data.getNonce()) {
-      client.once('ready', () => {
+      getClient().once('ready', () => {
         this._run();
       }, this);
     } else {
@@ -467,7 +469,7 @@ class Query extends Root {
     // If already registered with the client, properties will be updated as needed
     // Database results rather than server results will arrive already registered.
     results.data.forEach((item) => {
-      if (!(item instanceof Root)) client._createObject(item);
+      if (!(item instanceof Root)) getClient()._createObject(item);
     });
 
     // Filter results to just the new results
@@ -490,7 +492,7 @@ class Query extends Root {
 
     // Insert the results... if the results are a match
     newResults.forEach((itemIn) => {
-      const item = client.getObject(itemIn.id);
+      const item = getClient().getObject(itemIn.id);
       if (item && (!this.filter || this.filter(item))) {
         this._appendResultsSplice(item);
         finalResults.push(item);
@@ -504,7 +506,7 @@ class Query extends Root {
       pagedToEnd: this.pagedToEnd,
       data: finalResults.map(item => this._getData(item)),
       query: this,
-      target: client,
+      target: getClient(),
     });
   }
 
@@ -546,7 +548,7 @@ class Query extends Root {
    */
   _getInstance(item) {
     if (item instanceof Root) return item;
-    return client.getObject(item.id);
+    return getClient().getObject(item.id);
   }
 
   /**
@@ -705,7 +707,7 @@ class Query extends Root {
    * If this is ever changed to be async, make sure that destroy() still triggers synchronous events
    */
   _triggerChange(evt) {
-    if (this.isDestroyed || client._inCleanup) return;
+    if (this.isDestroyed || getClient()._inCleanup) return;
     this.trigger('change', evt);
     this.trigger('change:' + evt.type, evt);
   }
@@ -1115,5 +1117,3 @@ Query._supportedEvents = [
 ].concat(Root._supportedEvents);
 
 Root.initClass.apply(Query, [Query, 'Query', Core]);
-
-module.exports = Query;

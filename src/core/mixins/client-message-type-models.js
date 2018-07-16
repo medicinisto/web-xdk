@@ -16,7 +16,7 @@ const MessageTypeModelClasses = [];
 const MessageTypeModelHash = {};
 const MessageTypeModelNameHash = {};
 
-module.exports = {
+const ClientMessageTypeModel =  {
   events: [
     /**
      * A property of this model has changed.
@@ -232,5 +232,5 @@ module.exports = {
     },
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClientMessageTypeModel;
+Core.mixins.Client.push(ClientMessageTypeModel);

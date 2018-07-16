@@ -81,7 +81,7 @@
  * @mixin Layer.UI.mixins.EmptyList
  * @mixin Layer.UI.mixins.QueryEndIndicator
  */
-import { client } from '../../../settings';
+import Settings from '../../../settings';
 import Core from '../../../core/namespace';
 import Util from '../../../utils';
 import { registerComponent } from '../component';
@@ -91,6 +91,8 @@ import ListLoadIndicator from '../../mixins/list-load-indicator';
 import EmptyList from '../../mixins/empty-list';
 import QueryEndIndicator from '../../mixins/query-end-indicator';
 import SizeProperty from '../../mixins/size-property';
+
+const { getClient } = Settings;
 
 registerComponent('layer-identity-list', {
   mixins: [List, HasQuery, ListLoadIndicator, SizeProperty, EmptyList, QueryEndIndicator],
@@ -270,7 +272,7 @@ registerComponent('layer-identity-list', {
         if (!Array.isArray(value)) return;
 
         this.properties.selectedIdentities = value.map((identity) => {
-          if (!(identity instanceof Core.Identity)) return client.getIdentity(identity.id);
+          if (!(identity instanceof Core.Identity)) return getClient().getIdentity(identity.id);
           return identity;
         });
         this._renderSelection();

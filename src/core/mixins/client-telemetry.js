@@ -8,7 +8,7 @@
 import TelemetryMonitor from '../telemetry-monitor';
 import Core from '../namespace';
 
-module.exports = {
+const ClientTelemetry = {
   events: [
     /**
      * State change events are used for internal communications.
@@ -53,5 +53,5 @@ module.exports = {
     telemetryMonitor: null,
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClientTelemetry;
+Core.mixins.Client.push(ClientTelemetry);

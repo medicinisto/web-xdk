@@ -14,12 +14,14 @@
  */
 
 import Core from '../namespace';
-import { client } from '../../settings';
+import Settings from '../../settings';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
 import Message from '../models/message';
 
-module.exports = {
+const { getClient } = Settings;
+
+const MessageTypeModel = {
   methods: {
 
     /**
@@ -118,9 +120,9 @@ module.exports = {
         });
         this._setupSlots();
 
-        client._removeMessageTypeModel(this);
+        getClient()._removeMessageTypeModel(this);
         this.id = Core.MessageTypeModel.prefixUUID + this.part.id.replace(/^.*messages\//, '');
-        client._addMessageTypeModel(this);
+        getClient()._addMessageTypeModel(this);
         this.parseModelChildParts({ changes: this.childParts.map(part => ({ type: 'added', part })), isEdit: false });
         this.trigger('message-type-model:has-new-message'); // do this before the callback so it fires before message.send() is called
         if (callback) callback(this.message);
@@ -128,4 +130,5 @@ module.exports = {
     },
   },
 };
-Core.mixins.MessageTypeModel.push(module.exports);
+export default MessageTypeModel;
+Core.mixins.MessageTypeModel.push(MessageTypeModel);

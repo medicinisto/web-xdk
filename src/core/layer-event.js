@@ -37,7 +37,7 @@
  */
 import Core from './namespace';
 
-class LayerEvent {
+export default class LayerEvent {
   /**
    * Constructor for LayerEvent.
    *
@@ -221,4 +221,4 @@ LayerEvent.prototype.cancelable = false;
  */
 LayerEvent.prototype.returnedValue = null;
 
-module.exports = Core.LayerEvent = LayerEvent;
+Core.LayerEvent = LayerEvent;

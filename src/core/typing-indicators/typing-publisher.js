@@ -44,13 +44,15 @@
  * @class Layer.Core.TypingIndicators.TypingPublisher
  * @protected
  */
-import { client as Client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../namespace';
 import { STARTED, PAUSED, FINISHED } from './typing-indicators';
 
+const { getClient } = Settings;
+
 const INTERVAL = 2500;
 
-class TypingPublisher {
+export default class TypingPublisher {
 
 
   /**
@@ -65,7 +67,7 @@ class TypingPublisher {
    * @param {Object} [conversation=null] - The Conversation Object or Instance that messages are being typed to.
    */
   constructor(args) {
-    if (args.conversation) this.conversation = Client.getObject(args.conversation.id);
+    if (args.conversation) this.conversation = getClient().getObject(args.conversation.id);
     this.state = FINISHED;
     this._lastMessageTime = 0;
   }
@@ -81,7 +83,7 @@ class TypingPublisher {
    */
   setConversation(conv) {
     this.setState(FINISHED);
-    this.conversation = conv ? Client.getObject(conv.id) : null;
+    this.conversation = conv ? getClient().getObject(conv.id) : null;
     this.state = FINISHED;
   }
 
@@ -190,7 +192,7 @@ class TypingPublisher {
   _send(state) {
     if (!this.conversation.isSaved()) return;
     this._lastMessageTime = Date.now();
-    const ws = Client.socketManager;
+    const ws = getClient().socketManager;
     ws.sendSignal({
       type: 'typing_indicator',
       object: {
@@ -209,5 +211,5 @@ class TypingPublisher {
     clearInterval(this._pauseLoopId);
   }
 }
-module.exports = Core.TypingIndicators.TypingPublisher = TypingPublisher;
+Core.TypingIndicators.TypingPublisher = TypingPublisher;
 

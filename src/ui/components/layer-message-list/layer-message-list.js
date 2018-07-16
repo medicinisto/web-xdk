@@ -117,7 +117,7 @@
  * @mixin Layer.UI.mixins.QueryEndIndicator
  */
 import { defer, generateUUID, logger } from '../../../utils';
-import Settings, { client } from '../../../settings';
+import Settings from '../../../settings';
 import StatusMessageManager from '../../ui-utils/status-message-manager';
 import MessageHandlers from '../../handlers/message/message-handlers';
 import UIUtils from '../../ui-utils';
@@ -128,6 +128,8 @@ import HasQuery from '../../mixins/has-query';
 import EmptyList from '../../mixins/empty-list';
 import ListLoadIndicator from '../../mixins/list-load-indicator';
 import QueryEndIndicator from '../../mixins/query-end-indicator';
+
+const { getClient } = Settings;
 
 // Mandatory delay between loading one page and the next.  If user is scrolling too fast, they'll have to wait at least (2) seconds.
 const PAGING_DELAY = 2000;
@@ -733,7 +735,7 @@ registerComponent('layer-message-list', {
      */
     _reportAnalytics(child) {
       if (this._isVisibleEnoughToMarkAsRead(child)) {
-        client._triggerAsync('analytics', {
+        getClient()._triggerAsync('analytics', {
           type: 'message-viewed',
           size: child.nodes.messageViewer ? child.nodes.messageViewer.size : '',
           where: 'message-list',

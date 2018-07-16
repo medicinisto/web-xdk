@@ -39,9 +39,11 @@
  * @class Layer.UI.messages.ReceiptMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import Core, { MessagePart, MessageTypeModel, Root } from '../../../core/namespace';
+import Core  from '../../../core/namespace';
 import Util from '../../../utils';
 import '../location/layer-location-message-model';
+
+const { MessagePart, MessageTypeModel, Root } = Core;
 
 class ReceiptModel extends MessageTypeModel {
 

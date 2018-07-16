@@ -16,7 +16,7 @@ import Util from '../../utils';
 import { RECEIPT_STATE } from '../../constants';
 import Core from '../namespace';
 
-module.exports = {
+const ClientWeboscketOps = {
   lifecycle: {
 
     // Listen for any websocket operations and call our handler
@@ -89,5 +89,5 @@ module.exports = {
     },
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClientWeboscketOps;
+Core.mixins.Client.push(ClientWeboscketOps);

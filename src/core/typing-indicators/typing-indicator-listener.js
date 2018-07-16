@@ -17,10 +17,12 @@
  */
 import Core from '../namespace';
 import Root from '../root';
-import { client as Client } from '../../settings';
+import Settings from '../../settings';
 import { STARTED, PAUSED, FINISHED } from './typing-indicators';
 
-class TypingIndicatorListener extends Root {
+const { getClient } = Settings;
+
+export default class TypingIndicatorListener extends Root {
 
   /**
    * Creates a Typing Indicator Listener for this Client.
@@ -40,7 +42,7 @@ class TypingIndicatorListener extends Root {
      */
     this.state = {};
     this._pollId = 0;
-    Client.on('ready', () => this._clientReady());
+    getClient().on('ready', () => this._clientReady());
   }
 
   /**
@@ -50,8 +52,8 @@ class TypingIndicatorListener extends Root {
    * @private
    */
   _clientReady() {
-    this.user = Client.user;
-    const ws = Client.socketManager;
+    this.user = getClient().user;
+    const ws = getClient().socketManager;
     ws.on('message', this._handleSocketEvent, this);
     this._startPolling();
   }
@@ -86,8 +88,8 @@ class TypingIndicatorListener extends Root {
     if (this._isRelevantEvent(evt)) {
       // Could just do _createObject() but for ephemeral events, going through _createObject and updating
       // objects for every typing indicator seems a bit much.  Try getIdentity and only create if needed.
-      const identity = Client.getIdentity(evt.body.data.sender.id) ||
-        Client._createObject(evt.body.data.sender);
+      const identity = getClient().getIdentity(evt.body.data.sender.id) ||
+        getClient()._createObject(evt.body.data.sender);
       const state = evt.body.data.action;
       const conversationId = evt.body.object.id;
       let stateEntry = this.state[conversationId];
@@ -220,7 +222,7 @@ class TypingIndicatorListener extends Root {
   }
 
   _getBubbleEventsTo() {
-    return Client;
+    return getClient();
   }
 }
 
@@ -245,4 +247,3 @@ TypingIndicatorListener._supportedEvents = [
 
 Root.initClass.apply(TypingIndicatorListener,
   [TypingIndicatorListener, 'TypingIndicatorListener', Core.TypingIndicators]);
-module.exports = TypingIndicatorListener;

@@ -6,7 +6,7 @@
  * @mixin Layer.UI.mixins.Throttler
  * @typescript ismixin
  */
-import { client } from '../../settings';
+import Settings from '../../settings';
 import Layer from '../../core/namespace';
 import Util, { defer, logger } from '../../utils';
 import { animatedScrollTo } from '././../ui-utils/animated-scroll';
@@ -14,6 +14,8 @@ import { registerComponent } from '../components/component';
 import HasQuery from './has-query';
 import Throttler from './throttler';
 import mixins from './index';
+
+const { getClient } = Settings;
 
 mixins.List = module.exports = {
   mixins: [HasQuery, Throttler],
@@ -249,7 +251,7 @@ mixins.List = module.exports = {
      * @private
      */
     _generateFragmentItem(item, fragment) {
-      const itemInstance = item instanceof Layer.Root ? item : client.getObject(item.id);
+      const itemInstance = item instanceof Layer.Root ? item : getClient().getObject(item.id);
       if (itemInstance) {
         const widget = this._generateItem(itemInstance);
 

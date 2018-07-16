@@ -42,13 +42,15 @@
  * @property {String} evt.detail.action           One of "selected" or "deselected" indicating whether the user action selected or deselected a Choice
  * @property {String} evt.detail.name             Proposed name for the Choice Model in order to describe what the user was answering. May be empty string.
  */
-import { client } from '../../../settings';
+import Settings from '../../../settings';
 import { registerComponent } from '../../components/component';
 
 import MessageViewMixin from '../message-view-mixin';
 import '../../components/layer-action-button';
 import './layer-choice-label-message-view';
 import './layer-choice-message-model';
+
+const { getClient } = Settings;
 
 registerComponent('layer-choice-message-view', {
   mixins: [MessageViewMixin],
@@ -194,7 +196,7 @@ registerComponent('layer-choice-message-view', {
         this.onChoiceSelect(data);
 
         const rootPart = this.model.message.getPartsMatchingAttribute({ role: 'root' })[0];
-        const rootModel = client.getMessageTypeModel(rootPart.id);
+        const rootModel = getClient().getMessageTypeModel(rootPart.id);
         this.trigger(this.model.responseName, {
           model: this.model,
           data: this.model,

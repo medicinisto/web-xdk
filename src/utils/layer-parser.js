@@ -21,17 +21,18 @@
  * @param {Object[]} request.operations - Array of change operations to perform upon the object
  */
 import LayerParser from 'layer-patch';
-import { client } from '../settings';
+import Settings from '../settings';
 
+const { getClient } = Settings;
 let parser;
 
 function createParser(request) {
-  client.once('destroy', () => (parser = null));
+  getClient().once('destroy', () => (parser = null));
 
   parser = new LayerParser({
     camelCase: true,
-    getObjectCallback: id => client.getObject(id),
-    createObjectCallback: (id, obj) => client._createObject(obj),
+    getObjectCallback: id => getClient().getObject(id),
+    createObjectCallback: (id, obj) => getClient()._createObject(obj),
     propertyNameMap: {
       Conversation: {
         unreadMessageCount: 'unreadCount',

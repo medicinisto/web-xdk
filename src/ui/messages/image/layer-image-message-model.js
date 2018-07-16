@@ -60,8 +60,10 @@ import 'blueimp-load-image/js/load-image-meta';
 import 'blueimp-load-image/js/load-image-exif';
 import { normalizeSize } from '../../ui-utils';
 
-import Core, { Root, MessagePart, MessageTypeModel } from '../../../core/namespace';
+import Core from '../../../core/namespace';
 import { getNativeSupport } from '../../../utils/native-support';
+
+const { Root, MessagePart, MessageTypeModel } = Core;
 
 const Blob = getNativeSupport('Blob');
 

@@ -46,8 +46,10 @@
  * @param {Layer.Core.Identity[]} evt.detail.typing
  * @param {Layer.Core.Identity[]} evt.detail.paused
  */
-import { client } from '../../settings';
+import Settings from '../../settings';
 import { registerComponent } from './component';
+
+const { getClient } = Settings;
 
 registerComponent('layer-typing-indicator', {
   template: '<span class="layer-typing-message" layer-id="panel"></span>',
@@ -77,7 +79,7 @@ registerComponent('layer-typing-indicator', {
     conversation: {
       set(value) {
         if (value) {
-          const state = client.getTypingState(value);
+          const state = getClient().getTypingState(value);
           this.onRerender({
             conversationId: value.id,
             typing: state.typing,
@@ -105,13 +107,13 @@ registerComponent('layer-typing-indicator', {
 
     // Lifecycle method depends upon `client` property
     onAfterCreate() {
-      client.on('typing-indicator-change', this.onRerender, this);
+      getClient().on('typing-indicator-change', this.onRerender, this);
     },
 
     // Lifecycle method
     onRender() {
       if (this.conversation && this.conversation.id) {
-        const data = client.getTypingState(this.conversation.id);
+        const data = getClient().getTypingState(this.conversation.id);
         data.conversationId = this.conversation.id;
         this.onRerender(data);
       }

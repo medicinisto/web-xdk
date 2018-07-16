@@ -26,7 +26,7 @@ import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import './layer-location-message-model';
 import { logger } from '../../../utils';
-import { googleMapsKey } from '../../../settings';
+import Settings from '../../../settings';
 
 registerComponent('layer-location-message-view', {
   mixins: [MessageViewMixin],
@@ -126,12 +126,12 @@ registerComponent('layer-location-message-view', {
           marker = escape(this.model.street1 + (this.model.street2 ? ` ${this.model.street2}` : '') +
             ` ${this.model.city} ${this.model.administrativeArea}, ${this.model.postalCode} ${this.model.country}`);
         }
-        if (!googleMapsKey) {
+        if (!Settings.googleMapsKey) {
           logger.error('LAYER-LOCATION-MESSAGE-VIEW: No googleMapsKey found in settings; pass into Layer.init()');
         }
         this.nodes.img.src = location.protocol + '//maps.googleapis.com/maps/api/staticmap?' +
           `size=${width}x${this.height}&language=${navigator.language.toLowerCase()}` +
-          `&key=${googleMapsKey}&zoom=${this.model.zoom}&markers=${marker}`;
+          `&key=${Settings.googleMapsKey}&zoom=${this.model.zoom}&markers=${marker}`;
         this.style.width = width + 'px';
         this.messageViewer.width = width;
       }

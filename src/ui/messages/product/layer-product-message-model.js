@@ -59,7 +59,9 @@
  * @class Layer.UI.messages.ProductMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import Core, { MessagePart, Root, MessageTypeModel } from '../../../core/namespace';
+import Core from '../../../core/namespace';
+
+const { MessagePart, Root, MessageTypeModel } = Core;
 
 class ProductModel extends MessageTypeModel {
   constructor(options = {}) {

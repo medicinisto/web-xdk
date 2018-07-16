@@ -19,7 +19,7 @@ import { ErrorDictionary } from '../layer-error';
 import Identity from '../models/identity';
 
 
-module.exports = {
+const ClientAuth = {
   events: [
     /**
      * The client is ready for action
@@ -809,5 +809,5 @@ module.exports = {
     },
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClientAuth;
+Core.mixins.Client.push(ClientAuth);

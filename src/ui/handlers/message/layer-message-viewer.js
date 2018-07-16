@@ -27,10 +27,12 @@ import { registerComponent } from '../../components/component';
 import MessageHandler from '../../mixins/message-handler';
 import Clickable from '../../mixins/clickable';
 import SizeProperty from '../../mixins/size-property';
-import { conversationViewWidths, client } from '../../../settings';
+import Settings from '../../../settings';
 import messageActionHandlers from '../../message-actions/index';
 import { register } from './message-handlers';
 import { getWhereClicked } from '../../ui-utils/analytics';
+
+const { conversationViewWidths, client } = Settings;
 
 registerComponent('layer-message-viewer', {
   mixins: [MessageHandler, Clickable, SizeProperty],

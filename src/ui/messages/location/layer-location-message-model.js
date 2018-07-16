@@ -50,8 +50,9 @@
  * @class Layer.UI.messages.LocationMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import Core, { MessagePart, MessageTypeModel, Root } from '../../../core/namespace';
+import Core from '../../../core/namespace';
 
+const { MessagePart, MessageTypeModel, Root } = Core;
 
 class LocationModel extends MessageTypeModel {
 

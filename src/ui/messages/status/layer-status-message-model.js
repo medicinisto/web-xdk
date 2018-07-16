@@ -23,8 +23,10 @@
  * @class Layer.UI.messages.StatusMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import Core, { MessagePart, Root, MessageTypeModel } from '../../../core/namespace';
+import Core from '../../../core/namespace';
 import { registerStatusModel } from '../../ui-utils';
+
+const { MessagePart, Root, MessageTypeModel } = Core;
 
 class StatusModel extends MessageTypeModel {
 

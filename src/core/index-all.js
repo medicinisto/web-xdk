@@ -6,4 +6,4 @@ import './mixins/client-dbmanager';
 import Core from './index';
 import './db-manager';
 
-module.exports = Core;
+export default Core;

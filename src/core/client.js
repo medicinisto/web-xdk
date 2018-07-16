@@ -75,7 +75,7 @@ import Identity from './models/identity';
 import Core from './namespace';
 import Settings from '../settings';
 
-class Client extends Root {
+export default class Client extends Root {
 
   /**
    * Create a new Client.
@@ -108,7 +108,7 @@ class Client extends Root {
    */
   constructor(options) {
     super(options);
-    Settings.client = this;
+    Settings.setClient(this);
     this._isReadyObj = {};
 
     this._models = {};
@@ -188,7 +188,7 @@ class Client extends Root {
     super.destroy();
     this._inCleanup = false;
 
-    Settings.client = null;
+    Settings.setClient(null);
   }
 
   /**
@@ -453,5 +453,3 @@ Client.LoggedEvents = [
 Client.mixins = Core.mixins.Client;
 
 Root.initClass.apply(Client, [Client, 'Client', Core]);
-module.exports = Client;
-

@@ -10,7 +10,7 @@ import TypingIndicatorListener from '../typing-indicators/typing-indicator-liste
 import TypingListener from '../typing-indicators/typing-listener';
 import TypingPublisher from '../typing-indicators/typing-publisher';
 
-module.exports = {
+const ClientTyping = {
   events: [
     /**
      * A Typing Indicator state has changed.
@@ -103,5 +103,5 @@ module.exports = {
     },
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClientTyping;
+Core.mixins.Client.push(ClientTyping);

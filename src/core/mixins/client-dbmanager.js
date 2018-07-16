@@ -8,7 +8,7 @@
 import Core from '../namespace';
 import { ErrorDictionary } from '../layer-error';
 
-module.exports = {
+const ClientDb = {
   roles: ['handles-load-user'],
   lifecycle: {
     constructor() {
@@ -152,5 +152,5 @@ module.exports = {
     },
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClientDb;
+Core.mixins.Client.push(ClientDb);

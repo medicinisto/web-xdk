@@ -9,9 +9,11 @@
  * @class Layer.UI.mixins.ListSelection
  * @typescript ismixin
  */
-import { client } from '../../settings';
+import Settings from '../../settings';
 import Clickable from './clickable';
 import mixins from './index';
+
+const { getClient } = Settings;
 
 mixins.ListSelection = module.exports = {
   mixins: [Clickable],
@@ -37,7 +39,7 @@ mixins.ListSelection = module.exports = {
      */
     selectedId: {
       set(newId, oldId) {
-        const newItem = client.getObject(newId);
+        const newItem = getClient().getObject(newId);
         let isAllowed = true;
         if (newItem || oldId) {
           try {

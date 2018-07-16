@@ -11,7 +11,7 @@ import MembersQuery from '../queries/members-query';
 import { ErrorDictionary } from '../layer-error';
 import Core from '../namespace';
 
-module.exports = {
+const ClientMemeber =  {
   events: [
     /**
      * A call to Layer.Core.Membership.load has completed successfully
@@ -165,5 +165,5 @@ module.exports = {
     },
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClientMemeber;
+Core.mixins.Client.push(ClientMemeber);

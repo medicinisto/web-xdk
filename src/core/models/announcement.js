@@ -11,15 +11,16 @@
  * @class  Layer.Core.Announcement
  * @extends Layer.Core.Message.ConversationMessage
  */
-import { client as Client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../namespace';
 import ConversationMessage from './conversation-message';
 import Syncable from './syncable';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
 
+const { getClient } = Settings;
 
-class Announcement extends ConversationMessage {
+export default class Announcement extends ConversationMessage {
 
   /**
    * @method send
@@ -40,7 +41,7 @@ class Announcement extends ConversationMessage {
   getConversation() {}
 
   _loaded(data) {
-    Client._addMessage(this);
+    getClient()._addMessage(this);
   }
 
   /**
@@ -138,4 +139,3 @@ Announcement.mixins = Core.mixins.Announcement;
 
 Root.initClass.apply(Announcement, [Announcement, 'Announcement', Core]);
 Syncable.subclasses.push(Announcement);
-module.exports = Announcement;

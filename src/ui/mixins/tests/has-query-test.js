@@ -167,7 +167,7 @@ describe("Has Query Mixin", function() {
 
         // Alt test 2: Given no client, should generate nothing
         var tmp = Layer.UI.appId;
-        Layer.UI.settings.client = null;
+        Layer.Settings.setClient(null);
         testRoot.innerHTML = '<has-query-test></has-query-test>';
         var el = testRoot.firstChild;
         CustomElements.takeRecords();
@@ -177,7 +177,7 @@ describe("Has Query Mixin", function() {
         expect(el.query).toBe(null);
 
         // Restore
-        Layer.UI.settings.client = client;
+        Layer.Settings.setClient(client);
 
         // Alt test 3, it should not generate a query if one is present
         testRoot.innerHTML = '<has-query-test></has-query-test>';
@@ -209,7 +209,7 @@ describe("Has Query Mixin", function() {
         expect(el.hasGeneratedQuery).toBe(false);
 
         // Alt test 2, no client
-        Layer.UI.settings.client = null;
+        Layer.Settings.setClient(null);
         Layer.UI.appId = '';
         testRoot.innerHTML = '<has-query-test use-generated-query="false"></has-query-test>';
         CustomElements.takeRecords();
@@ -217,7 +217,7 @@ describe("Has Query Mixin", function() {
         var el = testRoot.firstChild;
         el._setupGeneratedQuery();
         expect(el.hasGeneratedQuery).toBe(false);
-        Layer.UI.settings.client = client;
+        Layer.Settings.setClient(client);
 
         // Alt test 3, set a query
         testRoot.innerHTML = '<has-query-test use-generated-query="false" app-id="' + client.appId + '"></has-query-test>';

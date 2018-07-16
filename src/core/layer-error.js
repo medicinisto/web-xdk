@@ -25,7 +25,7 @@
 import Core from './namespace';
 import { logger } from '../utils';
 
-class LayerError {
+export class LayerError {
   constructor(options) {
     if (options instanceof LayerError) {
       options = {
@@ -144,7 +144,7 @@ LayerError.prototype.xhr = null;
  * Dictionary of error messages
  * @property {Object} [ErrorDictionary={}]
  */
-LayerError.ErrorDictionary = {
+export const ErrorDictionary = {
   appIdMissing: 'Property missing: appId is required',
   identityTokenMissing: 'Identity Token missing: answerAuthenticationChallenge requires an identity token',
   sessionTokenMissing: 'Session Token missing: _authComplete requires a {session_token: value} input',
@@ -186,5 +186,5 @@ LayerError.ErrorDictionary = {
   invalidMimeType: 'MIME Type is invalid',
   initAlreadyCalled: 'Must be called before init()',
 };
-
-module.exports = Core.LayerError = LayerError;
+LayerError.ErrorDictionary = ErrorDictionary;
+Core.LayerError = LayerError;

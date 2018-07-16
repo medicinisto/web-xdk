@@ -21,4 +21,4 @@ function get(mimeType) {
   return versions[mimeType];
 }
 
-module.exports = { register, get };
+export { register, get };

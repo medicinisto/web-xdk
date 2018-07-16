@@ -11,7 +11,7 @@ import WebsocketChangeManager from '../websockets/change-manager';
 import WebsocketRequestManager from '../websockets/request-manager';
 
 
-module.exports = {
+const ClientWebsockets = {
   events: [
     /**
      * An operation has been received via the websocket.
@@ -68,5 +68,5 @@ module.exports = {
     socketChangeManager: null,
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClientWebsockets;
+Core.mixins.Client.push(ClientWebsockets);

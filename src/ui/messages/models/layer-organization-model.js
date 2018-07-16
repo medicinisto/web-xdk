@@ -3,7 +3,9 @@
  * @ignore
  */
 
-import Core, { MessageTypeModel } from '../../../core/namespace';
+import Core from '../../../core/namespace';
+
+const { MessageTypeModel } = Core;
 
 class OrganizationModel extends MessageTypeModel {
 

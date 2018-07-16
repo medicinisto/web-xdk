@@ -126,7 +126,7 @@
  * @extends Layer.UI.Component
  * @typescript ismixin
  */
-import Constants from '../../../constants';
+import { RECIPIENT_STATE } from '../../../constants';
 import Util, { logger } from '../../../utils';
 import ListItem from '../../mixins/list-item';
 
@@ -279,13 +279,13 @@ module.exports = {
       const deliveryStatus = this.properties.item.deliveryStatus;
       const statusPrefix = 'layer-message-status';
       this.toggleClass('layer-unread-message', !this.properties.item.isRead);
-      this.toggleClass(`${statusPrefix}-read-by-all`, readStatus === Constants.RECIPIENT_STATE.ALL);
-      this.toggleClass(`${statusPrefix}-read-by-some`, readStatus === Constants.RECIPIENT_STATE.SOME);
-      this.toggleClass(`${statusPrefix}-read-by-none`, readStatus === Constants.RECIPIENT_STATE.NONE);
+      this.toggleClass(`${statusPrefix}-read-by-all`, readStatus === RECIPIENT_STATE.ALL);
+      this.toggleClass(`${statusPrefix}-read-by-some`, readStatus === RECIPIENT_STATE.SOME);
+      this.toggleClass(`${statusPrefix}-read-by-none`, readStatus === RECIPIENT_STATE.NONE);
 
-      this.toggleClass(`${statusPrefix}-delivered-to-all`, deliveryStatus === Constants.RECIPIENT_STATE.ALL);
-      this.toggleClass(`${statusPrefix}-delivered-to-some`, deliveryStatus === Constants.RECIPIENT_STATE.SOME);
-      this.toggleClass(`${statusPrefix}-delivered-to-none`, deliveryStatus === Constants.RECIPIENT_STATE.NONE);
+      this.toggleClass(`${statusPrefix}-delivered-to-all`, deliveryStatus === RECIPIENT_STATE.ALL);
+      this.toggleClass(`${statusPrefix}-delivered-to-some`, deliveryStatus === RECIPIENT_STATE.SOME);
+      this.toggleClass(`${statusPrefix}-delivered-to-none`, deliveryStatus === RECIPIENT_STATE.NONE);
 
       this.toggleClass(`${statusPrefix}-pending`, this.properties.item.isSaving());
       this.toggleClass('layer-message-preview', this.properties.item.isNew());

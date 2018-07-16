@@ -8,7 +8,7 @@
 import Core from '../namespace';
 import Root from '../root';
 
-module.exports = {
+const ClinetCacheCleaner = {
   lifecycle: {
     constructor() {
       this._scheduleCheckAndPurgeCacheItems = [];
@@ -121,5 +121,5 @@ module.exports = {
     },
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClinetCacheCleaner;
+Core.mixins.Client.push(ClinetCacheCleaner);

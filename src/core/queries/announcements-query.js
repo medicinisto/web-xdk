@@ -19,21 +19,23 @@
  * @class  Layer.Core.Query.AnnouncementsQuery
  * @extends Layer.Core.Query
  */
-import { client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Query from './query';
 import MessagesQuery from './messages-query';
 
-class AnnouncementsQuery extends MessagesQuery {
+const { getClient } = Settings;
+
+export default class AnnouncementsQuery extends MessagesQuery {
   _fixPredicate(inValue) {
     return Query.prototype._fixPredicate.apply(this, [inValue]);
   }
 
   _fetchData(pageSize) {
     // Retrieve data from db cache in parallel with loading data from server
-    if (client.dbManager) {
-      client.dbManager.loadAnnouncements(this._nextDBFromId, pageSize, (messages) => {
+    if (getClient().dbManager) {
+      getClient().dbManager.loadAnnouncements(this._nextDBFromId, pageSize, (messages) => {
         if (messages.length) this._appendResults({ data: messages }, true);
       });
     }
@@ -45,7 +47,7 @@ class AnnouncementsQuery extends MessagesQuery {
     if (newRequest !== this._firingRequest) {
       this.isFiring = true;
       this._firingRequest = newRequest;
-      client.xhr({
+      getClient().xhr({
         telemetry: {
           name: 'announcement_query_time',
         },
@@ -66,5 +68,3 @@ AnnouncementsQuery.MaxPageSize = 100;
 AnnouncementsQuery.prototype.model = Query.Announcement;
 
 Root.initClass.apply(AnnouncementsQuery, [AnnouncementsQuery, 'AnnouncementsQuery', Core]);
-
-module.exports = AnnouncementsQuery;

@@ -39,8 +39,10 @@
  */
 
 
-import Core, { MessagePart, MessageTypeModel, Root } from '../../../core/namespace';
+import Core from '../../../core/namespace';
 import { humanFileSize } from '../../ui-utils';
+
+const { MessagePart, MessageTypeModel, Root } = Core;
 
 class FileModel extends MessageTypeModel {
 

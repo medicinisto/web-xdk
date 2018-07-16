@@ -10,7 +10,7 @@ import { ErrorDictionary } from '../layer-error';
 import ConversationMessage from '../models/conversation-message';
 import Core from '../namespace';
 
-module.exports = {
+const ClientConversation =  {
   events: [
     /**
      * One or more Layer.Core.Conversation objects have been added to the client.
@@ -415,5 +415,5 @@ module.exports = {
     },
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClientConversation;
+Core.mixins.Client.push(ClientConversation);

@@ -49,7 +49,7 @@
  * @extends Layer.Core.Container
  * @author  Michael Kantor
  */
-import { client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Syncable from './syncable';
@@ -58,14 +58,16 @@ import ChannelMessage from './channel-message';
 import { ErrorDictionary } from '../layer-error';
 import LayerEvent from '../layer-event';
 import Util from '../../utils';
-import Constants from '../../constants';
+import { STANDARD_MIME_TYPES, SYNC_STATE } from '../../constants';
 
-class Channel extends Container {
+const { getClient } = Settings;
+
+export default class Channel extends Container {
   constructor(options = {}) {
     // Setup default values
     if (!options.membership) options.membership = {};
     super(options);
-    this._members = client._fixIdentities(options.members || []).map(item => item.id);
+    this._members = getClient()._fixIdentities(options.members || []).map(item => item.id);
     this._register();
   }
 
@@ -77,7 +79,7 @@ class Channel extends Container {
    */
   destroy() {
     this.lastMessage = null;
-    client._removeChannel(this);
+    getClient()._removeChannel(this);
     super.destroy();
     this.membership = null;
   }
@@ -107,7 +109,7 @@ class Channel extends Container {
       messageConfig = {
         parts: [{
           body: JSON.stringify({ text: options }),
-          mimeType: Constants.STANDARD_MIME_TYPES.TEXT + ';role=root',
+          mimeType: STANDARD_MIME_TYPES.TEXT + ';role=root',
         }],
       };
     } else {
@@ -138,7 +140,7 @@ class Channel extends Container {
   _getSendData(data) {
     const isMetadataEmpty = Util.isEmpty(this.metadata);
     const members = this._members || [];
-    if (members.indexOf(client.user.id) === -1) members.push(client.user.id);
+    if (members.indexOf(getClient().user.id) === -1) members.push(getClient().user.id);
     return {
       method: 'Channel.create',
       data: {
@@ -164,12 +166,12 @@ class Channel extends Container {
 
     // Disable events if creating a new Conversation
     // We still want property change events for anything that DOES change
-    this._disableEvents = (this.syncState === Constants.SYNC_STATE.NEW);
+    this._disableEvents = (this.syncState === SYNC_STATE.NEW);
     this.name = channel.name;
 
     this.isCurrentParticipant = Boolean(channel.membership);
     this.membership = !channel.membership ||
-      !channel.membership.id ? null : client._createObject(channel.membership);
+      !channel.membership.id ? null : getClient()._createObject(channel.membership);
 
     super._populateFromServer(channel);
     this._register();
@@ -182,7 +184,7 @@ class Channel extends Container {
     if (channel) {
       this._createSuccess(channel);
     } else {
-      this.syncState = Constants.SYNC_STATE.NEW;
+      this.syncState = SYNC_STATE.NEW;
       this._syncCounter = 0;
       this.trigger('sent-error', { error: data });
     }
@@ -239,8 +241,8 @@ class Channel extends Container {
    * @ignore until server supports it
    */
   addMembers(members) {
-    members = client._fixIdentities(members).map(item => item.id);
-    if (this.syncState === Constants.SYNC_STATE.NEW) {
+    members = getClient()._fixIdentities(members).map(item => item.id);
+    if (this.syncState === SYNC_STATE.NEW) {
       this._members = this._members.concat(members);
       return this;
     }
@@ -271,9 +273,9 @@ class Channel extends Container {
    * @ignore until server supports it
    */
   removeMembers(members) {
-    members = client._fixIdentities(members).map(item => item.id);
+    members = getClient()._fixIdentities(members).map(item => item.id);
 
-    if (this.syncState === Constants.SYNC_STATE.NEW) {
+    if (this.syncState === SYNC_STATE.NEW) {
       members.forEach((id) => {
         const index = this._members.indexOf(id);
         if (index !== -1) this._members.splice(index, 1);
@@ -304,7 +306,7 @@ class Channel extends Container {
    * @ignore until server supports it
    */
   join() {
-    return this.addMembers([client.user.id]);
+    return this.addMembers([getClient().user.id]);
   }
 
   /**
@@ -319,7 +321,7 @@ class Channel extends Container {
    * @ignore until server supports it
    */
   leave() {
-    return this.removeMembers([client.user.id]);
+    return this.removeMembers([getClient().user.id]);
   }
 
   /**
@@ -349,9 +351,9 @@ class Channel extends Container {
    * @returns {Layer.Core.Membership}
    */
   getMember(identityId) {
-    identityId = client._fixIdentities([identityId])[0].id;
+    identityId = getClient()._fixIdentities([identityId])[0].id;
     const membershipId = this.id + '/members/' + identityId.replace(/layer:\/\/\/identities\//, '');
-    return client.getMember(membershipId, true);
+    return getClient().getMember(membershipId, true);
   }
 
   /**
@@ -400,7 +402,7 @@ class Channel extends Container {
    * @private
    */
   _register() {
-    client._addChannel(this);
+    getClient()._addChannel(this);
   }
 
   _deleteResult(result, id) {
@@ -478,11 +480,11 @@ class Channel extends Container {
     const newOptions = {
       name: options.name,
       private: options.private,
-      members: options.members ? client._fixIdentities(options.members).map(item => item.id) : [],
+      members: options.members ? getClient()._fixIdentities(options.members).map(item => item.id) : [],
       metadata: options.metadata,
     };
 
-    const channel = client.findCachedChannel(aChannel => aChannel.name === newOptions.name);
+    const channel = getClient().findCachedChannel(aChannel => aChannel.name === newOptions.name);
 
     if (channel) {
       channel._sendDistinctEvent = new LayerEvent({
@@ -612,4 +614,3 @@ Channel._supportedEvents = [
 
 Root.initClass.apply(Channel, [Channel, 'Channel', Core]);
 Syncable.subclasses.push(Channel);
-module.exports = Channel;

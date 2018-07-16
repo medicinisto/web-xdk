@@ -49,7 +49,7 @@
  * @extends Layer.Core.Container
  * @author  Michael Kantor
  */
-import { client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Syncable from './syncable';
@@ -57,10 +57,12 @@ import Container from './container';
 import ConversationMessage from './conversation-message';
 import { ErrorDictionary } from '../layer-error';
 import Util, { logger } from '../../utils';
-import Constants from '../../constants';
+import { STANDARD_MIME_TYPES, SYNC_STATE, DELETION_MODE } from '../../constants';
 import LayerEvent from '../layer-event';
 
-class Conversation extends Container {
+const { getClient } = Settings;
+
+export default class Conversation extends Container {
   /**
    * Create a new conversation.
    *
@@ -86,9 +88,9 @@ class Conversation extends Container {
 
     // If the options doesn't contain server object, setup participants.
     if (!options || !options.fromServer) {
-      this.participants = client._fixIdentities(this.participants);
-      if (client.needsUserContext && client.user && this.participants.indexOf(client.user) === -1) {
-        this.participants.push(client.user);
+      this.participants = getClient()._fixIdentities(this.participants);
+      if (getClient().needsUserContext && getClient().user && this.participants.indexOf(getClient().user) === -1) {
+        this.participants.push(getClient().user);
       }
     }
     this._register();
@@ -105,7 +107,7 @@ class Conversation extends Container {
     this.lastMessage = null;
 
     // Client fires 'conversations:remove' and then removes the Conversation.
-    client._removeConversation(this);
+    getClient()._removeConversation(this);
 
     super.destroy();
 
@@ -139,7 +141,7 @@ class Conversation extends Container {
       messageConfig = {
         parts: [{
           body: JSON.stringify({ text: options }),
-          mimeType: Constants.STANDARD_MIME_TYPES.TEXT + ';role=root',
+          mimeType: STANDARD_MIME_TYPES.TEXT + ';role=root',
         }],
       };
     } else {
@@ -206,7 +208,7 @@ class Conversation extends Container {
     if (this._sendDistinctEvent) this._handleLocalDistinctConversation();
 
     // If the Conversation is already on the server, don't send.
-    if (wasLocalDistinct || this.syncState !== Constants.SYNC_STATE.NEW) {
+    if (wasLocalDistinct || this.syncState !== SYNC_STATE.NEW) {
       if (message) this._setupMessage(message);
       return this;
     }
@@ -214,8 +216,8 @@ class Conversation extends Container {
     // Make sure this user is a participant (server does this for us, but
     // this insures the local copy is correct until we get a response from
     // the server
-    if (client.needsUserContext && this.participants.indexOf(client.user) === -1) {
-      this.participants.push(client.user);
+    if (getClient().needsUserContext && this.participants.indexOf(getClient().user) === -1) {
+      this.participants.push(getClient().user);
     }
 
     return super.send(message);
@@ -316,22 +318,22 @@ class Conversation extends Container {
 
     // Disable events if creating a new Conversation
     // We still want property change events for anything that DOES change
-    this._disableEvents = (this.syncState === Constants.SYNC_STATE.NEW);
+    this._disableEvents = (this.syncState === SYNC_STATE.NEW);
 
-    this.participants = client._fixIdentities(conversation.participants);
+    this.participants = getClient()._fixIdentities(conversation.participants);
     this.participants.forEach(identity => identity.on('identities:change', this._handleParticipantChangeEvent, this));
     this.distinct = conversation.distinct;
     this.unreadCount = conversation.unread_message_count;
     this.totalMessageCount = conversation.total_message_count;
-    if (client.needsUserContext) {
-      this.isCurrentParticipant = this.participants.indexOf(client.user) !== -1;
+    if (getClient().needsUserContext) {
+      this.isCurrentParticipant = this.participants.indexOf(getClient().user) !== -1;
     }
     super._populateFromServer(conversation);
 
     if (typeof conversation.last_message === 'string') {
-      this.lastMessage = client.getMessage(conversation.last_message);
+      this.lastMessage = getClient().getMessage(conversation.last_message);
     } else if (conversation.last_message) {
-      this.lastMessage = client._createObject(conversation.last_message);
+      this.lastMessage = getClient()._createObject(conversation.last_message);
     }
     this._register();
 
@@ -361,7 +363,7 @@ class Conversation extends Container {
    */
   addParticipants(participants) {
     // Only add those that aren't already in the list.
-    const identities = client._fixIdentities(participants);
+    const identities = getClient()._fixIdentities(participants);
     const adding = identities.filter(identity => this.participants.indexOf(identity) === -1);
     this._patchParticipants({ add: adding, remove: [] });
     return this;
@@ -386,7 +388,7 @@ class Conversation extends Container {
   removeParticipants(participants) {
     const currentParticipants = {};
     this.participants.forEach(participant => (currentParticipants[participant.id] = true));
-    const identities = client._fixIdentities(participants);
+    const identities = getClient()._fixIdentities(participants);
 
     const removing = identities.filter(participant => currentParticipants[participant.id]);
     if (removing.length === 0) return this;
@@ -416,7 +418,7 @@ class Conversation extends Container {
       throw new Error(ErrorDictionary.moreParticipantsRequired);
     }
 
-    const identities = client._fixIdentities(participants);
+    const identities = getClient()._fixIdentities(participants);
 
     const change = this._getParticipantChange(identities, this.participants);
     this._patchParticipants(change);
@@ -441,8 +443,8 @@ class Conversation extends Container {
    */
   _patchParticipants(change) {
     this._applyParticipantChange(change);
-    if (client.needsUserContext) {
-      this.isCurrentParticipant = this.participants.indexOf(client.user) !== -1;
+    if (getClient().needsUserContext) {
+      this.isCurrentParticipant = this.participants.indexOf(getClient().user) !== -1;
     }
 
     const ops = [];
@@ -505,7 +507,7 @@ class Conversation extends Container {
    */
   leave() {
     if (this.isDestroyed) throw new Error(ErrorDictionary.isDestroyed);
-    this._delete(`mode=${Constants.DELETION_MODE.MY_DEVICES}&leave=true`);
+    this._delete(`mode=${DELETION_MODE.MY_DEVICES}&leave=true`);
   }
 
   /**
@@ -539,12 +541,12 @@ class Conversation extends Container {
 
     let queryStr;
     switch (mode) {
-      case Constants.DELETION_MODE.ALL:
+      case DELETION_MODE.ALL:
       case true:
-        queryStr = `mode=${Constants.DELETION_MODE.ALL}`;
+        queryStr = `mode=${DELETION_MODE.ALL}`;
         break;
-      case Constants.DELETION_MODE.MY_DEVICES:
-        queryStr = `mode=${Constants.DELETION_MODE.MY_DEVICES}&leave=false`;
+      case DELETION_MODE.MY_DEVICES:
+        queryStr = `mode=${DELETION_MODE.MY_DEVICES}&leave=false`;
         break;
       default:
         throw new Error(ErrorDictionary.deletionModeUnsupported);
@@ -575,8 +577,8 @@ class Conversation extends Container {
       this._disableEvents = false;
       if (paths[0] === 'participants') {
         // oldValue/newValue come as a Basic Identity POJO; lets deliver events with actual instances
-        oldValue = oldValue.map(identity => client.getIdentity(identity.id));
-        newValue = newValue.map(identity => client.getIdentity(identity.id));
+        oldValue = oldValue.map(identity => getClient().getIdentity(identity.id));
+        newValue = newValue.map(identity => getClient().getIdentity(identity.id));
         this.__updateParticipants(newValue, oldValue);
       } else {
         super._handlePatchEvent(newValue, oldValue, paths);
@@ -615,7 +617,7 @@ class Conversation extends Container {
 
 
   _register() {
-    client._addConversation(this);
+    getClient()._addConversation(this);
   }
 
 
@@ -718,7 +720,7 @@ class Conversation extends Container {
       this._triggerAsync('change', change);
     }
 
-    const isParticipant = newValue.indexOf(client.user) !== -1;
+    const isParticipant = newValue.indexOf(getClient().user) !== -1;
     if (isParticipant !== this.isCurrentParticipant) {
       this.isCurrentParticipant = isParticipant;
       this._triggerAsync('change', {
@@ -791,7 +793,7 @@ class Conversation extends Container {
   static create(options) {
     const newOptions = {
       distinct: options.distinct,
-      participants: client._fixIdentities(options.participants || []),
+      participants: getClient()._fixIdentities(options.participants || []),
       metadata: options.metadata,
     };
     if (newOptions.distinct) {
@@ -817,8 +819,8 @@ class Conversation extends Container {
    * @return {Layer.Core.Conversation}
    */
   static _createDistinct(options) {
-    if (client.needsUserContext && options.participants.indexOf(client.user) === -1) {
-      options.participants.push(client.user);
+    if (getClient().needsUserContext && options.participants.indexOf(getClient().user) === -1) {
+      options.participants.push(getClient().user);
     }
 
     const participantsHash = {};
@@ -826,7 +828,7 @@ class Conversation extends Container {
       participantsHash[participant.id] = participant;
     });
 
-    const conv = client.findCachedConversation((aConv) => {
+    const conv = getClient().findCachedConversation((aConv) => {
       if (aConv.distinct && aConv.participants.length === options.participants.length) {
         for (let index = 0; index < aConv.participants.length; index++) {
           if (!participantsHash[aConv.participants[index].id]) return false;
@@ -1004,5 +1006,3 @@ Conversation.mixins = Core.mixins.Conversation;
 
 Root.initClass.apply(Conversation, [Conversation, 'Conversation', Core]);
 Syncable.subclasses.push(Conversation);
-
-module.exports = Conversation;

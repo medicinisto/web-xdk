@@ -4,7 +4,7 @@
  * @class Layer.Core.Message.ChannelMessage
  * @extends Layer.Core.Message
  */
-import { client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Message from './message';
@@ -12,14 +12,16 @@ import Constants from '../../constants';
 import { logger } from '../../utils';
 import { ErrorDictionary } from '../layer-error';
 
-class ChannelMessage extends Message {
+const { getClient } = Settings;
+
+export default class ChannelMessage extends Message {
   constructor(options) {
     if (options.channel) options.conversationId = options.channel.id;
     super(options);
 
     this.isInitializing = false;
     if (options && options.fromServer) {
-      client._addMessage(this);
+      getClient()._addMessage(this);
     } else {
       this.parts.forEach((part) => { part._message = this; });
     }
@@ -34,7 +36,7 @@ class ChannelMessage extends Message {
    */
   getConversation(load) {
     if (this.conversationId) {
-      return client.getChannel(this.conversationId, load);
+      return getClient().getChannel(this.conversationId, load);
     }
     return null;
   }
@@ -87,7 +89,7 @@ class ChannelMessage extends Message {
    */
   _loaded(data) {
     this.conversationId = data.channel.id;
-    client._addMessage(this);
+    getClient()._addMessage(this);
   }
 
 
@@ -117,7 +119,7 @@ class ChannelMessage extends Message {
       conversationId,
       fromServer: message,
       _fromDB: message._fromDB,
-      _notify: fromWebsocket && message.is_unread && message.sender.user_id !== client.user.userId,
+      _notify: fromWebsocket && message.is_unread && message.sender.user_id !== getClient().user.userId,
     });
   }
 }
@@ -137,4 +139,3 @@ ChannelMessage.prototype.isRead = false;
 ChannelMessage.inObjectIgnore = Message.inObjectIgnore;
 ChannelMessage._supportedEvents = [].concat(Message._supportedEvents);
 Root.initClass.apply(ChannelMessage, [ChannelMessage, 'ChannelMessage', Core.Message]);
-module.exports = ChannelMessage;

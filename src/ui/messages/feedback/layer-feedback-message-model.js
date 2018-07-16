@@ -28,10 +28,13 @@
  * @class Layer.UI.messages.FeedbackMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import { client as Client } from '../../../settings';
-import Core, { MessagePart, Root, MessageTypeModel } from '../../../core/namespace';
+import Settings from '../../../settings';
+import Core from '../../../core/namespace';
 import { CRDT_TYPES } from '../../../constants';
 import { ErrorDictionary } from '../../../core/layer-error';
+
+const { getClient } = Settings;
+const { MessagePart, Root, MessageTypeModel } = Core;
 
 class FeedbackModel extends MessageTypeModel {
   registerAllStates() {
@@ -92,12 +95,12 @@ class FeedbackModel extends MessageTypeModel {
 
   isEditable() {
     if (this.sentAt) return false;
-    if (this.enabledFor !== Client.user.id) return false;
+    if (this.enabledFor !== getClient().user.id) return false;
     return true;
   }
 
   sendFeedback() {
-    if (this.enabledFor !== Client.user.id) return;
+    if (this.enabledFor !== getClient().user.id) return;
 
     const responseText = this.getSummary(this.responseMessage, false);
     this.sentAt = new Date();
@@ -137,10 +140,10 @@ class FeedbackModel extends MessageTypeModel {
       const key = match.substring(2, match.length - 1);
       switch (key) {
         case 'customer':
-          if (useYou && this.enabledFor === Client.user.userId) {
+          if (useYou && this.enabledFor === getClient().user.userId) {
             return 'You';
           } else {
-            return Client.getIdentity(this.enabledFor).displayName || FeedbackModel.anonymousUserName;
+            return getClient().getIdentity(this.enabledFor).displayName || FeedbackModel.anonymousUserName;
           }
         default:
           return this[key];

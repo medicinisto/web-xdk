@@ -24,7 +24,7 @@ import Query from './query';
  *
  * @class Layer.Core.QueryBuilder.MessagesQuery
  */
-class MessagesQuery {
+export default class MessagesQuery {
 
   /**
    * Creates a new query builder for a set of messages.
@@ -575,5 +575,4 @@ const QueryBuilder = {
   },
 };
 
-module.exports = QueryBuilder;
 Core.QueryBuilder = QueryBuilder;

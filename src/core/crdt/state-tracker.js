@@ -307,7 +307,4 @@ Core.CRDT.CRDTStateTracker = CRDTStateTracker;
 Core.CRDT.Changes = Changes;
 Core.CRDT.AddOperation = AddOperation;
 
-module.exports = {
-  CRDTStateTracker,
-  Changes,
-};
+export { CRDTStateTracker, Changes };

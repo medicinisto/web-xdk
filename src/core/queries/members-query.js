@@ -24,18 +24,20 @@
  * @class  Layer.Core.Query.MembersQuery
  * @extends Layer.Core.Query
  */
-import { client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
 import { logger } from '../../utils';
 import Query from './query';
 
+const { getClient } = Settings;
+
 const findChannelIdRegex = new RegExp(
   /^channel.id\s*=\s*['"]((layer:\/\/\/channels\/)?.{8}-.{4}-.{4}-.{4}-.{12})['"]$/);
 
 
-class MembersQuery extends Query {
+export default class MembersQuery extends Query {
   _fixPredicate(inValue) {
     if (inValue === '') return '';
     if (inValue.indexOf('channel.id') !== -1) {
@@ -87,7 +89,7 @@ class MembersQuery extends Query {
 
     const channelId = 'layer:///channels/' + predicateIds.uuid;
     if (!this._predicate) this._predicate = predicateIds.id;
-    const channel = client.getChannel(channelId);
+    const channel = getClient().getChannel(channelId);
 
     const newRequest = `channels/${predicateIds.uuid}/members?page_size=${pageSize}` +
       (this._nextServerFromId ? '&from_id=' + this._nextServerFromId : '');
@@ -96,7 +98,7 @@ class MembersQuery extends Query {
     if ((!channel || channel.isSaved()) && newRequest !== this._firingRequest) {
       this.isFiring = true;
       this._firingRequest = newRequest;
-      client.xhr({
+      getClient().xhr({
         telemetry: {
           name: 'member_query_time',
         },
@@ -141,5 +143,3 @@ MembersQuery.MaxPageSize = 500;
 MembersQuery.prototype.model = Query.Membership;
 
 Root.initClass.apply(MembersQuery, [MembersQuery, 'MembersQuery', Core.Query]);
-
-module.exports = MembersQuery;

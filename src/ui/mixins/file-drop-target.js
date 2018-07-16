@@ -11,8 +11,10 @@ import FileModel from '../messages/file/layer-file-message-model';
 
 import CarouselModel from '../messages/carousel/layer-carousel-message-model';
 import mixins from './index';
-import { client, audioMIMETypes, videoMIMETypes, imageMIMETypes } from '../../settings';
+import Settings from '../../settings';
 import { logger } from '../../utils';
+
+const { client, audioMIMETypes, videoMIMETypes, imageMIMETypes } = Settings;
 
 mixins.FileDropTarget = module.exports = {
   properties: {

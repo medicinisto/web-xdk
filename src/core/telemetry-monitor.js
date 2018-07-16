@@ -12,13 +12,15 @@
  * @extends Layer.Core.Root
  * @private
  */
-import { client as Client } from '../settings';
+import Settings from '../settings';
 import Core from './namespace';
 import Root from './root';
 import Util, { xhr, hasLocalStorage } from '../utils';
 import version from '../version';
 
-class TelemetryMonitor extends Root {
+const { getClient } = Settings;
+
+export default class TelemetryMonitor extends Root {
   /**
    * Creates a new Monitor.
    *
@@ -36,7 +38,7 @@ class TelemetryMonitor extends Root {
       records: [],
     };
     this.tempState = {};
-    this.storageKey = 'layer-telemetry-' + Client.appId;
+    this.storageKey = 'layer-telemetry-' + getClient().appId;
 
     if (!hasLocalStorage) {
       this.enabled = false;
@@ -53,7 +55,7 @@ class TelemetryMonitor extends Root {
       }
     }
 
-    Client.on('state-change', this.trackEvent, this);
+    getClient().on('state-change', this.trackEvent, this);
     xhr.addConnectionListener(this.trackRestPerformance.bind(this));
     this.setupReportingInterval();
   }
@@ -296,7 +298,7 @@ class TelemetryMonitor extends Root {
         },
         data: {
           id: Util.uuid(this.state.id),
-          layer_app_id: Client.appId,
+          layer_app_id: getClient().appId,
           records: records.map(record => this.convertRecord(record)),
         },
       }, (result) => {
@@ -430,4 +432,3 @@ TelemetryMonitor._supportedEvents = Root._supportedEvents.concat([
 ]);
 
 Root.initClass.apply(TelemetryMonitor, [TelemetryMonitor, 'TelemetryMonitor', Core]);
-module.exports = TelemetryMonitor;

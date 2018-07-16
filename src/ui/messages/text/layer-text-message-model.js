@@ -36,8 +36,10 @@
  * @class Layer.UI.messages.TextMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import Core, { MessagePart, Root, MessageTypeModel } from '../../../core/namespace';
+import Core from '../../../core/namespace';
 import { STANDARD_MIME_TYPES } from '../../../constants';
+
+const { MessagePart, Root, MessageTypeModel } = Core;
 
 class TextModel extends MessageTypeModel {
   /**

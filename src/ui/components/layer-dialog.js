@@ -39,7 +39,9 @@ import './layer-title-bar';
 import Clickable from '../mixins/clickable';
 import { generateUUID } from '../../utils';
 import { isInBackground } from '../ui-utils';
-import { client } from '../../settings';
+import Settings from '../../settings';
+
+const { getClient } = Settings;
 
 registerComponent('layer-dialog', {
   mixins: [Clickable],
@@ -277,7 +279,7 @@ registerComponent('layer-dialog', {
       }
 
       if (this.model) {
-        client._triggerAsync('analytics', {
+        getClient()._triggerAsync('analytics', {
           type: 'message-viewed',
           size: 'large',
           where: 'dialog',

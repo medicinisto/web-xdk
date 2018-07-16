@@ -4,7 +4,7 @@
  */
 import './utils/native-support/web';
 import './core/mixins/client-dbmanager';
-import { Core, Utils, Constants, init, onInit, version, client, Settings } from './index-core';
+import { Core, Utils, Constants, init, onInit, version, Settings } from './index-core';
 import './core/db-manager';
 import './core/models/message-type-response-summary/message-type-response-summary-v1';
 import UI from './ui/index-all';
@@ -19,7 +19,7 @@ module.exports = {
   init,
   onInit,
   version: version + '-all',
-  client,
+  get client() { return Settings.getClient(); },
   Settings,
 };
 if (typeof global !== 'undefined') global.Layer = global.layer = module.exports;

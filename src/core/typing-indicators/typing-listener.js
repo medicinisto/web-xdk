@@ -28,7 +28,7 @@ import { STARTED, FINISHED } from './typing-indicators';
  *
  * @class  Layer.Core.TypingIndicators.TypingListener
  */
-class TypingListener {
+export default class TypingListener {
 
   /**
    * Create a TypingListener that listens for the user's typing.
@@ -176,4 +176,4 @@ class TypingListener {
   }
 }
 
-module.exports = Core.TypingIndicators.TypingListener = TypingListener;
+Core.TypingIndicators.TypingListener = TypingListener;

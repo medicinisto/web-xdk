@@ -15,11 +15,12 @@
 
 import Core from '../namespace';
 
-module.exports = {
+const MessagePart = {
   methods: {
     _getPostContentURL() {
       return '/content';
     },
   },
 };
-Core.mixins.MessagePart.push(module.exports);
+export default MessagePart;
+Core.mixins.MessagePart.push(MessagePart);

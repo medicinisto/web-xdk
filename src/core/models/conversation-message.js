@@ -4,15 +4,17 @@
  * @class Layer.Core.Message.ConversationMessage
  * @extends Layer.Core.Message
  */
-import { client as Client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Message from './message';
 import { ErrorDictionary } from '../layer-error';
-import Constants from '../../constants';
+import { RECEIPT_STATE, RECIPIENT_STATE, DELETION_MODE } from '../../constants';
 import Util from '../../utils';
 
-class ConversationMessage extends Message {
+const { getClient } = Settings;
+
+export default class ConversationMessage extends Message {
   constructor(options) {
     if (options.conversation) options.conversationId = options.conversation.id;
     super(options);
@@ -24,10 +26,10 @@ class ConversationMessage extends Message {
 
     this.isInitializing = false;
     if (options && options.fromServer) {
-      Client._addMessage(this);
-      if (Client.needsUserContext) {
-        const status = this.recipientStatus[Client.user.id];
-        if (status && status !== Constants.RECEIPT_STATE.READ && status !== Constants.RECEIPT_STATE.DELIVERED) {
+      getClient()._addMessage(this);
+      if (getClient().needsUserContext) {
+        const status = this.recipientStatus[getClient().user.id];
+        if (status && status !== RECEIPT_STATE.READ && status !== RECEIPT_STATE.DELIVERED) {
           Util.defer(() => this._sendReceipt('delivery'));
         }
       }
@@ -45,7 +47,7 @@ class ConversationMessage extends Message {
    */
   getConversation(load) {
     if (this.conversationId) {
-      return Client.getConversation(this.conversationId, load);
+      return getClient().getConversation(this.conversationId, load);
     }
     return null;
   }
@@ -60,7 +62,7 @@ class ConversationMessage extends Message {
    */
   _loaded(data) {
     this.conversationId = data.conversation.id;
-    Client._addMessage(this);
+    getClient()._addMessage(this);
   }
 
   /**
@@ -75,13 +77,13 @@ class ConversationMessage extends Message {
    */
   __getRecipientStatus(pKey) {
     const value = this[pKey] || {};
-    const id = Client.needsUserContext ? Client.user.id : '';
+    const id = getClient().needsUserContext ? getClient().user.id : '';
     const conversation = this.getConversation(false);
     if (conversation) {
       conversation.participants.forEach((participant) => {
         if (!value[participant.id]) {
           value[participant.id] = participant.id === id ?
-            Constants.RECEIPT_STATE.READ : Constants.RECEIPT_STATE.PENDING;
+            RECEIPT_STATE.READ : RECEIPT_STATE.PENDING;
         }
       });
     }
@@ -108,9 +110,9 @@ class ConversationMessage extends Message {
 
     if (Util.doesObjectMatch(status, oldStatus)) return;
 
-    const id = Client.needsUserContext ? Client.user.id : '';
-    const isSender = Client.needsUserContext ? this.sender.isMine : false;
-    const userHasRead = status[id] === Constants.RECEIPT_STATE.READ;
+    const id = getClient().needsUserContext ? getClient().user.id : '';
+    const isSender = getClient().needsUserContext ? this.sender.isMine : false;
+    const userHasRead = status[id] === RECEIPT_STATE.READ;
 
     const triggerChange = (force) => {
       // Only trigger an event
@@ -121,7 +123,7 @@ class ConversationMessage extends Message {
       // 3. This user is the sender; in that case we do care about rendering receipts from other users
       if (!this.isInitializing && oldStatus || force) {
         if (!oldStatus) oldStatus = {};
-        const usersStateUpdatedToRead = userHasRead && oldStatus[id] !== Constants.RECEIPT_STATE.READ;
+        const usersStateUpdatedToRead = userHasRead && oldStatus[id] !== RECEIPT_STATE.READ;
         if (usersStateUpdatedToRead || isSender) {
           this._triggerAsync('change', {
             oldValue: oldStatus,
@@ -177,10 +179,10 @@ class ConversationMessage extends Message {
     Object.keys(status)
       .filter(participant => participant !== id)
       .forEach((participant) => {
-        if (status[participant] === Constants.RECEIPT_STATE.READ) {
+        if (status[participant] === RECEIPT_STATE.READ) {
           readCount++;
           deliveredCount++;
-        } else if (status[participant] === Constants.RECEIPT_STATE.DELIVERED) {
+        } else if (status[participant] === RECEIPT_STATE.DELIVERED) {
           deliveredCount++;
         }
       });
@@ -202,18 +204,18 @@ class ConversationMessage extends Message {
    */
   _setReceiptStatus(readCount, deliveredCount, userCount) {
     if (readCount === userCount) {
-      this.readStatus = Constants.RECIPIENT_STATE.ALL;
+      this.readStatus = RECIPIENT_STATE.ALL;
     } else if (readCount > 0) {
-      this.readStatus = Constants.RECIPIENT_STATE.SOME;
+      this.readStatus = RECIPIENT_STATE.SOME;
     } else {
-      this.readStatus = Constants.RECIPIENT_STATE.NONE;
+      this.readStatus = RECIPIENT_STATE.NONE;
     }
     if (deliveredCount === userCount) {
-      this.deliveryStatus = Constants.RECIPIENT_STATE.ALL;
+      this.deliveryStatus = RECIPIENT_STATE.ALL;
     } else if (deliveredCount > 0) {
-      this.deliveryStatus = Constants.RECIPIENT_STATE.SOME;
+      this.deliveryStatus = RECIPIENT_STATE.SOME;
     } else {
-      this.deliveryStatus = Constants.RECIPIENT_STATE.NONE;
+      this.deliveryStatus = RECIPIENT_STATE.NONE;
     }
   }
 
@@ -234,7 +236,7 @@ class ConversationMessage extends Message {
     if (value) {
       const conversation = this.getConversation();
       if (!this._inPopulateFromServer && (!conversation || !conversation._inMarkAllAsRead)) {
-        this._sendReceipt(Constants.RECEIPT_STATE.READ);
+        this._sendReceipt(RECEIPT_STATE.READ);
       }
       this._triggerMessageRead();
       if (conversation) conversation.unreadCount--;
@@ -280,8 +282,8 @@ class ConversationMessage extends Message {
    * @param {string} [type=Layer.Constants.RECEIPT_STATE.READ] - One of Layer.Constants.RECEIPT_STATE.READ or Layer.Constants.RECEIPT_STATE.DELIVERY
    * @return {Layer.Core.Message.ConversationMessage} this
    */
-  sendReceipt(type = Constants.RECEIPT_STATE.READ) {
-    if (type === Constants.RECEIPT_STATE.READ) {
+  sendReceipt(type = RECEIPT_STATE.READ) {
+    if (type === RECEIPT_STATE.READ) {
       if (this.isRead) {
         return this;
       } else {
@@ -350,11 +352,11 @@ class ConversationMessage extends Message {
     if (this.isDestroyed) throw new Error(ErrorDictionary.isDestroyed);
     let queryStr;
     switch (mode) {
-      case Constants.DELETION_MODE.ALL:
+      case DELETION_MODE.ALL:
       case true:
         queryStr = 'mode=all_participants';
         break;
-      case Constants.DELETION_MODE.MY_DEVICES:
+      case DELETION_MODE.MY_DEVICES:
         queryStr = 'mode=my_devices';
         break;
       default:
@@ -407,7 +409,7 @@ class ConversationMessage extends Message {
       conversationId = message.conversationId;
     }
 
-    const isMine = Client.needsUserContext ? message.sender.user_id !== Client.user.userId : false;
+    const isMine = getClient().needsUserContext ? message.sender.user_id !== getClient().user.userId : false;
     return new ConversationMessage({
       conversationId,
       fromServer: message,
@@ -485,5 +487,3 @@ ConversationMessage._supportedEvents = [].concat(Message._supportedEvents);
 ConversationMessage.mixins = Core.mixins.Message;
 
 Root.initClass.apply(ConversationMessage, [ConversationMessage, 'ConversationMessage', Core.Message]);
-
-module.exports = ConversationMessage;

@@ -78,11 +78,14 @@
  * @class Layer.UI.messages.ChoiceMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import { client as Client } from '../../../settings';
-import Core, { MessagePart, Root, MessageTypeModel } from '../../../core/namespace';
+import Settings from '../../../settings';
+import Core from '../../../core/namespace';
 import ChoiceItem from './layer-choice-message-model-item';
 import { ErrorDictionary } from '../../../core/layer-error';
 import { CRDT_TYPES } from '../../../constants';
+
+const { MessagePart, Root, MessageTypeModel } = Core;
+const { getClient } = Settings;
 
 class ChoiceModel extends MessageTypeModel {
 
@@ -181,7 +184,7 @@ class ChoiceModel extends MessageTypeModel {
   parseModelPart({ payload, isEdit }) {
     // These two lines are Backwards compatability with 1.0.0-pre2.7; remove some day please!
     if (payload.enabled_for && Array.isArray(payload.enabled_for)) payload.enabled_for = payload.enabled_for[0];
-    if (!payload.enabled_for) payload.enabled_for = Client.user.id;
+    if (!payload.enabled_for) payload.enabled_for = getClient().user.id;
 
     // Explicitly protect us from this illegal usage.
     delete payload.selectedAnswer;
@@ -231,7 +234,7 @@ class ChoiceModel extends MessageTypeModel {
     if (!this.allowReselect && this.selectedAnswer) return false;
 
     // Disable selection if enabledFor is in use, but this user is not in the list
-    if (this.enabledFor !== Client.user.id) return false;
+    if (this.enabledFor !== getClient().user.id) return false;
 
     return true;
   }
@@ -355,7 +358,7 @@ class ChoiceModel extends MessageTypeModel {
 
     // Update the selected answer and update the UI
     // TODO: Use function to look at all state and get selectedAnswer
-    this.selectedAnswer = this.responses.getState(this.responseName, Client.user.id).join(',');
+    this.selectedAnswer = this.responses.getState(this.responseName, getClient().user.id).join(',');
 
 
     // Tell the UIs to update
@@ -375,7 +378,7 @@ class ChoiceModel extends MessageTypeModel {
    */
   _generateResponseMessage({ action, selectedText, choiceItem, participantData }) {
     // Generate the Response Message
-    return `${Client.user.displayName} ${action} "${selectedText}"` + (this.name ? ` for "${this.name}"` : '');
+    return `${getClient().user.displayName} ${action} "${selectedText}"` + (this.name ? ` for "${this.name}"` : '');
   }
 
   /**
@@ -433,7 +436,7 @@ class ChoiceModel extends MessageTypeModel {
 
     // Update the selected answer and update the UI
     // TODO: Use function to look at all state and get selectedAnswer
-    this.selectedAnswer = this.responses.getState(this.responseName, Client.user.id);
+    this.selectedAnswer = this.responses.getState(this.responseName, getClient().user.id);
 
     this._triggerAsync('message-type-model:change', {
       property: 'selectedAnswer',

@@ -11,7 +11,7 @@ import ChannelMessage from '../models/channel-message';
 import ChannelsQuery from '../queries/channels-query';
 import Core from '../namespace';
 
-module.exports = {
+const ClientChannel = {
   events: [
     /**
      * One or more Layer.Core.Channel objects have been added to the client.
@@ -411,5 +411,5 @@ module.exports = {
     },
   },
 };
-
-Core.mixins.Client.push(module.exports);
+export default ClientChannel;
+Core.mixins.Client.push(ClientChannel);

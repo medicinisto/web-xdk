@@ -17,15 +17,16 @@
  * @extends Layer.Core.Root
  * @author Michael Kantor
  */
-import { client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import { xhr } from '../../utils';
 import { getNativeSupport } from '../../utils/native-support';
 
+const { getClient } = Settings;
 const Blob = getNativeSupport('Blob');
 
-class Content extends Root {
+export default class Content extends Root {
 
   /**
    * Constructor
@@ -79,7 +80,7 @@ class Content extends Root {
    * @param {Function} [callback]
    */
   refreshContent(callback) {
-    client.xhr({
+    getClient().xhr({
       url: this.refreshUrl,
       method: 'GET',
       sync: false,
@@ -155,4 +156,3 @@ Content.prototype.size = 0;
 Content.prototype.expiration = null;
 
 Root.initClass.apply(Content, [Content, 'Content', Core]);
-module.exports = Content;

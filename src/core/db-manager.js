@@ -11,18 +11,18 @@
  * @class Layer.Core.DbManager
  * @protected
  */
-import { client } from '../settings';
+import Settings from '../settings';
 import Core from './namespace';
 import Root from './root';
-import SyncEvent from './sync-event';
-import Constants from '../constants';
+import { WebsocketSyncEvent, XHRSyncEvent } from './sync-event';
+import { SYNC_STATE } from '../constants';
 import Util from '../utils';
 import Announcement from './models/announcement';
 import Identity from './models/identity';
 
+const { getClient } = Settings;
 const DB_VERSION = 5;
 const MAX_SAFE_INTEGER = 9007199254740991;
-const SYNC_NEW = Constants.SYNC_STATE.NEW;
 
 function getDate(inDate) {
   return inDate ? inDate.toISOString() : null;
@@ -58,7 +58,7 @@ const TABLES = [
   },
 ];
 
-class DbManager extends Root {
+export default class DbManager extends Root {
 
   /**
    * Create the DB Manager
@@ -89,25 +89,25 @@ class DbManager extends Root {
       }
 
       // If Client is a Layer.Core.ClientAuthenticator, it won't support these events; this affects Unit Tests
-      if (enabled && client.constructor._supportedEvents.indexOf('conversations:add') !== -1) {
-        client.on('conversations:add', evt => this.writeConversations(evt.conversations), this);
-        client.on('conversations:change', evt => this._updateConversation(evt.target, evt.changes), this);
-        client.on('conversations:delete conversations:sent-error',
+      if (enabled && getClient().constructor._supportedEvents.indexOf('conversations:add') !== -1) {
+        getClient().on('conversations:add', evt => this.writeConversations(evt.conversations), this);
+        getClient().on('conversations:change', evt => this._updateConversation(evt.target, evt.changes), this);
+        getClient().on('conversations:delete conversations:sent-error',
           evt => this.deleteObjects('conversations', [evt.target]), this);
 
-        client.on('channels:add', evt => this.writeChannels(evt.channels), this);
-        client.on('channels:change', evt => this._updateChannel(evt.target, evt.changes), this);
-        client.on('channels:delete channels:sent-error',
+        getClient().on('channels:add', evt => this.writeChannels(evt.channels), this);
+        getClient().on('channels:change', evt => this._updateChannel(evt.target, evt.changes), this);
+        getClient().on('channels:delete channels:sent-error',
           evt => this.deleteObjects('channels', [evt.target]), this);
 
-        client.on('messages:add', evt => this.writeMessages(evt.messages), this);
-        client.on('messages:change', evt => this.writeMessages([evt.target]), this);
-        client.on('messages:delete messages:sent-error',
+        getClient().on('messages:add', evt => this.writeMessages(evt.messages), this);
+        getClient().on('messages:change', evt => this.writeMessages([evt.target]), this);
+        getClient().on('messages:delete messages:sent-error',
           evt => this.deleteObjects('messages', [evt.target]), this);
 
-        client.on('identities:add', evt => this.writeIdentities(evt.identities), this);
-        client.on('identities:change', evt => this.writeIdentities([evt.target]), this);
-        client.on('identities:unfollow', evt => this.deleteObjects('identities', [evt.target]), this);
+        getClient().on('identities:add', evt => this.writeIdentities(evt.identities), this);
+        getClient().on('identities:change', evt => this.writeIdentities([evt.target]), this);
+        getClient().on('identities:unfollow', evt => this.deleteObjects('identities', [evt.target]), this);
       }
 
       // Sync Queue only really works properly if we have the Messages and Conversations written to the DB; turn it off
@@ -124,7 +124,7 @@ class DbManager extends Root {
   }
 
   _getDbName() {
-    return 'LayerXDK_' + client.appId;
+    return 'LayerXDK_' + getClient().appId;
   }
 
   /**
@@ -140,7 +140,7 @@ class DbManager extends Root {
       this.db.close();
       delete this.db;
     }
-    if (!client) return;
+    if (!getClient()) return;
 
     // Abort if all tables are disabled
     const enabledTables = TABLES.filter(tableDef => this['_permission_' + tableDef.name]);
@@ -267,7 +267,7 @@ class DbManager extends Root {
       if (conversation._fromDB) {
         conversation._fromDB = false;
         return false;
-      } else if (conversation.isLoading || conversation.syncState === SYNC_NEW) {
+      } else if (conversation.isLoading || conversation.syncState === SYNC_STATE.NEW) {
         return false;
       } else {
         return true;
@@ -330,7 +330,7 @@ class DbManager extends Root {
       if (channel._fromDB) {
         channel._fromDB = false;
         return false;
-      } else if (channel.isLoading || channel.syncState === SYNC_NEW) {
+      } else if (channel.isLoading || channel.syncState === SYNC_STATE.NEW) {
         return false;
       } else {
         return true;
@@ -416,7 +416,7 @@ class DbManager extends Root {
       if (message._fromDB) {
         message._fromDB = false;
         return false;
-      } else if (message.syncState === Constants.SYNC_STATE.LOADING) {
+      } else if (message.syncState === SYNC_STATE.LOADING) {
         return false;
       } else {
         return true;
@@ -521,7 +521,7 @@ class DbManager extends Root {
         id: syncEvent.id,
         target: syncEvent.target,
         depends: syncEvent.depends,
-        isWebsocket: syncEvent instanceof SyncEvent.WebsocketSyncEvent,
+        isWebsocket: syncEvent instanceof WebsocketSyncEvent,
         operation: syncEvent.operation,
         data: syncEvent.data,
         url: syncEvent.url || '',
@@ -608,7 +608,7 @@ class DbManager extends Root {
     try {
       let sortIndex;
       let range = null;
-      const fromConversation = fromId ? client.getConversation(fromId) : null;
+      const fromConversation = fromId ? getClient().getConversation(fromId) : null;
       if (sortBy === 'last_message') {
         sortIndex = 'last_message_sent';
         if (fromConversation) {
@@ -627,7 +627,7 @@ class DbManager extends Root {
         // Step 2: Gather all Message IDs needed to initialize these Conversation's lastMessage properties.
         const messagesToLoad = data
           .map(item => item.last_message)
-          .filter(messageId => messageId && !client.getMessage(messageId));
+          .filter(messageId => messageId && !getClient().getMessage(messageId));
 
         // Step 3: Load all Messages needed to initialize these Conversation's lastMessage properties.
         this.getObjects('messages', messagesToLoad, (messages) => {
@@ -655,7 +655,7 @@ class DbManager extends Root {
 
     // Instantiate and Register each Conversation; will find any lastMessage that was registered.
     const newData = conversations
-      .map(conversation => this._createConversation(conversation) || client.getConversation(conversation.id))
+      .map(conversation => this._createConversation(conversation) || getClient().getConversation(conversation.id))
       .filter(conversation => conversation);
 
     // Return the data
@@ -677,7 +677,7 @@ class DbManager extends Root {
     try {
       const sortIndex = 'created_at';
       let range = null;
-      const fromChannel = fromId ? client.getChannel(fromId) : null;
+      const fromChannel = fromId ? getClient().getChannel(fromId) : null;
       if (fromChannel) {
         range = window.IDBKeyRange.upperBound([getDate(fromChannel.createdAt)]);
       }
@@ -703,7 +703,7 @@ class DbManager extends Root {
   _loadChannelsResult(channels, callback) {
     // Instantiate and Register each Conversation; will find any lastMessage that was registered.
     const newData = channels
-      .map(channel => this._createChannel(channel) || client.getChannel(channel.id))
+      .map(channel => this._createChannel(channel) || getClient().getChannel(channel.id))
       .filter(conversation => conversation);
 
     // Return the data
@@ -725,7 +725,7 @@ class DbManager extends Root {
   loadMessages(conversationId, fromId, pageSize, callback) {
     if (!this._permission_messages || this._isOpenError) return callback([]);
     try {
-      const fromMessage = fromId ? client.getMessage(fromId) : null;
+      const fromMessage = fromId ? getClient().getMessage(fromId) : null;
       const query = window.IDBKeyRange.bound([conversationId, 0],
         [conversationId, fromMessage ? fromMessage.position : MAX_SAFE_INTEGER]);
       this._loadByIndex('messages', 'conversationId', query, Boolean(fromId), pageSize, (data) => {
@@ -748,7 +748,7 @@ class DbManager extends Root {
   loadAnnouncements(fromId, pageSize, callback) {
     if (!this._permission_messages || this._isOpenError) return callback([]);
     try {
-      const fromMessage = fromId ? client.getMessage(fromId) : null;
+      const fromMessage = fromId ? getClient().getMessage(fromId) : null;
       const query = window.IDBKeyRange.bound(['announcement', 0],
         ['announcement', fromMessage ? fromMessage.position : MAX_SAFE_INTEGER]);
       this._loadByIndex('messages', 'conversationId', query, Boolean(fromId), pageSize, (data) => {
@@ -785,7 +785,7 @@ class DbManager extends Root {
 
     // Instantiate and Register each Message
     const newData = messages
-      .map(message => this._createMessage(message) || client.getMessage(message.id))
+      .map(message => this._createMessage(message) || getClient().getMessage(message.id))
       .filter(message => message);
 
     // Return the results
@@ -818,7 +818,7 @@ class DbManager extends Root {
   _loadIdentitiesResult(identities, callback) {
     // Instantiate and Register each Identity.
     const newData = identities
-      .map(identity => this._createIdentity(identity) || client.getIdentity(identity.id))
+      .map(identity => this._createIdentity(identity) || getClient().getIdentity(identity.id))
       .filter(identity => identity);
 
     // Return the data
@@ -840,9 +840,9 @@ class DbManager extends Root {
    * @returns {Layer.Core.Conversation}
    */
   _createConversation(conversation) {
-    if (!client.getConversation(conversation.id)) {
+    if (!getClient().getConversation(conversation.id)) {
       conversation._fromDB = true;
-      const newConversation = client._createObject(conversation);
+      const newConversation = getClient()._createObject(conversation);
       newConversation.syncState = conversation.sync_state;
       return newConversation;
     }
@@ -864,9 +864,9 @@ class DbManager extends Root {
    * @ignore
    */
   _createChannel(channel) {
-    if (!client.getChannel(channel.id)) {
+    if (!getClient().getChannel(channel.id)) {
       channel._fromDB = true;
-      const newChannel = client._createObject(channel);
+      const newChannel = getClient()._createObject(channel);
       newChannel.syncState = channel.sync_state;
       return newChannel;
     }
@@ -884,7 +884,7 @@ class DbManager extends Root {
    * @returns {Layer.Core.Message}
    */
   _createMessage(message) {
-    if (!client.getMessage(message.id)) {
+    if (!getClient().getMessage(message.id)) {
       message._fromDB = true;
       if (message.conversationId.indexOf('layer:///conversations') === 0) {
         message.conversation = {
@@ -896,7 +896,7 @@ class DbManager extends Root {
         };
       }
       delete message.conversationId;
-      const newMessage = client._createObject(message);
+      const newMessage = getClient()._createObject(message);
       newMessage.syncState = message.sync_state;
       return newMessage;
     }
@@ -913,9 +913,9 @@ class DbManager extends Root {
    * @returns {Layer.Core.Identity}
    */
   _createIdentity(identity) {
-    if (!client.getIdentity(identity.id)) {
+    if (!getClient().getIdentity(identity.id)) {
       identity._fromDB = true;
-      const newidentity = client._createObject(identity);
+      const newidentity = getClient()._createObject(identity);
       newidentity.syncState = identity.sync_state;
       return newidentity;
     }
@@ -996,12 +996,12 @@ class DbManager extends Root {
     // do NOT attempt to instantiate this event... unless its a DELETE operation.
     const newData = syncEvents
       .filter((syncEvent) => {
-        const hasTarget = Boolean(syncEvent.target && client.getObject(syncEvent.target));
+        const hasTarget = Boolean(syncEvent.target && getClient().getObject(syncEvent.target));
         return syncEvent.operation === 'DELETE' || hasTarget;
       })
       .map((syncEvent) => {
         if (syncEvent.isWebsocket) {
-          return new SyncEvent.WebsocketSyncEvent({
+          return new WebsocketSyncEvent({
             target: syncEvent.target,
             depends: syncEvent.depends,
             operation: syncEvent.operation,
@@ -1011,7 +1011,7 @@ class DbManager extends Root {
             createdAt: syncEvent.created_at,
           });
         } else {
-          return new SyncEvent.XHRSyncEvent({
+          return new XHRSyncEvent({
             target: syncEvent.target,
             depends: syncEvent.depends,
             operation: syncEvent.operation,
@@ -1214,7 +1214,7 @@ class DbManager extends Root {
               return callback(cursor.value);
             case 'conversations':
               if (cursor.value.last_message) {
-                const lastMessage = client.getMessage(cursor.value.last_message);
+                const lastMessage = getClient().getMessage(cursor.value.last_message);
                 if (lastMessage) {
                   return this._getMessageData([lastMessage], (messages) => {
                     cursor.value.last_message = messages[0];
@@ -1338,4 +1338,3 @@ DbManager._supportedEvents = [
 ].concat(Root._supportedEvents);
 
 Root.initClass.apply(DbManager, [DbManager, 'DbManager', Core]);
-module.exports = DbManager;

@@ -4,9 +4,11 @@
  * @class Layer.UI.mixins.HasQuery
  * @typescript ismixin
  */
-import { client as Client } from '../../settings';
+import Settings from '../../settings';
 import Core from '../../core/namespace';
 import mixins from './index';
+
+const { getClient } = Settings;
 
 mixins.HasQuery = module.exports = {
   properties: {
@@ -23,7 +25,7 @@ mixins.HasQuery = module.exports = {
     queryId: {
       set(value) {
         if (value && value.indexOf('layer:///') !== 0) this.properties.queryId = '';
-        this.query = this.queryId ? Client.getQuery(this.queryId) : null;
+        this.query = this.queryId ? getClient().getQuery(this.queryId) : null;
       },
     },
 
@@ -133,8 +135,8 @@ mixins.HasQuery = module.exports = {
      */
     _setupGeneratedQuery() {
       // Warning: Do not call the query getter via `this.query` as it may cause an infinite loop
-      if (this._queryModel && !this.properties.query && Client && !Client.isDestroyed) {
-        this.query = Client.createQuery({
+      if (this._queryModel && !this.properties.query && getClient() && !getClient().isDestroyed) {
+        this.query = getClient().createQuery({
           model: this._queryModel,
           dataType: Core.Query.InstanceDataType,
           paginationWindow: this.pageSize || 50,
