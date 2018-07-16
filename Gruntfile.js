@@ -104,6 +104,9 @@ module.exports = function (grunt) {
       build: {
         dirList: ['build', 'npm', 'themes/build']
       },
+      npm: {
+        dirList: ['npm'],
+      },
       theme: {
         dirList: ['themes/build']
       },
@@ -961,6 +964,7 @@ module.exports = function (grunt) {
     'commonjsify', // Replace es6 import/export with something that browserify can work with; write to tmp/commonjs
     'optimize-webcomponents', // Strip out comments/white-space from webcomponents (overwrite tmp/commonjs)
     'full-babel:es5files', // write tmp/es5 with code that jsduck and IE11 can understand
+    'remove:npm', // Insure we have a clean npm folder
     'copy:npm', // Copy es5 into npm
     'theme', // build the theme and write it to npm
     'fix-npm-package', 'notify:npm', // Setup the npm folder package.json

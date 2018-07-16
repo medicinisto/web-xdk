@@ -186,8 +186,7 @@ registerComponent('layer-message-viewer', {
       if (this.size === 'medium') {
         cardUIType = this.model.currentMessageRenderer;
       } else if (this.size === 'large') {
-
-        cardUIType = this.model.currentLargeMessageRenderer;
+        cardUIType = this.model.currentLargeMessageRenderer || this.model.currentMessageRenderer;
       }
 
       this.classList.add(cardUIType);
@@ -195,7 +194,10 @@ registerComponent('layer-message-viewer', {
         this.parentComponent.classList.add('layer-message-item-' + cardUIType);
       }
       let titleBar;
-      if (this.size === 'large') {
+
+      // All Large Messages get a title bar built in (can be hidden via CSS if needed)
+      // All Large Message Sub-views however should not get their own title bar
+      if (this.size === 'large' && (!this.parentNode || !this.closest.call(this.parentNode, 'layer-message-viewer'))) {
         titleBar = document.createElement('layer-title-bar');
         this.nodes.titlebar = titleBar;
         this.appendChild(titleBar);
@@ -282,7 +284,13 @@ registerComponent('layer-message-viewer', {
       if (this.nodes.ui.runAction && this.nodes.ui.runAction(action)) return;
 
       const event = action && action.event ? action.event : this.model.actionEvent;
-      if (!event) return;
+
+      // If there is no event, do nothing... though do bubble this up to the parent message viewer if this is a sub-viewer
+      if (!event) {
+        const parent = this.closest.call(this.parentNode, 'layer-message-viewer');
+        if (parent) parent._runAction(action);
+        return;
+      }
 
       const actionData = action && action.data ? action.data : this.model.actionData; // TODO: perhaps merge action.data with actionData?
       const rootModel = this.message ? this.message.getRootPart().createModel() : null;

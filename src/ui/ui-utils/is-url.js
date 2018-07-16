@@ -50,6 +50,9 @@ module.exports = function isURL(extensions, urlOnly) {
     // resource path
     '(?:[/?#]\\S*)' + resource;
 
-  if (urlOnly) expr = '^' + expr + '$';
-  return new RegExp(expr, 'igm');
+  if (urlOnly) {
+    return new RegExp(`^${expr}$`, 'i');
+  } else {
+    return new RegExp(expr, 'igm');
+  }
 };

@@ -163,7 +163,10 @@ LayerUI.setupMixins = function setupMixins(mixins) {
 if (global && global.document) {
   global.document.addEventListener('DOMContentLoaded', () => {
     const useSafariCss = navigator.vendor && navigator.vendor.indexOf('Apple') > -1;
-    if (useSafariCss) document.body.classList.add('safari');
+    if (useSafariCss) document.body.classList.add('layer-safari');
+    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+      document.body.classList.add('layer-firefox');
+    }
   });
 }
 

@@ -337,4 +337,7 @@ Root.initClass.apply(ButtonsModel, [ButtonsModel, 'ButtonsModel', MessageTypeMod
 // Register the Message Model Class with the Client
 Client.registerMessageTypeModelClass(ButtonsModel, 'ButtonsModel');
 
+// Because that "s" is such a common error, lets register both names...
+Client.registerMessageTypeModelClass(ButtonsModel, 'ButtonModel');
+
 module.exports = ButtonsModel;

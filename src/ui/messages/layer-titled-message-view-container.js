@@ -21,26 +21,9 @@ registerComponent('layer-titled-message-view-container', {
       flex-direction: column;
       align-items: stretch;
     }
-    layer-titled-message-view-container.layer-title-icon-empty .layer-card-title-bar-icon {
-      display: none;
-    }
-    layer-titled-message-view-container.layer-no-title .layer-card-title-bar {
-      display: none;
-    }
-    layer-titled-message-view-container .layer-card-title-bar {
-      display: flex;
-      flex-direction: row;
-    }
-    layer-titled-message-view-container .layer-card-title-bar-text {
-      flex-grow: 1;
-    }
-
   `,
   template: `
-  <div class="layer-card-title-bar">
-    <div layer-id='icon' class="layer-card-title-bar-icon"></div>
-    <div layer-id='title' class="layer-card-title-bar-text"></div>
-  </div>
+  <layer-title-bar layer-id='titlebar'></layer-title-bar>
   <div layer-id='UIContainer' class='layer-card-top'></div>
   `,
 
@@ -72,7 +55,7 @@ registerComponent('layer-titled-message-view-container', {
      */
     title: {
       set(title) {
-        this.nodes.title.innerHTML = title;
+        this.nodes.titlebar.title = title;
         this.toggleClass('layer-no-title', !title);
       },
     },
@@ -85,8 +68,7 @@ registerComponent('layer-titled-message-view-container', {
     icon: {
       value: '',
       set(icon, oldIcon) {
-        if (oldIcon) this.nodes.icon.classList.remove(oldIcon);
-        if (icon) this.nodes.icon.classList.add(icon);
+        this.nodes.titlebar.icon = icon;
         this.toggleClass('layer-title-icon-empty', !(icon));
       },
     },
@@ -102,4 +84,3 @@ registerComponent('layer-titled-message-view-container', {
     },
   },
 });
-

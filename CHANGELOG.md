@@ -133,6 +133,7 @@ Impact of this change:
     * Dialog Close Button
     * File Upload Button
 * Updated babel settings, updated build process
+* Fixes line wrapping of text messages in Firefox
 
 ## 4.0.4
 

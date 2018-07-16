@@ -4,7 +4,7 @@ describe("The Message Type Model class", function() {
   var conversation,
       client,
       requests;
-  var TextModel;
+  var TextModel, ButtonModel;
 
   afterAll(function() {
 
@@ -43,6 +43,7 @@ describe("The Message Type Model class", function() {
       requests.reset();
       client.syncManager.queue = [];
       TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
+      ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonModel');
   });
   afterEach(function() {
       client.destroy();
@@ -287,6 +288,22 @@ describe("The Message Type Model class", function() {
 
       // Posttest
       expect(client.getMessageTypeModel(model.id)).toBe(model);
+    });
+
+    it("Should trigger message-type-model:has-new-message event", function() {
+      var model = new ButtonModel({
+        contentModel: new TextModel({  }),
+        buttons: []
+      });
+      spyOn(model, 'trigger').and.callThrough();
+      spyOn(model.contentModel, 'trigger').and.callThrough();
+
+      // Run
+      model.send({ conversation: conversation });
+
+      // Posttest
+      expect(model.trigger).toHaveBeenCalledWith('message-type-model:has-new-message');
+      expect(model.contentModel.trigger).toHaveBeenCalledWith('message-type-model:has-new-message');
     });
   });
 

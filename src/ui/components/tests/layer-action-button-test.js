@@ -69,6 +69,19 @@ describe('layer-action-button', function() {
     expect(eventData).toEqual({howdy: "ho"});
   });
 
+  it("Should remove focus after clicking", function() {
+    el.event = "do-something";
+    el.nodes.button.focus();
+    expect(document.activeElement).toBe(el.nodes.button);
+
+    if (Layer.Utils.isIOS) {
+      click(el);
+    } else {
+      el.click();
+    }
+    expect(document.activeElement).toBe(document.body);
+  });
+
   it("Should get and set disabled state", function() {
     el.disabled = true;
     expect(el.nodes.button.disabled).toBe(true);

@@ -133,6 +133,10 @@ class MessageTypeModel extends Root {
     this._registerAllStates();
     this.initializeNewModel();
     this._setupSlots();
+    this.once('message-type-model:has-new-message', () => {
+      this.childModels.forEach(model => model.trigger('message-type-model:has-new-message'));
+    }, this);
+
   }
 
   /**
@@ -1708,6 +1712,14 @@ MessageTypeModel._supportedEvents = [
 
   /**
    * An event that is triggered for locally created models once they have generated their message.
+   *
+   * ```
+   * const model = new TextModel({text: "hello"});
+   * model.once('message-type-model:has-new-message', function() {
+   *    model.message.addPart(new Layer.Core.MessagePart({mimeType: "text/plain", body: "hello"}));
+   * });
+   * model.send({ conversation });
+   * ```
    *
    * @event
    * @param {Layer.Core.LayerEvent} evt

@@ -151,6 +151,9 @@ registerComponent('layer-action-button', {
       if (evt) {
         evt.preventDefault();
         evt.stopPropagation();
+        if (this.contains(document.activeElement)) {
+          document.activeElement.blur(); // Sometimes the button keeps its ":active" or ":focus" state which is wrong
+        }
       }
 
       let node = this;
@@ -165,7 +168,6 @@ registerComponent('layer-action-button', {
       } else if (this.event) {
         this.trigger(this.event, this.data);
       }
-      if (evt) evt.target.blur(); // Don't recall specific problem that this addresses but probably better that the button not stay active after clicked/tapped
     },
   },
 });
