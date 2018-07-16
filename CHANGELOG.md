@@ -134,6 +134,9 @@ Impact of this change:
     * File Upload Button
 * Updated babel settings, updated build process
 * Fixes line wrapping of text messages in Firefox
+* Fixes URL detection to handle multi-line expressions that contain
+  a URL that goes from the start to the end of a line
+* Typescript definition files now included in npm repository
 
 ## 4.0.4
 

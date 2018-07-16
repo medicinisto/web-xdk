@@ -30,7 +30,7 @@ function extractClassDef(text) {
 }
 
 module.exports = function (grunt) {
-  var saucelabsTests = require('./sauce-gruntfile')(grunt, version);
+  var saucelabsTests = require('./grunt-scripts/sauce-gruntfile')(grunt, version);
   var doingIstanbul = false;
 
 
