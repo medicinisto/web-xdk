@@ -407,7 +407,7 @@ module.exports = function (grunt) {
       },
       themes: {
         files: ['themes/src/**'],
-        tasks: ['theme'],
+        tasks: ['theme', 'buildthemes'],
         options: {
           interrupt: true
         }

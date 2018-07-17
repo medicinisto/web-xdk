@@ -130,6 +130,16 @@ export default class VideoModel extends MessageTypeModel {
   parseModelPart({ payload, isEdit }) {
     super.parseModelPart({ payload, isEdit });
 
+    if (this.sourceUrl && !this.mimeType) {
+      switch (this.sourceUrl.replace(/^.*\./, '')) {
+        case 'mp4':
+          this.mimeType = 'video/mp4';
+          break;
+        case '3gp':
+          this.mimeType = 'video/3gpp';
+          break;
+      }
+    }
     if (this.createdAt) this.createdAt = new Date(this.createdAt);
   }
 
