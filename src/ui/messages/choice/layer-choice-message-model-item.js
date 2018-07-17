@@ -17,7 +17,7 @@ import Core from '../../../core/namespace';
 
 const { Root } = Core;
 
-class ChoiceItem extends Root {
+export default class ChoiceItem extends Root {
   constructor(options) {
     if (options.custom_response_data) {
       options.customResponseData = options.custom_response_data;
@@ -72,4 +72,3 @@ ChoiceItem.prototype.states = null;
 ChoiceItem.prototype.customResponseData = null;
 
 Root.initClass.apply(ChoiceItem, [ChoiceItem, 'ChoiceItem']);
-module.exports = ChoiceItem;

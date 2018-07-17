@@ -12,8 +12,7 @@ let handlersOrdered = [];
  * @property {Object} handlers
  * @private
  */
-const handlers = {};
-module.exports.handlers = handlers;
+export const handlers = {};
 
 
 /**
@@ -22,7 +21,7 @@ module.exports.handlers = handlers;
  * @method _setupOrderedHandlers
  * @private
  */
-module.exports._setupOrderedHandlers = () => {
+export function _setupOrderedHandlers() {
   handlersOrdered = Object.keys(handlers).filter(handlerName =>
     handlers[handlerName].enabled && handlers[handlerName].handler)
     .map(handlerName => handlers[handlerName])
@@ -31,7 +30,7 @@ module.exports._setupOrderedHandlers = () => {
       if (b.order > a.order) return -1;
       return 0;
     });
-};
+}
 
 /**
  * Removes tags from strings before rendering.
@@ -46,10 +45,12 @@ module.exports._setupOrderedHandlers = () => {
  * @param {String} text
  * @returns {String}
  */
-module.exports.sanitizeText = text => (text || '')
-  .trim()
-  .replace(/</g, '&lt;')
-  .replace(/>/g, '&gt;');
+export function sanitizeText(text) {
+  return (text || '')
+    .trim()
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
 
 /**
  * Transform text into HTML using all registered text handlers.
@@ -66,11 +67,11 @@ module.exports.sanitizeText = text => (text || '')
  * @param {String[]} [handlerNames]  Uses the default handlers if names not passed
  * @returns {String}
  */
-module.exports.processText = (text, handlerNames) => {
+export function processText(text, handlerNames) {
   if (text === '') return text;
-  if (!handlersOrdered.length) module.exports._setupOrderedHandlers();
+  if (!handlersOrdered.length) _setupOrderedHandlers();
 
-  const processedText = module.exports.sanitizeText(text);
+  const processedText = sanitizeText(text);
 
   const textData = {
     originalText: text,
@@ -86,7 +87,7 @@ module.exports.processText = (text, handlerNames) => {
     handlerDef.handler(textData);
   });
   return textData.text;
-};
+}
 
 
 /**
@@ -131,7 +132,7 @@ module.exports.processText = (text, handlerNames) => {
  * @param {String} options.handler.textData.text          Use this to read the current text value and write an update to it
  * @param {String} options.handler.textData.originalText  Text before any processing was done
  */
-module.exports.register = function register(options) {
+export function register(options) {
   if (handlers[options.name]) {
     if (options.handler) {
       Object.keys(options).forEach((optionKey) => {
@@ -145,4 +146,4 @@ module.exports.register = function register(options) {
     if (!('order' in options)) options.order = 100000;
     handlers[options.name] = options;
   }
-};
+}

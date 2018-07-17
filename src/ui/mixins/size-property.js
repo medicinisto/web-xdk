@@ -24,7 +24,7 @@ import { registerComponent } from '../components/component';
 import { logger } from '../../utils';
 import mixins from './index';
 
-mixins.SizeProperty = module.exports = {
+mixins.SizeProperty = {
   properties: {
     /**
      * The supported sizes property lists all valid size values for the {@link #size} property.
@@ -55,3 +55,4 @@ mixins.SizeProperty = module.exports = {
     },
   },
 };
+export default mixins.SizeProperty;

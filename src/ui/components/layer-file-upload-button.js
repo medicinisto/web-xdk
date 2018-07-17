@@ -30,13 +30,13 @@
  * @mixin Layer.UI.mixins.Clickable
  */
 import Layer from '../../core/namespace';
-import { logger } from '../../utils';
 import * as Util from '../../utils';
 import { registerComponent } from './component';
 import Clickable from '../mixins/clickable';
 import Settings from '../../settings';
 import CirclePlus from '../ui-utils/graphics/circle-plus';
 
+const { logger } = Util;
 const { imageMIMETypes, audioMIMETypes, videoMIMETypes } = Settings;
 
 registerComponent('layer-file-upload-button', {

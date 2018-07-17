@@ -211,8 +211,8 @@ module.exports = function (grunt) {
     less: {
       themes: {
         files: [
-          {src: ['themes/src/layer-basic-blue/theme.less'], dest: 'npm/themes/layer-basic-blue.css'},
-          {src: ['themes/src/layer-groups/theme.less'], dest: 'npm/themes/layer-groups.css'}
+          {src: ['themes/src/layer-basic-blue/theme.less'], dest: 'tmp/es5/src/themes/layer-basic-blue.css'},
+          {src: ['themes/src/layer-groups/theme.less'], dest: 'tmp/es5/src/themes/layer-groups.css'}
         ]
       }
     },
@@ -233,7 +233,8 @@ module.exports = function (grunt) {
       },
       buildthemes: {
         files: [
-          {src: ['*.css'], cwd: 'npm/themes', dest: 'build/themes/', expand: true}
+          {src: ['*.css'], cwd: 'tmp/es5/themes', dest: 'npm/themes/', expand: true},
+          {src: ['*.css'], cwd: 'tmp/es5/themes', dest: 'build/themes/', expand: true}
         ]
       },
 
@@ -247,8 +248,8 @@ module.exports = function (grunt) {
     cssmin: {
       build: {
         files: [
-          {src: ['npm/themes/layer-basic-blue.css'], dest: 'npm/themes/layer-basic-blue.min.css'},
-          {src: ['npm/themes/layer-groups.css'], dest: 'npm/themes/layer-groups.min.css'}
+          {src: ['tmp/es5/src/themes/layer-basic-blue.css'], dest: 'tmp/es5/src/themes/layer-basic-blue.min.css'},
+          {src: ['tmp/es5/src/themes/layer-groups.css'], dest: 'tmp/es5/src/themes/layer-groups.min.css'}
         ]
       }
     },
@@ -524,7 +525,7 @@ module.exports = function (grunt) {
     function replace(fileGroup, version) {
       fileGroup.src.forEach(function(file, index) {
         var contents = grunt.file.read(file);
-        grunt.file.write(fileGroup.dest, "module.exports = '" + version + "';\n");
+        grunt.file.write(fileGroup.dest, "export default '" + version + "';\n");
       });
     }
 
@@ -1012,10 +1013,10 @@ module.exports = function (grunt) {
     'commonjsify', // Replace es6 import/export with something that browserify can work with; write to tmp/commonjs
     'optimize-webcomponents', // Strip out comments/white-space from webcomponents (overwrite tmp/commonjs)
     'full-babel:es5files', // write tmp/es5 with code that jsduck and IE11 can understand
-    'remove:npm', // Insure we have a clean npm folder
     'typescript',
+    'theme', // build the theme and write it to es5 folder
+    'remove:npm', // Insure we have a clean npm folder
     'copy:npm', // Copy es5 into npm
-    'theme', // build the theme and write it to npm
     'fix-npm-package',
     'notify:npm', // Setup the npm folder package.json
   ]);

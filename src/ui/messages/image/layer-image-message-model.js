@@ -67,7 +67,7 @@ const { Root, MessagePart, MessageTypeModel } = Core;
 
 const Blob = getNativeSupport('Blob');
 
-class ImageModel extends MessageTypeModel {
+export default class ImageModel extends MessageTypeModel {
 
   /**
    * Does the work of generateParts but allows us to asynchronously call it if needed.
@@ -606,5 +606,3 @@ Root.initClass.apply(ImageModel, [ImageModel, 'ImageModel']);
 
 // Register the Message Model Class with the Client
 Core.Client.registerMessageTypeModelClass(ImageModel, 'ImageModel');
-
-module.exports = ImageModel;

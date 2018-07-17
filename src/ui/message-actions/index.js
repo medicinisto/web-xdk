@@ -14,7 +14,7 @@
  * @property {Object} handlers
  * @private
  */
-module.exports.handlers = {};
+export const handlers = {};
 
 /**
  * Register a Message Action Handler.
@@ -29,6 +29,6 @@ module.exports.handlers = {};
  * @param {String} actionName   Name of the action that will trigger this handler
  * @param {Function} handler    The function that executes the handler
  */
-module.exports.register = function register(actionName, handler) {
-  module.exports[actionName] = handler;
-};
+export function register(actionName, handler) {
+  handlers[actionName] = handler;
+}

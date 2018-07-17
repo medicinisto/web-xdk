@@ -12,13 +12,13 @@
  * @typescript extendclass
  */
 
-import { logger } from '../../utils';
 import * as Util from '../../utils';
 import Core from '../namespace';
 import { LOCALSTORAGE_KEYS } from '../../constants';
 import { ErrorDictionary } from '../layer-error';
 import Identity from '../models/identity';
 
+const { logger } = Util;
 
 const ClientAuth = {
   events: [

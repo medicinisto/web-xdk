@@ -16,7 +16,7 @@
 import mixins from './index';
 import Throttler from './throttler';
 
-mixins.WidthTracker = module.exports = {
+mixins.WidthTracker = {
   mixins: [Throttler],
   properties: {
     /**
@@ -99,4 +99,4 @@ mixins.WidthTracker = module.exports = {
     },
   },
 };
-
+export default mixins.WidthTracker;

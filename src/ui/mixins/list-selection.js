@@ -15,7 +15,7 @@ import mixins from './index';
 
 const { getClient } = Settings;
 
-mixins.ListSelection = module.exports = {
+mixins.ListSelection = {
   mixins: [Clickable],
   properties: {
     /**
@@ -152,3 +152,4 @@ mixins.ListSelection = module.exports = {
     },
   },
 };
+export default mixins.ListSelection;

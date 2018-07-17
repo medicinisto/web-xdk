@@ -9,7 +9,7 @@
  */
 import mixins from './index';
 
-mixins.Throttler = module.exports = {
+mixins.Throttler = {
   properties: {
     /**
      * This state property enables your application to  expose application state to the widget.
@@ -59,3 +59,4 @@ mixins.Throttler = module.exports = {
      */
   },
 };
+export default mixins.Throttler;

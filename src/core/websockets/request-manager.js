@@ -8,10 +8,10 @@
  */
 import Settings from '../../settings';
 import Core from '../namespace';
-import { logger } from '../../utils';
 import * as Util from '../../utils';
 import { LayerError } from '../layer-error';
 
+const { logger } = Util;
 const { getClient } = Settings;
 
 // Wait 15 seconds for a response and then give up

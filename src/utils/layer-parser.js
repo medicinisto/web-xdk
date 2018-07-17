@@ -72,7 +72,7 @@ function createParser(request) {
 }
 
 // Docs in client-utils.js
-export default function(request) {
+export default function parse(request) {
   if (!parser) createParser(request);
   parser.parse(request);
 }

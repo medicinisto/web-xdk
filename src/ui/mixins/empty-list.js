@@ -6,7 +6,7 @@
  */
 import mixins from './index';
 
-mixins.EmptyList = module.exports = {
+const EmptyList = mixins.EmptyList = {
   properties: {
     /**
      * If the query has no data and is not loading data (and has fired successfully!), this should be true.
@@ -51,3 +51,5 @@ mixins.EmptyList = module.exports = {
     },
   },
 };
+
+export default EmptyList;

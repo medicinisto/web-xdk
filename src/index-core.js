@@ -1,13 +1,11 @@
 /* eslint-disable import/first */
-import { SYNC_STATE, RECIPIENT_STATE, RECEIPT_STATE, LOCALSTORAGE_KEYS, ACCEPT, WEBSOCKET_PROTOCOL, LOG, DELETION_MODE, STANDARD_MIME_TYPES, CRDT_TYPES } from './constants';
+import * as Constants from './constants';
 import Core from './core/index';
 import * as Utils from './utils';
 import version from './version';
 import Settings from './settings';
 
 Settings.setClient(new Core.Client({}));
-
-const Constants = { SYNC_STATE, RECIPIENT_STATE, RECEIPT_STATE, LOCALSTORAGE_KEYS, ACCEPT, WEBSOCKET_PROTOCOL, LOG, DELETION_MODE, STANDARD_MIME_TYPES, CRDT_TYPES };
 
 const onInitItems = [];
 

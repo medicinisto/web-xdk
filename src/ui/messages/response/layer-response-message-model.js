@@ -32,7 +32,7 @@ import Settings from '../../../settings';
 const { getClient } = Settings;
 const { MessagePart, MessageTypeModel } = Core;
 
-class ResponseModel extends MessageTypeModel {
+export default class ResponseModel extends MessageTypeModel {
   constructor(options) {
     super(options);
     this._changeEvents = {};
@@ -295,5 +295,3 @@ Core.Client.registerMessageTypeModelClass(ResponseModel, 'ResponseModel');
 
 // Register the message to be handled as a Status Message
 registerStatusModel(ResponseModel);
-
-module.exports = ResponseModel;

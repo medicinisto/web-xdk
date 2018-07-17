@@ -10,7 +10,7 @@ import mixins from './index';
 
 const { getClient } = Settings;
 
-mixins.HasQuery = module.exports = {
+mixins.HasQuery = {
   properties: {
 
     /**
@@ -159,3 +159,4 @@ mixins.HasQuery = module.exports = {
     },
   },
 };
+export default mixins.HasQuery;

@@ -747,7 +747,7 @@ function setupProperty(classDef, prop, propertyDefHash) {
 }
 
 let registerAllCalled = false;
-function registerComponent(tagName, classDef) {
+export function registerComponent(tagName, classDef) {
   if (!ComponentsHash[tagName]) ComponentsHash[tagName] = {};
   ComponentsHash[tagName].def = classDef;
 
@@ -2154,7 +2154,7 @@ const standardClassMethods = {
  *
  * @method unregisterComponent
  */
-function unregisterComponent(tagName) {
+export function unregisterComponent(tagName) {
   delete ComponentsHash[tagName];
 }
 
@@ -2166,7 +2166,7 @@ function unregisterComponent(tagName) {
  * @private
  * @method _registerAll
  */
-function _registerAll() {
+export function _registerAll() {
   if (!registerAllCalled) {
     registerAllCalled = true;
     Object.keys(ComponentsHash)
@@ -2174,10 +2174,3 @@ function _registerAll() {
       .forEach(tagName => _registerComponent(tagName));
   }
 }
-
-module.exports = {
-  registerComponent,
-  _registerAll,
-  unregisterComponent,
-};
-

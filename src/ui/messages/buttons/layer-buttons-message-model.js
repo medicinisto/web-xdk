@@ -97,7 +97,7 @@ import ChoiceItem from '../choice/layer-choice-message-model-item';
 
 const { Client, MessagePart, MessageTypeModel, Root, MessageTypeModels } = Core;
 
-class ButtonsModel extends MessageTypeModel {
+export default class ButtonsModel extends MessageTypeModel {
 
   constructor(options = {}) {
     options.choices = {};
@@ -340,5 +340,3 @@ Client.registerMessageTypeModelClass(ButtonsModel, 'ButtonsModel');
 
 // Because that "s" is such a common error, lets register both names...
 Client.registerMessageTypeModelClass(ButtonsModel, 'ButtonModel');
-
-module.exports = ButtonsModel;

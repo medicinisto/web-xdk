@@ -13,8 +13,7 @@ import Settings from '../../../settings';
  * @property {Object[]} messageHandlers
  * @private
  */
-const messageHandlers = [];
-module.exports.messageHandlers = messageHandlers;
+export const messageHandlers = [];
 
 
 /**
@@ -55,7 +54,7 @@ module.exports.messageHandlers = messageHandlers;
  * @param {Number} [options.order=0]                        Some handlers may need to be tested before other handlers to control which one gets
  *                                                          selected; Defaults to order=0, this handler is first
  */
-module.exports.register = function register(options) {
+export function register(options) {
   if (!options.order) options.order = 0;
   let pushed = false;
   for (let i = 0; i < messageHandlers.length; i++) {
@@ -66,14 +65,14 @@ module.exports.register = function register(options) {
     }
   }
   if (!pushed) messageHandlers.push(options);
-};
+}
 
 // For unit test cleanup
-module.exports.unregister = (tagName) => {
+export function unregister(tagName) {
   for (let i = messageHandlers.length - 1; i >= 0; i--) {
     if (messageHandlers[i].tagName === tagName) messageHandlers.splice(i, 1);
   }
-};
+}
 
 
 /**
@@ -92,8 +91,8 @@ module.exports.unregister = (tagName) => {
  * @param {HTMLElement} container     The container that this will be rendered within
  * @return {Object} handler     See {@link #register} for the structure of a handler.
  */
-module.exports.getHandler = (message, container) => {
+export function getHandler(message, container) {
   const handlers =
     messageHandlers.filter(handler => handler.handlesMessage(message, container));
   return handlers[0] || Settings.defaultHandler;
-};
+}

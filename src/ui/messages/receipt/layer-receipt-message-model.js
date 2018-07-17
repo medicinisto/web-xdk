@@ -39,13 +39,13 @@
  * @class Layer.UI.messages.ReceiptMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-import Core  from '../../../core/namespace';
+import Core from '../../../core/namespace';
 import * as Util from '../../../utils';
 import '../location/layer-location-message-model';
 
 const { MessagePart, MessageTypeModel, Root } = Core;
 
-class ReceiptModel extends MessageTypeModel {
+export default class ReceiptModel extends MessageTypeModel {
 
   /**
    * Generate all of the Layer.Core.MessagePart needed to represent this Model.
@@ -383,5 +383,3 @@ Root.initClass.apply(ReceiptModel, [ReceiptModel, 'ReceiptModel']);
 
 // Register the Message Model Class with the Client
 Core.Client.registerMessageTypeModelClass(ReceiptModel, 'ReceiptModel');
-
-module.exports = ReceiptModel;

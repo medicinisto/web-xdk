@@ -54,7 +54,7 @@ import Core from '../../../core/namespace';
 
 const { MessagePart, MessageTypeModel, Root } = Core;
 
-class LocationModel extends MessageTypeModel {
+export default class LocationModel extends MessageTypeModel {
 
   /**
    * Generate all of the Layer.Core.MessagePart needed to represent this Model.
@@ -274,5 +274,3 @@ Root.initClass.apply(LocationModel, [LocationModel, 'LocationModel']);
 
 // Register the Card Model Class with the Client
 Core.Client.registerMessageTypeModelClass(LocationModel, 'LocationModel');
-
-module.exports = LocationModel;

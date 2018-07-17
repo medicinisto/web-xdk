@@ -15,7 +15,7 @@ import mixins from './index';
 import { isIOS } from '../../utils';
 import { registerComponent } from '../components/component';
 
-mixins.Clickable = module.exports = {
+const Clickable = mixins.Clickable = {
   methods: {
     onCreate: {
       mode: registerComponent.MODES.BEFORE,
@@ -135,3 +135,4 @@ mixins.Clickable = module.exports = {
     },
   },
 };
+export default Clickable;

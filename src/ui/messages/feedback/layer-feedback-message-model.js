@@ -36,7 +36,7 @@ import { ErrorDictionary } from '../../../core/layer-error';
 const { getClient } = Settings;
 const { MessagePart, Root, MessageTypeModel } = Core;
 
-class FeedbackModel extends MessageTypeModel {
+export default class FeedbackModel extends MessageTypeModel {
   registerAllStates() {
     this.responses.registerState('rating', CRDT_TYPES.FIRST_WRITER_WINS);
     this.responses.registerState('comment', CRDT_TYPES.FIRST_WRITER_WINS);
@@ -200,5 +200,3 @@ Root.initClass.apply(FeedbackModel, [FeedbackModel, 'FeedbackModel']);
 
 // Register the Message Model Class with the Client
 Core.Client.registerMessageTypeModelClass(FeedbackModel, 'FeedbackModel');
-
-module.exports = FeedbackModel;

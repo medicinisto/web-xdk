@@ -70,7 +70,7 @@
 import { registerComponent } from '../components/component';
 import mixins from './index';
 
-mixins.Throttler = module.exports = {
+mixins.Throttler = {
   properties: {
     /**
      * The Layer.Core.Message to be rendered.
@@ -149,3 +149,4 @@ mixins.Throttler = module.exports = {
     onSent() {},
   },
 };
+export default mixins.Throttler;

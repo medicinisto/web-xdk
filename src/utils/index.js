@@ -8,16 +8,11 @@
 // Note: `export { default as layerParse } from './layer-parser'` generates a property setter via babel and jasmine spys cannot hook into them.
 import UUID from 'uuid';
 import layerParse from './layer-parser';
-export { layerParse };
-
 import logger from './logger';
-export { logger };
-
 import xhr from './xhr';
-export { xhr };
-
 import { getNativeSupport, registerNativeSupport } from '../utils/native-support';
-export { getNativeSupport, registerNativeSupport };
+
+export { layerParse, logger, xhr, getNativeSupport, registerNativeSupport };
 
 const Blob = getNativeSupport('Blob');
 
@@ -77,7 +72,9 @@ export const typeFromID = (id) => {
  */
 export const uuid = id => (id || '').replace(/^.*\//, '');
 
-export const isEmpty = obj => Object.prototype.toString.apply(obj) === '[object Object]' && Object.keys(obj).length === 0;
+export function isEmpty(obj) {
+  return Object.prototype.toString.apply(obj) === '[object Object]' && Object.keys(obj).length === 0;
+}
 
 
 export const camelCase = str =>

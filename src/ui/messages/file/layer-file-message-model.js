@@ -44,7 +44,7 @@ import { humanFileSize } from '../../ui-utils';
 
 const { MessagePart, MessageTypeModel, Root } = Core;
 
-class FileModel extends MessageTypeModel {
+export default class FileModel extends MessageTypeModel {
 
   /**
    * Generate the Message Parts representing this model so that the File Message can be sent.
@@ -241,5 +241,3 @@ Root.initClass.apply(FileModel, [FileModel, 'FileModel']);
 
 // Register the Message Model Class with the Client
 Core.Client.registerMessageTypeModelClass(FileModel, 'FileModel');
-
-module.exports = FileModel;

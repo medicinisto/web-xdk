@@ -17,13 +17,13 @@
 import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
-import { logger } from '../../utils';
 import * as Util from '../../utils';
 import { getNativeSupport } from '../../utils/native-support';
 import { ErrorDictionary } from '../layer-error';
 import { WEBSOCKET_PROTOCOL } from '../../constants';
 import version from '../../version';
 
+const { logger } = Util;
 const { getClient } = Settings;
 let WebSocket = getNativeSupport('Websocket');
 
@@ -673,7 +673,8 @@ export default class SocketManager extends Root {
    * @private
    */
   _scheduleReconnect() {
-    if (this.isDestroyed || !getClient() || !getClient().isOnline || !getClient().isAuthenticated || this._isOpen()) return;
+    if (this.isDestroyed || !getClient() || !getClient().isOnline ||
+      !getClient().isAuthenticated || this._isOpen()) return;
 
     const delay = Util.getExponentialBackoffSeconds(this.maxDelaySecondsBetweenReconnect,
       Math.min(15, this._lostConnectionCount));

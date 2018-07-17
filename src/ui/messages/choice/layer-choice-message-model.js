@@ -87,7 +87,7 @@ import { CRDT_TYPES } from '../../../constants';
 const { MessagePart, Root, MessageTypeModel } = Core;
 const { getClient } = Settings;
 
-class ChoiceModel extends MessageTypeModel {
+export default class ChoiceModel extends MessageTypeModel {
 
   // Message Type Model Lifecycle method that is called by the MessageTypeModel when a new model is instantiated
   // locally, using properties rather than a Message to initialize it.
@@ -887,6 +887,3 @@ Root.initClass.apply(ChoiceModel, [ChoiceModel, 'ChoiceModel']);
 
 // Register the Message Model Class with the Client
 Core.Client.registerMessageTypeModelClass(ChoiceModel, 'ChoiceModel');
-
-module.exports = ChoiceModel;
-

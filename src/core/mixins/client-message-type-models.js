@@ -16,7 +16,7 @@ const MessageTypeModelClasses = [];
 const MessageTypeModelHash = {};
 const MessageTypeModelNameHash = {};
 
-const ClientMessageTypeModel =  {
+const ClientMessageTypeModel = {
   events: [
     /**
      * A property of this model has changed.

@@ -1,5 +1,5 @@
 import { registerNativeSupport } from './index';
-import { defer } from '../defer';
+import defer from '../defer';
 
 registerNativeSupport('atob', atob.bind(window));
 registerNativeSupport('btoa', btoa.bind(window));

@@ -45,7 +45,7 @@ import { humanFileSize } from '../../ui-utils';
 
 const { MessagePart, MessageTypeModel, Root } = Core;
 
-class AudioModel extends MessageTypeModel {
+export default class AudioModel extends MessageTypeModel {
 
   /**
    * Generate the Message Parts representing this model so that the Audio Message can be sent.
@@ -475,5 +475,3 @@ Root.initClass.apply(AudioModel, [AudioModel, 'AudioModel']);
 
 // Register the Message Model Class with the Client
 Core.Client.registerMessageTypeModelClass(AudioModel, 'AudioModel');
-
-module.exports = AudioModel;

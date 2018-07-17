@@ -29,14 +29,14 @@
 
 import { registerComponent, _registerAll, unregisterComponent } from './components/component';
 import './handlers/message/layer-message-unknown';
-import Constants from './constants';
+import * as Constants from './constants';
 import * as ComponentServices from './component-services';
 import Settings from '../settings';
-import MessageHandlers from './handlers/message/message-handlers';
-import TextHandlers from './handlers/text/text-handlers';
-import ListSeparatorManager from './ui-utils/list-separator-manager';
+import * as MessageHandlers from './handlers/message/message-handlers';
+import * as TextHandlers from './handlers/text/text-handlers';
+import * as ListSeparatorManager from './ui-utils/list-separator-manager';
 import * as Adapters from './adapters';
-import MessageActions from './message-actions';
+import * as MessageActions from './message-actions';
 import * as UIUtils from './ui-utils';
 import { ErrorDictionary } from '../core/layer-error';
 

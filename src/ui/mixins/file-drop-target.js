@@ -16,7 +16,7 @@ import { logger } from '../../utils';
 
 const { getClient, audioMIMETypes, videoMIMETypes, imageMIMETypes } = Settings;
 
-mixins.FileDropTarget = module.exports = {
+mixins.FileDropTarget = {
   properties: {
     /**
      * By default, this widget supports dropping Files from your file system to send them as Messages.
@@ -245,3 +245,4 @@ mixins.FileDropTarget = module.exports = {
   },
 };
 
+export default mixins.FileDropTarget;

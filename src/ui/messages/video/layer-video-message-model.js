@@ -45,7 +45,7 @@ import { humanFileSize } from '../../ui-utils';
 
 const { MessagePart, MessageTypeModel, Root } = Core;
 
-class VideoModel extends MessageTypeModel {
+export default class VideoModel extends MessageTypeModel {
 
 
   /**
@@ -590,5 +590,3 @@ Root.initClass.apply(VideoModel, [VideoModel, 'VideoModel']);
 
 // Register the Message Model Class with the Client
 Core.Client.registerMessageTypeModelClass(VideoModel, 'VideoModel');
-
-module.exports = VideoModel;

@@ -228,4 +228,4 @@ const LayerDate = {
 };
 
 registerComponent('layer-date', LayerDate);
-module.exports = LayerDate;
+export default LayerDate;

@@ -28,12 +28,12 @@
 import Settings from '../settings';
 import Core from './namespace';
 import Root from './root';
-import { logger, xhr } from '../utils';
 import * as Util from '../utils';
 import { getNativeSupport } from '../utils/native-support';
 import { ACCEPT } from '../constants';
 import version from '../version';
 
+const { logger, xhr } = Util;
 const { getClient } = Settings;
 
 export default class OnlineStateManager extends Root {

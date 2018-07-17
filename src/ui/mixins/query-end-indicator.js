@@ -15,7 +15,7 @@ import * as Util from '../../utils';
 import { registerComponent } from '../components/component';
 import mixins from './index';
 
-mixins.QueryEndIndicator = module.exports = {
+mixins.QueryEndIndicator = {
   properties: {
     /**
      * If the query has no more data to load but is not empty, this should be true.
@@ -69,3 +69,4 @@ mixins.QueryEndIndicator = module.exports = {
     },
   },
 };
+export default mixins.QueryEndIndicator;

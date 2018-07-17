@@ -15,10 +15,10 @@
 import Settings from '../settings';
 import Core from './namespace';
 import Root from './root';
-import { xhr, hasLocalStorage } from '../utils';
 import * as Util from '../utils';
 import version from '../version';
 
+const { xhr, hasLocalStorage } = Util;
 const { getClient } = Settings;
 
 export default class TelemetryMonitor extends Root {

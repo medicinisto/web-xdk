@@ -8,7 +8,7 @@ import Core from '../../../core/namespace';
 
 const { MessageTypeModel } = Core;
 
-class PersonModel extends MessageTypeModel {
+export default class PersonModel extends MessageTypeModel {
 
   parseModelChildParts() {
     super.parseModelChildParts();
@@ -28,5 +28,3 @@ PersonModel.MIMEType = 'application/vnd.layer.person+json';
 
 // Register the Card Model Class with the Client
 Core.Client.registerMessageTypeModelClass(PersonModel, 'PersonModel');
-
-module.exports = PersonModel;

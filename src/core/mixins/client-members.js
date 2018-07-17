@@ -11,7 +11,7 @@ import MembersQuery from '../queries/members-query';
 import { ErrorDictionary } from '../layer-error';
 import Core from '../namespace';
 
-const ClientMemeber =  {
+const ClientMemeber = {
   events: [
     /**
      * A call to Layer.Core.Membership.load has completed successfully

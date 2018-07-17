@@ -51,7 +51,7 @@ import Core from '../../../core/namespace';
 
 const { MessagePart, MessageTypeModel, Root } = Core;
 
-class CarouselModel extends MessageTypeModel {
+export default class CarouselModel extends MessageTypeModel {
   /**
    * Generate the Message Parts representing this model so that the Carousel Message can be sent.
    *
@@ -225,6 +225,3 @@ Root.initClass.apply(CarouselModel, [CarouselModel, 'CarouselModel']);
 
 // Register the Message Model Class with the Client
 Core.Client.registerMessageTypeModelClass(CarouselModel, 'CarouselModel');
-
-module.exports = CarouselModel;
-

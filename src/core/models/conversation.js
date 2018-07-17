@@ -57,10 +57,10 @@ import Container from './container';
 import ConversationMessage from './conversation-message';
 import { ErrorDictionary } from '../layer-error';
 import * as Util from '../../utils';
-import { logger } from '../../utils';
 import { STANDARD_MIME_TYPES, SYNC_STATE, DELETION_MODE } from '../../constants';
 import LayerEvent from '../layer-event';
 
+const { logger } = Util;
 const { getClient } = Settings;
 
 export default class Conversation extends Container {

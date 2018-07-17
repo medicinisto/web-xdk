@@ -10,7 +10,7 @@ import { ErrorDictionary } from '../layer-error';
 import ConversationMessage from '../models/conversation-message';
 import Core from '../namespace';
 
-const ClientConversation =  {
+const ClientConversation = {
   events: [
     /**
      * One or more Layer.Core.Conversation objects have been added to the client.

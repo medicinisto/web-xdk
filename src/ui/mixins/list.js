@@ -18,7 +18,7 @@ import mixins from './index';
 const { defer, logger } = Util;
 const { getClient } = Settings;
 
-mixins.List = module.exports = {
+mixins.List = {
   mixins: [HasQuery, Throttler],
   properties: {
     /**
@@ -502,3 +502,4 @@ mixins.List = module.exports = {
     },
   },
 };
+export default mixins.List;

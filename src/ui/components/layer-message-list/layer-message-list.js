@@ -118,8 +118,8 @@
  */
 import { defer, generateUUID, logger } from '../../../utils';
 import Settings from '../../../settings';
-import StatusMessageManager from '../../ui-utils/status-message-manager';
-import MessageHandlers from '../../handlers/message/message-handlers';
+import * as StatusMessageManager from '../../ui-utils/status-message-manager';
+import * as MessageHandlers from '../../handlers/message/message-handlers';
 import * as UIUtils from '../../ui-utils';
 import { animatedScrollTo } from '../../ui-utils/animated-scroll';
 import { registerComponent } from '../component';

@@ -21,9 +21,9 @@ import Settings from '../settings';
 import Core from './namespace';
 import Root from './root';
 import { WebsocketSyncEvent } from './sync-event';
-import { logger, xhr } from '../utils';
 import * as Util from '../utils';
 
+const { logger, xhr } = Util;
 const { getClient } = Settings;
 
 const MAX_RECEIPT_CONNECTIONS = 4;

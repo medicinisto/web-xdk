@@ -6,7 +6,7 @@
  */
 import mixins from './index';
 
-mixins.ListItemSelection = module.exports = {
+mixins.ListItemSelection = {
   properties: {
 
     /**
@@ -48,3 +48,4 @@ mixins.ListItemSelection = module.exports = {
     },
   },
 };
+export default mixins.ListItemSelection;

@@ -41,7 +41,7 @@ import { STANDARD_MIME_TYPES } from '../../../constants';
 
 const { MessagePart, Root, MessageTypeModel } = Core;
 
-class TextModel extends MessageTypeModel {
+export default class TextModel extends MessageTypeModel {
   /**
    * Generate all of the Layer.Core.MessagePart needed to represent this Model.
    *
@@ -161,5 +161,3 @@ Root.initClass.apply(TextModel, [TextModel, 'TextModel']);
 
 // Register the Message Model Class with the Client
 Core.Client.registerMessageTypeModelClass(TextModel, 'TextModel');
-
-module.exports = TextModel;

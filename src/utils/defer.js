@@ -57,7 +57,7 @@ function setImmediateProcessor() {
   }
 }
 // Schedule the function to be called by adding it to the queue, and setting up scheduling if its needed.
-export function defer(func) {
+export default function defer(func) {
   if (typeof func !== 'function') throw new Error('Function expected in defer');
 
   setImmediateQueue.push(func);
@@ -76,12 +76,13 @@ export function defer(func) {
     // if postMessage is succesfully called.
     setImmediateId = setTimeout(setImmediateProcessor, 0);
   }
-};
+}
 
 // For Unit Testing
 defer.flush = () => {
   setImmediateProcessor();
-}
+};
+
 defer.reset = () => {
   setImmediateQueue = [];
 };

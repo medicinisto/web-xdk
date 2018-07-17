@@ -17,7 +17,7 @@ import version from '../../version';
 const { timeBetweenReauths } = Settings;
 const MAX_XHR_RETRIES = 3;
 
-const ClientCapiRequest =  {
+const ClientCapiRequest = {
   lifecycle: {
 
     // Listen for any websocket operations and call our handler

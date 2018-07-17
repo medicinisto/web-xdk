@@ -7,7 +7,7 @@
 
 import mixins from '../mixins';
 
-mixins.MessageViewMixin = module.exports = {
+mixins.MessageViewMixin = {
   properties: {
     defaultWidth: {
       value: 192,
@@ -337,3 +337,4 @@ mixins.MessageViewMixin = module.exports = {
     },
   },
 };
+export default mixins.MessageViewMixin;

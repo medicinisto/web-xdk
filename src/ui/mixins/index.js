@@ -4,4 +4,4 @@
  * @class Layer.UI.mixins
  * @singleton
  */
-module.exports = {};
+export default {};

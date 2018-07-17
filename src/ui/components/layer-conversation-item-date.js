@@ -170,7 +170,6 @@ const LayerDate = {
     },
   },
 };
-
+export default LayerDate;
 registerComponent('layer-conversation-item-date', LayerDate);
-module.exports = LayerDate;
 

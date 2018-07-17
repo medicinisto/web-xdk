@@ -67,7 +67,7 @@ function parseLinkHeaders(linkHeader) {
   return links;
 }
 
-module.exports = (request, callback) => {
+export default function XHR(request, callback) {
   const startTime = Date.now();
   const req = getNativeSupport('XHR')();
   const method = (request.method || 'GET').toUpperCase();
@@ -111,7 +111,7 @@ module.exports = (request, callback) => {
 
       // Note that it is a successful connection if we get back an error from the server,
       // it may have been a failed request, but the connection was good.
-      module.exports.trigger({
+      XHR.trigger({
         target: this,
         status: !this.responseText && !this.status ? 'connection:error' : 'connection:success',
         duration: Date.now() - startTime,
@@ -218,11 +218,11 @@ module.exports = (request, callback) => {
   } catch (e) {
     // do nothing
   }
-};
+}
 
 const listeners = [];
-module.exports.addConnectionListener = func => listeners.push(func);
+XHR.addConnectionListener = func => listeners.push(func);
 
-module.exports.trigger = (evt) => {
+XHR.trigger = (evt) => {
   listeners.forEach(func => func(evt));
 };

@@ -107,4 +107,4 @@ export function addListItemSeparator(listItemNode, content, contentClass, isAbov
       existingContent.parentNode.removeChild(existingContent);
     }
   }
-};
+}

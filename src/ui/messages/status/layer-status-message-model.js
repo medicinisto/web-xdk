@@ -28,7 +28,7 @@ import { registerStatusModel } from '../../ui-utils';
 
 const { MessagePart, Root, MessageTypeModel } = Core;
 
-class StatusModel extends MessageTypeModel {
+export default class StatusModel extends MessageTypeModel {
 
   /**
    * Generate all of the Layer.Core.MessagePart needed to represent this Model.
@@ -107,5 +107,3 @@ Core.Client.registerMessageTypeModelClass(StatusModel, 'StatusModel');
 
 // Register this MIME Type to be handled as a Status Message
 registerStatusModel(StatusModel);
-
-module.exports = StatusModel;

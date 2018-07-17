@@ -18,7 +18,7 @@ import { registerComponent } from '../components/component';
 import { ComponentsHash } from '../component-services';
 import mixins from './index';
 
-mixins.ListItem = module.exports = {
+mixins.ListItem = {
   properties: {
     /**
      * Is this component a List Item
@@ -218,3 +218,4 @@ mixins.ListItem = module.exports = {
      */
   },
 };
+export default mixins.ListItem;

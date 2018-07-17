@@ -63,7 +63,7 @@ import Core from '../../../core/namespace';
 
 const { MessagePart, Root, MessageTypeModel } = Core;
 
-class ProductModel extends MessageTypeModel {
+export default class ProductModel extends MessageTypeModel {
   constructor(options = {}) {
     if (!options.imageUrls) options.imageUrls = [];
     if (!options.options) options.options = [];
@@ -282,5 +282,3 @@ Root.initClass.apply(ProductModel, [ProductModel, 'ProductModel']);
 
 // Register the Message Model Class with the Client
 Core.Client.registerMessageTypeModelClass(ProductModel, 'ProductModel');
-
-module.exports = ProductModel;

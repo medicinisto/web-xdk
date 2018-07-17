@@ -70,11 +70,11 @@ import Core from '../namespace';
 import Root from '../root';
 import Content from './content';
 import { LayerError, ErrorDictionary } from '../layer-error';
-import { logger, xhr } from '../../utils';
 import * as Util from '../../utils';
 import { getNativeSupport } from '../../utils/native-support';
 import { STANDARD_MIME_TYPES } from '../../constants';
 
+const { logger, xhr } = Util;
 const { getClient } = Settings;
 const Blob = getNativeSupport('Blob');
 const URL = getNativeSupport('URL');

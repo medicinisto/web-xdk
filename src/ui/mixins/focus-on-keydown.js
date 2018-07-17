@@ -8,7 +8,7 @@
  */
 import mixins from './index';
 
-mixins.FocusOnKeydown = module.exports = {
+mixins.FocusOnKeydown = {
   methods: {
     // Wire up the event listener, and make sure that this DOM node can have focus, but is _not_ reachable via Tabbing (only inputs should do that)
     onCreate() {
@@ -59,3 +59,4 @@ mixins.FocusOnKeydown = module.exports = {
     onKeyDown() {},
   },
 };
+export default mixins.FocusOnKeydown;

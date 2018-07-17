@@ -14,7 +14,7 @@
  */
 import mixins from './index';
 
-mixins.Throttler = module.exports = {
+mixins.Throttler = {
   properties: {
     /**
      * A throttler is used to prevent excessive scroll events.
@@ -71,3 +71,4 @@ mixins.Throttler = module.exports = {
     },
   },
 };
+export default mixins.Throttler;

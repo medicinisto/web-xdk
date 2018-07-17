@@ -28,7 +28,7 @@ import MessageHandler from '../../mixins/message-handler';
 import Clickable from '../../mixins/clickable';
 import SizeProperty from '../../mixins/size-property';
 import Settings from '../../../settings';
-import messageActionHandlers from '../../message-actions/index';
+import { handlers as messageActionHandlers } from '../../message-actions';
 import { register } from './message-handlers';
 import { getWhereClicked } from '../../ui-utils/analytics';
 

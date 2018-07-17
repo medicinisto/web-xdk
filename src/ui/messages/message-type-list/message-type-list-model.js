@@ -16,9 +16,9 @@ MessageTypeListModel = Layer.Core.Client.getMessageTypeModelClass('MessageTypeLi
 */
 import Core from '../../../core/namespace';
 
-const { MessagePart, MessageTypeModel }  = Core;
+const { MessagePart, MessageTypeModel } = Core;
 
-class MessageTypeListModel extends MessageTypeModel {
+export default class MessageTypeListModel extends MessageTypeModel {
   generateParts(callback) {
     const body = this.initBodyWithMetadata([]);
 
@@ -65,6 +65,3 @@ MessageTypeListModel.MIMEType = 'application/x.layer.message-type-list+json';
 
 // Register the Message Model Class with the Client
 Core.Client.registerMessageTypeModelClass(MessageTypeListModel, 'MessageTypeListModel');
-
-module.exports = MessageTypeListModel;
-

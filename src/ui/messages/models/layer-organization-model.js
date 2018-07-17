@@ -7,7 +7,7 @@ import Core from '../../../core/namespace';
 
 const { MessageTypeModel } = Core;
 
-class OrganizationModel extends MessageTypeModel {
+export default class OrganizationModel extends MessageTypeModel {
 
   parseModelChildParts() {
     super.parseModelChildParts();
@@ -24,5 +24,3 @@ OrganizationModel.MIMEType = 'application/vnd.layer.organization+json';
 
 // Register the Card Model Class with the Client
 Core.Client.registerMessageTypeModelClass(OrganizationModel, 'OrganizationModel');
-
-module.exports = OrganizationModel;

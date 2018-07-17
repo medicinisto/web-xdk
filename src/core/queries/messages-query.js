@@ -31,10 +31,10 @@ import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
-import { logger } from '../../utils';
 import * as Util from '../../utils';
 import Query from './query';
 
+const { logger } = Util;
 const { getClient } = Settings;
 
 const findConvIdRegex = new RegExp(

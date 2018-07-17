@@ -8,7 +8,7 @@ import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Message from './message';
-import Constants from '../../constants';
+import { RECEIPT_STATE } from '../../constants';
 import { logger } from '../../utils';
 import { ErrorDictionary } from '../layer-error';
 
@@ -48,7 +48,7 @@ export default class ChannelMessage extends Message {
    * @param {string} [type=Layer.Constants.RECEIPT_STATE.READ] - One of Layer.Constants.RECEIPT_STATE.READ or Layer.Constants.RECEIPT_STATE.DELIVERY
    * @return {Layer.Core.Message.ChannelMessage} this
    */
-  sendReceipt(type = Constants.RECEIPT_STATE.READ) {
+  sendReceipt(type = RECEIPT_STATE.READ) {
     logger.warn('Message: Receipts not supported for Channel Messages yet');
     return this;
   }

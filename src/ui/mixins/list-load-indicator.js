@@ -11,7 +11,7 @@
 import '../components/layer-loading-indicator';
 import mixins from './index';
 
-mixins.ListLoadIndicator = module.exports = {
+mixins.ListLoadIndicator = {
   properties: {
     isDataLoading: {
       set(value) {
@@ -32,3 +32,4 @@ mixins.ListLoadIndicator = module.exports = {
      */
   },
 };
+export default mixins.ListLoadIndicator;

@@ -59,7 +59,7 @@ const DescriptionRegEx = new RegExp(/<meta [^>]*property\s*=\s*['"]og:descriptio
 const AuthorRegEx = new RegExp(/<meta [^>]*property\s*=\s*['"]og:author['"].*?\/>/);
 const ImageRegEx = new RegExp(/<meta [^>]*property\s*=\s*['"]og:image['"].*?\/>/);
 
-class LinkModel extends MessageTypeModel {
+export default class LinkModel extends MessageTypeModel {
 
   /**
    * Generate all of the Layer.Core.MessagePart needed to represent this Model.
@@ -278,5 +278,3 @@ Root.initClass.apply(LinkModel, [LinkModel, 'LinkModel']);
 
 // Register the Card Model Class with the Client
 Core.Client.registerMessageTypeModelClass(LinkModel, 'LinkModel');
-
-module.exports = LinkModel;

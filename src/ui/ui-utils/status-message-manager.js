@@ -8,7 +8,7 @@
  * @property {String[]} statusMimeTypes
  * @protected
  */
-module.exports.statusMimeTypes = [];
+export const statusMimeTypes = [];
 
 /**
  * Register a Message Type Model to be treated as a Status Message instead of a Message Sent/Received.
@@ -22,11 +22,10 @@ module.exports.statusMimeTypes = [];
  * @method registerStatusModel
  * @param {Function} StatusModel    Pass in the Class Definition for a Layer.Core.MessageTypeModel subclass
  */
-module.exports.registerStatusModel = (StatusModel) => {
-  module.exports.statusMimeTypes.push(StatusModel.MIMEType);
-  (StatusModel.AltMIMETypes || []).forEach(mimeType => module.exports.statusMimeTypes.push(mimeType));
-};
-
+export function registerStatusModel(StatusModel) {
+  statusMimeTypes.push(StatusModel.MIMEType);
+  (StatusModel.AltMIMETypes || []).forEach(mimeType => statusMimeTypes.push(mimeType));
+}
 
 /**
  * Returns whether the specified MIME Type is setup to be rendered as a Status Message.
@@ -35,4 +34,6 @@ module.exports.registerStatusModel = (StatusModel) => {
  * @param {String} mimeType
  * @returns {Boolean}
  */
-module.exports.isStatusMessage = mimeType => module.exports.statusMimeTypes.indexOf(mimeType);
+export function isStatusMessage(mimeType) {
+  return statusMimeTypes.indexOf(mimeType);
+}

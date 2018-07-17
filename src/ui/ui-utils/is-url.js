@@ -16,7 +16,7 @@ export default function isURL(extensions, urlOnly) {
   if (extensions) resource = '.(' + extensions.join('|') + ')';
 
   // Taken from https://gist.github.com/dperini/729294
-  let expr =
+  const expr =
     // protocol identifier
     '(?:(?:https?|ftp)://)' +
     // user:pass authentication
