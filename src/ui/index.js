@@ -25,4 +25,4 @@ import './handlers/text/newline';
 import './mixins/file-drop-target';
 import './mixins/focus-on-keydown';
 
-module.exports = LayerUI;
+export default LayerUI;

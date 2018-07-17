@@ -120,7 +120,7 @@ import { defer, generateUUID, logger } from '../../../utils';
 import Settings from '../../../settings';
 import StatusMessageManager from '../../ui-utils/status-message-manager';
 import MessageHandlers from '../../handlers/message/message-handlers';
-import UIUtils from '../../ui-utils';
+import * as UIUtils from '../../ui-utils';
 import { animatedScrollTo } from '../../ui-utils/animated-scroll';
 import { registerComponent } from '../component';
 import List from '../../mixins/list';
@@ -657,7 +657,7 @@ registerComponent('layer-message-list', {
       children.filter(item => item.tagName !== 'DIV').forEach((child, index) => {
         if (child.properties && child.properties.item && this._isVisibleEnoughToMarkAsRead(child)) {
           // TODO: Use a scheduler rather than many setTimeout calls
-          if (!UIUtils.isInBackground() && !child.properties.item.isRead) {
+          if (true && !UIUtils.isInBackground() && !child.properties.item.isRead) {
             setTimeout(() => this._markAsRead(child), Settings.markReadDelay);
           }
 

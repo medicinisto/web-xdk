@@ -126,7 +126,7 @@
  */
 import Settings from '../../settings';
 import Core from '../../core/namespace';
-import UIConstants from '../constants';
+import * as UIConstants from '../constants';
 import { registerComponent } from './component';
 import HasQuery from '../mixins/has-query';
 import WidthTracker from '../mixins/width-tracker';

@@ -15,7 +15,7 @@
  */
 import { registerComponent } from '../component';
 import MessageItemMixin from './layer-message-item-mixin';
-import RCUtils from '../../ui-utils/replaceable-content-utils';
+import * as RCUtils from '../../ui-utils/replaceable-content-utils';
 
 registerComponent('layer-message-item-received', {
   mixins: [MessageItemMixin],

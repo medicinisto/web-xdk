@@ -10,8 +10,7 @@
  * @property {Object} ComponentsHash
  * @private
  */
-const ComponentsHash = {};
-module.exports.ComponentsHash = ComponentsHash;
+export const ComponentsHash = {};
 
 
 /**
@@ -66,7 +65,7 @@ module.exports.ComponentsHash = ComponentsHash;
  * @param {String} className                The tag name for the widget your setting the template for; 'layer-avatar'
  * @param {HTMLTemplateElement} [template]  Template node to register.  If none provided, will check the ownerDocument for a template.
  */
-module.exports.registerTemplate = function registerTemplate(className, template) {
+export function registerTemplate(className, template) {
   if (!template) template = document._currentScript.ownerDocument.querySelector('template');
 
   // Since we aren't doing shadowDOM, and we don't want to insert the template <style/> tag a thousand times
@@ -81,7 +80,7 @@ module.exports.registerTemplate = function registerTemplate(className, template)
   ComponentsHash[className].template = template;
   ComponentsHash[className].style = styles;
   template.setAttribute('layer-template-registered', 'true');
-};
+}
 
 /**
  * Register this template by passing in a string representation of the template.
@@ -98,7 +97,7 @@ module.exports.registerTemplate = function registerTemplate(className, template)
  * @param {String} className          The tag name for the widget your setting the template for; 'layer-avatar'
  * @param {String} templateStr        Template string to register.
  */
-module.exports.buildAndRegisterTemplate = function buildTemplate(className, templateStr) {
+export function buildAndRegisterTemplate(className, templateStr) {
 
   // Generate a template node
   const template = document.createElement('template');
@@ -107,7 +106,7 @@ module.exports.buildAndRegisterTemplate = function buildTemplate(className, temp
   // Write it as a static property of the Component
   ComponentsHash[className].template = template;
   template.setAttribute('layer-template-registered', 'true');
-};
+}
 
 /**
  * Add the style for the template by passing in a string representation of the CSS rules.
@@ -122,6 +121,6 @@ module.exports.buildAndRegisterTemplate = function buildTemplate(className, temp
  * @param {String} className           The tag name for the widget your setting the template for; 'layer-avatar'
  * @param {String} styleStr            Style string to associate with this component.  Specifically, expects the output of `Function.toString()`
  */
-module.exports.buildStyle = function buildStyles(className, styleStr) {
+export function buildStyle(className, styleStr) {
   ComponentsHash[className].style = styleStr;
-};
+}

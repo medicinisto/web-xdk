@@ -140,7 +140,4 @@ const animatedScrollLeftTo = (element, to, duration, callback) => {
   return cancel;
 };
 
-module.exports = {
-  animatedScrollTo,
-  animatedScrollLeftTo,
-};
+export { animatedScrollTo, animatedScrollLeftTo };

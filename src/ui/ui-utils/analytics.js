@@ -1,4 +1,5 @@
-module.exports.getWhereClicked = (messageViewer) => {
+/* eslint-disable import/prefer-default-export */
+export function getWhereClicked(messageViewer) {
   const rootMessageViewer = messageViewer.getRootMessageViewer();
   let whereClicked;
   let parentName;
@@ -21,4 +22,4 @@ module.exports.getWhereClicked = (messageViewer) => {
       whereClicked = parentName;
   }
   return whereClicked;
-};
+}

@@ -30,7 +30,7 @@ import { addListItemSeparator } from './list-separator-manager';
 
 const dateClassName = 'layer-list-item-separator-date';
 
-module.exports = (widget, messages, index) => {
+export default function dateSeparator(widget, messages, index) {
   try {
     if (index > messages.length) return;
     const message = widget.item;
@@ -52,5 +52,4 @@ module.exports = (widget, messages, index) => {
   } catch (e) {
     // no-op
   }
-};
-
+}

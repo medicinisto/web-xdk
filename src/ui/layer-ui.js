@@ -30,14 +30,14 @@
 import { registerComponent, _registerAll, unregisterComponent } from './components/component';
 import './handlers/message/layer-message-unknown';
 import Constants from './constants';
-import ComponentServices, { ComponentsHash } from './component-services';
+import * as ComponentServices from './component-services';
 import Settings from '../settings';
 import MessageHandlers from './handlers/message/message-handlers';
 import TextHandlers from './handlers/text/text-handlers';
 import ListSeparatorManager from './ui-utils/list-separator-manager';
-import Adapters from './adapters';
+import * as Adapters from './adapters';
 import MessageActions from './message-actions';
-import UIUtils from './ui-utils/index';
+import * as UIUtils from './ui-utils';
 import { ErrorDictionary } from '../core/layer-error';
 
 const LayerUI = {
@@ -97,14 +97,14 @@ const LayerUI = {
     message: MessageHandlers,
     text: TextHandlers,
   },
-  components: ComponentsHash, // backwards compatability
+  components: ComponentServices.ComponentsHash, // backwards compatability
 
   /**
    * Hash of all UI Component definitions
    *
    * @property {Object} ComponentsHash
    */
-  ComponentsHash,
+  ComponentsHash: ComponentServices.ComponentsHash,
 
   /**
    * Tools for managing List Separators

@@ -11,7 +11,7 @@
  *
  * @property {String} [itemSeparatorParentClassName=layer-list-item-separator-parent]
  */
-module.exports.itemSeparatorParentClassName = 'layer-list-item-separator-parent';
+export const itemSeparatorParentClassName = 'layer-list-item-separator-parent';
 
 
 /**
@@ -27,12 +27,11 @@ module.exports.itemSeparatorParentClassName = 'layer-list-item-separator-parent'
  * @method createItemSeparator
  * @returns {HTMLElement}
  */
-module.exports.createItemSeparator = () => {
+export function createItemSeparator() {
   const node = document.createElement('div');
-  node.classList.add(module.exports.itemSeparatorParentClassName);
+  node.classList.add(itemSeparatorParentClassName);
   return node;
-};
-
+}
 
 /**
  * Adds a separator between list items.
@@ -70,7 +69,7 @@ module.exports.createItemSeparator = () => {
  *                                               if there is already a node of that class.
  * @param {Boolean} isAboveItem                 If true, `listItem.customNodeAbove` is used, else `listItem.customNodeBelow`
  */
-module.exports.addListItemSeparator = function addListItemSeparator(listItemNode, content, contentClass, isAboveItem) {
+export function addListItemSeparator(listItemNode, content, contentClass, isAboveItem) {
   const nodeName = isAboveItem ? 'customNodeAbove' : 'customNodeBelow';
   let node;
 
@@ -99,7 +98,7 @@ module.exports.addListItemSeparator = function addListItemSeparator(listItemNode
     }
   } else if (!listItemNode[nodeName] && node) {
     // Create a parent node and then add this to it
-    const parent = module.exports.createItemSeparator();
+    const parent = createItemSeparator();
     parent.appendChild(node);
     listItemNode[nodeName] = parent;
   } else if (listItemNode[nodeName] && !node) {

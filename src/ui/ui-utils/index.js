@@ -2,9 +2,10 @@
  * @class Layer.UI.UIUtils
  * @static
  */
-import StatusManager from './status-message-manager';
-import ListSeparatorManager from './list-separator-manager';
-import RCUtils from './replaceable-content-utils';
+import * as RCUtils from './replaceable-content-utils';
+
+export * from './list-separator-manager';
+export * from './status-message-manager';
 
 /**
  * Utility returns whether or not the window is in the background.
@@ -12,7 +13,9 @@ import RCUtils from './replaceable-content-utils';
  * @method isInBackground
  * @returns {Boolean}
  */
-module.exports.isInBackground = () => !document.hasFocus() || document.hidden;
+export function isInBackground() {
+  return !document.hasFocus() || document.hidden;
+}
 
 /**
  * Placeholder for a mechanism for all Message Types to share for showing a zoomed in version of their content.
@@ -22,11 +25,11 @@ module.exports.isInBackground = () => !document.hasFocus() || document.hidden;
  * @method showFullScreen
  * @param {String} url
  */
-module.exports.showFullScreen = (url) => {
+export function showFullScreen(url) {
   if (url && url.length > 7) {
     window.open(url);
   }
-};
+}
 
 /**
  * Calculates a scaled size given a set of dimensions and the maximum allowed width/height.
@@ -36,8 +39,7 @@ module.exports.showFullScreen = (url) => {
  * @param {Object} maxSizes      `width` and `height` of the maximum allowed dimensions
  * @returns {Object}             `width` and `height` that is proportional to dimensions and within maxSizes
  */
-module.exports.normalizeSize = (dimensions, maxSizes) => {
-
+export function normalizeSize(dimensions, maxSizes) {
   if (!dimensions) return maxSizes;
 
   const size = {
@@ -62,7 +64,7 @@ module.exports.normalizeSize = (dimensions, maxSizes) => {
     width: Math.round(size.width),
     height: Math.round(size.height),
   };
-};
+}
 
 /**
  * Return a human readable file size with B, K, M, G, etc... appended to it
@@ -73,7 +75,7 @@ module.exports.normalizeSize = (dimensions, maxSizes) => {
  * @param {Number} size
  * @returns {String}
  */
-module.exports.humanFileSize = (size) => {
+export function humanFileSize(size) {
   const i = Math.floor(Math.log(size) / Math.log(1024));
   /* eslint-disable no-restricted-properties */
   const base = Math.round(size / Math.pow(1024, i));
@@ -82,9 +84,6 @@ module.exports.humanFileSize = (size) => {
   } else {
     return base + ['B', 'K', 'M', 'G', 'T'][i];
   }
-};
+}
 
-
-module.exports.ReplaceableSnippets = RCUtils;
-Object.keys(StatusManager).forEach(keyName => (module.exports[keyName] = StatusManager[keyName]));
-Object.keys(ListSeparatorManager).forEach(keyName => (module.exports[keyName] = ListSeparatorManager[keyName]));
+export const ReplaceableSnippets = RCUtils;

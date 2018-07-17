@@ -9,7 +9,7 @@
  * @param {String[]} extensions    Specific file extensions our URL must match against
  * @returns {RegExp}               Regular Expression that can test if something is a string
  */
-module.exports = function isURL(extensions, urlOnly) {
+export default function isURL(extensions, urlOnly) {
   let resource = '?';
 
   /* istanbul ignore else */
@@ -55,4 +55,4 @@ module.exports = function isURL(extensions, urlOnly) {
   } else {
     return new RegExp(expr, 'igm');
   }
-};
+}

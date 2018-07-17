@@ -94,7 +94,7 @@
  * @mixin Layer.UI.mixins.QueryEndIndicator
  */
 import Core from '../../../core/namespace';
-import UIConstants from '../../constants';
+import * as UIConstants from '../../constants';
 import { registerComponent } from '../component';
 import List from '../../mixins/list';
 import ListLoadIndicator from '../../mixins/list-load-indicator';
@@ -102,7 +102,7 @@ import ListSelection from '../../mixins/list-selection';
 import SizeProperty from '../../mixins/size-property';
 import EmptyList from '../../mixins/empty-list';
 import QueryEndIndicator from '../../mixins/query-end-indicator';
-import RCUtils from '../../ui-utils/replaceable-content-utils';
+import * as RCUtils from '../../ui-utils/replaceable-content-utils';
 
 registerComponent('layer-conversation-list', {
   mixins: [List, ListSelection, ListLoadIndicator, SizeProperty, EmptyList, QueryEndIndicator],
@@ -285,6 +285,7 @@ registerComponent('layer-conversation-list', {
      * @property {String} [sortBy=lastMessage]
      */
     sortBy: {
+      hey: 'ho',
       order: -1, // needs to fire before appId and client are set
       value: UIConstants.CONVERSATIONS_SORT.LAST_MESSAGE,
       set(value) {

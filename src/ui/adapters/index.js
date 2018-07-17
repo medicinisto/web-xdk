@@ -16,18 +16,18 @@ import { ErrorDictionary } from '../../core/layer-error';
 const adapters = {
 };
 
-export function angular() {
-  if (adapters.angular) return adapters.angular();
+export function angular(...args) {
+  if (adapters.angular) return adapters.angular.apply(null, args);
   throw new Error(ErrorDictionary.adapterError);
 }
 
-export function react() {
-  if (adapters.react) return adapters.react();
+export function react(...args) {
+  if (adapters.react) return adapters.react.apply(null, args);
   throw new Error(ErrorDictionary.adapterError);
 }
 
-export function backbone() {
-  if (adapters.backbone) return adapters.backbone();
+export function backbone(...args) {
+  if (adapters.backbone) return adapters.backbone.apply(null, args);
   throw new Error(ErrorDictionary.adapterError);
 }
 

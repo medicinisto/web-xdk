@@ -31,8 +31,9 @@ import './components/layer-conversation-view';
 // import './handlers/text/autolinker';
 // import './handlers/text/emoji';
 import './handlers/text/newline';
+import * as UIUtils from './ui-utils';
 import dateSeparator from './ui-utils/date-separator';
-import animatedScroll from './ui-utils/animated-scroll';
+import * as animatedScroll from './ui-utils/animated-scroll';
 
 import './messages/index-lite';
 
@@ -59,9 +60,10 @@ import mixins from './mixins';
 
 LayerUI.mixins = mixins;
 
+LayerUI.UIUtils = UIUtils;
 LayerUI.UIUtils.animatedScrollTo = animatedScroll.animatedScrollTo;
 LayerUI.UIUtils.animatedScrollLeftTo = animatedScroll.animatedScrollLeftTo;
 LayerUI.UIUtils.dateSeparator = dateSeparator;
 LayerUI.mixins.MessageHandler = MessageHandler;
 
-module.exports = LayerUI;
+export default LayerUI;

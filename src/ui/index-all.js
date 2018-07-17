@@ -33,4 +33,4 @@ import './components/layer-send-button';
 // Load standard cards
 import './messages/index';
 
-module.exports = LayerUI;
+export default LayerUI;

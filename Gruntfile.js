@@ -56,7 +56,7 @@ module.exports = function (grunt) {
             src: [
               'tmp/duck.json'
             ],
-            dest: 'npm'
+            dest: 'tmp/es5/src'
           }
         ]
       }
@@ -125,7 +125,7 @@ module.exports = function (grunt) {
       }
     },
     clean: {
-      typescript: ['npm/**.d.ts', 'npm/*/**.d.ts']
+      typescript: ['npm/**.d.ts', 'npm/*/**.d.ts', 'tmp/es5/src/**.d.ts', 'tmp/es5/src/*/**.d.ts']
     },
     remove: {
       build: {
@@ -1013,10 +1013,10 @@ module.exports = function (grunt) {
     'optimize-webcomponents', // Strip out comments/white-space from webcomponents (overwrite tmp/commonjs)
     'full-babel:es5files', // write tmp/es5 with code that jsduck and IE11 can understand
     'remove:npm', // Insure we have a clean npm folder
+    'typescript',
     'copy:npm', // Copy es5 into npm
     'theme', // build the theme and write it to npm
     'fix-npm-package',
-    'typescript',
     'notify:npm', // Setup the npm folder package.json
   ]);
 
