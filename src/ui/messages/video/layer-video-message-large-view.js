@@ -153,6 +153,7 @@ registerComponent('layer-video-message-large-view', {
         this.model.currentTime = 0;
       }
       this.nodes.player.pause();
+      this.nodes.player.src = '';
     },
 
     /**
@@ -207,7 +208,7 @@ registerComponent('layer-video-message-large-view', {
           // Update the source and kick off the above events
           player.src = this.model.streamUrl;
         }
-      });
+      }, this);
     },
   },
 });
