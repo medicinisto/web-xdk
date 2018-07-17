@@ -56,7 +56,7 @@ module.exports = function (grunt) {
             src: [
               'tmp/duck.json'
             ],
-            dest: 'tmp/es5/src'
+            dest: 'npm'
           }
         ]
       }
@@ -125,7 +125,7 @@ module.exports = function (grunt) {
       }
     },
     clean: {
-      typescript: ['npm/**.d.ts', 'npm/*/**.d.ts', 'tmp/es5/src/**.d.ts', 'tmp/es5/src/*/**.d.ts']
+      typescript: ['npm/**.d.ts', 'npm/*/**.d.ts']
     },
     remove: {
       build: {
@@ -211,8 +211,8 @@ module.exports = function (grunt) {
     less: {
       themes: {
         files: [
-          {src: ['themes/src/layer-basic-blue/theme.less'], dest: 'tmp/es5/src/themes/layer-basic-blue.css'},
-          {src: ['themes/src/layer-groups/theme.less'], dest: 'tmp/es5/src/themes/layer-groups.css'}
+          {src: ['themes/src/layer-basic-blue/theme.less'], dest: 'tmp/themes/layer-basic-blue.css'},
+          {src: ['themes/src/layer-groups/theme.less'], dest: 'tmp/themes/layer-groups.css'}
         ]
       }
     },
@@ -226,15 +226,15 @@ module.exports = function (grunt) {
           {src: 'LICENSE', dest: 'npm/LICENSE'}
         ]
       },
-      npmthemesrc: {
+      npmtheme: {
         files: [
-          {src: ['**'], cwd: 'themes/src/', dest: 'npm/themes/src/', expand: true}
+          {src: ['**'], cwd: 'themes/src/', dest: 'npm/themes/src/', expand: true},
+          {src: ['**'], cwd: 'tmp/themes/', dest: 'npm/themes/', expand: true}
         ]
       },
       buildthemes: {
         files: [
-          {src: ['*.css'], cwd: 'tmp/es5/themes', dest: 'npm/themes/', expand: true},
-          {src: ['*.css'], cwd: 'tmp/es5/themes', dest: 'build/themes/', expand: true}
+          {src: ['*.css'], cwd: 'npm/themes', dest: 'build/themes/', expand: true}
         ]
       },
 
@@ -248,8 +248,8 @@ module.exports = function (grunt) {
     cssmin: {
       build: {
         files: [
-          {src: ['tmp/es5/src/themes/layer-basic-blue.css'], dest: 'tmp/es5/src/themes/layer-basic-blue.min.css'},
-          {src: ['tmp/es5/src/themes/layer-groups.css'], dest: 'tmp/es5/src/themes/layer-groups.min.css'}
+          {src: ['tmp/themes/layer-basic-blue.css'], dest: 'tmp/themes/layer-basic-blue.min.css'},
+          {src: ['tmp/themes/layer-groups.css'], dest: 'tmp/themes/layer-groups.min.css'}
         ]
       }
     },
@@ -1013,8 +1013,6 @@ module.exports = function (grunt) {
     'commonjsify', // Replace es6 import/export with something that browserify can work with; write to tmp/commonjs
     'optimize-webcomponents', // Strip out comments/white-space from webcomponents (overwrite tmp/commonjs)
     'full-babel:es5files', // write tmp/es5 with code that jsduck and IE11 can understand
-    'typescript',
-    'theme', // build the theme and write it to es5 folder
     'remove:npm', // Insure we have a clean npm folder
     'copy:npm', // Copy es5 into npm
     'fix-npm-package',
@@ -1036,7 +1034,9 @@ module.exports = function (grunt) {
     'eslint:build', // Verify we are ready to build
     'remove:build', // Delete the build folder
     'generate-npm', // Here only because people will probably run build and expect Everything not just the build folder
-    'generate-build-file', // Generate all build artifacts
+    'theme', // build the theme and write it to the npm folder
+    'typescript', // generate typescript definitions and write them to the npm folder
+    'generate-build-file', // Generate all build artifacts in the build folder
     'uglify', // Generate layer-xdk.min.js
     'copy:buildthemes' // Copy theme files in for CDN deploy
   ]);
@@ -1047,14 +1047,14 @@ module.exports = function (grunt) {
   grunt.registerTask('samples', ['version', 'remove:tmp', 'optimize-webcomponents', 'custom_copy:src', 'commonjsify', 'browserify:samples']);
 
   // Build the theme and write them to npm folder
-  grunt.registerTask('theme', ['remove:theme', 'less', 'cssmin', 'copy:npmthemesrc']),
+  grunt.registerTask('theme', ['remove:theme', 'less', 'cssmin', 'copy:npmtheme']),
 
   grunt.registerTask('typescript', ['clean:typescript', 'generate-structures-from-jsduck', 'generate-typescript-from-jsduck-structures']);
 
   grunt.registerTask('default', ['build', 'generate-npm']);
 
   // Open a port for running tests and rebuild whenever anything interesting changes
-  grunt.registerTask("developnpm", ["generate-npm", "parallel:dev"]);
+  grunt.registerTask("developnpm", ["theme", "generate-npm", "parallel:dev"]);
   grunt.registerTask("developtests", ["connect:develop", "generate-build-file", "parallel:test"]);
 
 };
