@@ -57,7 +57,7 @@ class ContentType {
   }
 }
 
-module.exports = function parseContentType(contentType) {
+export default function parseContentType(contentType) {
   if (!contentType) {
     return null;
   }

@@ -43,7 +43,7 @@
  * @mixin Layer.UI.mixins.Clickable
  * @extends Layer.UI.Component
  */
-import Util from '../../../utils';
+import * as Util from '../../../utils';
 import { registerComponent } from '../component';
 import ListItem from '../../mixins/list-item';
 import SizeProperty from '../../mixins/size-property';

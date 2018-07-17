@@ -32,7 +32,7 @@ import messageActionHandlers from '../../message-actions/index';
 import { register } from './message-handlers';
 import { getWhereClicked } from '../../ui-utils/analytics';
 
-const { conversationViewWidths, client } = Settings;
+const { conversationViewWidths, getClient } = Settings;
 
 registerComponent('layer-message-viewer', {
   mixins: [MessageHandler, Clickable, SizeProperty],
@@ -272,7 +272,7 @@ registerComponent('layer-message-viewer', {
     _runAction(action) {
       if (this.size === 'large') return; // For now, there is no action performed when users tap on a Large Message Viewer
 
-      client._triggerAsync('analytics', {
+      getClient()._triggerAsync('analytics', {
         type: 'message-selected',
         size: this.size,
         where: getWhereClicked(this),

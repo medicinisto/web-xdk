@@ -21,7 +21,8 @@ import Settings from '../settings';
 import Core from './namespace';
 import Root from './root';
 import { WebsocketSyncEvent } from './sync-event';
-import Util, { logger, xhr } from '../utils';
+import { logger, xhr } from '../utils';
+import * as Util from '../utils';
 
 const { getClient } = Settings;
 

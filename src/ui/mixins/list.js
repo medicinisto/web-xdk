@@ -8,7 +8,8 @@
  */
 import Settings from '../../settings';
 import Layer from '../../core/namespace';
-import Util, { defer, logger } from '../../utils';
+import { defer, logger } from '../../utils';
+import * as Util from '../../utils';
 import { animatedScrollTo } from '././../ui-utils/animated-scroll';
 import { registerComponent } from '../components/component';
 import HasQuery from './has-query';

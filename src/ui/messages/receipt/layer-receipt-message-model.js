@@ -40,7 +40,7 @@
  * @extends Layer.Core.MessageTypeModel
  */
 import Core  from '../../../core/namespace';
-import Util from '../../../utils';
+import * as Util from '../../../utils';
 import '../location/layer-location-message-model';
 
 const { MessagePart, MessageTypeModel, Root } = Core;

@@ -67,7 +67,7 @@
  * @extends Layer.Core.Root
  */
 
-import Util from '../utils';
+import * as Util from '../utils';
 import version from '../version';
 import logger from '../utils/logger';
 import Root from './root';
@@ -109,6 +109,7 @@ export default class Client extends Root {
   constructor(options) {
     super(options);
     Settings.setClient(this);
+
     this._isReadyObj = {};
 
     this._models = {};

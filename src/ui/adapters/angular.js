@@ -66,7 +66,7 @@ import { register } from './index';
  * @param {Object} angular     Pass in the AngularJS library
  */
 
-function initAngular(angular) {
+export default function initAngular(angular) {
 
   // Define the layerXDKController
   const controllers = angular.module('layerXDKControllers', []);
@@ -144,5 +144,4 @@ function initAngular(angular) {
     });
 }
 
-module.exports = initAngular;
 register('angular', initAngular);

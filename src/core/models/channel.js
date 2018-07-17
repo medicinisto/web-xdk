@@ -57,7 +57,7 @@ import Container from './container';
 import ChannelMessage from './channel-message';
 import { ErrorDictionary } from '../layer-error';
 import LayerEvent from '../layer-event';
-import Util from '../../utils';
+import * as Util from '../../utils';
 import { STANDARD_MIME_TYPES, SYNC_STATE } from '../../constants';
 
 const { getClient } = Settings;

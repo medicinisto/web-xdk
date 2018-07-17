@@ -5,17 +5,25 @@
  */
 /* eslint-disable no-restricted-properties */
 
-import uuid from 'uuid';
+// Note: `export { default as layerParse } from './layer-parser'` generates a property setter via babel and jasmine spys cannot hook into them.
+import UUID from 'uuid';
 import layerParse from './layer-parser';
+export { layerParse };
+
 import logger from './logger';
+export { logger };
+
 import xhr from './xhr';
+export { xhr };
+
 import { getNativeSupport, registerNativeSupport } from '../utils/native-support';
+export { getNativeSupport, registerNativeSupport };
 
 const Blob = getNativeSupport('Blob');
 
-exports.atob = getNativeSupport('atob');
-exports.btoa = getNativeSupport('btoa');
-exports.defer = getNativeSupport('setImmediate');
+export const atob = getNativeSupport('atob');
+export const btoa = getNativeSupport('btoa');
+export const defer = getNativeSupport('setImmediate');
 
 /**
  * Generate a random UUID
@@ -23,7 +31,7 @@ exports.defer = getNativeSupport('setImmediate');
  * @method generateUUID
  * @return {string}
  */
-exports.generateUUID = uuid.v4;
+export const generateUUID = UUID.v4;
 
 /**
  * Generate a random UUID as a Uint8Array array
@@ -31,10 +39,10 @@ exports.generateUUID = uuid.v4;
  * @method generateUUIDBytes
  * @return {Uint8Array[]}
  */
-exports.generateUUIDBytes = () => {
+export const generateUUIDBytes = () => {
   const b = new Uint8Array(16);
-  uuid.v4(null, b);
-  return exports.btoa(String.fromCharCode.apply(null, b));
+  UUID.v4(null, b);
+  return btoa(String.fromCharCode.apply(null, b));
 };
 
 /**
@@ -55,7 +63,7 @@ exports.generateUUIDBytes = () => {
  * @param  {string} id
  * @return {string}
  */
-exports.typeFromID = (id) => {
+export const typeFromID = (id) => {
   const matches = id.match(/([^/]*)(\/[^/]*)$/);
   return matches ? matches[1] : '';
 };
@@ -67,12 +75,12 @@ exports.typeFromID = (id) => {
  * @param  {string} id
  * @return {string}
  */
-exports.uuid = id => (id || '').replace(/^.*\//, '');
+export const uuid = id => (id || '').replace(/^.*\//, '');
 
-exports.isEmpty = obj => Object.prototype.toString.apply(obj) === '[object Object]' && Object.keys(obj).length === 0;
+export const isEmpty = obj => Object.prototype.toString.apply(obj) === '[object Object]' && Object.keys(obj).length === 0;
 
 
-exports.camelCase = str =>
+export const camelCase = str =>
   str.replace(/[-_](.)/g, (match, value) => value.toUpperCase());
 
 /**
@@ -90,7 +98,7 @@ exports.camelCase = str =>
  * @returns {String} a-hyphenated-string
  */
 const regexHyphenate = /([a-z])([A-Z])/g;
-exports.hyphenate = (str, separator = '-') =>
+export const hyphenate = (str, separator = '-') =>
   str.replace(regexHyphenate, (match, part1, part2) =>
     part1 + separator + part2.toLowerCase());
 
@@ -109,7 +117,7 @@ exports.hyphenate = (str, separator = '-') =>
  * @param  {Function} fn.value      Current value from inArray we are comparing, and from which a value should be extracted
  * @param  {boolean}  [reverse=false] Sort ascending (false) or descending (true)
  */
-exports.sortBy = (inArray, fn, reverse) => {
+export const sortBy = (inArray, fn, reverse) => {
   reverse = reverse ? -1 : 1;
   return inArray.sort((valueA, valueB) => {
     const aa = fn(valueA);
@@ -135,7 +143,7 @@ exports.sortBy = (inArray, fn, reverse) => {
  * @param  {Object}     Object to clone
  * @return {Object}     New Object
  */
-exports.clone = obj => JSON.parse(JSON.stringify(obj));
+export const clone = obj => JSON.parse(JSON.stringify(obj));
 
 /**
  * Shallow Clone doesn't lose subpointers; for use on raw objects, not class instances.
@@ -146,7 +154,7 @@ exports.clone = obj => JSON.parse(JSON.stringify(obj));
  * @param  {Object}     Object to clone
  * @return {Object}     New Object
  */
-exports.shallowClone = (obj) => {
+export const shallowClone = (obj) => {
   const result = {};
   Object.keys(obj).forEach(keyName => (result[keyName] = obj[keyName]));
   return result;
@@ -161,7 +169,7 @@ exports.shallowClone = (obj) => {
  * @method strictEncodeURI
  * @param {String} str
  */
-exports.strictEncodeURI =
+export const strictEncodeURI =
   str => encodeURIComponent(str).replace(/[!~'()]/g, x => `%${x.charCodeAt(0).toString(16).toUpperCase()}`);
 
 /**
@@ -175,7 +183,7 @@ exports.strictEncodeURI =
  * @return {String}   Decoded string
  */
 /* istanbul ignore next */
-exports.decode = (str) => {
+export const decode = (str) => {
   const reg1 = new RegExp('_', 'g');
   const reg2 = new RegExp('-', 'g');
   let output = str.replace(reg2, '+').replace(reg1, '/');
@@ -191,7 +199,7 @@ exports.decode = (str) => {
     default:
       throw new Error('Illegal base64url string!');
   }
-  return exports.atob(output);
+  return atob(output);
 };
 
 
@@ -230,7 +238,7 @@ exports.decode = (str) => {
  * @param  {number} counter - Current counter to use for calculating the delay; should be incremented up to some reasonable maximum value for each use.
  * @return {number}     Delay in seconds/fractions of a second
  */
-exports.getExponentialBackoffSeconds = function getExponentialBackoffSeconds(maxSeconds, counter) {
+export const getExponentialBackoffSeconds = function getExponentialBackoffSeconds(maxSeconds, counter) {
   let secondsWaitTime = (Math.pow(2, counter)) / 10;
   let secondsOffset = Math.random(); // value between 0-1 seconds.
   if (counter < 2) secondsOffset = secondsOffset / 4; // values less than 0.2 should be offset by 0-0.25 seconds
@@ -248,7 +256,7 @@ exports.getExponentialBackoffSeconds = function getExponentialBackoffSeconds(max
  * @param {Mixed} value
  * @returns {Boolean} - True if its a blob, false if not.
  */
-exports.isBlob = value => typeof Blob !== 'undefined' && value instanceof Blob;
+export const isBlob = value => typeof Blob !== 'undefined' && value instanceof Blob;
 
 /**
  * Given a blob return a base64 string.
@@ -258,7 +266,7 @@ exports.isBlob = value => typeof Blob !== 'undefined' && value instanceof Blob;
  * @param {Function} callback
  * @param {String} callback.result - Your base64 string result
  */
-exports.blobToBase64 = (blob, callback) => {
+export const blobToBase64 = (blob, callback) => {
   if (blob instanceof Blob) {
     getNativeSupport('blobToBase64')(blob, callback);
   } else {
@@ -275,10 +283,10 @@ exports.blobToBase64 = (blob, callback) => {
  * @param {String} contentType - mime type of the data
  * @returns {Blob}
  */
-exports.base64ToBlob = (b64Data, contentType) => {
+export const base64ToBlob = (b64Data, contentType) => {
   try {
     const sliceSize = 512;
-    const byteCharacters = exports.atob(b64Data);
+    const byteCharacters = atob(b64Data);
     const byteArrays = [];
     let offset;
 
@@ -312,7 +320,7 @@ exports.base64ToBlob = (b64Data, contentType) => {
  * @param {String} str
  * @return {String}
  */
-exports.utoa = str => exports.btoa(unescape(encodeURIComponent(str)));
+export const utoa = str => btoa(unescape(encodeURIComponent(str)));
 
 /**
  * Does window.atob() in a way that can decode data from utoa()
@@ -323,7 +331,7 @@ exports.utoa = str => exports.btoa(unescape(encodeURIComponent(str)));
  * @param {String} str
  * @return {String}
  */
-exports.atou = str => decodeURIComponent(escape(exports.atob(str)));
+export const atou = str => decodeURIComponent(escape(atob(str)));
 
 
 /**
@@ -336,12 +344,10 @@ exports.atou = str => decodeURIComponent(escape(exports.atob(str)));
  * @param {Function} callback
  * @param {String} callback.result
  */
-exports.fetchTextFromFile = (file, callback) => {
+export const fetchTextFromFile = (file, callback) => {
   if (typeof file === 'string') return callback(file);
   getNativeSupport('fetchTextFromFile')(file, callback);
 };
-
-exports.layerParse = layerParse;
 
 
 /**
@@ -350,7 +356,7 @@ exports.layerParse = layerParse;
  * @param {Number} size
  * @returns {String}
  */
-exports.randomString = (size) => {
+export const randomString = (size) => {
   const byteBuffer = new Uint8Array(size);
   while (size--) byteBuffer[size] = (Math.random() * 91) + 35;
   return String.fromCharCode.apply(null, byteBuffer);
@@ -372,7 +378,7 @@ exports.randomString = (size) => {
  * @param  {Object} actualData
  * @return {boolean}
  */
-exports.doesObjectMatch = (requestedData, actualData) => {
+export const doesObjectMatch = (requestedData, actualData) => {
   if ((!requestedData && actualData) || (requestedData && !actualData)) return false;
   const requestedKeys = Object.keys(requestedData).sort();
   const actualKeys = Object.keys(actualData).sort();
@@ -391,7 +397,7 @@ exports.doesObjectMatch = (requestedData, actualData) => {
       // Array comparison is not used by the Web XDK at this time.
       if (Array.isArray(v1)) {
         throw new Error('Array comparison not handled yet');
-      } else if (!exports.doesObjectMatch(v1, v2)) {
+      } else if (!doesObjectMatch(v1, v2)) {
         return false;
       }
     } else if (v1 !== v2) {
@@ -401,12 +407,12 @@ exports.doesObjectMatch = (requestedData, actualData) => {
   return true;
 };
 
-exports.isMobile = global.navigator ? Boolean(global.navigator.userAgent.match(/(mobile|android|phone)/i)) : false;
-exports.isIOS = global.navigator ? Boolean(global.navigator.userAgent.match(/(iPhone|iPad)/i)) : false;
-exports.isSafari = global.navigator ?
+export const isMobile = global.navigator ? Boolean(global.navigator.userAgent.match(/(mobile|android|phone)/i)) : false;
+export const isIOS = global.navigator ? Boolean(global.navigator.userAgent.match(/(iPhone|iPad)/i)) : false;
+export const isSafari = global.navigator ?
   Boolean(global.navigator.userAgent.match(/(safari)/i)) &&
   global.navigator.vendor.match(/apple/i) : false;
-exports.hasLocalStorage = typeof Storage !== 'undefined' && global.localStorage instanceof Storage;
+export const hasLocalStorage = typeof Storage !== 'undefined' && global.localStorage instanceof Storage;
 
 /**
  * Simple array inclusion test
@@ -415,13 +421,13 @@ exports.hasLocalStorage = typeof Storage !== 'undefined' && global.localStorage 
  * @param {Mixed} value
  * @returns {boolean}
  */
-exports.includes = (items, value) => items.indexOf(value) !== -1;
+export const includes = (items, value) => items.indexOf(value) !== -1;
 
 /**
  * Some ASCII art when client initializes
  * @property {String} asciiInit
  */
-exports.asciiInit = (version) => {
+export const asciiInit = (version) => {
   if (!version) return 'Missing version';
 
   const split = version.split('-');
@@ -460,10 +466,4 @@ exports.asciiInit = (version) => {
  * @return {Object} return.object     Contains additional details that may be relevant to your logging; do not try and serialize these as they will infinite loop.
  * @return {String} return.type       Object type that generated the log
  */
-exports.getLogs = logger.getLogs;
-
-exports.logger = logger;
-exports.xhr = xhr;
-
-exports.registerNativeSupport = registerNativeSupport;
-exports.getNativeSupport = getNativeSupport;
+export const getLogs = logger.getLogs;

@@ -31,7 +31,8 @@ import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import { ErrorDictionary } from '../layer-error';
-import Util, { logger } from '../../utils';
+import { logger } from '../../utils';
+import * as Util from '../../utils';
 import Query from './query';
 
 const { getClient } = Settings;

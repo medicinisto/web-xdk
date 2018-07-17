@@ -9,7 +9,7 @@
 import Settings from '../../settings';
 import Core from '../namespace';
 import Syncable from './syncable';
-import Util from '../../utils';
+import * as Util from '../../utils';
 import { DELETION_MODE } from '../../constants';
 import Root from '../root';
 

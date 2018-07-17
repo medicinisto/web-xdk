@@ -1,6 +1,8 @@
 const resources = {};
-exports.getNativeSupport = resourceName => resources[resourceName];
+export function getNativeSupport(resourceName) {
+  return resources[resourceName];
+}
 
-exports.registerNativeSupport = (resourceName, resource) => {
+export function registerNativeSupport(resourceName, resource) {
   if (resource) resources[resourceName] = resource;
-};
+}

@@ -57,7 +57,7 @@ function setImmediateProcessor() {
   }
 }
 // Schedule the function to be called by adding it to the queue, and setting up scheduling if its needed.
-module.exports = function defer(func) {
+export function defer(func) {
   if (typeof func !== 'function') throw new Error('Function expected in defer');
 
   setImmediateQueue.push(func);
@@ -79,8 +79,12 @@ module.exports = function defer(func) {
 };
 
 // For Unit Testing
-module.exports.flush = () => setImmediateProcessor();
-module.exports.reset = () => { setImmediateQueue = []; };
+defer.flush = () => {
+  setImmediateProcessor();
+}
+defer.reset = () => {
+  setImmediateQueue = [];
+};
 
 if (typeof addEventListener !== 'undefined') {
   addEventListener('message', (event) => {

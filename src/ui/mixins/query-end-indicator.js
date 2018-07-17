@@ -11,7 +11,7 @@
  * @class Layer.UI.mixins.QueryEndIndicator
  * @typescript ismixin
  */
-import Util from '../../utils';
+import * as Util from '../../utils';
 import { registerComponent } from '../components/component';
 import mixins from './index';
 

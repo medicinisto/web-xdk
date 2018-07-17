@@ -56,7 +56,8 @@ import Syncable from './syncable';
 import Container from './container';
 import ConversationMessage from './conversation-message';
 import { ErrorDictionary } from '../layer-error';
-import Util, { logger } from '../../utils';
+import * as Util from '../../utils';
+import { logger } from '../../utils';
 import { STANDARD_MIME_TYPES, SYNC_STATE, DELETION_MODE } from '../../constants';
 import LayerEvent from '../layer-event';
 

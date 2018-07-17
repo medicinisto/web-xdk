@@ -8,7 +8,8 @@
  */
 import Settings from '../../settings';
 import Core from '../namespace';
-import Util, { logger } from '../../utils';
+import { logger } from '../../utils';
+import * as Util from '../../utils';
 import { LayerError } from '../layer-error';
 
 const { getClient } = Settings;

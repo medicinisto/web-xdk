@@ -15,7 +15,7 @@
 
 import Core from '../namespace';
 import Settings from '../../settings';
-import Util from '../../utils';
+import * as Util from '../../utils';
 import { ErrorDictionary } from '../layer-error';
 import { SYNC_STATE } from '../../constants';
 import ContentTypeParser from '../../utils/content-type-parser';

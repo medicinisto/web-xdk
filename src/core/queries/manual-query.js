@@ -48,7 +48,7 @@ import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
 import Query from './query';
-import Util from '../../utils';
+import * as Util from '../../utils';
 import Message from '../models/message';
 import Conversation from '../models/conversation';
 import Identity from '../models/identity';

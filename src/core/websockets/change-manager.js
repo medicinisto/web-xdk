@@ -7,7 +7,8 @@
  */
 import Settings from '../../settings';
 import Core from '../namespace';
-import Util, { logger } from '../../utils';
+import { logger } from '../../utils';
+import * as Util from '../../utils';
 import Message from '../models/message';
 import Container from '../models/container';
 

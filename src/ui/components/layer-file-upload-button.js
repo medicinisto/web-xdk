@@ -30,7 +30,8 @@
  * @mixin Layer.UI.mixins.Clickable
  */
 import Layer from '../../core/namespace';
-import Util, { logger } from '../../utils';
+import { logger } from '../../utils';
+import * as Util from '../../utils';
 import { registerComponent } from './component';
 import Clickable from '../mixins/clickable';
 import Settings from '../../settings';

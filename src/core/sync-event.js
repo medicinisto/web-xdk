@@ -16,7 +16,7 @@
  * @extends Layer.Core.Root
  */
 import Settings from '../settings';
-import Util from '../utils';
+import * as Util from '../utils';
 import Core from './namespace';
 
 const { getClient } = Settings;

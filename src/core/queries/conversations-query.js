@@ -34,7 +34,7 @@
 import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
-import Util from '../../utils';
+import * as Util from '../../utils';
 import { SYNC_STATE } from '../../constants';
 import Query from './query';
 

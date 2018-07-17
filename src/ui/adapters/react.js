@@ -47,7 +47,7 @@ import { register } from './index';
  *   appId: 'layer:///apps/staging/my-app-id'
  * });
  * const LayerUIWidgets = Layer.UI.adapters.react(React, ReactDom);
- * module.exports = LayerUIWidgets;
+ * export default LayerUIWidgets;
  * ```
  *
  * Now anywhere you need access to the LayerUIWidgets library can import this module and expect everything to
@@ -69,7 +69,7 @@ import { register } from './index';
  * @typescript foreach-ui-component {"imports": "import { Component } from 'react'", "interfaces": "declare class ${className} extends Component<${propsInterfaceName}, void> {}"}
  */
 let libraryResult;
-function initReact(React, ReactDom) {
+export default function initReact(React, ReactDom) {
   if (libraryResult) return libraryResult;
   libraryResult = {};
 
@@ -266,5 +266,4 @@ function initReact(React, ReactDom) {
   return libraryResult;
 }
 
-module.exports = initReact;
 register('react', initReact);

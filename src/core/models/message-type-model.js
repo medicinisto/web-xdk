@@ -28,7 +28,7 @@
  */
 import Settings from '../../settings';
 import Core from '../namespace';
-import Util from '../../utils';
+import * as Util from '../../utils';
 import Root from '../root';
 import Identity from './identity';
 import MessageTypeResponseSummary from './message-type-response-summary/message-type-response-summary-v2';

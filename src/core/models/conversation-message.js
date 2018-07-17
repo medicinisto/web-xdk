@@ -10,7 +10,7 @@ import Root from '../root';
 import Message from './message';
 import { ErrorDictionary } from '../layer-error';
 import { RECEIPT_STATE, RECIPIENT_STATE, DELETION_MODE } from '../../constants';
-import Util from '../../utils';
+import * as Util from '../../utils';
 
 const { getClient } = Settings;
 

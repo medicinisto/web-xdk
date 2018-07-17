@@ -14,7 +14,7 @@ import mixins from './index';
 import Settings from '../../settings';
 import { logger } from '../../utils';
 
-const { client, audioMIMETypes, videoMIMETypes, imageMIMETypes } = Settings;
+const { getClient, audioMIMETypes, videoMIMETypes, imageMIMETypes } = Settings;
 
 mixins.FileDropTarget = module.exports = {
   properties: {
@@ -205,8 +205,8 @@ mixins.FileDropTarget = module.exports = {
      * @private
      */
     _processAttachment(file, callback) {
-      const VideoModel = client.constructor.getMessageTypeModelClass('VideoModel');
-      const AudioModel = client.constructor.getMessageTypeModelClass('AudioModel');
+      const VideoModel = getClient().constructor.getMessageTypeModelClass('VideoModel');
+      const AudioModel = getClient().constructor.getMessageTypeModelClass('AudioModel');
 
       if (imageMIMETypes.indexOf(file.type) !== -1) {
         callback(new ImageModel({

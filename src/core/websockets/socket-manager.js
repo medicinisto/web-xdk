@@ -17,7 +17,8 @@
 import Settings from '../../settings';
 import Core from '../namespace';
 import Root from '../root';
-import Util, { logger } from '../../utils';
+import { logger } from '../../utils';
+import * as Util from '../../utils';
 import { getNativeSupport } from '../../utils/native-support';
 import { ErrorDictionary } from '../layer-error';
 import { WEBSOCKET_PROTOCOL } from '../../constants';

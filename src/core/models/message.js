@@ -130,7 +130,7 @@ import Root from '../root';
 import Syncable from './syncable';
 import MessagePart from './message-part';
 import { SYNC_STATE } from '../../constants';
-import Util from '../../utils';
+import * as Util from '../../utils';
 import Identity from './identity';
 
 const { getClient } = Settings;

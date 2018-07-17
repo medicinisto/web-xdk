@@ -16,7 +16,7 @@ import Core from './namespace';
 import Root from './root';
 import { WebsocketSyncEvent, XHRSyncEvent } from './sync-event';
 import { SYNC_STATE } from '../constants';
-import Util from '../utils';
+import * as Util from '../utils';
 import Announcement from './models/announcement';
 import Identity from './models/identity';
 

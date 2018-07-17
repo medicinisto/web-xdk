@@ -83,7 +83,7 @@
  */
 import Settings from '../../../settings';
 import Core from '../../../core/namespace';
-import Util from '../../../utils';
+import * as Util from '../../../utils';
 import { registerComponent } from '../component';
 import List from '../../mixins/list';
 import HasQuery from '../../mixins/has-query';

@@ -127,7 +127,8 @@
  * @typescript ismixin
  */
 import { RECIPIENT_STATE } from '../../../constants';
-import Util, { logger } from '../../../utils';
+import { logger } from '../../../utils';
+import * as Util from '../../../utils';
 import ListItem from '../../mixins/list-item';
 
 module.exports = {

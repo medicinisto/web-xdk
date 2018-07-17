@@ -12,7 +12,7 @@
  * @typescript extendclass
  */
 
-import Util from '../../utils';
+import * as Util from '../../utils';
 import { RECEIPT_STATE } from '../../constants';
 import Core from '../namespace';
 

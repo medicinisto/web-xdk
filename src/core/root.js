@@ -1,6 +1,6 @@
 import Events from 'backbone-events-standalone/backbone-events-standalone';
 import Core from './namespace';
-import Util, { logger, defer } from '../utils';
+import { logger, defer, camelCase, generateUUID, includes } from '../utils';
 import LayerEvent from './layer-event';
 import { ErrorDictionary } from './layer-error';
 
@@ -134,7 +134,7 @@ export default class Root extends EventClass {
 
     // Generate a temporary id if there isn't an id
     if (!this.id && !options.id && this.constructor.prefixUUID) {
-      this.id = this.constructor.prefixUUID + Util.generateUUID();
+      this.id = this.constructor.prefixUUID + generateUUID();
     }
 
     // Copy in all properties; setup all event handlers
@@ -254,7 +254,7 @@ export default class Root extends EventClass {
   }
 
   supportsEvent(eventName) {
-    return Util.includes(this.constructor._supportedEvents, eventName);
+    return includes(this.constructor._supportedEvents, eventName);
   }
 
   /**
@@ -264,7 +264,7 @@ export default class Root extends EventClass {
    * @private
    */
   _warnForEvent(eventName) {
-    if (!Util.includes(this.constructor._supportedEvents, eventName)) {
+    if (!includes(this.constructor._supportedEvents, eventName)) {
       throw new Error('Event ' + eventName + ' not defined for ' + this.toString());
     }
   }
@@ -397,8 +397,8 @@ export default class Root extends EventClass {
    * @return {Layer.Core.LayerEvent} evt
    */
   _trigger(...args) {
-    if (!Util.includes(this.constructor._supportedEvents, args[0])) {
-      if (!Util.includes(this.constructor._ignoredEvents, args[0])) {
+    if (!includes(this.constructor._supportedEvents, args[0])) {
+      if (!includes(this.constructor._ignoredEvents, args[0])) {
         logger.error(this.toString() + ' ignored ' + args[0]);
       }
       return;
@@ -706,7 +706,7 @@ export default class Root extends EventClass {
 
 function defineProperty(newClass, propertyName) {
   const pKey = '__' + propertyName;
-  let camel = Util.camelCase(propertyName);
+  let camel = camelCase(propertyName);
   camel = camel.charAt(0).toUpperCase() + camel.substring(1);
   const hasDefinitions = newClass.prototype['__adjust' + camel] || newClass.prototype['__update' + camel] ||
     newClass.prototype['__get' + camel];
@@ -788,5 +788,4 @@ Root.prototype._disableEvents = false;
 
 Root._supportedEvents = ['destroy', 'all'];
 Root._ignoredEvents = [];
-module.exports = Root;
 Core.Root = Root;

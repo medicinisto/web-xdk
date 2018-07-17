@@ -118,7 +118,4 @@ class Logger {
 /* istanbul ignore next */
 Logger.prototype.level = typeof jasmine === 'undefined' ? ERROR : NONE;
 
-const logger = new Logger();
-
-module.exports = logger;
-
+export default new Logger();

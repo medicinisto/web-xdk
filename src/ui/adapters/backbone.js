@@ -54,7 +54,7 @@ import { register } from './index';
  * @param {Object} backbone     Pass in the backbone library
  */
 let libraryResult;
-function initBackbone(backbone) {
+export default function initBackbone(backbone) {
   if (libraryResult) return libraryResult;
   libraryResult = {};
 
@@ -93,6 +93,5 @@ function initBackbone(backbone) {
   return libraryResult;
 }
 
-module.exports = initBackbone;
 register('backbone', initBackbone);
 

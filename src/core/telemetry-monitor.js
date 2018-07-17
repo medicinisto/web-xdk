@@ -15,7 +15,8 @@
 import Settings from '../settings';
 import Core from './namespace';
 import Root from './root';
-import Util, { xhr, hasLocalStorage } from '../utils';
+import { xhr, hasLocalStorage } from '../utils';
+import * as Util from '../utils';
 import version from '../version';
 
 const { getClient } = Settings;

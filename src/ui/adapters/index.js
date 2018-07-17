@@ -13,9 +13,23 @@
  */
 import { ErrorDictionary } from '../../core/layer-error';
 
-module.exports.angular = module.exports.backbone = module.exports.react = () => {
-  throw new Error(ErrorDictionary.adapterError);
+const adapters = {
 };
+
+export function angular() {
+  if (adapters.angular) return adapters.angular();
+  throw new Error(ErrorDictionary.adapterError);
+}
+
+export function react() {
+  if (adapters.react) return adapters.react();
+  throw new Error(ErrorDictionary.adapterError);
+}
+
+export function backbone() {
+  if (adapters.backbone) return adapters.backbone();
+  throw new Error(ErrorDictionary.adapterError);
+}
 
 /**
  * An adapter does not need to be registered via `register` to be used, but doing so makes it
@@ -29,6 +43,6 @@ module.exports.angular = module.exports.backbone = module.exports.react = () => 
  * @param {String} name      Name of the adapter. Namespaces it within layerUI.adapters
  * @param {Function} adapter The adapter to make available to apps
  */
-module.exports.register = (name, adapter) => {
-  module.exports[name] = adapter;
-};
+export function register(name, adapter) {
+  adapters[name] = adapter;
+}

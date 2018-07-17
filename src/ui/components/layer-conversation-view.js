@@ -130,7 +130,7 @@ import UIConstants from '../constants';
 import { registerComponent } from './component';
 import HasQuery from '../mixins/has-query';
 import WidthTracker from '../mixins/width-tracker';
-import Utils from '../../utils';
+import * as Utils from '../../utils';
 
 import './layer-message-list';
 import './layer-compose-bar';
