@@ -137,6 +137,7 @@ Impact of this change:
 * Fixes URL detection to handle multi-line expressions that contain
   a URL that goes from the start to the end of a line
 * Typescript definition files now included in npm repository
+* Removes all CommonJS module usage from internal components; note that CommonJS is still used when doing `import '@layerhq/web-xdk'`; this will be treated as a potential breaking change and removed in the next Major release.
 
 ## 4.0.4
 
