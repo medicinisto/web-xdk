@@ -62,11 +62,6 @@ registerComponent('layer-video-message-large-view', {
         this._resizeContent();
       },
     },
-    height: {
-      set() {
-        this._resizeContent();
-      },
-    },
   },
   methods: {
 
@@ -78,13 +73,6 @@ registerComponent('layer-video-message-large-view', {
      */
     getTitle() {
       return VideoModel.LabelSingular;
-    },
-
-    /*
-     * Height will be allocated once we sort out preview images; initialize it to false
-     */
-    onCreate() {
-      this.isHeightAllocated = false;
     },
 
     /*
@@ -114,7 +102,19 @@ registerComponent('layer-video-message-large-view', {
         this.model.getPreviewUrl(url => (player.poster = url));
       }
 
+      this._updateHasNoMetadata();
       this._resizeContent();
+    },
+
+    _updateHasNoMetadata() {
+      let found = false;
+      for (let i = 0; i < 20; i++) {
+        if (this.model.getMetadataAtIndex(i)) {
+          found = true;
+          break;
+        }
+      }
+      this.toggleClass('layer-video-no-metadata', !found);
     },
 
     /**
@@ -126,24 +126,24 @@ registerComponent('layer-video-message-large-view', {
     _resizeContent() {
       const width = this.clientWidth || this.getAvailableMessageWidth();
       if (width) {
+        const videoStyles = getComputedStyle(this.nodes.player);
+        const videoMargins = (parseInt(videoStyles.getPropertyValue('margin-top'), 10) || 0) +
+          (parseInt(videoStyles.getPropertyValue('margin-bottom'), 10) || 0);
+        const videoBorders = (parseInt(videoStyles.getPropertyValue('border-top-width'), 10) || 0) +
+          (parseInt(videoStyles.getPropertyValue('border-bottom-width'), 10) || 0);
         const sizes = this.getBestDimensions({
           contentWidth: this.model.width,
           contentHeight: this.model.height,
           maxWidth: width,
-          maxHeight: this.clientHeight,
+          maxHeight: this.clientHeight - videoMargins - videoBorders,
         });
         this.nodes.player.style.width = sizes.width + 'px';
         this.nodes.player.style.height = sizes.height + 'px';
-
-        const styles = getComputedStyle(this.lastChild);
-        const margins = parseInt(styles.getPropertyValue('margin-top'), 10) +
-          parseInt(styles.getPropertyValue('margin-bottom'), 10);
-        const requiredHeight = this.lastChild.clientHeight + this.lastChild.offsetTop + margins;
-
-        this.trigger('layer-container-reduce-height', {
-          height: requiredHeight,
-        });
-        this.isHeightAllocated = true;
+        if (this.scrollHeight === this.clientHeight) {
+          this.style.justifyContent = 'center';
+        } else {
+          this.style.justifyContent = 'flex-start';
+        }
       }
     },
 
@@ -152,7 +152,7 @@ registerComponent('layer-video-message-large-view', {
      * was not yet added to the DOM, then it will need to be resolved here.
      */
     onAttach() {
-      if (!this.isHeightAllocated) this._resizeContent();
+      this._resizeContent();
     },
 
     /**
@@ -187,8 +187,6 @@ registerComponent('layer-video-message-large-view', {
       ];
 
       nodes.forEach((node, index) => (node.innerHTML = this.model.getMetadataAtIndex(index)));
-      const nodesWithData = nodes.filter(node => node.innerHTML);
-      this.toggleClass('layer-video-no-metadata', nodesWithData.length === 0);
     },
 
     /**
@@ -226,6 +224,10 @@ registerComponent('layer-video-message-large-view', {
           player.src = this.model.streamUrl;
         }
       }, this);
+    },
+
+    _updateWidth() {
+      this._resizeContent();
     },
   },
 });

@@ -38,7 +38,6 @@ mixins.WidthTracker = {
         this.toggleClass(this.tagName.toLowerCase() + '-width-large', newValue >= this.widthLargeStart);
       },
     },
-    height: {},
 
     /**
      * Minimum width for this UI Component to be considered of size "small"
@@ -97,7 +96,6 @@ mixins.WidthTracker = {
      */
     _updateWidth() {
       this.width = this.clientWidth;
-      this.height = this.clientHeight;
     },
   },
 };

@@ -412,7 +412,14 @@ registerComponent('layer-dialog', {
         this.properties.requestedAltMaxHeight = altMaxHeight;
         return;
       }
-      altMaxHeight += this.nodes.titleBar.clientHeight;
+
+      const titleStyles = getComputedStyle(this.nodes.titleBar);
+      const margins = (parseInt(titleStyles.getPropertyValue('margin-top'), 10) || 0) +
+        (parseInt(titleStyles.getPropertyValue('margin-bottom'), 10) || 0);
+      const borders = (parseInt(titleStyles.getPropertyValue('border-top-width'), 10) || 0) +
+        (parseInt(titleStyles.getPropertyValue('border-bottom-width'), 10) || 0);
+
+      altMaxHeight += this.nodes.titleBar.clientHeight + margins + borders;
       if (!this.properties.initialMaxHeight) {
         const styles = getComputedStyle(this.nodes.inner);
         const maxHeightStr = styles.getPropertyValue('max-height');
