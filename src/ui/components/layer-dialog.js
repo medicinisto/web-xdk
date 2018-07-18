@@ -413,9 +413,14 @@ registerComponent('layer-dialog', {
         return;
       }
       altMaxHeight += this.nodes.titleBar.clientHeight;
-      const styles = getComputedStyle(this.nodes.inner);
-      const maxHeight = parseInt(styles.getPropertyValue('max-height'), 10);
-      if (altMaxHeight < maxHeight) this.nodes.inner.style.maxHeight = altMaxHeight + 'px';
+      if (!this.properties.initialMaxHeight) {
+        const styles = getComputedStyle(this.nodes.inner);
+        const maxHeightStr = styles.getPropertyValue('max-height');
+        this.properties.initialMaxHeight = maxHeightStr && maxHeightStr !== 'none' ? parseInt(maxHeightStr, 10) : 0;
+      }
+      if (altMaxHeight < this.properties.initialMaxHeight) {
+        this.nodes.inner.style.maxHeight = altMaxHeight + 'px';
+      }
     },
 
     /**

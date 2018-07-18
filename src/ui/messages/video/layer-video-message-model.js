@@ -548,7 +548,7 @@ MessageTypeModel.DefineFileBehaviors({
  * @static
  * @property {String} [LabelSingular=Video]
  */
-VideoModel.LabelSingular = 'Video';
+VideoModel.LabelSingular = 'Video Message';
 
 /**
  * One instance of this type
@@ -556,7 +556,7 @@ VideoModel.LabelSingular = 'Video';
  * @static
  * @property {String} [LabelPlural=Videos]
  */
-VideoModel.LabelPlural = 'Videos';
+VideoModel.LabelPlural = 'Video Messages';
 
 /**
  * Standard concise representation of this Message Type
