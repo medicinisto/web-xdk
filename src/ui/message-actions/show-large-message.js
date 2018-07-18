@@ -17,6 +17,7 @@ const showLargeView = ({ messageViewer, model, data }) => {
   largeMessageViewer.model = model;
   largeMessageViewer.openActionData = data;
   largeMessageViewer.parentComponent = dialog;
+  largeMessageViewer.cardBorderStyle = 'none';
 
   dialog.replaceableContent = {
     content: largeMessageViewer,

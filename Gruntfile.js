@@ -134,6 +134,9 @@ module.exports = function (grunt) {
       npm: {
         dirList: ['npm'],
       },
+      npmjs: {
+        dirList: ['npm/*', '!npm/theme'],
+      },
       theme: {
         dirList: ['themes/build']
       },
@@ -407,7 +410,7 @@ module.exports = function (grunt) {
       },
       themes: {
         files: ['themes/src/**'],
-        tasks: ['theme', 'buildthemes'],
+        tasks: ['theme'],
         options: {
           interrupt: true
         }
@@ -1013,7 +1016,7 @@ module.exports = function (grunt) {
     'commonjsify', // Replace es6 import/export with something that browserify can work with; write to tmp/commonjs
     'optimize-webcomponents', // Strip out comments/white-space from webcomponents (overwrite tmp/commonjs)
     'full-babel:es5files', // write tmp/es5 with code that jsduck and IE11 can understand
-    'remove:npm', // Insure we have a clean npm folder
+    'remove:npmjs', // Insure we have a clean npm folder
     'copy:npm', // Copy es5 into npm
     'fix-npm-package',
     'notify:npm', // Setup the npm folder package.json
@@ -1033,6 +1036,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'eslint:build', // Verify we are ready to build
     'remove:build', // Delete the build folder
+    'remove:npm',
     'generate-npm', // Here only because people will probably run build and expect Everything not just the build folder
     'theme', // build the theme and write it to the npm folder
     'typescript', // generate typescript definitions and write them to the npm folder

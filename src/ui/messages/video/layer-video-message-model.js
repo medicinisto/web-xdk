@@ -188,21 +188,24 @@ export default class VideoModel extends MessageTypeModel {
 
   // See parent class
   setupSlots() {
-    const slots = [
-      [
-        this.title || this.sourceUrl.replace(/(.*\/)?(.*?)(\..*)?$/, '$2') || this.getOneLineSummary(true),
-      ].filter(value => value),
-      [
-        this.subtitle, this.artist,
-      ].filter(value => value),
-      [
-        this.duration ? this.getDuration() : null,
-        this.size ? this.getSize() : null,
-        this.createdAt ? this.createdAt.toLocaleString() : null,
-      ].filter(value => value),
-    ];
-    while (slots[0].length > 1) slots[0].pop();
-    return slots;
+    const firstSlot = [
+      this.title || this.sourceUrl.replace(/(.*\/)?(.*?)(\..*)?$/, '$2'),
+    ].filter(value => value);
+
+    const secondSlot = [
+      this.subtitle, this.artist,
+    ].filter(value => value);
+
+    const thirdSlot = [
+      this.duration ? this.getDuration() : null,
+      this.size ? this.getSize() : null,
+      this.createdAt ? this.createdAt.toLocaleString() : null,
+    ].filter(value => value);
+
+    if (!firstSlot.length && (secondSlot.length || thirdSlot.length)) {
+      firstSlot.push(this.getOneLineSummary(true));
+    }
+    return [firstSlot, secondSlot, thirdSlot];
   }
 
   /**

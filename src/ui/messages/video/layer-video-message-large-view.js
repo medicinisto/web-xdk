@@ -17,17 +17,18 @@ import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import VideoModel from './layer-video-message-model';
 import Clickable from '../../mixins/clickable';
+import WidthTracker from '../../mixins/width-tracker';
 
 registerComponent('layer-video-message-large-view', {
-  mixins: [MessageViewMixin, Clickable],
+  mixins: [MessageViewMixin, Clickable, WidthTracker],
 
   style: `
     layer-video-message-large-view {
       display: flex;
       flex-direction: column;
     }
-    layer-video-message-large-view .layer-video-inner {
-      overflow-y: auto;
+    layer-video-message-large-view.layer-video-no-metadata .layer-video-inner {
+      display: none;
     }
   `,
   /* eslint-disable */
@@ -53,6 +54,18 @@ registerComponent('layer-video-message-large-view', {
     autoplay: {
       value: true,
       type: Boolean,
+    },
+
+    // Set via the width tracker
+    width: {
+      set() {
+        this._resizeContent();
+      },
+    },
+    height: {
+      set() {
+        this._resizeContent();
+      },
     },
   },
   methods: {
@@ -111,11 +124,13 @@ registerComponent('layer-video-message-large-view', {
      * @private
      */
     _resizeContent() {
-      const width = this.getAvailableMessageWidth();
+      const width = this.clientWidth || this.getAvailableMessageWidth();
       if (width) {
         const sizes = this.getBestDimensions({
           contentWidth: this.model.width,
           contentHeight: this.model.height,
+          maxWidth: width,
+          maxHeight: this.clientHeight,
         });
         this.nodes.player.style.width = sizes.width + 'px';
         this.nodes.player.style.height = sizes.height + 'px';
@@ -172,6 +187,8 @@ registerComponent('layer-video-message-large-view', {
       ];
 
       nodes.forEach((node, index) => (node.innerHTML = this.model.getMetadataAtIndex(index)));
+      const nodesWithData = nodes.filter(node => node.innerHTML);
+      this.toggleClass('layer-video-no-metadata', nodesWithData.length === 0);
     },
 
     /**

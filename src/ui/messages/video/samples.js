@@ -155,6 +155,28 @@ new VideoModel({
     title: 'Sample mp3',
   }).send({ conversation: $("layer-conversation-view").conversation });
 
+  VideoModel = Layer.Core.Client.getMessageTypeModelClass('VideoModel');
+  TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
+  new TextModel({text: "source and preview with no title"}).send({ conversation: $("layer-conversation-view").conversation });
+  new VideoModel({
+    source: Layer.Utils.base64ToBlob(videoBase64, 'video/mp4'),
+    preview: Layer.Utils.base64ToBlob(imgBase64, 'image/png'),
+    mimeType: 'audio/mp3',
+    artist: "Artist Foo",
+    size: Layer.Utils.base64ToBlob(videoBase64, 'video/mp4').size,
+  }).send({ conversation: $("layer-conversation-view").conversation });
+
+  new TextModel({text: "source and preview with no metadata"}).send({ conversation: $("layer-conversation-view").conversation });
+  new VideoModel({
+    source: Layer.Utils.base64ToBlob(videoBase64, 'video/mp4'),
+    preview: Layer.Utils.base64ToBlob(imgBase64, 'image/png'),
+  }).
+  generateMessage($("layer-conversation-view").conversation, function(message) {
+    message.findPart().body = JSON.stringify({width: 452, height: 256});
+    message.send();
+  });
+
+
 CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json');
 TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
 VideoModel = Layer.Core.Client.getMessageTypeModelClass('VideoModel');
