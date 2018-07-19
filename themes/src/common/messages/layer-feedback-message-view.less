@@ -5,6 +5,18 @@ body layer-message-item-status layer-message-viewer.layer-message-item-main.laye
 
 layer-message-viewer.layer-feedback-message-view {
   cursor: pointer;
+
+  layer-title-bar svg {
+    .layer-svg-strokable {
+      stroke: @color-g5;
+    }
+    .layer-svg-fillable {
+      fill: @color-g5;
+    }
+    .layer-svg-fillable-background {
+      fill: @color-white;
+    }
+  }
 }
 
 
@@ -41,15 +53,21 @@ layer-feedback-message-large-view:not(.layer-feedback-enabled) {
     width: 32px;
     height: 48px;
     display: inline-block;
-    .layer-star-path {
+    svg {
+      .layer-svg-strokable {
         stroke: @color-black;
+      }
+      .layer-svg-fillable {
         fill: @color-black;
       }
+    }
 
-    &.layer-feedback-selector-unselected .layer-star-path {
+
+
+    &.layer-feedback-selector-unselected svg .layer-svg-fillable {
       fill-opacity: 0;
     }
-    &.layer-feedback-selector-selected .layer-star-path {
+    &.layer-feedback-selector-selected svg .layer-svg-fillable {
       fill-opacity: 1;
     }
   }
@@ -77,14 +95,22 @@ layer-message-viewer.layer-feedback-message-view {
     background-color: @color-white;
 
     span {
-      .layer-star-path {
-        stroke: @color-blue5;
-        fill: @color-blue5;
+      svg {
+        .layer-svg-strokable {
+          stroke: @color-blue5;
+        }
+        .layer-svg-fillable {
+          fill: @color-blue5;
+        }
       }
 
-      &:hover .layer-star-path {
-        stroke: @color-blue6;
-        fill: @color-blue6;
+      &:hover svg {
+        .layer-svg-strokable {
+          stroke: @color-blue6;
+        }
+        .layer-svg-fillable {
+          fill: @color-blue6;
+        }
       }
     }
   }
@@ -103,14 +129,22 @@ layer-feedback-message-large-view {
       background-color: @color-white;
 
       span {
-        .layer-star-path {
-          stroke: @color-blue5;
-          fill: @color-blue5;
+        svg {
+          .layer-svg-strokable {
+            stroke: @color-blue5;
+          }
+          .layer-svg-fillable {
+            fill: @color-blue5;
+          }
         }
 
-        &:hover .layer-star-path {
-          stroke: @color-blue6;
-          fill: @color-blue6;
+        &:hover svg {
+          .layer-svg-strokable {
+            stroke: @color-blue6;
+          }
+          .layer-svg-fillable {
+            fill: @color-blue6;
+          }
         }
       }
     }

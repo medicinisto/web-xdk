@@ -150,6 +150,19 @@ registerComponent('layer-dialog', {
     },
 
     /**
+     * Icon for the titlebar; comes from `this.properties.ui.getIcon()` and is an SVG XML string
+     *
+     * @property {String} iconSVG
+     */
+    iconSVG: {
+      value: '',
+      set(icon, oldIcon) {
+        if (icon) this.nodes.titleBar.iconSVG = icon;
+        this._updateTitlebarShowing();
+      },
+    },
+
+    /**
      * Show a close button in the titlebar to close the dialog?:
      *
      * @property {Boolean} [isCloseButtonShowing=false]
@@ -262,6 +275,10 @@ registerComponent('layer-dialog', {
         this.icon = content.getIconClass();
       }
 
+      if (content.getIcon) {
+        this.iconSVG = content.getIcon();
+      }
+
       // If we are managing pop state, then push our state to the history, and listen for it to be popped.
       // This allows us to support android back button to dismiss the dialog
       if (this.managePopState) {
@@ -300,7 +317,7 @@ registerComponent('layer-dialog', {
      * @method _updateTitlebarShowing
      */
     _updateTitlebarShowing() {
-      this.toggleClass('layer-dialog-titlebar-showing', (this.title || this.icon || this.isCloseButtonShowing));
+      this.toggleClass('layer-dialog-titlebar-showing', (this.title || this.icon || this.iconSVG || this.isCloseButtonShowing));
     },
 
     /**

@@ -16,10 +16,19 @@ layer-file-upload-button {
 
   svg {
     flex-grow: 1;
-  }
-  .layer-circle-plus-shape {
-      stroke: @button-color;
+    .layer-svg-fillable {
       fill: @button-color;
+    }
+    .layer-svg-strokable {
+      stroke: @button-color;
+    }
+  }
+  &:hover svg {
+    .layer-svg-fillable {
+      fill: @button-hover-color;
+    }
+    .layer-svg-strokable {
+      stroke: @button-hover-color;
+    }
   }
 }
-

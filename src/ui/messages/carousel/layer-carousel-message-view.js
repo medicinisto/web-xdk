@@ -22,14 +22,17 @@ import { isMobile } from '../../../utils';
 import Settings from '../../../settings';
 import './layer-carousel-message-model';
 import { getWhereClicked } from '../../ui-utils/analytics';
+import { get as getGraphic } from '../../resources/graphics/';
+import '../../resources/graphics/next-arrow';
+import '../../resources/graphics/previous-arrow';
 
 const { getClient } = Settings;
 
 registerComponent('layer-carousel-message-view', {
   template: `
-    <span layer-id='prev' class="layer-next-icon layer-previous-icon" ></span>
+    <span layer-id='prev' class="layer-next-icon layer-previous-icon" >${getGraphic('previous-arrow')()}</span>
     <div class="layer-carousel-message-view-items" layer-id="items"></div>
-    <span layer-id='next' class="layer-next-icon" ></span>
+    <span layer-id='next' class="layer-next-icon" >${getGraphic('next-arrow')()}</span>
   `,
   style: `
   layer-carousel-message-view {

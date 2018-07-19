@@ -19,6 +19,9 @@ import './layer-audio-message-model';
 import './layer-audio-message-large-view';
 import Clickable from '../../mixins/clickable';
 import { logger, hasLocalStorage } from '../../../utils';
+import { getDom as getGraphicDom } from '../../resources/graphics/';
+import '../../resources/graphics/large-play';
+import '../../resources/graphics/large-not-playable';
 
 registerComponent('layer-audio-message-view', {
   mixins: [MessageViewMixin, Clickable],
@@ -29,6 +32,9 @@ registerComponent('layer-audio-message-view', {
       width: 100%;
       flex-direction: column;
       justify-content: flex-end;
+    }
+    .layer-audio-message-view .layer-card-body {
+      align-self: stretch;
     }
   `,
   template: `
@@ -207,7 +213,7 @@ registerComponent('layer-audio-message-view', {
      * @private
      */
     _setupPlayButton() {
-      const playButton = this.properties.playButton = document.createElement('div');
+      const playButton = this.properties.playButton = getGraphicDom('large-play')();
       playButton.classList.add('layer-play-button');
       this.parentComponent.customControls = playButton;
       this.addClickHandler('play-button', playButton, this.onPlayClick.bind(this));
@@ -396,11 +402,17 @@ registerComponent('layer-audio-message-view', {
       if (this._internalState.onDetachCalled) return;
 
       this.messageViewer.classList.add('layer-audio-not-playable');
+      const playButton = this.properties.playButton;
+      this.properties.playButton = getGraphicDom('large-not-playable')();
+      playButton.parentNode.replaceChild(this.properties.playButton, playButton);
 
       // If the source url has expired, then these would not be equal, and calling getSourceUrl will trigger our model change event we setup above
       this.model.getSourceUrl((url) => {
         if (url !== this.properties.audio.src && url + '/' !== this.properties.audio.src) {
           this.messageViewer.classList.remove('layer-audio-not-playable');
+          const playButton2 = this.properties.playButton;
+          this.properties.playButton = getGraphicDom('large-play')();
+          playButton.parentNode.replaceChild(this.properties.playButton, playButton2);
         } else {
           logger.error('LAYER-AUDIO-MESSAGE-VIEW: Play failed: ', err);
         }

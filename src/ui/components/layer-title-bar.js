@@ -65,7 +65,20 @@ registerComponent('layer-title-bar', {
       set(icon, oldIcon) {
         if (oldIcon) this.nodes.icon.classList.remove(oldIcon);
         if (icon) this.nodes.icon.classList.add(icon);
-        this.toggleClass('layer-title-icon-empty', !(icon));
+        this.toggleClass('layer-title-icon-empty', !(this.icon || this.iconSVG));
+      },
+    },
+
+    /**
+     * Icon for the titlebar; comes from `this.properties.ui.getIcon()`; represents an SVG XML string
+     *
+     * @property {String} iconSVG
+     */
+    iconSVG: {
+      value: '',
+      set(icon, oldIcon) {
+        this.nodes.icon.innerHTML = icon;
+        this.toggleClass('layer-title-icon-empty', !(this.icon || this.iconSVG));
       },
     },
   },

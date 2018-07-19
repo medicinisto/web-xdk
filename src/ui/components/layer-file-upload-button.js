@@ -34,7 +34,8 @@ import * as Util from '../../utils';
 import { registerComponent } from './component';
 import Clickable from '../mixins/clickable';
 import Settings from '../../settings';
-import CirclePlus from '../ui-utils/graphics/circle-plus';
+import { get as getGraphic } from '../resources/graphics/';
+import '../resources/graphics/file-upload';
 
 const { logger } = Util;
 const { imageMIMETypes, audioMIMETypes, videoMIMETypes } = Settings;
@@ -58,7 +59,7 @@ registerComponent('layer-file-upload-button', {
   events: ['layer-files-selected', 'layer-models-generated'],
   template: `
     <label layer-id="label">
-      ${CirclePlus}
+      ${getGraphic('file-upload')()}
     </label>
     <input layer-id="input" type="file"></input>
   `,

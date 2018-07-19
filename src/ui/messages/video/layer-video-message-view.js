@@ -17,6 +17,8 @@ import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import './layer-video-message-model';
 import './layer-video-message-large-view';
+import { get as getGraphic } from '../../resources/graphics/';
+import '../../resources/graphics/large-play';
 
 registerComponent('layer-video-message-view', {
   mixins: [MessageViewMixin],
@@ -30,9 +32,7 @@ registerComponent('layer-video-message-view', {
       align-items: center;
     }
   `,
-  template: `
-    <div layer-id="playIcon" class="layer-play-button"></div>
-  `,
+  template: getGraphic('large-play')(),
   properties: {
 
     /**

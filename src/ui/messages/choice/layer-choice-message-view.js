@@ -49,6 +49,9 @@ import MessageViewMixin from '../message-view-mixin';
 import '../../components/layer-action-button';
 import './layer-choice-label-message-view';
 import './layer-choice-message-model';
+import { get as getGraphic } from '../../resources/graphics/';
+import '../../resources/graphics/chart';
+
 
 const { getClient } = Settings;
 
@@ -66,7 +69,6 @@ registerComponent('layer-choice-message-view', {
     display: flex;
     flex-direction: column;
   }
-
   `,
   properties: {
 
@@ -92,7 +94,10 @@ registerComponent('layer-choice-message-view', {
      * @protected
      */
     getIconClass() {
-      return 'layer-poll-message-view-icon';
+    },
+
+    getIcon() {
+      return getGraphic('chart')();
     },
 
     /**

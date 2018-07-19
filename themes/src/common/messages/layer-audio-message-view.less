@@ -1,12 +1,27 @@
-
 layer-message-viewer.layer-audio-message-view {
   layer-standard-message-view-container .layer-card-body-outer {
     align-items: flex-end;
-    margin: 8px 0px;
+    margin: 4px 0px 8px 0px;
     position: relative;
 
     .layer-card-body {
       display: flex;
+    }
+
+    svg {
+      width: 36px;
+      height: 36px;
+      margin: 0px 12px 0px 8px;
+      .layer-svg-fillable {
+        fill: @color-g6;
+      }
+
+      .layer-svg-fillable-background {
+        fill: @color-white;
+      }
+      .layer-svg-strokable-background {
+        stroke: @color-white;
+      }
     }
   }
 
@@ -40,14 +55,6 @@ layer-message-viewer.layer-audio-message-view {
     width: 0px;
     position: absolute;
     z-index: 9;
-  }
-
-  &.layer-audio-playing:not(.layer-audio-not-playable) .layer-play-button {
-    .layer-pause-button-fancy-resource;
-  }
-
-  &:not(.layer-audio-playing):not(.layer-audio-not-playable) .layer-play-button {
-    .layer-play-button-fancy-resource;
   }
 
   &.layer-audio-not-playable .layer-play-button {

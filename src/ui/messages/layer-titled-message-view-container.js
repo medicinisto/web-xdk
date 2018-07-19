@@ -72,6 +72,13 @@ registerComponent('layer-titled-message-view-container', {
         this.toggleClass('layer-title-icon-empty', !(icon));
       },
     },
+
+    iconSVG: {
+      value: '',
+      set(icon) {
+        this.nodes.titlebar.iconSVG = icon;
+      },
+    },
   },
   methods: {
     onAfterCreate() {
@@ -79,7 +86,8 @@ registerComponent('layer-titled-message-view-container', {
     },
 
     onRerender() {
-      this.icon = this.properties.ui.getIconClass();
+      if (this.properties.ui.getIconClass) this.iconClass = this.properties.ui.getIconClass();
+      if (this.properties.ui.getIcon) this.iconSVG = this.properties.ui.getIcon();
       this.title = this.properties.ui.getTitle();
     },
   },

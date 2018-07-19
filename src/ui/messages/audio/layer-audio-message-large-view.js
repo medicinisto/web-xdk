@@ -29,6 +29,7 @@ registerComponent('layer-audio-message-large-view', {
       display: flex;
       flex-direction: column;
     }
+
     layer-audio-message-large-view audio {
       width: 100%;
     }

@@ -20,6 +20,8 @@ import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import './layer-receipt-message-product-view';
 import './layer-receipt-message-model';
+import { get as getGraphic } from '../../resources/graphics/';
+import '../../resources/graphics/receipt';
 
 registerComponent('layer-receipt-message-view', {
   template: `
@@ -72,12 +74,12 @@ registerComponent('layer-receipt-message-view', {
     /**
      * Provide the Titled Message Container with an Icon CSS Class
      *
-     * @method getIconClass
+     * @method getIcon
      * @returns {String}
      * @protected
      */
-    getIconClass() {
-      return 'layer-receipt-message-view-icon';
+    getIcon() {
+      return getGraphic('receipt')();
     },
 
     /**

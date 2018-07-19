@@ -21,7 +21,10 @@ import FeedbackModel from './layer-feedback-message-model';
 import MessageViewMixin from '../message-view-mixin';
 import Clickable from '../../mixins/clickable';
 import './layer-feedback-message-large-view';
-import Star from '../../ui-utils/graphics/star';
+import { get as getGraphic } from '../../resources/graphics/';
+import '../../resources/graphics/star';
+import '../../resources/graphics/feedback';
+
 
 registerComponent('layer-feedback-message-view', {
   mixins: [MessageViewMixin, Clickable],
@@ -49,9 +52,8 @@ registerComponent('layer-feedback-message-view', {
     },
   },
   methods: {
-
-    getIconClass() {
-      return 'layer-feedback-message-view-icon';
+    getIcon() {
+      return getGraphic('feedback')();
     },
     getTitle() {
       return this.model.title;
@@ -66,7 +68,7 @@ registerComponent('layer-feedback-message-view', {
       this.messageViewer.toggleClass('layer-feedback-enabled', this.model.isEditable());
       let text = '';
       for (let i = 1; i <= 5; i++) {
-        text += `<span class="${i <= rating ? 'layer-feedback-selector-selected' : 'layer-feedback-selector-unselected'}">${Star}</span>`;
+        text += `<span class="${i <= rating ? 'layer-feedback-selector-selected' : 'layer-feedback-selector-unselected'}">${getGraphic('star')()}</span>`;
       }
       this.innerHTML = text;
     },

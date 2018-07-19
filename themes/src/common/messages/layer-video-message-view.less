@@ -2,12 +2,24 @@ layer-video-message-view {
   background-color: @color-black;
   background-size: cover;
   background-position: 50% 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  svg {
+    width: 36px;
+    height: 36px;
+    .layer-svg-fillable {
+      fill: @color-g6;
+    }
 
-  .layer-play-button {
-    .layer-play-button-fancy-resource;
-  }
-  .layer-not-playable-button {
-    .layer-not-playable-button-resource;
+    .layer-svg-fillable-background {
+      fill: @color-white;
+    }
+
+    &.layer-not-playable-button {
+
+    }
   }
 }
 

@@ -214,6 +214,7 @@ registerComponent('layer-message-viewer', {
       if (titleBar) {
         titleBar.view = cardUI;
         if (cardUI.getIconClass) titleBar.iconClass = cardUI.getIconClass();
+        if (cardUI.getIcon) titleBar.iconSVG = cardUI.getIcon();
         if (cardUI.getTitle) titleBar.title = cardUI.getTitle();
       }
 

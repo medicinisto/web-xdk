@@ -231,6 +231,29 @@ imgBase64 = "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAECElEQVR4Xu2ZO44TURR
     duration: 60*3+9,previewWidth: 600, previewHeight: 600
   }).send({ conversation: $("layer-conversation-view").conversation })
 
+
+  AudioModel = Layer.Core.Client.getMessageTypeModelClass('AudioModel');
+  TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
+  new TextModel({text: "source and preview with no title"}).send({ conversation: $("layer-conversation-view").conversation });
+  new AudioModel({
+    source: Layer.Utils.base64ToBlob(mp3Base64, 'audio/mp3'),
+    previewUrl: "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg",
+    mimeType: 'audio/mp3',
+    artist: "Artist Foo",
+    size: Layer.Utils.base64ToBlob(mp3Base64, 'audio/mp3').size,
+  }).send({ conversation: $("layer-conversation-view").conversation });
+
+  new TextModel({text: "source and preview with no metadata"}).send({ conversation: $("layer-conversation-view").conversation });
+  new AudioModel({
+    source: Layer.Utils.base64ToBlob(mp3Base64, 'audio/mp3'),
+    previewUrl: "https://is3-ssl.mzstatic.com/image/thumb/Music6/v4/be/44/89/be4489a2-4562-a8c9-97dc-500ea98081cb/audiomachine17.jpg/600x600bf.jpg",
+  }).
+  generateMessage($("layer-conversation-view").conversation, function(message) {
+    message.findPart().body = JSON.stringify({width: 452, height: 256});
+    message.send();
+  });
+
+
 CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json');
 TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');
 AudioModel = Layer.Core.Client.getMessageTypeModelClass('AudioModel');
