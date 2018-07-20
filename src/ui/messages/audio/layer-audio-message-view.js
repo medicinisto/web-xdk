@@ -22,6 +22,7 @@ import { logger, hasLocalStorage } from '../../../utils';
 import { getDom as getGraphicDom } from '../../resources/graphics/';
 import '../../resources/graphics/large-play';
 import '../../resources/graphics/large-not-playable';
+import '../../resources/graphics/large-pause';
 
 registerComponent('layer-audio-message-view', {
   mixins: [MessageViewMixin, Clickable],
@@ -86,10 +87,12 @@ registerComponent('layer-audio-message-view', {
             result.catch(this.onError.bind(this));
           }
           this.messageViewer.classList.add('layer-audio-playing');
+          this._swapButtons('large-pause');
           this.onPlaying();
         } else {
           this.properties.audio.pause();
           this.messageViewer.classList.remove('layer-audio-playing');
+          this._swapButtons('large-play');
         }
       },
       get() {
@@ -402,21 +405,24 @@ registerComponent('layer-audio-message-view', {
       if (this._internalState.onDetachCalled) return;
 
       this.messageViewer.classList.add('layer-audio-not-playable');
-      const playButton = this.properties.playButton;
-      this.properties.playButton = getGraphicDom('large-not-playable')();
-      playButton.parentNode.replaceChild(this.properties.playButton, playButton);
+      this._swapButtons('large-not-playable');
 
       // If the source url has expired, then these would not be equal, and calling getSourceUrl will trigger our model change event we setup above
       this.model.getSourceUrl((url) => {
         if (url !== this.properties.audio.src && url + '/' !== this.properties.audio.src) {
           this.messageViewer.classList.remove('layer-audio-not-playable');
-          const playButton2 = this.properties.playButton;
-          this.properties.playButton = getGraphicDom('large-play')();
-          playButton.parentNode.replaceChild(this.properties.playButton, playButton2);
+          this._swapButtons('large-play');
         } else {
           logger.error('LAYER-AUDIO-MESSAGE-VIEW: Play failed: ', err);
         }
       });
+    },
+
+    _swapButtons(name) {
+      const playButton = this.properties.playButton;
+      this.properties.playButton = getGraphicDom(name)();
+      playButton.parentNode.replaceChild(this.properties.playButton, playButton);
+      this.addClickHandler('play-button', this.properties.playButton, this.onPlayClick.bind(this));
     },
 
     /**

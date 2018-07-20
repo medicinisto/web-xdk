@@ -20,6 +20,13 @@ import AudioModel from './layer-audio-message-model';
 import Clickable from '../../mixins/clickable';
 import WidthTracker from '../../mixins/width-tracker';
 import { logger, hasLocalStorage, isIOS } from '../../../utils';
+import { getDom as getGraphicDom, get as getGraphic } from '../../resources/graphics/';
+import '../../resources/graphics/media-controls/play';
+import '../../resources/graphics/media-controls/pause';
+import '../../resources/graphics/media-controls/forward-15';
+import '../../resources/graphics/media-controls/backward-15';
+import '../../resources/graphics/media-controls/mute';
+import '../../resources/graphics/media-controls/volume';
 
 registerComponent('layer-audio-message-large-view', {
   mixins: [MessageViewMixin, Clickable, WidthTracker],
@@ -79,13 +86,13 @@ registerComponent('layer-audio-message-large-view', {
     </div>
     <div class='layer-vertical-spacer'></div>
     <div class='layer-audio-controls' layer-id='controlPanel'>
-      <input type="button" class="layer-play-pause-button" layer-id="playButton"/>
+      <div class="layer-play-pause-button" layer-id="playButton">${getGraphic('media-player-play')()}</div>
       <span layer-id="currentTime" class='layer-audio-current-time'></span><span class='layer-audio-separator'>/</span><span layer-id="duration" class='layer-audio-duration'></span>
       <input type="range" layer-id="timeRange" min="0" max="100" class="layer-audio-time-range" />
       <div class="layer-audio-time-range-disabled"></div>
-      <input type="button" class="layer-audio-rewind-fifteen" layer-id="jumpBack" />
-      <input type="button" class="layer-audio-forward-fifteen" layer-id="jumpForward" />
-      <input type="button" class="layer-volume-button" layer-id="muteButton" />
+      <div class="layer-audio-rewind-fifteen" layer-id="jumpBack">${getGraphic('media-player-backward15')()}</div>
+      <div class="layer-audio-forward-fifteen" layer-id="jumpForward">${getGraphic('media-player-forward15')()}</div>
+      <div class="layer-volume-button" layer-id="muteButton">${getGraphic('media-player-mute')()}</div>
       <input type="range" layer-id="volumeRange" min="0" max="100" class="layer-audio-volume-range" />
       <div class="layer-audio-volume-range-disabled"></div>
     </div>
@@ -157,6 +164,7 @@ registerComponent('layer-audio-message-large-view', {
 
         // Update our css classes/state
         this.toggleClass('layer-audio-playing', value);
+        this._swapPlayButtons(value || this.properties.playAfterSeek ? 'media-player-pause' : 'media-player-play');
       },
       get() {
         return !this.properties.audio.paused;
@@ -699,9 +707,11 @@ registerComponent('layer-audio-message-large-view', {
       if (this.audio.volume) {
         this.nodes.muteButton.classList.add('layer-volume-enabled-button');
         this.nodes.muteButton.classList.remove('layer-volume-muted-button');
+        this._swapVolumeButtons('media-player-mute');
       } else {
         this.nodes.muteButton.classList.add('layer-volume-muted-button');
         this.nodes.muteButton.classList.remove('layer-volume-enabled-button');
+        this._swapVolumeButtons('media-player-volume');
       }
       this.nodes.volumeRange.value = this.audio.volume * 100;
     },
@@ -829,6 +839,15 @@ registerComponent('layer-audio-message-large-view', {
           this.autoplay = true;
         }
       });
+    },
+
+    _swapPlayButtons(name) {
+      const playButtonParent = this.nodes.playButton;
+      playButtonParent.replaceChild(getGraphicDom(name)(), playButtonParent.firstChild);
+    },
+    _swapVolumeButtons(name) {
+      const buttonParent = this.nodes.muteButton;
+      buttonParent.replaceChild(getGraphicDom(name)(), buttonParent.firstChild);
     },
   },
 });

@@ -15,7 +15,9 @@ layer-message-viewer.layer-audio-message-view {
       .layer-svg-fillable {
         fill: @color-g6;
       }
-
+      .layer-svg-strokable {
+        stroke: @color-g6;
+      }
       .layer-svg-fillable-background {
         fill: @color-white;
       }
@@ -55,10 +57,6 @@ layer-message-viewer.layer-audio-message-view {
     width: 0px;
     position: absolute;
     z-index: 9;
-  }
-
-  &.layer-audio-not-playable .layer-play-button {
-    .layer-not-playable-button-resource;
   }
 }
 
@@ -120,6 +118,16 @@ layer-audio-message-large-view {
     color: @color-g6;
     min-height: 30px;
 
+    svg {
+      cursor: pointer;
+      .layer-svg-strokable {
+        stroke: @color-g6;
+      }
+      .layer-svg-fillable {
+        fill: @color-g6;
+      }
+    }
+
     input[type=button] {
       box-sizing: border-box;
       width: 31px;
@@ -140,17 +148,15 @@ layer-audio-message-large-view {
   }
 
   .layer-play-pause-button, .layer-play-pause-button {
-    background-size: 11px 13px;
+    width: 11px;
+    height: 13px;
+    margin: 8px 10px;
   }
 
-  &:not(.layer-audio-playing) .layer-play-pause-button {
-    .layer-play-button-standard-resource;
-  }
-
-  &.layer-audio-playing .layer-play-pause-button,
-  &.layer-audio-seeking .layer-play-pause-button {
-    .layer-pause-button-standard-resource;
-  }
+  // &.layer-audio-playing .layer-play-pause-button,
+  // &.layer-audio-seeking .layer-play-pause-button {
+  //   .layer-pause-button-standard-resource;
+  // }
 
   .layer-audio-time-range-disabled, .layer-audio-volume-range-disabled {
     background-color: @color-g1;
@@ -179,29 +185,15 @@ layer-audio-message-large-view {
   }
 
   .layer-volume-enabled-button, .layer-volume-muted-button {
-    background-size: 25px 25px;
-  }
-
-
-  .layer-volume-enabled-button {
-    .layer-volume-is-enabled-resource;
-  }
-
-  .layer-volume-muted-button {
-    .layer-volume-is-muted-resource;
+    width: 25px;
+    height: 25px;
+    margin: 3px;
   }
 
   .layer-audio-forward-fifteen, .layer-audio-rewind-fifteen {
-    background-size: 19px 21px;
-  }
-
-  .layer-audio-forward-fifteen {
-    .layer-fast-forward-15-button-resource;
-  }
-
-
-  .layer-audio-rewind-fifteen {
-    .layer-rewind-15-button-resource;
+    width: 19px;
+    height: 21px;
+    margin: 4px 6px;
   }
 
   /* IE 11 */

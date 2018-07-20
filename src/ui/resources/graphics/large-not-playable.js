@@ -13,7 +13,7 @@ const svg = () => `<svg viewBox="0 0 28 28" version="1.1" xmlns="http://www.w3.o
             </g>
             <g>
                 <circle class="layer-svg-strokable-background" stroke-width="2" cx="226" cy="995" r="13"></circle>
-                <circle class="layer-svg-stroke" stroke-width="1" cx="226" cy="995" r="13.5"></circle>
+                <circle class="layer-svg-strokable" stroke-width="1" cx="226" cy="995" r="13.5"></circle>
             </g>
         </g>
     </g>

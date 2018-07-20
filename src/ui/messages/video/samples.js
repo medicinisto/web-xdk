@@ -176,6 +176,22 @@ new VideoModel({
     message.send();
   });
 
+  VideoModel = Layer.Core.Client.getMessageTypeModelClass('VideoModel');
+  TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel');
+  new TextModel({text: "Invalid video"}).send({ conversation: $("layer-conversation-view").conversation });
+  new VideoModel({
+    sourceUrl: "https://layer.com",
+    previewUrl: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
+    previewWidth: 600,
+    width: 1000,
+    aspectRatio: 0.5,
+    title: "Sample mp3",
+    artist: "Artist Foo",
+    mimeType: "text/plain",
+    duration: 12345678,
+  }).send({ conversation: $("layer-conversation-view").conversation })
+
+
 
 CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json');
 TextModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.text+json');

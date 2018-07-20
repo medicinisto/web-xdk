@@ -47,7 +47,7 @@ export function register({ svg, role }) {
  */
 export function get(role) {
   if (role && byRole[role]) return byRole[role];
-  return null;
+  throw new Error('Graphic not found');
 }
 
 export function getDom(role) {

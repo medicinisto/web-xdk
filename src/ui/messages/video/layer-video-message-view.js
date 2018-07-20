@@ -17,8 +17,9 @@ import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import './layer-video-message-model';
 import './layer-video-message-large-view';
-import { get as getGraphic } from '../../resources/graphics/';
+import { get as getGraphic, getDom as getGraphicDom } from '../../resources/graphics/';
 import '../../resources/graphics/large-play';
+import '../../resources/graphics/large-not-playable';
 
 registerComponent('layer-video-message-view', {
   mixins: [MessageViewMixin],
@@ -91,7 +92,7 @@ registerComponent('layer-video-message-view', {
     onAfterCreate() {
       const video = document.createElement('video');
       if (!video.canPlayType(this.model.mimeType)) {
-        this.nodes.playIcon.className = 'layer-not-playable-button';
+        this.replaceChild(getGraphicDom('large-not-playable')(), this.firstChild);
       }
       if (this.model.preview || this.model.previewUrl) {
         this.model.getPreviewUrl(url => (this.style.backgroundImage = 'url(' + url + ')'));
