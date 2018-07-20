@@ -58,6 +58,9 @@ import Core from '../../core/namespace';
 import { registerComponent } from './component';
 import './layer-presence';
 import SizeProperty from '../mixins/size-property';
+import { getDom as getGraphicDom } from '../resources/graphics/';
+import '../resources/graphics/anonymous-user';
+import '../resources/graphics/anonymous-group';
 
 const { getClient } = Settings;
 
@@ -247,14 +250,16 @@ registerComponent('layer-avatar', {
      */
     _setupTextAvatar(node, user, index) {
       const text = this.onGenerateInitials(user);
-      node.innerHTML = text;
       if (text) {
+        node.innerHTML = text;
         node.classList.add('layer-text-avatar');
       } else {
         if (this.users.length > index + 1) {
           node.classList.add('layer-empty-group-avatar');
+          node.appendChild(getGraphicDom('anonymous-group')());
         } else {
           node.classList.add('layer-empty-avatar');
+          node.appendChild(getGraphicDom('anonymous-user')());
         }
         if (index === 0) this.properties.firstUserIsAnonymous = true;
       }

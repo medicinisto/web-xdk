@@ -5,12 +5,24 @@ layer-title-bar {
   height: 56px;
   padding: 0px 16px;
 
-
   .layer-title-bar-icon {
     width: 24px;
     height: 24px;
     background-size: 24px;
     margin-right: 8px;
+
+    svg {
+      flex-grow: 1;
+      .layer-svg-strokable {
+        stroke: @color-g5;
+      }
+      .layer-svg-fillable {
+        fill: @color-g5;
+      }
+      .layer-svg-fillable-background {
+        fill: @color-white;
+      }
+    }
   }
   .layer-title-bar-text {
     color: @color-black;
@@ -36,9 +48,6 @@ layer-title-bar {
     display: flex;
     width: 24px;
     height: 24px;
-    svg {
-      flex-grow: 1;
-    }
 
     &:hover .layer-close-button-line {
       stroke: @layer-close-button-hover-color;
