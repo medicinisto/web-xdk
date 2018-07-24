@@ -37,8 +37,6 @@
  * @class Layer.UI.messages.VideoMessageModel
  * @extends Layer.Core.MessageTypeModel
  */
-
-
 import Core from '../../../core/namespace';
 import { logger } from '../../../utils';
 import { humanFileSize } from '../../ui-utils';

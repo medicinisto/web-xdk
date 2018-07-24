@@ -3,7 +3,7 @@
  *
  * ### Importing
  *
- * Not included with the standard build. Import using:
+ * Not included with the standard build. Import all audio components using:
  *
  * ```
  * import '@layerhq/web-xdk/ui/messages/audio/layer-audio-message-view';

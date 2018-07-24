@@ -802,10 +802,10 @@ registerComponent('layer-conversation-view', {
      *
      * Changes in width will cause a CSS class to be added that is one of:
      *
-     * * `layer-conversation-view-width-tiny`: Width is less than 320px (Settings.conversationViewWidths.maxTiny)
-     * * `layer-conversation-view-width-small`: Width is less than 480px (Settings.conversationViewWidths.maxSmall)
-     * * `layer-conversation-view-width-medium`: Width is between 480 and 600 (Settings.conversationViewWidths.maxSmall - Settings.conversationViewWidths.maxMedium)
-     * * `layer-conversation-view-width-large`: Width is greater than or equal to 600 (> (Settings.conversationViewWidths.maxMedium)
+     * * `layer-conversation-view-width-tiny`: Width is less than 320px (Settings.conversationViewWidths.small)
+     * * `layer-conversation-view-width-small`: Width is less than 480px (Settings.conversationViewWidths.medium)
+     * * `layer-conversation-view-width-medium`: Width is between 480 and 600 (Settings.conversationViewWidths.medium - Settings.conversationViewWidths.large)
+     * * `layer-conversation-view-width-large`: Width is greater than or equal to 600 (> (Settings.conversationViewWidths.large)
      *
      * > *Note*
      * >
@@ -822,14 +822,15 @@ registerComponent('layer-conversation-view', {
       },
     },
 
-    widthSmallStart: {
-      value: conversationViewWidths.maxTiny,
-    },
-    widthMediumStart: {
-      value: conversationViewWidths.maxSmall,
-    },
-    widthLargeStart: {
-      value: conversationViewWidths.maxMedium,
+    /**
+     * Width value to use
+     */
+    widths: {
+      value: {
+        small: conversationViewWidths.small,
+        medium: conversationViewWidths.medium,
+        large: conversationViewWidths.large,
+      },
     },
 
     /**

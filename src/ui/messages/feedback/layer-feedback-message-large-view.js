@@ -109,7 +109,7 @@ registerComponent('layer-feedback-message-large-view', {
     onRerender() {
       this.toggleClass('layer-feedback-enabled', this.model.isEditable());
 
-      if (this.model.sentAt) {
+      if (this.model.isRated()) {
         this.nodes.label.innerText = this.model.getSummary(this.model.summary, true);
       } else if (!this.model.isEditable()) {
         this.nodes.label.innerText = this.model.getSummary(this.model.promptWait, true);
@@ -120,7 +120,6 @@ registerComponent('layer-feedback-message-large-view', {
       let text = '';
       for (let i = 1; i <= 5; i++) {
         text += `<span class=${i <= this.model.rating ? 'layer-feedback-selector-selected' : 'layer-feedback-selector-unselected'}>${getGraphic('star')()}</span>`;
-
       }
       this.nodes.ratings.innerHTML = text;
       this.nodes.input.disabled = !this.model.isEditable();

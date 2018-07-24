@@ -40,7 +40,6 @@ export default class FeedbackModel extends MessageTypeModel {
   registerAllStates() {
     this.responses.registerState('rating', CRDT_TYPES.FIRST_WRITER_WINS);
     this.responses.registerState('comment', CRDT_TYPES.FIRST_WRITER_WINS);
-    this.responses.registerState('sent_at', CRDT_TYPES.FIRST_WRITER_WINS);
     this.responses.registerState('custom_response_data', CRDT_TYPES.FIRST_WRITER_WINS);
   }
 
@@ -89,12 +88,15 @@ export default class FeedbackModel extends MessageTypeModel {
     if (rating) {
       this.rating = rating;
       this.comment = this.responses.getState('comment', this.enabledFor);
-      this.sentAt = new Date(this.responses.getState('sent_at', this.enabledFor));
     }
   }
 
+  isRated() {
+    return Boolean(this.responses.getState('rating', this.enabledFor));
+  }
+
   isEditable() {
-    if (this.sentAt) return false;
+    if (this.isRated()) return false;
     if (this.enabledFor !== getClient().user.id) return false;
     return true;
   }
@@ -103,20 +105,12 @@ export default class FeedbackModel extends MessageTypeModel {
     if (this.enabledFor !== getClient().user.id) return;
 
     const responseText = this.getSummary(this.responseMessage, false);
-    this.sentAt = new Date();
 
     this.responses.addState('rating', this.rating);
     this.responses.addState('comment', this.comment);
-    this.responses.addState('sent_at', this.sentAt.toISOString());
     if (this.customResponseData) this.responses.addState('custom_response_data', this.customResponseData);
     this.responses.setResponseMessageText(responseText);
     this.responses.sendResponseMessage();
-
-    this._triggerAsync('message-type-model:change', {
-      property: 'sentAt',
-      oldValue: null,
-      newValue: this.sentAt,
-    });
   }
 
   __setRating(newValue, oldValue) {
@@ -162,7 +156,6 @@ FeedbackModel.prototype.enabledFor = '';
 FeedbackModel.prototype.customResponseData = null;
 FeedbackModel.prototype.rating = 0;
 FeedbackModel.prototype.comment = '';
-FeedbackModel.prototype.sentAt = null;
 FeedbackModel.prototype.customer = '';
 
 FeedbackModel.anonymousUserName = 'Customer';

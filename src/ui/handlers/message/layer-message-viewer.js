@@ -22,6 +22,7 @@
  * @class Layer.UI.handlers.message.MessageViewer
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.Clickable
+ * @mixin Layer.UI.mixins.SizeProperty
  */
 import { registerComponent } from '../../components/component';
 import MessageHandler from '../../mixins/message-handler';
@@ -46,9 +47,17 @@ registerComponent('layer-message-viewer', {
 
   // Note that there is also a message property managed by the MessageHandler mixin
   properties: {
+    /**
+     * Set the size class of the Message, either "medium" or "large".
+     *
+     * This is not currently a dynamically changable property; this is currently only set during initialization.
+     *
+     * @property {String} size
+     */
     size: {
       value: 'medium',
     },
+
     supportedSizes: {
       value: ['medium', 'large'],
     },
@@ -214,7 +223,7 @@ registerComponent('layer-message-viewer', {
       if (titleBar) {
         titleBar.view = cardUI;
         if (cardUI.getIconClass) titleBar.iconClass = cardUI.getIconClass();
-        if (cardUI.getIcon) titleBar.iconSVG = cardUI.getIcon();
+        if (cardUI.getIcon) titleBar.icon = cardUI.getIcon();
         if (cardUI.getTitle) titleBar.title = cardUI.getTitle();
       }
 
@@ -324,6 +333,19 @@ registerComponent('layer-message-viewer', {
      */
     getIconClass() {
       return this.nodes.ui && this.nodes.ui.getIconClass ? this.nodes.ui.getIconClass() : null;
+    },
+
+    /**
+     * When the Message Viewer is placed within a Dialog or other container that wants icon/title,
+     * this method acts as a proxy for getting that information from the Message Type View.
+     *
+     * Expected to return either a string representing an SVG image, or an HTMLElement of type `<svg />`
+     *
+     * @method getIconClass
+     * @returns {String | HTMLElement}
+     */
+    getIcon() {
+      return this.nodes.ui && this.nodes.ui.getIcon ? this.nodes.ui.getIcon() : null;
     },
 
     /**

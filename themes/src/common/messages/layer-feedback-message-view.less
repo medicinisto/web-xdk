@@ -10,7 +10,15 @@ layer-message-viewer.layer-feedback-message-view {
 
 layer-feedback-message-large-view:not(.layer-feedback-enabled), layer-feedback-message-view:not(.layer-feedback-enabled) {
   .layer-feedback-message-view-ratings span {
-    opacity: 0.4;
+    svg {
+      .layer-svg-strokable {
+        stroke: @color-g5;
+      }
+      .layer-svg-fillable {
+        fill: @color-g5;
+      }
+    }
+
   }
 }
 
@@ -41,16 +49,6 @@ layer-feedback-message-large-view:not(.layer-feedback-enabled) {
     width: 32px;
     height: 48px;
     display: inline-block;
-    svg {
-      .layer-svg-strokable {
-        stroke: @color-black;
-      }
-      .layer-svg-fillable {
-        fill: @color-black;
-      }
-    }
-
-
 
     &.layer-feedback-selector-unselected svg .layer-svg-fillable {
       fill-opacity: 0;
@@ -105,8 +103,15 @@ layer-message-viewer.layer-feedback-message-view {
 
   &:not(.layer-feedback-enabled) .layer-card-top {
     color: @color-role-font-standard;
-    opacity: 0.4;
-    background-color: @color-g4;
+    background-color: @color-g1;
+    svg {
+      .layer-svg-strokable {
+        stroke: @color-g5;
+      }
+      .layer-svg-fillable {
+        fill: @color-g5;
+      }
+    }
   }
 }
 

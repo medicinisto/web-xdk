@@ -58,27 +58,32 @@ registerComponent('layer-title-bar', {
     /**
      * Icon for the titlebar; comes from `this.properties.ui.getIconClass()`
      *
-     * @property {String} icon
+     * @property {String} iconClass
      */
-    icon: {
+    iconClass: {
       value: '',
       set(icon, oldIcon) {
         if (oldIcon) this.nodes.icon.classList.remove(oldIcon);
         if (icon) this.nodes.icon.classList.add(icon);
-        this.toggleClass('layer-title-icon-empty', !(this.icon || this.iconSVG));
+        this.toggleClass('layer-title-icon-empty', !(this.icon || this.iconClass));
       },
     },
 
     /**
      * Icon for the titlebar; comes from `this.properties.ui.getIcon()`; represents an SVG XML string
      *
-     * @property {String} iconSVG
+     * @property {String | HTMLElement} icon
      */
-    iconSVG: {
+    icon: {
       value: '',
       set(icon, oldIcon) {
-        this.nodes.icon.innerHTML = icon;
-        this.toggleClass('layer-title-icon-empty', !(this.icon || this.iconSVG));
+        if (icon instanceof HTMLElement) {
+          this.nodes.icon.innerHTML = '';
+          this.nodes.icon.appendChild(icon);
+        } else {
+          this.nodes.icon.innerHTML = icon;
+        }
+        this.toggleClass('layer-title-icon-empty', !(this.icon || this.iconClass));
       },
     },
   },

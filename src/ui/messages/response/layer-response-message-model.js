@@ -150,7 +150,7 @@ export default class ResponseModel extends MessageTypeModel {
    *
    * @method getOperationsForState
    * @param {String} stateName
-   * return {Changes[]}
+   * @return {Layer.Core.CRDT.Changes[]}
    */
   getOperationsForState(stateName) {
     return (this.operations || []).filter(operation => operation.name === stateName);
@@ -163,8 +163,13 @@ export default class ResponseModel extends MessageTypeModel {
    * on older Response Messages.
    *
    * ```
+   * // Get all changes for this Response Message
    * const changes = responseModel.getStateChanges();
+   *
+   * // Get changes associated with a "selection" state (or other named states)
    * const selectionChange = changes.selection;
+   *
+   * // Get the details from the Layer.Core.CRDT.Changes object
    * console.log(`selection changed from ${selectionChange.oldValue} to ${selectionChange.newValue}`);
    * ```
    *

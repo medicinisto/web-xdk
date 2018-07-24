@@ -192,8 +192,14 @@ registerComponent('layer-buttons-message-view', {
      * @param {Object} action.data    Data to use when processing the event, in addition to the model's data
      */
     runAction(action) {
-      if (this.nodes.subviewer) {
-        this.nodes.subviewer._runAction(action);
+      if (this.nodes.subviewer && !this.properties.inRunAction) {
+        try {
+          this.properties.inRunAction = true;
+          this.nodes.subviewer._runAction(action);
+        } catch (e) {
+          // No-op
+        }
+        this.properties.inRunAction = false;
         return true;
       }
     },

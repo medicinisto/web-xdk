@@ -301,6 +301,9 @@ registerComponent('layer-message-list', {
     /**
      * Control whether or not the Message List is allowed to show the current user's avatars.
      *
+     * A value of `true` means it will be shown {@link #Layer.Settings.conversationViewWidths} permitting.
+     * A value of `false` insures that they are not shown.
+     *
      * @property {Boolean} [canShowMyAvatars=true]
      */
     canShowMyAvatars: {
@@ -461,7 +464,7 @@ registerComponent('layer-message-list', {
     },
 
     /**
-     * Method for generating the styles specific to this Message List.
+     * Method for generating the styles specific to this Message List instance; primarily for managing margins specified via {@link #marginWithMyAvatar} and related properties.
      *
      * Override this method using a mixin to change the behavivors
      *
@@ -505,8 +508,8 @@ registerComponent('layer-message-list', {
      * @private
      */
     _updateShowingAvatars() {
-      this._showMyAvatars = this.canShowMyAvatars && this.width >= Settings.conversationViewWidths.maxSmall;
-      this._showOtherAvatars = this.canShowOtherAvatars && this.width >= Settings.conversationViewWidths.maxTiny;
+      this._showMyAvatars = this.canShowMyAvatars && this.width >= Settings.conversationViewWidths.medium;
+      this._showOtherAvatars = this.canShowOtherAvatars && this.width >= Settings.conversationViewWidths.small;
     },
 
     /**

@@ -3,12 +3,12 @@
  *
  * Sets a CSS class of:
  *
- * * component-name-width-tiny: Width is less than {@link #widthSmallStart}
- * * component-name-width-small: Width is between {@link #widthSmallStart} and {@link #widthMediumStart}
- * * component-name-width-medium: Width is between {@link #widthMediumStart} and {@link #widthLargeStart}
- * * component-name-width-large: Width is greater than {@link #widthLargeStart}
+ * * component-name-width-tiny: Width is less than `widths.small`}
+ * * component-name-width-small: Width is between `widths.small` and `widths.medium`
+ * * component-name-width-medium: Width is between `widths.medium` and `widths.large`
+ * * component-name-width-large: Width is greater than `widths.large`
  *
- * Each UI Component that uses this must define these widthXXXStart properties
+ * Each UI Component that uses this must define the {@link #widths} properties
  *
  * @class Layer.UI.mixins.WidthTracker
  * @typescript ismixin
@@ -26,39 +26,29 @@ mixins.WidthTracker = {
      */
     width: {
       set(newValue, oldValue) {
-        if (this.widthSmallStart) {
-          this.toggleClass(this.tagName.toLowerCase() + '-width-tiny', newValue < this.widthSmallStart);
+        if (!this.widths) return; // some uses of this component only want the new width, and not the new class based on the widths property
+        if (this.widths.small) {
+          this.toggleClass(this.tagName.toLowerCase() + '-width-tiny', newValue < this.widths.small);
           this.toggleClass(this.tagName.toLowerCase() + '-width-small',
-            newValue >= this.widthSmallStart && newValue < this.widthMediumStart);
+            newValue >= this.widths.small && newValue < this.widths.medium);
         } else {
-          this.toggleClass(this.tagName.toLowerCase() + '-width-small', newValue < this.widthMediumStart);
+          this.toggleClass(this.tagName.toLowerCase() + '-width-small', newValue < this.widths.medium);
         }
         this.toggleClass(this.tagName.toLowerCase() + '-width-medium',
-          newValue >= this.widthMediumStart && newValue < this.widthLargeStart);
-        this.toggleClass(this.tagName.toLowerCase() + '-width-large', newValue >= this.widthLargeStart);
+          newValue >= this.widths.medium && newValue < this.widths.large);
+        this.toggleClass(this.tagName.toLowerCase() + '-width-large', newValue >= this.widths.large);
       },
     },
 
     /**
-     * Minimum width for this UI Component to be considered of size "small"
+     * Width values used to configure the width-tracker mixin
      *
-     * @property {Number} widthSmallStart
+     * @property {Object} widths
+     * @property {Number} widths.small
+     * @property {Number} widths.medium
+     * @property {Number} widths.large
      */
-    widthSmallStart: {},
-
-    /**
-     * Minimum width for this UI Component to be considered of size "medium"
-     *
-     * @property {Number} widthMediumStart
-     */
-    widthMediumStart: {},
-
-    /**
-     * Minimum width for this UI Component to be considered of size "large"
-     *
-     * @property {Number} widthLargeStart
-     */
-    widthLargeStart: {},
+    widths: {},
   },
   methods: {
 

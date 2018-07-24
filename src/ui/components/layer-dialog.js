@@ -138,12 +138,12 @@ registerComponent('layer-dialog', {
     /**
      * Icon for the titlebar; comes from `this.properties.ui.getIconClass()`
      *
-     * @property {String} icon
+     * @property {String} iconClass
      */
-    icon: {
+    iconClass: {
       value: '',
       set(icon, oldIcon) {
-        if (icon) this.nodes.titleBar.icon = icon;
+        if (icon) this.nodes.titleBar.iconClass = icon;
         this._updateTitlebarShowing();
       },
     },
@@ -151,12 +151,12 @@ registerComponent('layer-dialog', {
     /**
      * Icon for the titlebar; comes from `this.properties.ui.getIcon()` and is an SVG XML string
      *
-     * @property {String} iconSVG
+     * @property {String} icon
      */
-    iconSVG: {
+    icon: {
       value: '',
       set(icon, oldIcon) {
-        if (icon) this.nodes.titleBar.iconSVG = icon;
+        if (icon) this.nodes.titleBar.icon = icon;
         this._updateTitlebarShowing();
       },
     },
@@ -271,11 +271,11 @@ registerComponent('layer-dialog', {
       }
 
       if (content.getIconClass) {
-        this.icon = content.getIconClass();
+        this.iconClass = content.getIconClass();
       }
 
       if (content.getIcon) {
-        this.iconSVG = content.getIcon();
+        this.icon = content.getIcon();
       }
 
       // If we are managing pop state, then push our state to the history, and listen for it to be popped.
@@ -316,7 +316,7 @@ registerComponent('layer-dialog', {
      * @method _updateTitlebarShowing
      */
     _updateTitlebarShowing() {
-      this.toggleClass('layer-dialog-titlebar-showing', (this.title || this.icon || this.iconSVG || this.isCloseButtonShowing));
+      this.toggleClass('layer-dialog-titlebar-showing', (this.title || this.icon || this.iconClass || this.isCloseButtonShowing));
     },
 
     /**

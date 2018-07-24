@@ -7,22 +7,23 @@ _Breaking Changes_:
 While there have been no major breaking changes, there have been some minor changes that could impact a few customers
 
 * WEB-1779: Now throws error if calling `Layer.UI.setupMixins({...})` after calling `Layer.init()`
+    * Previously, this failed silently to apply the mixins
 * `Layer.Constants.WIDTH` no longer exists and is no longer used
 * Minor CSS Class names and theme changes
 * ImageModel no longer has a `url` property; see `fetchUrl(callback)` instead
 
-### Message Avatar Breaking Changes
+### Message List Avatar Breaking Changes
 
 Previously, hiding and showing of Avatars within the Message List was managed directly via Style sheets:
 
-Avatars were shown using:
+Avatars were previously shown using `less` variables:
 
 ```
 @message-item-text-indent: 12px + 12px + 32px;
 @mesage-item-show-avatars: block;
 ```
 
-Avatars were hidden using:
+Avatars were previously hidden using:
 
 ```
 @message-item-text-indent: 12px + 12px;
@@ -31,22 +32,16 @@ Avatars were hidden using:
 
 These variables are no longer used; Instead, the Message List supports the following properties:
 
-* `conversationView.canShowMyAvatars`: Set to `false` to hide Avatars of the current authenticated user
-* `conversationView.canShowOtherAvatars`: Set to `false` to hide Avatars of other participants in the conversation
+* `conversationView.canShowMyAvatars`: Set to `false` to disable showing Avatars of the current authenticated user
+* `conversationView.canShowOtherAvatars`: Set to `false` to disable showing Avatars of other participants in the conversation
 * `conversationView.marginWithMyAvatar`: set to a number to indicate how large a margin to use for display name, sent time and message status for message I send, and where my avatar is showing
 * `conversationView.marginWithoutMyAvatar`: set to a number to indicate how large a margin to use for display name, sent time and message status for message I send, and where my avatar is hidden
 * `conversationView.marginWithOtherAvatar`: set to a number to indicate how large a margin to use for display name, sent time and message status for message I receive and where the sender's avatar is showing
 * `conversationView.marginWithoutOtherAvatar`: set to a number to indicate how large a margin to use for display name, sent time and message status for message I receive and where the sender's avatar is hidden
 * Assuming that the `canShowMyAvatars` and `canShowOtherAvatars` properties are left alone, avatars are shown if width permits; width settings are as follows:
-    * `Layer.Settings.conversationViewWidths.maxTiny: 320`: If the Message List width falls below 320px, no avatars are shown
-    * `Layer.Settings.conversationViewWidths.maxSmall: 480`: If the Message List width falls below 480px, only other participant's avatars are shown
-    * Show all avatars if width is greater than `maxSmall`
+    * `Layer.Settings.conversationViewWidths.small: 320`: If the width puts the Conversation View in a category smaller than the Small size of 320px, then show no avatars. If the Conversation View is classed as "Small" then only show other participant's avatars not the current user's avatar.
+    * `Layer.Settings.conversationViewWidths.medium: 480`: If the Conversation View is categorized as "Medium" or "Large", show all avatars.
     * Settings can be changed from `Layer.init()`
-* CSS Classes added to the Conversation View have also changed, based on `Layer.Settings.conversationViewWidths`:
-    * `Layer.Settings.conversationViewWidths.maxTiny`: CSS Class `layer-conversation-view-width-tiny` is added
-    * `Layer.Settings.conversationViewWidths.maxSmall`: CSS Class `layer-conversation-view-width-small` is added
-    * `Layer.Settings.conversationViewWidths.maxMedium`: CSS Class `layer-conversation-view-width-medium` is added
-    * For all other cases, CSS Class `layer-conversation-view-width-large` is added
 
 Impact of this change:
 
@@ -55,35 +50,148 @@ Impact of this change:
 
 ### All Changes
 
+#### Managing widths and layout
+
+The `settings` that can be passed into `Layer.init()` now accept a `conversationViewWidths` property that is used to redefine when the Conversation View is considered to be Tiny, Small, Medium or Large.  These settings influence the following behaviors:
+
+* Tiny: 0px - 320px
+    * Show no avatars in the message list
+    * Messages use 95% of the width of the Conversation View
+    * `layer-conversation-view-width-tiny` CSS class is added to the View
+* Small: 320px - 480px
+    * Show avatar for messages received, but not for messages sent
+    * Messages use 95% of the width of the Conversation View
+    * `layer-conversation-view-width-small` CSS class is added to the View
+* Medium: 480px - 640px
+    * Show avatar for messages sent and received
+    * Messages use 80% of the width of the Conversation View
+    * `layer-conversation-view-width-medium` CSS class is added to the View
+* Large: 640px and up
+    * Show avatar for messages sent and received
+    * Messages use 70% of the width of the Conversation View
+    * `layer-conversation-view-width-large` CSS class is added to the View
+
+The pixel sizes associated with these values can be customized using:
+
+```javascript
+Layer.init({
+    conversationViewWidths: {
+        small: 400,
+        medium:  600,
+        large: 800
+    }
+});
+```
+
+Further customizations can be done by setting the amount of width to indent messages when avatars are showing, and when they are hidden:
+
+```javascript
+Layer.init({
+    mixins: {
+        "layer-message-list": {
+            properties: {
+                marginWithMyAvatar: {
+                    value: 98
+                },
+                marginWithoutMyAvatar: {
+                    value: 48
+                },
+                marginWithOtherAvatar: {
+                    value: 90
+                },
+                marginWithoutOtherAvatar: {
+                    value: 40
+                }
+            }
+        }
+    }
+});
+```
+
+The above code changes away from default values used by the Message List for setting margins, and adjusts those margins to account for both the case where My avatar (or other participant's avatars) are showing, as well as the case where they are hidden.
+
+These values may be updated at runtime:
+
+```javascript
+myConversationView.nodes.list.marginWithOtherAvatar = 85;
+```
+
+#### Large Message Viewer
+
+Messages may now be shown with a Large Message Viewer.  The Large Message Viewer is the `<layer-message-viewer size="large" />` and allows Messages that have registered a large view can use an alternate layout for presenting more detailed information.
+
+Typically, a Message that is setup for the Large Message Viewer:
+
+* Will have registered a Large View; `<layer-audio-message-large-view />` is set by setting the Message Model's static `largeMessageRenderer` as follows: `AudioModel.largeMessageRenderer = 'layer-audio-message-large-view';`
+* Typically a Message that supports this will have the `action` (i.e. the action performed when a user taps/clicks) set to `layer-show-large-message`.  For example: `AudioModel.defaultAction = 'layer-show-large-message';`
+* A Message that is tapped/clicked and has its action set to `layer-show-large-message` will show within a Dialog; the `<layer-dialog />` widget.
+
+Large Message Views can be displayed anywhere, even outside of the `<layer-dialog />`; however, this is not as well tested as showing these with the Dialog.
+
+Note that only Audio and Video messages have defined Large Message Views at this time.
+
+#### Refactored Code
+
 * Refactored `Layer.Core.Client` Class
     * Rips out Client Authenticator Parent class of the Layer Client; replaces all of its capabilities via Mixins
     * Migrates all optional components into Mixins
-* WEB-1763: Refactored Index Files
+
+The resulting client should have the same API, but can now be put together to suit different goals, such as our standard usage within a browser, and a new SAPI-Web-XDK repository that allows for parsing and creating Messages/Message Models for use with Layer's Server API.
+
+* Changes to Static Client properties:
+    * `CACHE_PURGE_INTERVAL` is now an instance property settable from `Layer.init()` named `cachePurgeInterval`
+    * `TimeBetweenReauths` is now an instance property settable from `Layer.init()` named `timeBetweenReauths`
+    * `ResetAfterOfflineDuration` is now an instance property settable from `Layer.init()` named `resetAfterOfflineDuration`
+
+Changes to these are potentially breaking changes; its expected however that use of these customizations has not been common.
+
+* Refactored Index Files (WEB-1763):
     * Can import standard build with `import '@layerhq/web-xdk'`
     * Can import minimal build (that includes UI) with `import '@layerhq/web-xdk/index-lite'`
     * Can import minimal build without UI with `import '@layerhq/web-xdk/index-core'`
     * Can import Everything with `import '@layerhq/web-xdk/index-all'`
     * Can import all Message Types with an additional `import '@layerhq/web-xdk/ui/messages'`
-    * Adds simplistic dependency injection for switching between utilities for nodejs, ReactJS, Web, etc...
-    * Static Client property:
-        * `CACHE_PURGE_INTERVAL` is now an instance property settable from `Layer.init()` named `cachePurgeInterval`
-        * `TimeBetweenReauths` is now an instance property settable from `Layer.init()` named `timeBetweenReauths`
-        * `ResetAfterOfflineDuration` is now an instance property settable from `Layer.init()` named `resetAfterOfflineDuration`
+    * Adds simplistic dependency injection for switching between utilities for nodejs, Browsers, etc...
+
+Typically its easiest to start development with `index-all` but the above options will help you refine your build as development progresses.
+
 * Refactors Model Classes
     * Most classes in `src/core/models` now support a Mixin mechanism for customizing their capabilities; this is primarily used to customize it for use with Client API vs Server API.
     * Adds `mixins/message-capi` for Client API specific operations for the `Layer.Core.Message` class (Server API operations are in a separate repository)
     * Adds `mixins/message-type-model-capi` for Client API specific operations for the `Layer.Core.MessageType` class (Server API operations are in a separate repository)
-    * `Layer.Core.MessagePart` `fetchStream()` method now uses any `body` value it already has if it has it
+    * `Layer.Core.MessagePart` `fetchStream()` method now uses any `part.body` value it already has if it has it
+
+
+### Manual Query Class
+
+UI Components that take Queries as inputs can now take raw data using the Manual Query class. This is useful if simply providing raw data received from Layer's servers doesn't serve your use case.  Typically, you'd use this if fetching a list of Conversations, Messages or Identities from your own servers but still want to use Layer's UI Components to render them.
+
+
+```javascript
+var manualQuery = client.createQuery({
+  model: Layer.Core.Query.Manual
+});
+manualQuery.addItems(conversationList);
+manualQuery.addItem(conversation25);
+conversationListWidget.query = manualQuery;
+```
+
+Query data can be manipulated at any time using `addItem()`, `addItems()`, `removeItem()`, `removeItems()` and `reset()`; UI components will rerender as these calls are made.
+
+#### Other Changes
+
 * Large Message View has changed (not previously an officially documented/released component):
     * Renames `layer-open-expanded-view` action to `layer-show-large-message`
-    * Renames `messageRendererExpanded` to `largeMessageRenderer`
+    * Renames the Model static property `messageRendererExpanded` to `largeMessageRenderer`
     * Removes `<layer-message-viewer-expanded/>` in favor of `<layer-message-viewer size='large' />`
         * For the full `<layer-message-viewer-expanded />` experience, put `<layer-message-viewer size='large' />` inside of a `<layer-dialog />`
     * Renames `<layer-feedback-message-expanded-view />` to `<layer-feedback-message-large-view />` which is now rendered within the `<layer-message-viewer size='large' />`
+
+These changes impact customers who adopted the incomplete Large Message View prior to its official release.
+
 * Message Type Model Changes
-    * Message Types that have a Large Message View need to name that view using their `largeMessageRenderer` (previously used a preview release name of `messageRendererExpanded`)
     * Adds `presend()` method that will generate a message and call `message.presend()` so that users may preview it in their Message List without having sent it yet.
-    * Supports concept of Slots for organizing Message Metadata (optional)
+    * Supports concept of Slots for organizing Message Metadata (optional -- for use in designing Custom Messages)
 * Response Message Changes (WEB-1766)
     * Adds `getOperationsForState(stateName)` to get the list of operations to be sent (or already sent) to the server
     * Adds `getStateChanges()` which returns the Change Events associated with the operations to be sent to the server.
@@ -91,21 +199,20 @@ Impact of this change:
 * New Message Types
     * Adds Audio Message
     * Adds Video Message
-    * File Upload Button detects if Audio/Video messages are part of the build and will send an Audio/Video message based on the selected file
+    * File Upload Button detects if Audio/Video messages are part of the build and will send an Audio/Video message based on the selected file type
 * Changes to the Message Viewer Component (`<layer-message-viewer />`)
     * Adds a `size` property that can be set to `large` for the Large version of a given Message (not supported for all Message Types yet)
-    * Removes the `widthType` property; see instead the `width` property
+    * Removes the `widthType` property; see instead the `width` property which lets a Message Type View force the Message Viewer Width to a fixed pixel value.
     * Removes the `preferredMaxWidth` and `preferredMinWidth` properties
-    * Adds a `width` property which if set, will force the message width to match that width (but will not violate any constraining `max-width` settings)
-    * Various changes to how Message sizes are controlled using `height`, `width`, `maxWidth` and `minWidth` properties
-* The Standard Message View Container (`<layer-standard-message-view-container />`) now supports Replaceable Content for inserting controls
+* The Standard Message View Container (`<layer-standard-message-view-container />`) now supports inserting controls via `container.customControls = nodes`
     * This is used by Link Message and Location Message to insert an arrow indicating the message can be clicked
     * This is used by the Audio Message to insert a Play button
 * The Message View Mixin used to implement all Custom Messages:
+    * Changes to how Message sizes are controlled adding `height`, `width`, `maxWidth` and `minWidth` properties
     * now only calls `onAfterCreate` after the root part of the message has loaded
-    * Now provides `getMaxMessageWidth()` method for getting the available width for the Message to render in (not counting that message's own min/max widths)
-  if this part excedes 2K, it will wait until its downloaded before calling `onAfterCreate` and allowing the lifecycle to continue.
-* Adds a Manual Query class to which you can add and remove data, and have UI Components render them.  `var query = layerClient.createQuery({model: Layer.Core.Query.Manual}); query.addItem(conversation1);`
+        * Calls to `onAfterCreate` are blocked if the Root Message Part is > 2KB and still being asynchronously fetched
+        * Call to `onAfterCreate` will be called after fetch is completed
+    * Now provides `getMaxMessageWidth()` method for getting the available width for the Message to render in
 * Component base class now supports properties where `type: Object` is part of the definition; will deserialize JSON property values.
 * WEB-1779: Now throws error if calling `Layer.UI.setupMixins({...})` after calling `Layer.init()`
 * Increases priority of DOM nodes with `layer-replaceable-name="foo"` within your HTML over `widget.replaceableContent = {foo: nodes}` within your Javascript
@@ -138,6 +245,9 @@ Impact of this change:
   a URL that goes from the start to the end of a line
 * Typescript definition files now included in npm repository
 * Removes all CommonJS module usage from internal components; note that CommonJS is still used when doing `import '@layerhq/web-xdk'`; this will be treated as a potential breaking change and removed in the next Major release.
+* Removes all SVG background images, and adds SVG as stylable DOM nodes wherever they are used in the UI
+    * All Message Views that show icons in their title bars should now provide `getIcon()` method to get an SVG image, rather than `getIconClass()` method which got a CSS class to drive background images (`getIconClass()` should continue to be supported for now)
+    * `<layer-titled-message-view-container />` property `icon` renamed to `iconClass`
 
 ## 4.0.4
 

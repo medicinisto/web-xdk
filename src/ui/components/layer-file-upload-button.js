@@ -238,8 +238,10 @@ registerComponent('layer-file-upload-button', {
               }
               onDone();
             });
-          } else {
+          } else if (typeof FileModel !== 'undefined') {
             models[index] = new FileModel(options);
+          } else {
+            logger.error('FileModel not defined, unable to handle ' + file.type);
           }
         });
         onDone();
