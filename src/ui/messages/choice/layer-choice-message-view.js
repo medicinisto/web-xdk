@@ -34,13 +34,13 @@
  * ```
  *
  * @event layer-choice-model-generate-response-message
- * @property {CustomEvent} evt
- * @property {Layer.Core.LayerEvent} evt.detail
- * @property {Object} evt.detail.choice           A single choice from the array of choices for the Choice Model
- * @property {Layer.UI.messages.ChoiceMessageModel} evt.detail.model   The Choice Model that is reporting on the newly selected answer
- * @property {String} evt.detail.text             The proposed text to send as the renderable part of the Response Message
- * @property {String} evt.detail.action           One of "selected" or "deselected" indicating whether the user action selected or deselected a Choice
- * @property {String} evt.detail.name             Proposed name for the Choice Model in order to describe what the user was answering. May be empty string.
+ * @param {CustomEvent} evt
+ * @param {Layer.Core.LayerEvent} evt.detail
+ * @param {Object} evt.detail.choice           A single choice from the array of choices for the Choice Model
+ * @param {Layer.UI.messages.ChoiceMessageModel} evt.detail.model   The Choice Model that is reporting on the newly selected answer
+ * @param {String} evt.detail.text             The proposed text to send as the renderable part of the Response Message
+ * @param {String} evt.detail.action           One of "selected" or "deselected" indicating whether the user action selected or deselected a Choice
+ * @param {String} evt.detail.name             Proposed name for the Choice Model in order to describe what the user was answering. May be empty string.
  */
 import Settings from '../../../settings';
 import { registerComponent } from '../../components/component';

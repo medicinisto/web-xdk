@@ -1,4 +1,4 @@
-/*
+/**
  * The Layer Membership List renders a pagable list of Layer.Core.Membership objects, and allows the user to
  * see who else is in the Layer.Core.Channel with them.
  *
@@ -28,6 +28,7 @@
  * @extends Layer.UI.Component
  * @mixin Layer.UI.mixins.List
  * @mixin Layer.UI.mixins.ListSelection
+ * @ignore
 */
 import Settings from '../../../settings';
 import Core from '../../../core/namespace';

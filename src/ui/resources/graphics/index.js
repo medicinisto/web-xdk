@@ -33,7 +33,7 @@ const byRole = {};
  *
  * @method register
  * @param {Object} options
- * @param {Function} option.svg
+ * @param {Function} options.svg
  * @param {String} options.svg.return
  * @param {String} options.role
  */

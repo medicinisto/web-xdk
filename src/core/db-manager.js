@@ -324,6 +324,7 @@ export default class DbManager extends Root {
    * @private
    * @param {Layer.Core.Channel[]} channels
    * @return {Object[]} channels
+   * @ignore
    */
   _getChannelData(channels) {
     return channels.filter((channel) => {

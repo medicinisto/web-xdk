@@ -3,9 +3,10 @@ import { CRDT_TYPES } from '../../constants';
 import Core from '../namespace';
 
 /**
- * Simple class for managing value and operationId.
+ * Every state value gets set via an AddOperation that contains the `value` and the `ids` of that operation
  *
  * @class Layer.Core.CRDT.AddOperation
+ * @private
  */
 class AddOperation {
 
@@ -19,9 +20,24 @@ class AddOperation {
    * @param {String[]} [options.ids]  Operation IDs that resulted in those values
    */
   constructor({ value, ids }) {
+    /**
+     * @property {Mixed} value   The value being added to the state
+     */
     this.value = value;
+
+    /**
+     * @property {String[]} ids   The set of Operation IDs that have added this value to the state
+     */
     this.ids = ids && ids.length ? ids : [randomString(CRDTStateTracker.OperationLength)]; // eslint-disable-line no-use-before-define
   }
+
+  /**
+   * Test if this Add Operation was added using any of the specified Operation ID
+   *
+   * @method hasAnId
+   * @param {String[]} ids
+   * @returns {Boolean}
+   */
   hasAnId(ids) {
     for (let i = 0; i < ids.length; i++) {
       for (let j = 0; j < this.ids.length; j++) {
@@ -30,6 +46,15 @@ class AddOperation {
     }
     return false;
   }
+
+  /**
+   * Remove an Operation ID from this AddOperation's `ids` array.
+   *
+   * If no ids are left, this AddOperation will be removed.
+   *
+   * @method removeId
+   * @param {String} id
+   */
   removeId(id) {
     const index = this.ids.indexOf(id);
     if (index !== -1) this.ids.splice(index, 1);
@@ -57,15 +82,48 @@ class Changes {
    */
 
   constructor({ type, operation, name, id, value, oldValue, identityId }) {
+    /**
+     * @property {String} type   A value from Layer.Constants.CRDT_TYPES
+     */
     this.type = type;
+
+    /**
+     * @property {String} operation   'add' or 'remove'
+     */
     this.operation = operation;
+
+    /**
+     * @property {String} name  The state name being manipulated
+     */
     this.name = name;
+
+    /**
+     * @property {String} id   Unique identifier for this change
+     */
     this.id = id;
+
+    /**
+     * @property {Mixed} value   Value being added or removed from the state
+     */
     this.value = value;
+
+    /**
+     * @property {Mixed} oldValue   Prior value before this change was requested
+     */
     this.oldValue = oldValue;
+
+    /**
+     * @property {String} identityId   The IdentityId of the user requesting this change
+     */
     this.identityId = identityId;
   }
 
+  /**
+   * Transforms the Change object into something that can be sent as a Request to the server
+   *
+   * @method toSerializableObject
+   * @returns {Object}
+   */
   toSerializableObject() {
     return {
       operation: this.operation,
@@ -92,10 +150,29 @@ class CRDTStateTracker {
    * @param {String} options.identityId  The Identity ID of the user this state is for
    */
   constructor({ type, name, identityId }) {
+    /**
+     * @property {String} type   A value from Layer.Constants.CRDT_TYPES
+     */
     this.type = type;
+
+    /**
+     * @property {String} name  The state name being manipulated
+     */
     this.name = name;
+
+    /**
+     * @property {String} identityId   The IdentityId of the user requesting this change
+     */
     this.identityId = identityId;
+
+    /**
+     * @property {Layer.Core.CRDT.AddOperation[]} adds   Array of Add Operations that represent the current state for this state variable
+     */
     this.adds = [];
+
+    /**
+     * @property {String[]} removes   Set of Operation IDs that have been removed from the `adds` property
+     */
     this.removes = new Set();
   }
 

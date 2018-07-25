@@ -357,3 +357,13 @@ var testDbEnabled = function(callback) {
         });
     });
 };
+
+function TestWebSocket(url) {
+    this.url = url;
+    this.close = function() {};
+    this.send = function() {};
+    this.addEventListener = function() {};
+    this.removeEventListener = function() {};
+}
+
+Layer.Utils.registerNativeSupport('Websocket', TestWebSocket);

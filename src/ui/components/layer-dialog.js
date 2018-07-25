@@ -179,7 +179,7 @@ registerComponent('layer-dialog', {
      * setting the the content.
      *
      * @readonly
-     * @property {HTMLElement} content
+     * @property {HTMLElement} [content=null]
      */
     content: {},
 
@@ -194,7 +194,7 @@ registerComponent('layer-dialog', {
      *     'layer-dialog': {
      *       properties: {
      *         animationEnabled: {
-     *           value: true,
+     *           value: false,
      *         }
      *       }
      *     }
@@ -211,7 +211,7 @@ registerComponent('layer-dialog', {
     /**
      * Informational property only; if it has a model then this Dialog is being used to render the model or something closely related to it.
      *
-     * @property {Layer.Core.MessageTypeModel} model
+     * @property {Layer.Core.MessageTypeModel} [model=null]
      */
     model: {},
   },

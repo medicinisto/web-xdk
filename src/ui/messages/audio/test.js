@@ -27,11 +27,15 @@ describe('Audio Message Components', function() {
         this.__src = value;
         setTimeout(function() {
           if (value === "https://google.com") {
-            this._events.filter(event => event.name === "error").forEach(function(event) {
+            this._events.filter(function(event) {
+              return event.name === "error";
+            }).forEach(function(event) {
               event.fn({});
             });
           } else if (value) {
-            this._events.filter(event => ["durationchange", "canplay"].indexOf(event.name) !== -1).forEach(function(event) {
+            this._events.filter(function(event) {
+              return ["durationchange", "canplay"].indexOf(event.name) !== -1;
+            }).forEach(function(event) {
               event.fn({});
             });
           }
@@ -52,6 +56,9 @@ describe('Audio Message Components', function() {
 
       var evt = new Event('touchend', { bubbles: true });
       evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+    } else if (el instanceof SVGElement) {
+      var evt = new Event('click', { bubbles: true });
       el.dispatchEvent(evt);
     } else {
       el.click();
@@ -522,7 +529,7 @@ describe('Audio Message Components', function() {
       it("The play button should toggle the playing property", function() {
         // Pretest
         expect(el.contains(ui.properties.playButton)).toBe(true);
-        expect(ui.properties.playButton).toEqual(jasmine.any(HTMLElement));
+        expect(ui.properties.playButton).toEqual(jasmine.any(SVGElement));
         expect(ui.playing).toBe(false);
 
         // Run
@@ -605,7 +612,7 @@ describe('Audio Message Components', function() {
 
       el = document.createElement('layer-message-viewer');
       testRoot.appendChild(el);
-      CustomElements.upgradeAll(ui);
+      CustomElements.upgradeAll(el);
 
       el.size = "large"
       el.message = message;

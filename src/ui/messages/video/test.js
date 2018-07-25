@@ -218,24 +218,37 @@ describe('Video Message Components', function() {
       expect(m.preview.body).toBe(imageBlob);
     });
 
-    it("Should return title sourceUrl or Video to getTitle() call", function() {
+    it("Should return title sourceUrl or empty slot to getTitle() call", function() {
       expect(new VideoModel({
         title: "b",
+        artist: "art",
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
       }).getTitle()).toEqual("b");
 
       expect(new VideoModel({
+        artist: "art",
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
       }).getTitle()).toEqual("e");
 
+      // If there is metadata to prevent promotion of, show "Video Message"
+      var audioBlob = generateBlob(mp3Base64, "audio/mp3");
+      var model = new VideoModel({
+        artist: "art",
+        source: audioBlob,
+        mimeType: "audio/mp3",
+      });
+      expect(model.getTitle()).toEqual("Video Message");
+
+      // If there is no metadata, just show no title
       var audioBlob = generateBlob(mp3Base64, "audio/mp3");
       var model = new VideoModel({
         source: audioBlob,
         mimeType: "audio/mp3",
       });
-      expect(model.getTitle()).toEqual("Video");
+      expect(model.getTitle()).toEqual("");
+
       model.destroy();
     });
 
@@ -340,7 +353,7 @@ describe('Video Message Components', function() {
 
       expect(model1.getOneLineSummary()).toEqual("b");
       expect(model2.getOneLineSummary()).toEqual("e");
-      expect(model3.getOneLineSummary()).toEqual("Video");
+      expect(model3.getOneLineSummary()).toEqual("Video Message");
       model3.destroy();
     });
 
@@ -556,7 +569,7 @@ describe('Video Message Components', function() {
 
       el = document.createElement('layer-message-viewer');
       testRoot.appendChild(el);
-      CustomElements.upgradeAll(ui);
+      CustomElements.upgradeAll(el);
 
       el.size = "large"
       el.message = message;

@@ -301,7 +301,7 @@ registerComponent('layer-message-list', {
     /**
      * Control whether or not the Message List is allowed to show the current user's avatars.
      *
-     * A value of `true` means it will be shown {@link #Layer.Settings.conversationViewWidths} permitting.
+     * A value of `true` means it will be shown `Layer.Settings.conversationViewWidths` permitting.
      * A value of `false` insures that they are not shown.
      *
      * @property {Boolean} [canShowMyAvatars=true]

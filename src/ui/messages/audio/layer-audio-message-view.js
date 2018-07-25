@@ -50,6 +50,7 @@ registerComponent('layer-audio-message-view', {
      * Use a Standard Message Container to render this UI.
      *
      * @property {String} [messageViewContainerTagName=layer-standard-message-view-container]
+     * @readonly
      */
     messageViewContainerTagName: {
       noGetterFromSetter: true,
@@ -76,7 +77,7 @@ registerComponent('layer-audio-message-view', {
      * view.playing = !view.playing;
      * ```
      *
-     * @property {Boolean} playing
+     * @property {Boolean} [playing=false]
      */
     playing: {
       noGetterFromSetter: true,

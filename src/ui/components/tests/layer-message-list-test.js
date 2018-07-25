@@ -117,8 +117,8 @@ describe('layer-message-list', function() {
 
   describe("The width and avatar properties", function() {
     it("Should have suitable default values", function() {
-      expect(Layer.Settings.conversationViewWidths.maxTiny).toEqual(320);
-      expect(Layer.Settings.conversationViewWidths.maxSmall).toEqual(480);
+      expect(Layer.Settings.conversationViewWidths.small).toEqual(320);
+      expect(Layer.Settings.conversationViewWidths.medium).toEqual(480);
     });
     it("Should show all avatars for large width", function() {
       el.width = 1000;

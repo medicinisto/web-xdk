@@ -388,7 +388,7 @@
  * ```
  *
  * @class Layer.UI.Component
- * @extends CustomHTMLElement
+ * @extends HTMLElement
  */
 /* eslint-disable no-use-before-define */
 

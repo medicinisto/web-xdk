@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
 Copyright (c) 2008-2018 Pivotal Labs
 
@@ -60,17 +61,17 @@ jasmineRequire.HtmlReporter = function(j$) {
   };
 
   ResultsStateBuilder.prototype.specStarted = function(result) {
-    var floater = document.getElementById('layerfloater');
+    /*var floater = document.getElementById('layerfloater');
     if (!floater) {
         floater = document.createElement('div');
-	floater.style.position = 'absolute';
-	floater.style.top = '0px';
-	floater.style.left = '0px';
-	floater.style.zIndex = 10;
-	floater.id = 'layerfloater';
-	document.body.appendChild(floater);
+        floater.style.position = 'absolute';
+        floater.style.top = '0px';
+        floater.style.left = '0px';
+        floater.style.zIndex = 10;
+        floater.id = 'layerfloater';
+        document.body.appendChild(floater);
     }
-    floater.innerHTML = result.fullName;
+    floater.innerHTML = result.fullName;*/
   };
 
   ResultsStateBuilder.prototype.specDone = function(result) {
@@ -165,6 +166,11 @@ jasmineRequire.HtmlReporter = function(j$) {
           title: result.fullName
         }
       ));
+
+      // Layer quick link from error dots at the top
+      symbols.childNodes[symbols.childNodes.length - 1].addEventListener('click', function(evt) {
+        window.location.search = 'spec=' + escape(result.fullName);;
+      });
 
       if (result.status === 'failed') {
         failures.push(failureDom(result));

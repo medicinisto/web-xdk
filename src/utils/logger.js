@@ -9,11 +9,10 @@ import Settings from '../settings';
 
 const { logSize } = Settings;
 const { TIMING, DEBUG, INFO, WARN, ERROR, NONE } = LOG;
-
 const Timezone = new Date().toLocaleTimeString('en-US', {
   timeZoneName: 'short',
-  second: 'numeric',
-}).replace(/^[\d\s]*/, '');
+  hour: 'numeric',
+}).replace(/^[\d\s:]*/, '');
 
 const cache = [];
 

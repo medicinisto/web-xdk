@@ -1,4 +1,4 @@
-/*
+/**
  * A Channel object represents a dialog amongst a large set
  * of participants.
  *
@@ -47,7 +47,7 @@
  * @class  Layer.Core.Channel
  * @experimental This feature is incomplete, and available as Preview only.
  * @extends Layer.Core.Container
- * @author  Michael Kantor
+ * @ignore
  */
 import Settings from '../../settings';
 import Core from '../namespace';

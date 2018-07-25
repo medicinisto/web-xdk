@@ -1,4 +1,4 @@
-/**
+/*
  * Adds custom CAPI Messaging functionality.
  *
  * This is handled by a Client mixin so that other uses of Messaging objects (SAPI for example)
@@ -9,8 +9,9 @@
  * * `send()` method which unlike SAPI returns `this` rather than a Promise
  * * `presend()` method for rendering an unsent message in a Message List
  * * `_send()` for using websockets to actually send the message
- *
- * @class Layer.Core.Message
+ */
+/**
+ * @class Layer.Core.MessagePart
  */
 
 import Core from '../namespace';

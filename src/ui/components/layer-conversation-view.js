@@ -823,7 +823,13 @@ registerComponent('layer-conversation-view', {
     },
 
     /**
-     * Width value to use
+     * widths defines for the WidthTracker mixin when this Conversation View
+     * is in its Small, Medium or Large forms.
+     *
+     * @property {Object} widths
+     * @property {Number} widths.small
+     * @property {Number} widths.medium
+     * @property {Number} widths.large
      */
     widths: {
       value: {

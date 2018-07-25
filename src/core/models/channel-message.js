@@ -1,8 +1,9 @@
-/*
+/**
  * @inheritdoc Layer.Core.Message
  *
  * @class Layer.Core.Message.ChannelMessage
  * @extends Layer.Core.Message
+ * @ignore
  */
 import Settings from '../../settings';
 import Core from '../namespace';

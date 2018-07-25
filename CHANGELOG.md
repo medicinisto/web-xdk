@@ -11,6 +11,8 @@ While there have been no major breaking changes, there have been some minor chan
 * `Layer.Constants.WIDTH` no longer exists and is no longer used
 * Minor CSS Class names and theme changes
 * ImageModel no longer has a `url` property; see `fetchUrl(callback)` instead
+* `message-type-response-summmary-v2` renamed to `message-type-response-summary-v2`. More is sometimes better. More spell checkering is better than more m's every time.
+* `message-type-response-summmary-v1` renamed to `message-type-response-summary-v1`; Most projects should not be using this!
 
 ### Message List Avatar Breaking Changes
 
@@ -48,7 +50,7 @@ Impact of this change:
 * Apps that had taken steps to hide avatars may have them showing again and will need to use the above properties to hide them again
 * Apps that used `@message-item-text-indent` to control indentation will no longer have those values be applied
 
-### All Changes
+### New Features and Concepts
 
 #### Managing widths and layout
 
@@ -83,7 +85,7 @@ Layer.init({
 });
 ```
 
-Further customizations can be done by setting the amount of width to indent messages when avatars are showing, and when they are hidden:
+Further customizations (for those placing other components in the margins of the Message Items) can be done by setting the amount of width to indent messages when avatars are showing, and when they are hidden:
 
 ```javascript
 Layer.init({
@@ -130,6 +132,41 @@ Large Message Views can be displayed anywhere, even outside of the `<layer-dialo
 
 Note that only Audio and Video messages have defined Large Message Views at this time.
 
+### New Message Types
+
+* Adds Audio Message
+* Adds Video Message
+
+File Upload Button detects if Audio/Video messages are part of the build, and if they are loaded, will send an Audio/Video message based on file type of the selected file.
+
+### Manual Query Class
+
+UI Components that take Queries as inputs can now take raw data using the Manual Query class. This is useful if simply providing raw data received from Layer's servers doesn't serve your use case.  Typically, you'd use this if fetching a list of Conversations, Messages or Identities from your own servers but still want to use Layer's UI Components to render them.
+
+
+```javascript
+var manualQuery = client.createQuery({
+  model: Layer.Core.Query.Manual
+});
+manualQuery.addItems(conversationList);
+manualQuery.addItem(conversation25);
+conversationListWidget.query = manualQuery;
+```
+
+Query data can be manipulated at any time using `addItem()`, `addItems()`, `removeItem()`, `removeItems()` and `reset()`; UI components will rerender as these calls are made.
+
+### Analytics
+
+To help your application track usage patterns of users, 3 analytics events have been added that your application can listen to in order to report usage to your preferred reporting service.
+
+* Message Viewed: similar to Messages Read, but will retrigger whenever a message is reviewed, or continues to be visible
+* Message Selected: Whenever a user selects a message in the Message List to trigger its action.
+* Carousel Scrolled: reports what carousel items are visible and that the user explicitly scrolled the carousel
+
+### Typescript Support
+
+Basic typescript support has been added to the `npm` repository and is now part of the build process.
+
 #### Refactored Code
 
 * Refactored `Layer.Core.Client` Class
@@ -162,21 +199,6 @@ Typically its easiest to start development with `index-all` but the above option
     * `Layer.Core.MessagePart` `fetchStream()` method now uses any `part.body` value it already has if it has it
 
 
-### Manual Query Class
-
-UI Components that take Queries as inputs can now take raw data using the Manual Query class. This is useful if simply providing raw data received from Layer's servers doesn't serve your use case.  Typically, you'd use this if fetching a list of Conversations, Messages or Identities from your own servers but still want to use Layer's UI Components to render them.
-
-
-```javascript
-var manualQuery = client.createQuery({
-  model: Layer.Core.Query.Manual
-});
-manualQuery.addItems(conversationList);
-manualQuery.addItem(conversation25);
-conversationListWidget.query = manualQuery;
-```
-
-Query data can be manipulated at any time using `addItem()`, `addItems()`, `removeItem()`, `removeItems()` and `reset()`; UI components will rerender as these calls are made.
 
 #### Other Changes
 
@@ -196,10 +218,6 @@ These changes impact customers who adopted the incomplete Large Message View pri
     * Adds `getOperationsForState(stateName)` to get the list of operations to be sent (or already sent) to the server
     * Adds `getStateChanges()` which returns the Change Events associated with the operations to be sent to the server.
     * Adds `getResponseSummary()` to get the Response Summary instance that this Resonse Message is being sent/was sent to update.
-* New Message Types
-    * Adds Audio Message
-    * Adds Video Message
-    * File Upload Button detects if Audio/Video messages are part of the build and will send an Audio/Video message based on the selected file type
 * Changes to the Message Viewer Component (`<layer-message-viewer />`)
     * Adds a `size` property that can be set to `large` for the Large version of a given Message (not supported for all Message Types yet)
     * Removes the `widthType` property; see instead the `width` property which lets a Message Type View force the Message Viewer Width to a fixed pixel value.
@@ -217,10 +235,10 @@ These changes impact customers who adopted the incomplete Large Message View pri
 * WEB-1779: Now throws error if calling `Layer.UI.setupMixins({...})` after calling `Layer.init()`
 * Increases priority of DOM nodes with `layer-replaceable-name="foo"` within your HTML over `widget.replaceableContent = {foo: nodes}` within your Javascript
 * `message-type-response-summmary-v2` renamed to `message-type-response-summary-v2`
-* `message-type-response-summmary-v1` renamed to `message-type-response-summary-v1`; This will be imported by your project if you require it; please update your imports!
+* `message-type-response-summmary-v1` renamed to `message-type-response-summary-v1`; Most projects should not be using this!
 * Supported Image Types, Audio Types and Video Types can be set in the `settings` via `Layer.init({imageMIMETypes: ['image/gif'], audioMIMETypes: ['audio/mp3'], videoMIMETypes: ['video/mp4']})`; but the default values indicate values that Layer Messages have been tested against.
 * File Upload Button can now reslect the same file twice in a row
-* The Conversation View now provides properties `maxWidthSmall` and `maxWidthMedium` which can be configured to change when the Conversation View uses its Small rendering and when it uses its Medium rendering. A `width` property is set whenever the window resizes; apps may need to set this if they use sliders or other internal size changes.  Previously these values were hardcoded in.
+* The Conversation View now provides a `width` property is set whenever the window resizes; apps may need to set this if they use sliders or other internal size changes.  Changes in this property are used to notify the Conversation View and Message List that they have resized and may need to adjust margins and whether avatars are showing.
 * WEB-1792: Adds Replaceable Content section named `conversationViewTop` to the top of the Conversation View; this can be used to render temporary or persisted content on top of the Message List
 * Fixes bug where if Conversation is not loaded, Message Status cannot be rendered
 * WEB-1620: Adds a prompt to ask users if they want to enable notifications
@@ -228,26 +246,23 @@ These changes impact customers who adopted the incomplete Large Message View pri
     * `<layer-notifier />` widget now uses the prompt to ask users if they want to enable notifications
     * If users click Yes, the browser's permissions UI will be presented
     * If users click No, the prompt won't be shown again
+    * `Notifier.enableNotificationPrompt` can be set to customize the prompt message
 * WEB-1797: Adds MessageTypeModel static `FileBehaviorsForProperty()` method for setting up properties that manage files/blobs
-* WEB-1791: `Layer.Core.Client` instances now generate `analytics` events. Currently tracks Message Clicks, Message Views and Carousel Scroll events.  `client.on('analytics', evt => myProcessAnalyticsEvt(evt))`
 * WEB-1781: Improved link and address detection
     * Detects and links `mailto:` and `tel:` URIs
     * Detects and links email addresses within messages even if not preceded by a `mailto:`
 * WEB-1752: `Layer.UI.components.Avatar` Component now accepts `avatarComponent.item = identity;` as another option for setting the Avatar's Identity
 * WEB-1707 : Use `Layer.Utils.getLogs()` to get logs to dump to a logging service
     * Use `Layer.init({ logSize: 500 })` to change the number of lines of logging data that is tracked
-* DOM structural and rendering changes to:
-    * Dialog Close Button
-    * File Upload Button
 * Updated babel settings, updated build process
 * Fixes line wrapping of text messages in Firefox
-* Fixes URL detection to handle multi-line expressions that contain
-  a URL that goes from the start to the end of a line
-* Typescript definition files now included in npm repository
-* Removes all CommonJS module usage from internal components; note that CommonJS is still used when doing `import '@layerhq/web-xdk'`; this will be treated as a potential breaking change and removed in the next Major release.
+* Fixes URL detection to handle multi-line expressions that contain a URL that goes from the start to the end of a line
+* Removes all CommonJS module usage from internal components; note that CommonJS is still used when doing `import '@layerhq/web-xdk'`; this will be treated as a potential breaking; changing the main import to use ES6 module exports will happen in the next Major release.
 * Removes all SVG background images, and adds SVG as stylable DOM nodes wherever they are used in the UI
     * All Message Views that show icons in their title bars should now provide `getIcon()` method to get an SVG image, rather than `getIconClass()` method which got a CSS class to drive background images (`getIconClass()` should continue to be supported for now)
     * `<layer-titled-message-view-container />` property `icon` renamed to `iconClass`
+    * Dialog Close Button will now render differently and CSS may need to be updated
+    * File Upload Button will now render differently and CSS may need to be updated
 
 ## 4.0.4
 

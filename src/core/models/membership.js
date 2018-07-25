@@ -1,4 +1,4 @@
-/*
+/**
  * The Membership class represents an Membership of a user within a channel.
  *
  * Identities are created by the System, never directly by apps.
@@ -6,6 +6,7 @@
  * @class Layer.Core.Membership
  * @experimental This feature is incomplete, and available as Preview only.
  * @extends Layer.Core.Syncable
+ * @ignore
  */
 import Settings from '../../settings';
 import Core from '../namespace';

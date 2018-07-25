@@ -44,7 +44,7 @@ var dbIt = it;
           isDone = true;
           done(err);
         }
-        setTimeout(() => {
+        setTimeout(function() {
           if (!isDone) {
             isDone = true;
             done();
@@ -100,6 +100,7 @@ var dbIt = it;
               isTrustedDevice: true,
               isPersistenceEnabled: dbIsTestable
           }).on('challenge', function f() {});
+          jasmine.Ajax.install();
           client.sessionToken = "sessionToken";
           client.connect("Frodo");
 
@@ -125,15 +126,14 @@ var dbIt = it;
 
           allowWrites = false;
 
-          client.once('authenticated', function() {
+
+          client.once('ready', function() {
             dbManager = client.dbManager;
             var originalWriteObjects = dbManager._writeObjects;
             spyOn(dbManager, "_writeObjects").and.callFake(function() {
               if (allowWrites) originalWriteObjects.apply(dbManager, arguments);
             });
-          });
 
-          client.once('ready', function() {
             client.syncManager.queue = [];
             conversation = client._createObject(responses.conversation1);
             channel = client._createObject(responses.channel1);
@@ -156,12 +156,14 @@ var dbIt = it;
         });
       });
 
-      afterEach(function() {
+      afterEach(function(done) {
+        jasmine.Ajax.uninstall();
         Layer.Utils.defer.reset();
         if (client) {
           client.destroy();
           client = null;
         }
+        setTimeout(done, Layer.Utils.isSafari ? 1000 : 100);
       });
 
       describe("The constructor() method", function() {
@@ -353,6 +355,7 @@ var dbIt = it;
           expect(done).toBe(true);
         });
         it("Should trigger open event", function(done) {
+          debugger;
           var dbManager = new Layer.Core.DbManager({
             enabled: true,
             tables: {conversations: true}

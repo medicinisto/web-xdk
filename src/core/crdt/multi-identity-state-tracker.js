@@ -24,7 +24,14 @@ export default class CRDTMultiIdentityStateTracker {
    * @param {String} options.type   The Operation type chosen from Layer.Constants.CRDT_TYPES
    */
   constructor({ name, type }) {
+    /**
+     * @property {Object} users   Hash of Layer.Core.CRDT.StateTracker objects indexed by Identity ID
+     */
     this.users = {};
+
+    /**
+     * @property {String} name   Name of the state variable managed by this state tracker
+     */
     this.name = name;
 
     // Too bad Object.values() isn't in IE11...
@@ -32,6 +39,10 @@ export default class CRDTMultiIdentityStateTracker {
     if (values.indexOf(type) === -1) {
       throw new Error(ErrorDictionary.invalidCRDTType);
     }
+
+    /**
+     * @property {String} type   A value from Layer.Constants.CRDT_TYPES
+     */
     this.type = type;
   }
 

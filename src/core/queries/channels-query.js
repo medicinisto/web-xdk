@@ -1,4 +1,4 @@
-/*
+/**
  * Query class for running a Query on Channels
  *
  *      var channelQuery = client.createQuery({
@@ -18,6 +18,7 @@
  *
  * @class  Layer.Core.Query.ChannelsQuery
  * @extends Layer.Core.Query
+ * @ignore
  */
 import Settings from '../../settings';
 import { SYNC_STATE } from '../../constants';

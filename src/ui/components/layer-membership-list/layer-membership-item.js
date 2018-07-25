@@ -1,4 +1,4 @@
-/*
+/**
  * The Layer Membership Item represents a single user within a Membership List.
  *
  * ### Importing
@@ -15,6 +15,7 @@
  * @extends Layer.UI.Component
  * @mixins Layer.UI.mixins.ListItem
  * @mixins Layer.UI.mixins.ListItemSelection
+ * @ignore
  */
 import ListItem from '../../mixins/list-item';
 import ListItemSelection from '../../mixins/list-item-selection';

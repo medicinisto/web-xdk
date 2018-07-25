@@ -363,7 +363,7 @@ AudioModel.prototype.previewHeight = 0;
 AudioModel.prototype.duration = '';
 
 /**
- * Size of the file in bytes
+ * Size of the file in bytes.
  *
  * > *Note*
  * >

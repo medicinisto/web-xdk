@@ -205,12 +205,6 @@ describe('Feedback Message Components', function() {
             name: 'comment',
             value: 'howdy ho',
             id: jasmine.any(String)
-          }, {
-            type: 'FWW',
-            operation: 'add',
-            name: 'sent_at',
-            value: jasmine.any(String),
-            id: jasmine.any(String)
           }]
         }));
         expect(textPart.mimeType).toEqual(StatusModel.MIMEType);
@@ -360,7 +354,7 @@ describe('Feedback Message Components', function() {
     });
 
     it("Should show the specified summary", function() {
-      model.sentAt = new Date();
+      model.responses.addState('rating', 5);
       ui.onRerender();
       expect(ui.nodes.label.innerHTML).toEqual("all summaries for " + client.user.displayName);
     });

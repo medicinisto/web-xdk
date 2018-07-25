@@ -551,8 +551,8 @@ getJasmineRequireObj().Spec = function(j$) {
 
     var onStart = {
       fn: function(done) {
-	self.result.startTime = Date.now(); // Layer
-	if (self.result && self.result.fullName) console.log('Starting: ' + self.result.fullName); // Layer
+        self.result.startTime = Date.now(); // Layer
+        //if (self.result && self.result.fullName) console.log('Starting: ' + self.result.fullName); // Layer
         self.onStart(self, done);
       }
     };
@@ -1743,7 +1743,7 @@ getJasmineRequireObj().ObjectContaining = function(j$) {
   ObjectContaining.prototype.asymmetricMatch = function(other, customTesters) {
     if (typeof(this.sample) !== 'object') { throw new Error('You must provide an object to objectContaining, not \''+this.sample+'\'.'); }
 
-    
+
     for (var property in this.sample) {
 
       // LAYER MODIFIED LINE IS HERE; body is not a property of MessagePart... __body is a property of MessagePart.  Crap.
@@ -2377,7 +2377,7 @@ getJasmineRequireObj().ExceptionFormatter = function(j$) {
     function filterJasmine(stackTrace) {
       var result = [],
         jasmineMarker = stackTrace.style === 'webkit' ? '<Jasmine>' : '    at <Jasmine>';
- 
+
       stackTrace.frames.forEach(function(frame) {
         if (frame.file && frame.file !== jasmineFile) {
           result.push(frame.raw);
@@ -2385,7 +2385,7 @@ getJasmineRequireObj().ExceptionFormatter = function(j$) {
           result.push(jasmineMarker);
         }
       });
- 
+
       return result;
     }
   }
@@ -5606,7 +5606,7 @@ getJasmineRequireObj().StackTrace = function(j$) {
       }
     }
   }
-  
+
   return StackTrace;
 };
 

@@ -230,9 +230,11 @@ function processPropertyDef({ tags, docblock }) {
     name: '',
     static: false,
     readonly: false,
+    abstract: false,
     required: false,
     description: '',
     value: null,
+    deprecated: false,
   };
 
   // Do not add any property that has the following tag names:
@@ -267,8 +269,19 @@ function processPropertyDef({ tags, docblock }) {
         funcName = options.funcName;
         break;
       }
+      case 'abstract':
+        propertyDef.abstract = true;
+        break;
+      case 'deprecated':
+        propertyDef.deprecated = true;
+        break;
+      case 'inheritdoc':
+      case 'fires':
+      case 'link':
+      case 'experimental':
+        break;
       default:
-        console.log('ignore: ' + tag.tagName + ': ' + tag.details);
+        console.log('ignore property: ' + tag.tagName + ': ' + tag.details + '\n' + docblock + '\n');
     }
   });
 }
@@ -353,6 +366,7 @@ function processMethodDef({ tags, name, docblock }) {
     private: name.indexOf('_') === 0,
     protected: false,
     abstract: false,
+    deprecated: false,
   };
 
   // Do not generate anything for a docblock containing any of the following tagNames
@@ -390,8 +404,16 @@ function processMethodDef({ tags, name, docblock }) {
       case 'typescript':
         methodDef.instructions = tag.details;
         break;
+      case 'deprecated':
+        methodDef.deprecated = true;
+        break;
+      case 'inheritdoc':
+      case 'fires':
+      case 'link':
+      case 'experimental':
+        break;
       default:
-        console.log('ignore: ' + tag.tagName + ': ' + tag.details);
+        console.log('ignore method: ' + tag.tagName + ': ' + tag.details);
     }
   });
 
@@ -464,8 +486,13 @@ function processEventDef({ tags, name, docblock }) {
       case 'param':
         parseEventParam({ tag: tag.details, eventDef });
         break;
+      case 'experimental':
+      case 'link':
+      case 'inheritdoc':
+      case 'fires':
+        break;
       default:
-        console.log('ignore: ' + tag.tagName + ': ' + tag.details);
+        console.log(`ignore event: ${tag.tagName}: ${tag.details}\n${docblock}\n`);
     }
   });
 
@@ -595,10 +622,10 @@ function processFile(file) {
           processClassDef(tagsObj, code, file);
         } else if (tagsObj.method) {
           processMethodDef(tagsObj);
-        } else if (tagsObj.property) {
-          processPropertyDef(tagsObj);
         } else if (tagsObj.event) {
           processEventDef(tagsObj);
+        } else if (tagsObj.property) {
+          processPropertyDef(tagsObj);
         }
       } catch (e) {
         console.error('Error processing File ' + file + ', docblock: ' + docblock);

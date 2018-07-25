@@ -6,15 +6,29 @@
  * var manualQuery = client.createQuery({
  *   model: Layer.Core.Query.Manual
  * });
- * manualQuery.addItem(conversation);  // Add a Conversation instance to the end of the list
- * manualQuery.addItem(conversation.toObject());  // Add a conversation-like object to the end of the list
- * manualQuery.addItem(conversation, 0);  // Add a Conversation instance to the top of the list
  *
- * manualQuery.addItems(conversations); // Adds the specified conversations to the end of the list
- * manualQuery.addItems(conversations, 0); // Adds the specified conversations to the start of the list
+ * // Add a Conversation instance to the end of the list
+ * manualQuery.addItem(conversation);
  *
- * manualQuery.setItems(conversations); // Replaces all data with the specified conversations
- * manualQuery.reset(); // Removes all data
+ * // Add a conversation-like object to the end of the list
+ * manualQuery.addItem(conversation.toObject());
+ *
+ * // Add a Conversation instance to the top of the list
+ * manualQuery.addItem(conversation, 0);
+ *
+ * // Adds the specified conversations to the end of the list
+ * manualQuery.addItems(conversations);
+ *
+ * // Adds the specified conversations to the start of the list
+ * manualQuery.addItems(conversations, 0);
+ *
+ * // Replaces all data with the specified conversations
+ * manualQuery.setItems(conversations);
+ *
+ * // Removes all data
+ * manualQuery.reset();
+ *
+ * // Remove specified data
  * manualQuery.removeItem(conversation);
  * maualQuery.removeItems(conversations);
  * ```

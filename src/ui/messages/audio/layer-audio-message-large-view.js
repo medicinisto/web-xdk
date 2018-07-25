@@ -131,7 +131,7 @@ registerComponent('layer-audio-message-large-view', {
     /**
      * A javascript `Audio` object that is used to play the content without being in the DOM
      *
-     * @property {Audio} audio
+     * @property {Audio} [audio=null]
      */
     audio: {},
 
@@ -144,7 +144,7 @@ registerComponent('layer-audio-message-large-view', {
      * view.playing = !view.playing;
      * ```
      *
-     * @property {Boolean} playing
+     * @property {Boolean} [playing=false]
      */
     playing: {
       noGetterFromSetter: true,
@@ -223,14 +223,14 @@ registerComponent('layer-audio-message-large-view', {
     /**
      * Temporary state indicates that when starting a seek, we should start playback once the seek is completed.
      *
-     * @property {Boolean} playAfterSeek
+     * @property {Boolean} [playAfterSeek=false]
      */
     playAfterSeek: {},
 
     /**
      * Indicates if our player has reached the end, as defined by receipt of an "ended" event.
      *
-     * @property {Boolean} isEnded
+     * @property {Boolean} [isEnded=false]
      */
     isEnded: {},
 
@@ -239,16 +239,17 @@ registerComponent('layer-audio-message-large-view', {
      *
      * If the user rewinds to the start, it won't autoplay the way it does when the viewer first shows and autoplays.
      *
-     * @property {Boolean} firstPlayed
+     * @property {Boolean} [firstPlayed=false]
      */
     firstPlayed: {},
 
     /**
      * The user is currently dragging the progress slider.
      *
-     * @property {Boolean} dragging
+     * @property {Boolean} [_dragging=false]
+     * @private
      */
-    dragging: {},
+    _dragging: {},
   },
   methods: {
     onCreate() {
@@ -580,7 +581,7 @@ registerComponent('layer-audio-message-large-view', {
      * @protected
      */
     updateProgress() {
-      if (this.properties.dragging) return;
+      if (this.properties._dragging) return;
       this.setCurrentTime(this.properties.audio.currentTime, false);
     },
 
@@ -782,7 +783,7 @@ registerComponent('layer-audio-message-large-view', {
      * @method onProgressSliderStart
      */
     onProgressSliderStart() {
-      this.properties.dragging = true;
+      this.properties._dragging = true;
     },
 
     /**
@@ -791,7 +792,7 @@ registerComponent('layer-audio-message-large-view', {
      * @method onProgressSliderStop
      */
     onProgressSliderStop() {
-      this.properties.dragging = false;
+      this.properties._dragging = false;
     },
 
     /**

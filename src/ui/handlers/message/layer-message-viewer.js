@@ -387,10 +387,10 @@ registerComponent('layer-message-viewer', {
           // 95%, 80% and 70% must be changed both here and in layer-message-viewer.less
           if (
             this.nodes.ui.hideMessageItemRightAndLeftContent ||
-            width < conversationViewWidths.maxMedium
+            width > conversationViewWidths.large
           ) {
             return Math.round(width * 0.95);
-          } else if (width < conversationViewWidths.maxMedium) {
+          } else if (width < conversationViewWidths.large) {
             return Math.round(width * 0.8);
           } else {
             return Math.round(width * 0.7);

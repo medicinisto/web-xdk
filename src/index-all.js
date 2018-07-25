@@ -73,12 +73,8 @@ if (typeof global !== 'undefined') global.Layer = global.layer = module.exports;
  * Layer.onInit(myfunc, mycontext)
  * ```
  *
- * It is recommended that anonymous functions not be used as `onInit` insures that if a function is passed multiple times,
- * it will only get called once.  This pattern generates a new function each call and should not be used:
- *
- * ```
- * Layer.onInit(() => myfunc());
- * ```
+ * Note that your code typically is calling `Layer.init()`; this is only needed if you have
+ * code that cannot see when you are calling `Layer.init()`.
  *
  * @method onInit
  * @param {Function} callback

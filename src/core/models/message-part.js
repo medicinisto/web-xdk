@@ -60,9 +60,8 @@
  *
  * NOTE: `Layer.Core.MessagePart.url` should have a value when the message is first received, and will only fail `if (!part.url)` once the url has expired.
  *
- * @class  Layer.Core.MessagePart
+ * @class Layer.Core.MessagePart
  * @extends Layer.Core.Root
- * @author Michael Kantor
  */
 import ContentTypeParser from '../../utils/content-type-parser';
 import Settings from '../../settings';
@@ -164,9 +163,11 @@ export default class MessagePart extends Root {
 
   destroy() {
     clearTimeout(this._fetchStreamTimeoutId);
-
+    console.log("DESTROY WITH " + this.__url);
     if (this.__url) {
+      console.log("REVOKING " + this.__url);
       URL.revokeObjectURL(this.__url);
+      console.log("REVOKED");
       this.__url = null;
     }
     this.body = null;

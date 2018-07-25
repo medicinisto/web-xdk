@@ -20,8 +20,8 @@
  * ```
  *
  * @class Layer.UI.components.ConversationListPanel.Item.Channel
- * @experimental
  * @extends Layer.UI.Component
+ * @ignore
  */
 import { registerComponent } from '../../components/component';
 import ListItem from '../../mixins/list-item';
@@ -64,19 +64,6 @@ registerComponent('layer-channel-item', {
       },
     },
 
-    /**
-     * Enable deletion of this Conversation.
-     *
-     * This property is currently assumed to be settable at creation time only,
-     * and does not rerender if changed.
-     *
-     * This property does nothing if you remove the `delete` node from the template.
-     *
-     * @property {Boolean} [deleteConversationEnabled=false]
-     * @removed
-     */
-
-
     size: {
       value: 'large',
       set(size) {
@@ -104,6 +91,7 @@ registerComponent('layer-channel-item', {
      *
      * @method _runFilter
      * @param {String | RegExp | Function} filter
+     * @ignore
      */
     _runFilter(filter) {
       const channel = this.properties.item;

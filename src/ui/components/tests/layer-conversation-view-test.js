@@ -399,10 +399,10 @@ describe('layer-conversation-view', function() {
   });
 
   describe("The width property", function() {
-    it("Expect maxTiny maxSmall and maxMedium to have values", function() {
-      expect(Layer.Settings.conversationViewWidths.maxTiny).toEqual(320);
-      expect(Layer.Settings.conversationViewWidths.maxSmall).toEqual(480);
-      expect(Layer.Settings.conversationViewWidths.maxMedium).toEqual(640);
+    it("Expect small, medium and large to have values", function() {
+      expect(Layer.Settings.conversationViewWidths.small).toEqual(320);
+      expect(Layer.Settings.conversationViewWidths.medium).toEqual(480);
+      expect(Layer.Settings.conversationViewWidths.large).toEqual(640);
     });
     it("Should update CSS Classes", function() {
       el.width = 200;

@@ -1,11 +1,12 @@
-/**
+/*
  * Adds backwards compatability for the plain/text and image messages from Layer UI/Atlas.
  *
  * This is handled by a Client mixin as it is an optional capability.
- *
- * @class Layer.Core.Message
  */
 
+/**
+ * @class Layer.Core.Message
+ */
 import Core from '../namespace';
 import { generateUUID } from '../../utils';
 

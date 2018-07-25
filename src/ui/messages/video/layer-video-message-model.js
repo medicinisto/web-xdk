@@ -509,7 +509,7 @@ VideoModel.prototype.previewHeight = 0;
 VideoModel.prototype.duration = '';
 
 /**
- * Size of the file in bytes
+ * Size of the file in bytes.
  *
  * > *Note*
  * >

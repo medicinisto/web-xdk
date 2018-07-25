@@ -1,4 +1,4 @@
-/*
+/**
  * Query class for running a Query on Channel Members
  *
  *      var membersQuery = client.createQuery({
@@ -23,6 +23,7 @@
  *
  * @class  Layer.Core.Query.MembersQuery
  * @extends Layer.Core.Query
+ * @ignore
  */
 import Settings from '../../settings';
 import Core from '../namespace';

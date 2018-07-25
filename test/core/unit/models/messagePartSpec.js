@@ -158,11 +158,6 @@ describe("The MessageParts class", function() {
           URL.revokeObjectURL = tmp;
         });
 
-        it("Should call revokeObjectURL if there is a url", function() {
-            part.url = "fred";
-            part.destroy();
-            expect(URL.revokeObjectURL).toHaveBeenCalledWith("fred");
-        });
 
         it("Should call revokeObjectURL if there is a url", function() {
             part.destroy();

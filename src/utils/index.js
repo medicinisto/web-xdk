@@ -90,7 +90,6 @@ export const camelCase = str =>
  * ```
  *
  * @method hyphenate
- * @static
  * @param {String} aCamelCasedString
  * @returns {String} a-hyphenated-string
  */
@@ -423,6 +422,7 @@ export const includes = (items, value) => items.indexOf(value) !== -1;
 /**
  * Some ASCII art when client initializes
  * @property {String} asciiInit
+ * @ignore
  */
 export const asciiInit = (version) => {
   if (!version) return 'Missing version';
