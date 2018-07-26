@@ -74,22 +74,22 @@
  * @property {Number} [markReadDelay=2500]
  */
 
- /**
-  * The default message renderer for messages not matching any other handler.
-  *
-  * Specify your own UI Component's Tag Name to have that Message Handler used instead.
-  *
-  * ```
-  * Layer.init({
-  *   defaultHandler: {
-  *      tagName: 'my-custom-unknown-message-handler',
-  *    }
-  * });
-  * ```
-  *
-  * @property {Object} [defaultHandler]
-  * @property {String} [defaultHandler.tagName=layer-message-unknown]
-  */
+/**
+ * The default message renderer for messages not matching any other handler.
+ *
+ * Specify your own UI Component's Tag Name to have that Message Handler used instead.
+ *
+ * ```
+ * Layer.init({
+ *   defaultHandler: {
+ *      tagName: 'my-custom-unknown-message-handler',
+ *    }
+ * });
+ * ```
+ *
+ * @property {Object} [defaultHandler]
+ * @property {String} [defaultHandler.tagName=layer-message-unknown]
+ */
 
 /**
  * Specify which text handlers you want used.
@@ -98,98 +98,98 @@
  * after calling `init()` using `Layer.UI.handlers.text.register` and will be used automatically.
  *
  * ```
-   * Layer.init({
-   *   textHandlers: ['newline']
-   * });
-   * ```
-   *
+ * Layer.init({
+ *   textHandlers: ['newline']
+ * });
+ * ```
+ *
  * @property {String[]} [textHandlers=['email', 'autolinker', 'newline', 'emoji']]
  */
 
- /**
-  * Wait this long after a Component is removed from the document before destroying it.
-  *
-  * Note that a common use case is to remove it, and then insert it elsewhere. This causes a
-  * remove, and this delay helps insure that the insertion happens without instantly destroying the component as its being inserted elsewhere.
-  *
-  * @property {Number} [destroyAfterDetachDelay=10000]
-  */
+/**
+ * Wait this long after a Component is removed from the document before destroying it.
+ *
+ * Note that a common use case is to remove it, and then insert it elsewhere. This causes a
+ * remove, and this delay helps insure that the insertion happens without instantly destroying the component as its being inserted elsewhere.
+ *
+ * @property {Number} [destroyAfterDetachDelay=10000]
+ */
 
-  /**
-   * Use Emoji images instead of OS-specific Emoji Characters.
-   *
-   * By default, images are used for Emojis so that all users see the same
-   * graphics no matter what platform they are on. This also insures that platforms lacking emoji support (or lacking specific emojis) can still render
-   * emojis.  If your customers are all on platforms that support rendering of emojis and support the same set of emojis, you may disable this.
-   *
-   * ```
-   * Layer.init({
-   *   useEmojiImages: false
-   * });
-   * ```
-   *
-   * @property {Boolean} [useEmojiImages=true]
-   */
+/**
+ * Use Emoji images instead of OS-specific Emoji Characters.
+ *
+ * By default, images are used for Emojis so that all users see the same
+ * graphics no matter what platform they are on. This also insures that platforms lacking emoji support (or lacking specific emojis) can still render
+ * emojis.  If your customers are all on platforms that support rendering of emojis and support the same set of emojis, you may disable this.
+ *
+ * ```
+ * Layer.init({
+ *   useEmojiImages: false
+ * });
+ * ```
+ *
+ * @property {Boolean} [useEmojiImages=true]
+ */
 
-  /**
-   * The google maps key to use with Location Messages.
-   *
-   * ```
-   * Layer.init({
-   *   googleMapsKey: "my-key"
-   * });
-   * ```
-   *
-   * @property {String} [googleMapsKey=]
-   */
-
-
-  /**
-   * The MIME Types that are recognized as supported audio files
-   *
-   * @property {String[]} [audioMIMETypes=['audio/mp3', 'audio/mpeg']]
-   */
-
-  /**
-   * The MIME Types that are recognized as supported video files
-   *
-   * @property {String[]} [videoMIMETypes=['video/mp4']]
-   */
-
-  /**
-   * The MIME Types that are recognized as supported image files
-   *
-   * @property {String[]} [imageMIMETypes=['image/gif', 'image/png', 'image/jpeg', 'image/svg']]
-   */
+/**
+ * The google maps key to use with Location Messages.
+ *
+ * ```
+ * Layer.init({
+ *   googleMapsKey: "my-key"
+ * });
+ * ```
+ *
+ * @property {String} [googleMapsKey=]
+ */
 
 
-  /**
-   * The widths that the Conversation View must be for it to transition to the rendering associated with a new class of size
-   *
-   * ```
-   * Layer.init({
-   *   conversationViewWidths: {
-   *     small: 480,
-   *     medium: 480,
-   *     large: 880
-   *   }
-   * });
-   * ```
-   *
-   * @property {Object} [conversationViewWidths={small: 320, medium: 480, large: 640}]
-   * @property {Number} [conversationViewWidths.small=320] If width is less than this, use `layer-conversation-view-width-tiny` css class
-   * @property {Number} [conversationViewWidths.medium=480] If width is less than this, use `layer-conversation-view-width-small` css class
-   * @property {Number} [conversationViewWidths.large=640] If width is less than this, use `layer-conversation-view-width-medium` css class
-   */
+/**
+ * The MIME Types that are recognized as supported audio files
+ *
+ * @property {String[]} [audioMIMETypes=['audio/mp3', 'audio/mpeg']]
+ */
 
-  /**
-   * Number of items to store in the logs
-   *
-   * Sets the cache size (number of lines) for logs generated by the XDK; for use in
-   * limiting memory usage while still enabling the `Layer.client.sendLogs()` call to gather log data
-   *
-   * @property {Number} [logSize=150]
-   */
+/**
+ * The MIME Types that are recognized as supported video files
+ *
+ * @property {String[]} [videoMIMETypes=['video/mp4']]
+ */
+
+/**
+ * The MIME Types that are recognized as supported image files
+ *
+ * @property {String[]} [imageMIMETypes=['image/gif', 'image/png', 'image/jpeg', 'image/svg']]
+ */
+
+
+/**
+ * The widths that the Conversation View must be for it to transition to the rendering associated with a new class of size
+ *
+ * ```
+ * Layer.init({
+ *   conversationViewWidths: {
+ *     small: 480,
+ *     medium: 480,
+ *     large: 880
+ *   }
+ * });
+ * ```
+ *
+ * @property {Object} [conversationViewWidths={small: 320, medium: 480, large: 640}]
+ * @property {Number} [conversationViewWidths.small=320] If width is less than this, use `layer-conversation-view-width-tiny` css class
+ * @property {Number} [conversationViewWidths.medium=480] If width is less than this, use `layer-conversation-view-width-small` css class
+ * @property {Number} [conversationViewWidths.large=640] If width is less than this, use `layer-conversation-view-width-medium` css class
+ */
+
+/**
+ * Number of items to store in the logs
+ *
+ * Sets the cache size (number of lines) for logs generated by the XDK; for use in
+ * limiting memory usage while still enabling the `Layer.client.sendLogs()` call to gather log data
+ *
+ * @property {Number} [logSize=150]
+ */
 
 let currentClient;
 

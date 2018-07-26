@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * Import the jsdoc JSON representation and generate typescript from it
  */
@@ -9,6 +10,15 @@ let interfaceIndex = 0;
 
 const unknownTypes = ['Audio', 'Video', 'Canvas'];
 const StandardEventMethodNames = ['on', 'once', 'trigger', '_triggerAsync'];
+
+module.exports = function(gruntIn) {
+  grunt = gruntIn;
+  grunt.registerMultiTask('generate-typescript-from-jsduck-structures', 'Generating Typescript Definitions from JSDuck Comments', function generate() {
+    this.files.forEach((fileGroup) => {
+      run(fileGroup.src, fileGroup.dest);
+    });
+  });
+}
 
 /**
  * Given a requested type name such as `Layer.Core.Client` or `String[]` or `Layer.UI.components.ComposeBar` or `WebSocket`:
@@ -614,8 +624,7 @@ function processFile(allClasses, destFolder) {
 }
 
 
-module.exports = (gruntIn, files, destFolder) => {
-  grunt = gruntIn;
+function run(files, destFolder) {
   // Note, typically there is only a single file: duck.json
   files.forEach((file) => {
     const contents = grunt.file.read(file);

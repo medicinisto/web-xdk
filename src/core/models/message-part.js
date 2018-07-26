@@ -163,11 +163,8 @@ export default class MessagePart extends Root {
 
   destroy() {
     clearTimeout(this._fetchStreamTimeoutId);
-    console.log("DESTROY WITH " + this.__url);
     if (this.__url) {
-      console.log("REVOKING " + this.__url);
       URL.revokeObjectURL(this.__url);
-      console.log("REVOKED");
       this.__url = null;
     }
     this.body = null;

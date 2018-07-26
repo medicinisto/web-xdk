@@ -316,7 +316,8 @@ registerComponent('layer-dialog', {
      * @method _updateTitlebarShowing
      */
     _updateTitlebarShowing() {
-      this.toggleClass('layer-dialog-titlebar-showing', (this.title || this.icon || this.iconClass || this.isCloseButtonShowing));
+      this.toggleClass('layer-dialog-titlebar-showing',
+        (this.title || this.icon || this.iconClass || this.isCloseButtonShowing));
     },
 
     /**

@@ -1,36 +1,19 @@
 /* eslint-disable */
 var fs = require('fs');
-var path = require('path');
 var version = require('./package.json').version;
 var HTML_HEAD = fs.readFileSync('./jsduck-config/head.html').toString();
 var CSS = fs.readFileSync('./jsduck-config/style.css').toString();
-var babel = require('babel-core');
-
-function extractClassDef(text) {
-  const result = {
-    code: '',
-    def: ''
-  };
-  var indexOfClass = text.indexOf('@class');
-  var indexOfClassCodeBlock = (indexOfClass !== -1) ? text.lastIndexOf('/**', indexOfClass) : -1;
-  if (indexOfClassCodeBlock !== -1) {
-    var endOfClassCodeBlock = text.indexOf('*/', indexOfClassCodeBlock);
-    if (endOfClassCodeBlock !== -1) {
-      endOfClassCodeBlock += 2;
-      var prefix = text.substring(0, indexOfClassCodeBlock);
-      var classComment = text.substring(indexOfClassCodeBlock, endOfClassCodeBlock);
-      classComment = classComment.replace(/\n\s*\*/g, '\n *') + '\n';
-      var postfix =  text.substring(endOfClassCodeBlock);
-      result.code = prefix + postfix;
-      result.def = classComment;
-    }
-  }
-  if (!result.code) result.code = text;
-  return result;
-}
 
 module.exports = function (grunt) {
   var saucelabsTests = require('./grunt-scripts/sauce-gruntfile')(grunt, version);
+  require('./grunt-scripts/jsduck')(grunt);
+  require('./grunt-scripts/commonjsify')(grunt);
+  require('./grunt-scripts/full-babel')(grunt);
+  require('./grunt-scripts/optimize-webcomponents')(grunt);
+  require('./grunt-scripts/adapters')(grunt);
+  require('./grunt-scripts/fix-npm-package')(grunt);
+  require('./grunt-scripts/generate-structures-from-jsduck')(grunt);
+  require('./grunt-scripts/generate-typescript-from-jsduck-structures')(grunt);
   var doingIstanbul = false;
 
 
@@ -226,7 +209,8 @@ module.exports = function (grunt) {
           {src: ['**'], cwd: 'tmp/es5/src', dest: 'npm/', expand: true},
           {src: 'package.json', dest: 'npm/package.json'},
           {src: 'README.md', dest: 'npm/README.md'},
-          {src: 'LICENSE', dest: 'npm/LICENSE'}
+          {src: 'LICENSE', dest: 'npm/LICENSE'},
+          {src: 'grunt-scripts', dest: 'npm/grunt-scripts'}
         ]
       },
       npmtheme: {
@@ -397,14 +381,14 @@ module.exports = function (grunt) {
     watch: {
       dev: {
         files: ['package.json', 'Gruntfile.js', 'src/**', '!src/**/test.js', '!src/ui/**/tests/**.js', '!src/version.js'],
-        tasks: ['wait', 'generate-npm', 'notify:watch', 'eslint:dev'],
+        tasks: ['generate-npm', 'notify:watch', 'eslint:dev'],
         options: {
           interrupt: false
         }
       },
       test: {
         files: ['package.json', 'Gruntfile.js', 'src/**', '!src/**/test.js', '!src/ui/**/tests/**.js', '!src/version.js'],
-        tasks: ['wait', 'generate-build-file', 'notify:watch', 'eslint:dev'],
+        tasks: ['generate-build-file', 'notify:watch', 'eslint:dev'],
         options: {
           interrupt: false
         }
@@ -477,50 +461,7 @@ module.exports = function (grunt) {
     }
 
 
-    grunt.registerMultiTask('jsduckfixes', 'Fixing Docs', function() {
-      var options = this.options();
 
-      this.files.forEach(function(fileGroup) {
-        fileGroup.src.forEach(function(file, index) {
-            var contents = grunt.file.read(file);
-            var startIndex = contents.indexOf('{');
-            var endIndex = contents.lastIndexOf('}') + 1;
-            var parsedContents = JSON.parse(contents.substring(startIndex, endIndex));
-
-            if (parsedContents.members) parsedContents.members.forEach(function(element) {
-              element.id = element.id.replace(/:/g, '_');
-            });
-            parsedContents.html = parsedContents.html.replace(/id='([^']*):([^']*)'/g, "id='" + "$1" + "_" + "$2'");
-            parsedContents.html = parsedContents.html.replace(/href='([^']*):([^']*)'/g, "href='" + "$1" + "_" + "$2'");
-            contents = contents.substring(0, startIndex) + JSON.stringify(parsedContents) + contents.substring(endIndex);
-            grunt.file.write(file, contents);
-        });
-      });
-    });
-
-    /* Adds template info to the jsduck class definition comments */
-    grunt.registerMultiTask('jsducktemplates', 'Adding templates to Docs', function() {
-      var options = this.options();
-
-      this.files.forEach(function(fileGroup) {
-        fileGroup.src.forEach(function(file, index) {
-          var template = grunt.file.read(file);
-          var srcFilePath = file.replace(/src/, 'n').replace(/\.html/, '.js');
-          var srcFile = grunt.file.read(srcFilePath);
-          var startIndex = srcFile.indexOf("@class");
-
-          if (startIndex !== -1) {
-            var layerIds = (template.match(/layer-id=["'](.*?)["']/gm) || []).map(function(match) {
-              return match.replace(/^.*["'](.*)["']/, "$1");
-            });
-
-            srcFile = srcFile.substring(0, startIndex) +
-            `### Templates\n\n * You can see the template for the latest template version at [${file.replace(/^.*\//, '')}](https://github.com/layerhq/web-xdk/blob/master/src/${srcFilePath.replace(/^.*npm/,'').replace(/\.js$/, '.html')})  \n * \n * The following layer-id attributes are expected in templates for this component: \n * \n * * ${layerIds.join('\n * * ')} \n` + srcFile.substring(startIndex);
-            grunt.file.write(srcFilePath, srcFile);
-          }
-        });
-      });
-  });
 
   grunt.registerMultiTask('version', 'Assign Versions', function() {
     var options = this.options();
@@ -536,244 +477,6 @@ module.exports = function (grunt) {
     // Iterate over each file set and fire away on that set
     this.files.forEach(function(fileGroup) {
       replace(fileGroup, options.version);
-    });
-  });
-
-
-  grunt.registerMultiTask('custom_copy', 'Copying files', function() {
-    var options = this.options();
-
-    function process(file, outputPath) {
-      try {
-        grunt.file.copy(file, outputPath);
-      } catch(e) {
-        grunt.log.writeln('Failed to process ' + file + '; ', e);
-      }
-    }
-
-    // Iterate over each file set and generate the build file specified for that set
-    this.files.forEach(function(fileGroup) {
-      fileGroup.src.forEach(function(file, index) {
-        // TODO: Generalize this to not only work with src
-        process(file, file.replace(/^src/, fileGroup.dest));
-      });
-    });
-  });
-
-  // Replace each file with a conversion that really should only replace `import/export` with `require/export`
-  // Any really experimental ES6 should not be used in the XDK code but if it is, will get converted here too.
-  grunt.registerMultiTask('commonjsify', 'Babelifying all files in src/core', function() {
-    var options = this.options();
-
-    function convert(file, outputPath) {
-      try {
-        //console.log("Read " + file + " and write " + outputPath);
-        var output = grunt.file.read(file);
-        var outputFolder = path.dirname(outputPath);
-        if (!grunt.file.exists(outputFolder)) {
-          grunt.file.mkdir(outputFolder);
-        }
-
-        const { code, def } = extractClassDef(output);
-
-        var babelResult = babel.transform(code, {
-          presets: [["env", {
-            "targets": {
-              "browsers": [
-                "Chrome > 64"
-              ]
-            }
-          }]],
-          compact: false
-        });
-        var result = def + babelResult.code;
-
-        grunt.file.write(outputPath, result);
-      } catch(e) {
-        grunt.log.writeln('Failed to process ' + file + '; ', e);
-      }
-    }
-
-    var files = [];
-    // Iterate over each file set and generate the build file specified for that set
-    this.files.forEach(function(fileGroup) {
-      fileGroup.src.forEach(function(file, index) {
-        files.push(file);
-        try {
-          convert(file, file.replace(/^.*?\//, fileGroup.dest + '/'));
-        } catch(e) {
-          console.error('Failed to convert ' + file + ' to babel');
-          throw(e);
-        }
-      });
-    });
-  });
-
-  grunt.registerMultiTask('full-babel', 'Babelifying all files in src/core', function() {
-    var options = this.options();
-
-    function convert(file, outputPath) {
-      try {
-        //console.log("Read " + file + " and write " + outputPath);
-        var output = grunt.file.read(file);
-        var outputFolder = path.dirname(outputPath);
-        if (!grunt.file.exists(outputFolder)) {
-          grunt.file.mkdir(outputFolder);
-        }
-
-        const { code, def } = extractClassDef(output);
-
-        var babelResult = babel.transform(code, {
-          presets: [["env", {
-            "targets": {
-              "browsers": [
-                "Chrome > 64",
-                "Safari >= 11",
-                "Firefox >= 58",
-                "last 2 Edge versions",
-                "IE 11"
-              ]
-            }
-          }]],
-          compact: false
-        });
-        var result = def + babelResult.code;
-
-        grunt.file.write(outputPath, result);
-      } catch(e) {
-        grunt.log.writeln('Failed to process ' + file + '; ', e);
-      }
-    }
-
-    var files = [];
-    // Iterate over each file set and generate the build file specified for that set
-    this.files.forEach(function(fileGroup) {
-      fileGroup.src.forEach(function(file, index) {
-        files.push(file);
-        try {
-          var dest = file.replace(/^.*?\/src/, fileGroup.dest);
-          convert(file, dest);
-        } catch(e) {
-          console.error('Failed to convert ' + file + ' to babel');
-          throw(e);
-        }
-      });
-    });
-  });
-
-
-  /*
-   * Take the Webcomponent definitions, and optimize away stuff we don't need...
-   * like comments and whitespace in the CSS and HTML template strings.
-   */
-  grunt.registerMultiTask('optimize-webcomponents', 'Building Web Components', function() {
-    var options = this.options();
-
-    function optimizeStrings(contents, name, commentExpr) {
-      var keyString = name + ': `';
-      var startIndex = contents.indexOf(keyString);
-      if (startIndex === -1) return contents;
-
-      startIndex += keyString.length;
-      var endIndex = contents.indexOf('`', startIndex);
-      if (endIndex === -1) return contents;
-      var stringToOptimize = contents.substring(startIndex, endIndex).replace(commentExpr, '').split(/\n/).map(line => line.trim()).filter(line => line).join('\n').replace(/>\n</g, '><');
-      return contents.substring(0, startIndex) + stringToOptimize + contents.substring(endIndex);
-    }
-
-    function optimizeWebcomponent(file, dest) {
-      try {
-        // Extract the class name; TODO: class name should be same as file name.
-        var jsFileName = file.replace(/^.*\//, '');
-        var className = jsFileName.replace(/\.js$/, '');
-
-        if (jsFileName === 'test.js') return;
-
-        var output = grunt.file.read(file);
-        output = optimizeStrings(output, 'style', /\/\*[\s\S]*?\*\//mg);
-        output = optimizeStrings(output, 'template', /<!--[\s\S]*?-->/mg);
-
-        var destFolder = path.dirname(dest);
-
-        if (!grunt.file.exists(destFolder)) {
-          grunt.file.mkdir(destFolder);
-        }
-
-        //console.log("Write " + dest);
-        grunt.file.write(dest, output);
-      } catch(e) {
-        grunt.log.writeln('Failed to process ' + file + '; ', e);
-      }
-    }
-
-    var files = [];
-    // Iterate over each file set and generate the build file specified for that set
-    this.files.forEach(function(fileGroup) {
-      fileGroup.src.forEach(function(file, index) {
-        files.push(file);
-        var dest = file.replace(/^.*?\/src/, fileGroup.dest);
-        optimizeWebcomponent(file, dest);
-      });
-    });
-    inWebcomponents = false;
-  });
-
-  grunt.registerMultiTask('jsduck-adapters', 'Adding docs to adaptors', function() {
-    var options = this.options();
-    var components = {};
-    this.files.forEach(function(fileGroup) {
-      fileGroup.src.forEach(function(file, index) {
-        var script = grunt.file.read(file);
-        var matches = script.match(/^\s*registerComponent\('(layer-.*?)'/m);
-        if (matches) {
-          const componentName = matches[1];
-          const reactComponentName = (componentName.substring(0, 1).toUpperCase() +
-            componentName.substring(1)
-            .replace(/-(.)/g, (str, value) => value.toUpperCase()))
-            .replace(/^Layer/, '');
-          const header = script.match(/\/\*\*[\s\S]*?\*\s*(.*)/);
-
-          var classNameMatches = script.match(/@class (.*)/m);
-          if (classNameMatches) {
-            components[reactComponentName] = {
-              description: header ? header[1] : '',
-              duckName: classNameMatches ? classNameMatches[1] : '',
-            };
-          }
-        }
-      });
-    });
-
-    var reference = [];
-    Object.keys(components).forEach((componentName) => {
-      var description = components[componentName].description;
-      var duckClassName = components[componentName].duckName;
-      reference.push('@return {' + duckClassName + '} return.' + componentName + '    ' + description);
-    });
-
-    var reactAdaptor = grunt.file.read('tmp/es5/src/ui/adapters/react.js');
-    var adapterStartIndex = reactAdaptor.indexOf('/**');
-    var adapterEndIndex = reactAdaptor.indexOf('*/', adapterStartIndex);
-    reactAdaptor = reactAdaptor.substring(0, adapterEndIndex) +
-    '* ' + reference.join('\n * ') + "\n" +
-    reactAdaptor.substring(adapterEndIndex);
-    grunt.file.write('tmp/es5/src/ui/adapters/react.js', reactAdaptor);
-  });
-
-  grunt.registerMultiTask('generate-structures-from-jsduck', 'Generating structures from JSDuck Comments', function generate() {
-    const defs = {};
-    const generateStructuresFromJSDuck = require('./grunt-scripts/generate-structures-from-jsduck');
-
-    this.files.forEach((fileGroup) => {
-      generateStructuresFromJSDuck(grunt, fileGroup.src, fileGroup.dest);
-    });
-  });
-
-  grunt.registerMultiTask('generate-typescript-from-jsduck-structures', 'Generating Typescript Definitions from JSDuck Comments', function generate() {
-    const generateTypescript = require('./grunt-scripts/generate-typescript-from-jsduck-structures');
-
-    this.files.forEach((fileGroup) => {
-      generateTypescript(grunt, fileGroup.src, fileGroup.dest);
     });
   });
 
@@ -962,27 +665,10 @@ module.exports = function (grunt) {
   });
 
 
-  grunt.registerTask('fix-npm-package', function() {
-    var contents = JSON.parse(grunt.file.read('npm/package.json'));
-    contents.main = 'index.js'
-    contents.types = 'index-all.d.ts';
-    delete contents.scripts.prepublishOnly;
-    grunt.file.write('npm/package.json', JSON.stringify(contents, null, 4));
-  });
-
   grunt.registerTask('refuse-to-publish', function() {
     if (!process.env.TRAVIS_JOB_NUMBER) {
       throw new Error('cd into the npm folder to complete publishing');
     }
-  });
-
-  grunt.registerTask('wait', function() {
-    var done = this.async();
-    var waitTime = 4000;
-    setTimeout(function() {
-      console.log("Wait " + waitTime + " completed");
-      done();
-    }, waitTime);
   });
 
   // Building
@@ -1049,7 +735,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('prepublish', ['generate-npm', 'refuse-to-publish']);
 
-  grunt.registerTask('samples', ['version', 'remove:tmp', 'optimize-webcomponents', 'custom_copy:src', 'commonjsify', 'browserify:samples']);
+  grunt.registerTask('samples', ['version', 'remove:tmp', 'optimize-webcomponents', 'commonjsify', 'browserify:samples']);
 
   // Build the theme and write them to npm folder
   grunt.registerTask('theme', ['remove:theme', 'less', 'cssmin', 'copy:npmtheme']),
