@@ -198,7 +198,19 @@ Typically its easiest to start development with `index-all` but the above option
     * Adds `mixins/message-type-model-capi` for Client API specific operations for the `Layer.Core.MessageType` class (Server API operations are in a separate repository)
     * `Layer.Core.MessagePart` `fetchStream()` method now uses any `part.body` value it already has if it has it
 
+## Websocket fixes
 
+Fixes aimed at websocket stability:
+
+* Changes exponential backoff for websocket reconnect and Replaying of missed events to start at a higher interval
+* Adds client events for debugging; see API Reference for details.
+  * websocket:connecting
+  * websocket:disconnecting
+  * websocket:replaying-events
+  * websocket:scheduling-reconnect
+  * websocket:schedule-reconnect
+  * websocket:ignore-skipped-counter
+* If multiple anomolies in a websocket connection will not attempt recovery until frequency of such errors is less than once per minute
 
 #### Other Changes
 

@@ -118,7 +118,7 @@ module.exports = function (grunt) {
         dirList: ['npm'],
       },
       npmjs: {
-        dirList: ['npm/*', '!npm/theme'],
+        dirList: ['npm/*', '!npm/theme', '!npm/grunt-tasks'],
       },
       theme: {
         dirList: ['themes/build']
@@ -210,7 +210,7 @@ module.exports = function (grunt) {
           {src: 'package.json', dest: 'npm/package.json'},
           {src: 'README.md', dest: 'npm/README.md'},
           {src: 'LICENSE', dest: 'npm/LICENSE'},
-          {src: 'grunt-scripts', dest: 'npm/grunt-scripts'}
+          {src: ['**'], cwd: 'grunt-scripts', dest: 'npm/grunt-scripts/', expand: true}
         ]
       },
       npmtheme: {

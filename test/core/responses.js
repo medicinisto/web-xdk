@@ -365,5 +365,9 @@ function TestWebSocket(url) {
     this.addEventListener = function() {};
     this.removeEventListener = function() {};
 }
+TestWebSocket.CONNECTING = 0;
+TestWebSocket.OPEN = 1;
+TestWebSocket.CLOSING = 2;
+TestWebSocket.CLOSED = 3;
 
 Layer.Utils.registerNativeSupport('Websocket', TestWebSocket);
