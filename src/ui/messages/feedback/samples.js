@@ -5,14 +5,14 @@ FeedbackModel = Layer.Core.Client.getMessageTypeModelClass('FeedbackModel');
 new TextModel({text: "Basic Feedback"}).send({ conversation: $("layer-conversation-view").conversation });
 
 model = new FeedbackModel({
-  enabledFor: [Layer.client.user.id],
+  enabledFor: Layer.client.user.id,
 });
 model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Feedback with custom action data"}).send({ conversation: $("layer-conversation-view").conversation });
 
 model = new FeedbackModel({
-  enabledFor: [Layer.client.user.id],
+  enabledFor: Layer.client.user.id,
   action: {
     data: {hey: 'ho'}
   }
@@ -27,7 +27,7 @@ ButtonsModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel');
 new TextModel({text: "Feedback with Button with custom action data"}).send({ conversation: $("layer-conversation-view").conversation });
 model = new ButtonsModel({
   contentModel: new FeedbackModel({
-    enabledFor: [Layer.client.user.id],
+    enabledFor: Layer.client.user.id,
     action: {
       data: {hey: 'ho'}
     }
@@ -46,19 +46,19 @@ new TextModel({text: "Carousel of Feedback"}).send({ conversation: $("layer-conv
 new CarouselModel({
   items: [
     new FeedbackModel({
-      enabledFor: [Layer.client.user.id],
+      enabledFor: Layer.client.user.id,
       action: {
         data: {hey: 'ho'}
       }
     }),
     new FeedbackModel({
-      enabledFor: [Layer.client.user.id],
+      enabledFor: Layer.client.user.id,
       action: {
         data: {hey: 'ho'}
       }
     }),
     new FeedbackModel({
-      enabledFor: [Layer.client.user.id],
+      enabledFor: Layer.client.user.id,
       action: {
         data: {hey: 'ho'}
       }
@@ -77,7 +77,7 @@ new CarouselModel({
   items: [
     new ButtonsModel({
       contentModel: new FeedbackModel({
-        enabledFor: [Layer.client.user.id],
+        enabledFor: Layer.client.user.id,
         action: {
           data: {hey: 'ho'}
         }
@@ -86,7 +86,7 @@ new CarouselModel({
     }),
     new ButtonsModel({
       contentModel: new FeedbackModel({
-        enabledFor: [Layer.client.user.id],
+        enabledFor: Layer.client.user.id,
         action: {
           data: {hey: 'ho'}
         }
@@ -95,7 +95,7 @@ new CarouselModel({
     }),
     new ButtonsModel({
       contentModel: new FeedbackModel({
-        enabledFor: [Layer.client.user.id],
+        enabledFor: Layer.client.user.id,
         action: {
           data: {hey: 'ho'}
         }
