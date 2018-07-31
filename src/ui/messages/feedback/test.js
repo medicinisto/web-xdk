@@ -86,10 +86,9 @@ describe('Feedback Message Components', function() {
     it("Should create an appropriate Message", function() {
       var model = new FeedbackModel({
         title: "title1",
+        responseMessage: "Customer said something",
         prompt: "rate it",
         promptWait: "wait to rate it",
-        summary: "${customer} didn't like you",
-        responseMessage: "${customer} didn't respond to you",
         placeholder: "got something to say, do ya?",
         enabledFor: client.user.id,
       });
@@ -103,8 +102,7 @@ describe('Feedback Message Components', function() {
         title: "title1",
         prompt: "rate it",
         prompt_wait: "wait to rate it",
-        summary: "${customer} didn't like you",
-        response_message: "${customer} didn't respond to you",
+        response_message: "Customer said something",
         placeholder: "got something to say, do ya?",
         enabled_for: client.user.id,
       });
@@ -123,8 +121,7 @@ describe('Feedback Message Components', function() {
               title: "title1",
               prompt: "rate it",
               prompt_wait: "wait to rate it",
-              summary: "${customer} didn't like you",
-              response_message: "${customer} didn't respond to you",
+              response_message: "Customer provided feedback",
               placeholder: "got something to say, do ya?",
               enabled_for: client.user.id,
             }),
@@ -140,8 +137,7 @@ describe('Feedback Message Components', function() {
       expect(model.title).toEqual("title1");
       expect(model.prompt).toEqual("rate it");
       expect(model.promptWait).toEqual("wait to rate it");
-      expect(model.summary).toEqual("${customer} didn't like you");
-      expect(model.responseMessage).toEqual("${customer} didn't respond to you");
+      expect(model.responseMessage).toEqual("Customer provided feedback");
       expect(model.placeholder).toEqual("got something to say, do ya?");
       expect(model.enabledFor).toEqual(client.user.id);
     });
@@ -166,7 +162,8 @@ describe('Feedback Message Components', function() {
         spyOn(Layer.Core.Conversation.prototype, "send");
 
         var model = new FeedbackModel({
-          enabledFor: client.user.id
+          enabledFor: client.user.id,
+          responseMessage: "Customer has provided feedback"
         });
         model.generateMessage(conversation);
         model.message.syncState = Layer.Constants.SYNC_STATE.SYNCED;
@@ -211,7 +208,7 @@ describe('Feedback Message Components', function() {
         expect(textPart.mimeAttributes.role).toEqual("status");
         expect(textPart.mimeAttributes['parent-node-id']).toEqual(responsePart.nodeId);
         expect(JSON.parse(textPart.body)).toEqual(jasmine.objectContaining({
-          text: client.user.displayName + " rated the experience 2 stars"
+          text: "Customer has provided feedback"
         }));
 
 
@@ -306,9 +303,9 @@ describe('Feedback Message Components', function() {
       testRoot.appendChild(el);
       model = new FeedbackModel({
         title: "mytitle",
-        prompt: "all hail ${customer}",
-        promptWait: "all wait ${customer}",
-        summary: "all summaries for ${customer}",
+        prompt: "all hail the Customer",
+        promptWait: "all wait the Customer",
+        summary: "all summaries for the Customer",
         enabledFor: client.user.id
       });
 
@@ -344,19 +341,20 @@ describe('Feedback Message Components', function() {
     it("Should show the specified prompt", function() {
       spyOn(model, "isEditable").and.returnValue(true);
       ui.onRerender();
-      expect(ui.nodes.label.innerHTML).toEqual("all hail " + client.user.displayName);
+      expect(ui.nodes.label.innerHTML).toEqual("all hail the Customer");
     });
 
     it("Should show the specified promptWait", function() {
       spyOn(model, "isEditable").and.returnValue(false);
       ui.onRerender();
-      expect(ui.nodes.label.innerHTML).toEqual("all wait " + client.user.displayName);
+      expect(ui.nodes.label.innerHTML).toEqual("all wait the Customer");
     });
 
     it("Should show the specified summary", function() {
       model.responses.addState('rating', 5);
+      model.responses.part = {updatedAt: new Date("2010-10-10")};
       ui.onRerender();
-      expect(ui.nodes.label.innerHTML).toEqual("all summaries for " + client.user.displayName);
+      expect(ui.nodes.ratedAt.innerHTML).toEqual("October 2010");
     });
 
     it("Should change ratings on selecting enabled star", function() {

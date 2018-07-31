@@ -37,32 +37,67 @@ registerComponent('layer-feedback-message-view', {
   }
   `,
   properties: {
+    /**
+     * Use a Titled Display Container to render this UI.
+     *
+     * @property {String} [messageViewContainerTagName=layer-titled-message-view-container]
+     */
     messageViewContainerTagName: {
       noGetterFromSetter: true,
       value: 'layer-titled-message-view-container',
     },
+
+    // Add this class to <layer-feedback-message-view />
     cssClassList: {
       value: ['layer-feedback-message-view-ratings'],
     },
+
+    /**
+     * Fixed width at 300px
+     *
+     * @property {Number} [minWidth=300]
+     */
     minWidth: {
       value: 300,
     },
+
+    /**
+     * Fixed width at 300px
+     *
+     * @property {Number} [maxWidth=300]
+     */
     maxWidth: {
       value: 300,
     },
   },
   methods: {
+    /**
+     * Return an SVG string for use in the titlebar
+     *
+     * @method getIcon
+     * @returns {String}
+     */
     getIcon() {
       return getGraphic('feedback')();
     },
+
+    /**
+     * Returns a title for use in the titlebar
+     *
+     * @method getTitle
+     * @returns {String}
+     */
     getTitle() {
       return this.model.title;
     },
 
+    // On creating the widget, wire up its event handlers
     onCreate() {
       this.addClickHandler('pre-rating', this, this._onClick.bind(this));
     },
 
+    // Whenever we rerender, update the ratings that are selected/deselected
+    // TODO: Probably more efficient to have `onRender` render the stars, and `onRerender` update styling on the stars
     onRerender() {
       const rating = this.model.rating || 0;
       this.messageViewer.toggleClass('layer-feedback-enabled', this.model.isEditable());
@@ -73,6 +108,15 @@ registerComponent('layer-feedback-message-view', {
       this.innerHTML = text;
     },
 
+    /**
+     * When the user clicks on the View, find out which Star was clicked on (if any) and update the rating accordingly.
+     *
+     * Note that the event will bubble up and cause the Message Viewer Action to be triggered (typically shows the Large Feedback message)
+     *
+     * @method _onClick
+     * @private
+     * @param {Event} evt
+     */
     _onClick(evt) {
       if (!this.model.isEditable()) return;
       let target = evt.target;
@@ -87,5 +131,3 @@ registerComponent('layer-feedback-message-view', {
     },
   },
 });
-
-registerStatusModel(FeedbackModel.MIMEType);

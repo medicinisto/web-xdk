@@ -127,7 +127,7 @@ const LayerDate = {
     },
 
     /**
-     * The format options to use if rendering a date that is not from this week
+     * The format options to use if rendering a date that is not from this year
      *
      * widget.olderFormat = {
      *     weekday: "short",

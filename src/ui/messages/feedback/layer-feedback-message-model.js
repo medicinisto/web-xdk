@@ -3,26 +3,20 @@
   model = new FeedbackModel({
     title: "Experience Rooting", // Optional, defaults to Experience Rating
     prompt: "Rate your experiment 1-5 beakers", // Optional, defaults to Rate your experience 1-5 stars
-    promptWait: "Waiting for more Beakers",
-
-    // ${rating} extracts this.rating; ${customer} gets the customer's displayName... or "You" if rated by the customer viewing it.
-    summary: "${rating} stars by ${customer}",
-    // ${rating} extracts this.rating; ${customer} gets the customer's displayName (but not "You" as all users will see the same message)
-    responseMessage: "Rated ${rating} beakers by ${customer}",
+    promptWait: "Waiting for more Beakers", // Optional, defaults to "Waiting for Feedback"
+    responseMessage: "Feedback Message has a response", // Optional, defaults to "Rating submitted"
     placeholder: "Tell us that you love us", // Optional, defaults to "Add a comment..."
     enabledFor: "layer:///identities/user_id", // Only a single Identity is supported
-    customResponseData: {hey: "ho"},
    });
    model.send({ conversation });
  * ```
  *
  *### Importing
  *
- * Not included with the standard build. Import using either:
+ * Not included with the standard build. Import using:
  *
  * ```
  * import '@layerhq/web-xdk/ui/messages/choice/layer-feedback-message-view';
- * import '@layerhq/web-xdk/ui/messages/choice/layer-feedback-message-model';
  * ```
  *
  * @class Layer.UI.messages.FeedbackMessageModel
@@ -43,14 +37,14 @@ export default class FeedbackModel extends MessageTypeModel {
     this.responses.registerState('custom_response_data', CRDT_TYPES.FIRST_WRITER_WINS);
   }
 
+  // See parent class; generates the root message part for the feedback message
   generateParts(callback) {
     const body = this.initBodyWithMetadata([
       'title', 'prompt', 'promptWait', 'responseMessage',
-      'summary', 'placeholder', 'customResponseData', 'enabledFor',
+      // 'summary', 'customResponseData',
+      'placeholder', 'enabledFor',
     ]);
-    if (this.enabledFor) {
-      body.enabled_for = this.enabledFor;
-    } else {
+    if (!body.enabled_for) {
       throw new Error(ErrorDictionary.enabledForMissing);
     }
 
@@ -61,54 +55,46 @@ export default class FeedbackModel extends MessageTypeModel {
     callback([this.part]);
   }
 
-  // See parent class
-  parseModelPart({ payload, isEdit }) {
-    const rating = this.rating;
-    const comment = this.comment;
-    super.parseModelPart({ payload, isEdit });
-
-    if (this.rating !== rating) {
-      this._triggerAsync('message-type-model:change', {
-        property: 'rating',
-        newValue: this.rating,
-        oldValue: rating,
-      });
-    }
-    if (this.comment !== comment) {
-      this._triggerAsync('message-type-model:change', {
-        property: 'comment',
-        newValue: this.comment,
-        oldValue: comment,
-      });
-    }
-  }
-
+  // See parent class; parses all Response Messages and updates rating and comment properties
   parseModelResponses() {
     const rating = this.responses.getState('rating', this.enabledFor);
     if (rating) {
       this.rating = rating;
-      this.comment = this.responses.getState('comment', this.enabledFor);
+      this.comment = this.responses.getState('comment', this.enabledFor) || '';
     }
   }
 
-  isRated() {
-    return Boolean(this.responses.getState('rating', this.enabledFor));
-  }
-
+  /**
+   * Does this model represent something that the user can edit/interact with, or is it readonly data?
+   *
+   * @method isEditable
+   * @returns {Boolean}
+   */
   isEditable() {
-    if (this.isRated()) return false;
+    if (this.isRated) return false;
     if (this.enabledFor !== getClient().user.id) return false;
     return true;
   }
 
+  /**
+   * Send feedback submits the rating and comment to the server and shares it with other participants.
+   *
+   * ```
+   * model.rating = 3;
+   * model.comment = 'I think that everyone should see my comment';
+   * model.sendFeedback();
+   * ```
+   *
+   * @method sendFeedback
+   */
   sendFeedback() {
     if (this.enabledFor !== getClient().user.id) return;
 
-    const responseText = this.getSummary(this.responseMessage, false);
+    const responseText = this.responseMessage; // this.getSummary(this.responseMessage, false);
 
     this.responses.addState('rating', this.rating);
-    this.responses.addState('comment', this.comment);
-    if (this.customResponseData) this.responses.addState('custom_response_data', this.customResponseData);
+    if (this.comment) this.responses.addState('comment', this.comment);
+    // if (this.customResponseData) this.responses.addState('custom_response_data', this.customResponseData);
     this.responses.setResponseMessageText(responseText);
     this.responses.sendResponseMessage();
   }
@@ -129,6 +115,18 @@ export default class FeedbackModel extends MessageTypeModel {
     });
   }
 
+  __getRatedAt() {
+    if (this.isRated && this.responses.part) {
+      return this.responses.part.updatedAt;
+    } else {
+      return null;
+    }
+  }
+
+  __getIsRated() {
+    return Boolean(this.responses.getState('rating', this.enabledFor));
+  }
+/*
   getSummary(template, useYou) {
     return template.replace(/(\$\{.*?\})/g, (match) => {
       const key = match.substring(2, match.length - 1);
@@ -144,21 +142,157 @@ export default class FeedbackModel extends MessageTypeModel {
       }
     });
   }
+*/
 }
 
+/**
+ * Title to represent the Message.
+ *
+ * This can be customized using the Message Payload:
+ *
+ * ```
+ * new FeedbackModel({ title: "My Title" }).send({ conversation });
+ * ```
+ *
+ * Or by customizing the prototype:
+ *
+ * ```
+ * FeedbackModel.prototype.title = 'My Title';
+ * ```
+ *
+ * @property {String} [title=Experience Rating]
+ */
 FeedbackModel.prototype.title = 'Experience Rating';
-FeedbackModel.prototype.prompt = 'Rate your experience 1-5 stars';
-FeedbackModel.prototype.promptWait = 'Waiting for Feedback';
-FeedbackModel.prototype.summary = '${customer} rated the experience ${rating} stars'; // eslint-disable-line no-template-curly-in-string
-FeedbackModel.prototype.responseMessage = '${customer} rated the experience ${rating} stars'; // eslint-disable-line no-template-curly-in-string
-FeedbackModel.prototype.placeholder = 'Add a comment...';
-FeedbackModel.prototype.enabledFor = '';
-FeedbackModel.prototype.customResponseData = null;
-FeedbackModel.prototype.rating = 0;
-FeedbackModel.prototype.comment = '';
-FeedbackModel.prototype.customer = '';
 
-FeedbackModel.anonymousUserName = 'Customer';
+/**
+ * Prompt to show user in Large Message View to ask them to provide feedback.
+ *
+ * This can be customized using the Message Payload:
+ *
+ * ```
+ * new FeedbackModel({ prompt: "I demand your feedback!" }).send({ conversation });
+ * ```
+ *
+ * Or by customizing the prototype:
+ *
+ * ```
+ * FeedbackModel.prototype.prompt = 'I demand your feedback!';
+ * ```
+ *
+ * @property {String} [prompt=Rate your experience 1-5 stars]
+ */
+FeedbackModel.prototype.prompt = 'Rate your experience 1-5 stars';
+
+/**
+ * Prompt to show user in Large Message View to ask them to wait for the other user to provide feedback.
+ *
+ * This can be customized using the Message Payload:
+ *
+ * ```
+ * new FeedbackModel({ promptWait: "I demand you wait for feedback!" }).send({ conversation });
+ * ```
+ *
+ * Or by customizing the prototype:
+ *
+ * ```
+ * FeedbackModel.prototype.promptWait = 'I demand you wait for feedback!';
+ * ```
+ *
+ * @property {String} [promptWait=Waiting for Feedback]
+ */
+FeedbackModel.prototype.promptWait = 'Waiting for Feedback';
+
+/**
+ * Prompt to show user in Large Message View to ask them to wait for the other user to provide feedback.
+ *
+ * This can be customized using the Message Payload:
+ *
+ * ```
+ * new FeedbackModel({ responseMessage: "Feedback process completed" }).send({ conversation });
+ * ```
+ *
+ * Or by customizing the prototype:
+ *
+ * ```
+ * FeedbackModel.prototype.responseMessage = 'Feedback process completed';
+ * ```
+ *
+ * @property {String} [responseMessage=Rating submitted]
+ */
+FeedbackModel.prototype.responseMessage = 'Rating submitted';
+// FeedbackModel.prototype.responseMessage = '${customer} rated the experience ${rating} stars'; // eslint-disable-line no-template-curly-in-string
+// FeedbackModel.prototype.summary = '${customer} rated the experience ${rating} stars'; // eslint-disable-line no-template-curly-in-string
+
+/**
+ * Placeholder text to put in the Text Area if there is no text there and its waiting for input.
+ *
+ * This can be customized using the Message Payload:
+ *
+ * ```
+ * new FeedbackModel({ placeholder: "Please write something here." }).send({ conversation });
+ * ```
+ *
+ * Or by customizing the prototype:
+ *
+ * ```
+ * FeedbackModel.prototype.placeholder = 'Please write something here.';
+ * ```
+ *
+ * @property {String} [placeholder=Add a comment...]
+ */
+FeedbackModel.prototype.placeholder = 'Add a comment...';
+
+/**
+ * Required property for specifying which user is expected/allowed to provide the feedback; sent in the form of an Identity ID.
+ *
+ * This must be sent as part of any Feedback Message:
+ *
+ * ```
+ * new FeedbackModel({ enabledFor: "layer:///identitites/frodo-the-dodo" }).send({ conversation });
+ * ```
+ *
+ * @property {String} enabledFor
+ */
+FeedbackModel.prototype.enabledFor = '';
+
+
+// FeedbackModel.prototype.customResponseData = null;
+
+/**
+ * Currently selected rating.
+ *
+ * This value may be set via user selection, but not yet sent (or currently being sent); in this case
+ * you will see the local copy, but not necessarily a published value.
+ *
+ * @property {Number} [rating=0]
+ */
+FeedbackModel.prototype.rating = 0;
+
+/**
+ * Currently entered comment from the user.
+ *
+ * This value may be set via user entry, but not yet sent (or currently being sent); in this case
+ * you will see the local copy, but not necessarily a published value.
+ *
+ * @property {String} comment
+ */
+FeedbackModel.prototype.comment = '';
+
+/**
+ * Date object representing when this feedback was completed (or null if not completed)
+ *
+ * @property {Date} [ratedAt=null]
+ */
+FeedbackModel.prototype.ratedAt = null;
+
+/**
+ * Boolean indicates if this Feedback has a rating; rating may not have yet reached the server.
+ *
+ * @property {Boolean} [isRated=false]
+ */
+FeedbackModel.prototype.isRated = false;
+
+// FeedbackModel.anonymousUserName = 'Customer';
 
 /**
  * One instance of this type
@@ -169,7 +303,7 @@ FeedbackModel.anonymousUserName = 'Customer';
 FeedbackModel.LabelSingular = 'Feedback Request';
 
 /**
- * One instance of this type
+ * Multiple instances of this type
  *
  * @static
  * @property {String} [LabelPlural=Feedback Requests]
@@ -177,16 +311,35 @@ FeedbackModel.LabelSingular = 'Feedback Request';
 FeedbackModel.LabelPlural = 'Feedback Requests';
 
 /**
- * Standard concise representation of this Message Type
+ * The default action for the Feedback Message is to show a Large Message View.
  *
  * @static
- * @property {String} [SummaryTemplate=${prompt}]
+ * @property {String} [defaultAction=layer-show-large-message]
  */
-FeedbackModel.SummaryTemplate = '${prompt}'; // eslint-disable-line no-template-curly-in-string
-
 FeedbackModel.defaultAction = 'layer-show-large-message';
+
+/**
+ * Medium Message view is a `<layer-feedback-message-view />`
+ *
+ * @static
+ * @property {String} [messageRenderer=layer-feedback-message-view]
+ */
 FeedbackModel.messageRenderer = 'layer-feedback-message-view';
+
+/**
+ * Large Message view is a `<layer-feedback-message-large-view />`
+ *
+ * @static
+ * @property {String} [largeMessageRenderer=layer-feedback-message-large-view]
+ */
 FeedbackModel.largeMessageRenderer = 'layer-feedback-message-large-view';
+
+/**
+ * Set the MIME Type for Feedback Messages
+ *
+ * @static
+ * @property {String} [MIMEType=application/vnd.layer.feedback+json]
+ */
 FeedbackModel.MIMEType = 'application/vnd.layer.feedback+json';
 
 Root.initClass.apply(FeedbackModel, [FeedbackModel, 'FeedbackModel']);
