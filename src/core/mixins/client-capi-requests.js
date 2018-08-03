@@ -13,6 +13,7 @@ import Settings from '../../settings';
 import { LayerError } from '../layer-error';
 import { LOCALSTORAGE_KEYS, ACCEPT } from '../../constants';
 import version from '../../version';
+import packageName from '../../name';
 
 const { timeBetweenReauths } = Settings;
 const MAX_XHR_RETRIES = 3;
@@ -245,7 +246,7 @@ const ClientCapiRequest = {
 
       if (!headers['content-type']) headers['content-type'] = 'application/json';
 
-      if (!headers['layer-xdk-version']) headers['layer-xdk-version'] = version;
+      if (!headers['layer-xdk-version']) headers['layer-xdk-version'] = packageName + '-' + version;
       if (!headers['client-id']) headers['client-id'] = this._tabId;
     },
 

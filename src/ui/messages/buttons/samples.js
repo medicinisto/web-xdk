@@ -382,3 +382,36 @@ model = new ButtonModel({
  })
 });
 model.send({ conversation: $("layer-conversation-view").conversation });
+
+/* does not (yet) work
+TextModel = Layer.Core.Client.getMessageTypeModelClass('TextModel')
+new TextModel({text: "Choice Buttons in a column"}).send({ conversation: $("layer-conversation-view").conversation });
+
+ButtonModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
+model = new ButtonModel({
+  contentModel: new TextModel({title: "Text Title", text: "What is the airspeed velocity of an unladen swallow?"}),
+  buttons: [
+    {"type": "choice", "choices": [{"text": "I dont know", "id": "unknown"}],
+    "data": {
+        allowDeselect: true,
+        enabledFor: Layer.client.user.id
+      }
+    },
+    {"type": "choice", "choices": [{"text": "Faster than you can gallop on a coconut steed", "id": "faster"}],
+    "data": {
+        allowDeselect: true,
+        enabledFor: Layer.client.user.id
+      }
+    },
+
+    {"type": "choice", "choices": [{"text": "Unladen with what?", "id": "Gotcha"}],
+    "data": {
+        allowDeselect: true,
+        enabledFor: Layer.client.user.id
+      }
+    },
+ ]
+});
+model.send({ conversation: $("layer-conversation-view").conversation });
+
+*/

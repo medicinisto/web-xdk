@@ -406,7 +406,7 @@ describe("The Client CAPI Auth Mixin", function() {
                 requestHeaders: {
                     "content-type": "application/json",
                     "accept": "application/vnd.layer+json; version=3.0",
-                    "layer-xdk-version": Layer.version.replace(/-.*/, ''),
+                    "layer-xdk-version": Layer.packageName + '-' + Layer.version.replace(/-.*/, ''),
                     "client-id": client._tabId,
                 },
                 method: "POST"

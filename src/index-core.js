@@ -3,6 +3,7 @@ import * as Constants from './constants';
 import Core from './core/index';
 import * as Utils from './utils';
 import version from './version';
+import packageName from './name';
 import Settings from './settings';
 
 Settings.setClient(new Core.Client({}));
@@ -41,6 +42,7 @@ module.exports = {
   init,
   onInit,
   version,
+  packageName,
   get client() { return Settings.getClient(); },
   Settings,
 };

@@ -355,7 +355,6 @@ var dbIt = it;
           expect(done).toBe(true);
         });
         it("Should trigger open event", function(done) {
-          debugger;
           var dbManager = new Layer.Core.DbManager({
             enabled: true,
             tables: {conversations: true}

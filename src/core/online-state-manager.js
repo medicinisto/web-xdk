@@ -20,10 +20,43 @@
  * correctly report navigator.onLine=true.  As a result, we can't rely on this value and this class must continue to poll the server while
  * offline and to ignore values from navigator.onLine.  Future Work: Allow non-chrome browsers to use navigator.onLine.
  *
+ * ## Execution Paths
+ *
+ * Path A: Initialization Path
+ *
+ * 1. `start()` method calls `checkOnlineStatus()`
+ * 2. `checkOnlineStatus()` does a Ping operation to the server
+ * 3. `_connectionListener()` detects the result of the Ping in the form of an XHR success or failure to reach the server
+ *   a. Success: Schedule `_onlineExpiring()` to be called in 100 seconds (rescheduled if any network traffic is received)
+ *   b. Failure: Call `_onlineExpiring()` which does one verification Ping to the server to make sure it is unreachable (rather than CORS or other error)
+ *     i. Ping fails: Calls `_onlineExpired()` which Changes to state to offline mode, and calls `_scheduleNextOnlineCheck()`
+ *     ii. Ping succeedes: Handled by `_connectionListener()`; Go to #3 and #3a
+ *
+ *
+ * NOTES: Any failure of `checkOnlineStatus` could be caused by CORS errors or server request timing out
+ *    (should actually get a gateway timeout before that happens... which itself gets CORS header errors) rather than connection errors,
+ *    therefore we must verify loss of connection via Ping
+ *
+ * PATH B: Client is Online Path:
+ *
+ * 1. Call to `_onlineExpiring()` is scheduled to be called in 100 seconds
+ * 2. Websocket packets sent by the server and XHR responses from servers are intercepted by `_connectionListener()` which  reschedules `_onlineExpiring()` each time
+ * 3. Websocket pings make it unlikely that `_onlineExpiring()` ever gets reached... but if the websocket connection is down then `_onlineExpiring()` is called, does one verification Ping to the server to make sure it is unreachable
+ *   a. Ping fails: Calls `_onlineExpired()` which Changes to state to offline mode, and calls `_scheduleNextOnlineCheck()`
+ *   b. Ping succeedes: ping response observed by `_connectionListener()`; Go to #2
+ *
+ * PATH C: Client goes offline
+ *
+ * 1. Ping fails: Calls `_onlineExpired()` which changes the state to offline mode, and calls `_scheduleNextOnlineCheck()`
+ * 2. `_scheduleNextOnlineCheck()` schedules (using exponential backoff) calls to `checkOnlineStatus()`
+ * 3. `checkOnlineStatus()` Pings the server
+ *    a. `_connectionListener()` detects the result of the Ping in the form of an XHR success or failure to reach the server
+ *      i. Success: Changes state to Online and schedules `_onlineExpiring()`
+ *      ii. Failure: Go to #2 and increase the exponential backoff, repeat indefinitely until we have success
+ *
  * @class  Layer.Core.OnlineStateManager
  * @private
  * @extends Layer.Core.Root
- *
  */
 import Settings from '../settings';
 import Core from './namespace';
@@ -32,6 +65,7 @@ import * as Util from '../utils';
 import { getNativeSupport } from '../utils/native-support';
 import { ACCEPT } from '../constants';
 import version from '../version';
+import packageName from '../name';
 
 const { logger, xhr } = Util;
 const { getClient } = Settings;
@@ -78,8 +112,7 @@ export default class OnlineStateManager extends Root {
     logger.info('OnlineStateManager: start');
     this.isClientReady = true;
     this.isOnline = true;
-
-    this._scheduleNextOnlineCheck();
+    this._scheduleOnlineExpiring();
   }
 
   /**
@@ -101,32 +134,19 @@ export default class OnlineStateManager extends Root {
    * @method _scheduleNextOnlineCheck
    * @private
    */
-  _scheduleNextOnlineCheck(connectionFailure, callback) {
-    logger.debug('OnlineStateManager: skip schedule');
-    if (this.isDestroyed || !this.isClientReady) return;
+  _scheduleNextOnlineCheck() {
+    if (this.isDestroyed || !this.isClientReady || this.isOnline) return;
 
-    // Replace any scheduled calls with the newly scheduled call:
+    const backoffCounter = Math.min(10, this.offlineCounter + 3);
+    this.offlineCounter++;
+    const duration = Util.getExponentialBackoffSeconds(this.maxOfflineWait, backoffCounter);
+    logger.info('OnlineStateManager: Scheduled checkOnlineStatus ' + duration + ' seconds');
     this._clearCheck();
-
-    // If this is called while we are online, then we are using this to detect when we've gone without data for more than pingFrequency.
-    // Call this._onlineExpired after pingFrequency of no server responses.
-    if (!connectionFailure && this.isOnline) {
-      logger.debug('OnlineStateManager: Scheduled onlineExpired');
-      this.onlineCheckId = setTimeout(this._onlineExpired.bind(this), this.pingFrequency);
-    }
-
-    // If this is called while we are offline, we're doing exponential backoff pinging the server to see if we've come back online.
-    else {
-      logger.info('OnlineStateManager: Scheduled checkOnlineStatus');
-      const backoffCounter = Math.min(10, this.offlineCounter + 3);
-      this.offlineCounter++;
-      const duration = Util.getExponentialBackoffSeconds(this.maxOfflineWait, backoffCounter);
-      this.onlineCheckId = setTimeout(this.checkOnlineStatus.bind(this, callback), Math.floor(duration * 1000));
-    }
+    this.onlineCheckId = setTimeout(this.checkOnlineStatus.bind(this), Math.floor(duration * 1000));
   }
 
   /**
-   * Cancels any upcoming calls to checkOnlineStatus
+   * Cancels any upcoming calls to checkOnlineStatus or _onlineExpiring.
    *
    * @method _clearCheck
    * @private
@@ -150,22 +170,42 @@ export default class OnlineStateManager extends Root {
    * @param  {Event} evt - Browser online/offline event object
    */
   _handleOnlineEvent(evt) {
-    // Reset the counter because our first request may fail as they may not be
+    // Reset the counter; its likely our first request may fail as networking may not be
     // fully connected yet
     this.offlineCounter = 0;
     this.checkOnlineStatus();
   }
 
   /**
+   * Last ditch attempt to prove we are online before setting us to offline.
+   *
+   * Note that under worst case conditions, a request could take until the browser gives up (2 minutes?)
+   *
+   * @method _onlineExpiring
+   * @private
+   */
+  _onlineExpiring() {
+    logger.info('OnlineStateManager: Online State Expiring; pinging to verify');
+    this._isOnlineExpiring = true;
+    this.checkOnlineStatus((result) => {
+      if (!result && this._isOnlineExpiring) this._onlineExpired();
+      this._isOnlineExpiring = false;
+    });
+  }
+
+  /**
    * Our online state has expired; we are now offline.
    *
    * If this method gets called, it means that our connection has gone too long without any data
-   * and is now considered to be disconnected.  Start scheduling tests to see when we are back online.
+   * and is now considered to be disconnected.
+   *
+   * Start scheduling tests to see when we are back online.
    *
    * @method _onlineExpired
    * @private
    */
   _onlineExpired() {
+    logger.info('OnlineStateManager: Online State Expired');
     this._clearCheck();
     this._changeToOffline();
     this._scheduleNextOnlineCheck();
@@ -187,6 +227,9 @@ export default class OnlineStateManager extends Root {
    * @param {boolean} callback.isOnline - Callback is called with true if online, false if not
    */
   checkOnlineStatus(callback) {
+    const client = getClient();
+    if (this.isDestroyed || !client) return;
+
     this._clearCheck();
     if (getClient().isReady) {
       logger.info('OnlineStateManager: Firing XHR for online check');
@@ -197,6 +240,8 @@ export default class OnlineStateManager extends Root {
         method: 'HEAD',
         headers: {
           accept: ACCEPT,
+          'layer-xdk-version': packageName + '-' + version,
+          'client-id': getClient()._tabId,
         },
       }, ({ status }) => {
         // this.isOnline will be updated via _connectionListener prior to this line executing
@@ -214,9 +259,9 @@ export default class OnlineStateManager extends Root {
    */
   _changeToOffline() {
     if (this.isOnline) {
+      logger.info('OnlineStateManager: Connection lost');
       this.isOnline = false;
       this.trigger('disconnected');
-      logger.info('OnlineStateManager: Connection lost');
     }
   }
 
@@ -231,8 +276,9 @@ export default class OnlineStateManager extends Root {
    */
   _connectionListener(evt) {
     // If event is a success, change us to online
-    const failed = evt.status !== 'connection:success';
-    if (!failed) {
+    const success = evt.status === 'connection:success';
+    if (success) {
+      this._isOnlineExpiring = false;
       const lastTime = this.lastMessageTime;
       this.lastMessageTime = new Date();
       if (!this.isOnline) {
@@ -243,11 +289,32 @@ export default class OnlineStateManager extends Root {
         this.connectedCounter++;
         logger.info('OnlineStateManager: Connected restored');
       }
+      this._scheduleOnlineExpiring();
     }
 
-    this._scheduleNextOnlineCheck(failed, (result) => {
-      if (!result) this._changeToOffline();
-    });
+    // Request failed to get through and our state is online, do a verifying ping and set us to offline
+    else if (this.isOnline) {
+      this._clearCheck();
+      this._onlineExpiring();
+    }
+
+    // We were offline anyways, didn't expect it to work, Start/continue scheduled pinging to see when we come back online
+    else {
+      this._scheduleNextOnlineCheck();
+    }
+  }
+
+  /**
+   * Schedule the onlineExpiring ping to happen every 95-105 seconds
+   *
+   * @method _scheduleOnlineExpiring
+   * @private
+   */
+  _scheduleOnlineExpiring() {
+    this._clearCheck();
+    const delay = this.pingFrequency - 5 + Math.random() * 10;
+    logger.debug('OnlineStateManager: Scheduling online expiration in ' + delay + ' seconds');
+    this.onlineCheckId = setTimeout(this._onlineExpiring.bind(this), delay * 1000);
   }
 
   /**
@@ -321,7 +388,17 @@ OnlineStateManager.prototype.isOnline = false;
 OnlineStateManager.prototype.onlineCheckId = 0;
 
 /**
- * If we are online, how often do we need to ping to verify we are still online.
+ * True if current state is that we are probably offline, and just firing one last request to verify that fact.
+ *
+ * Set to false to cancel the verification (well, ignore the verification response)
+ *
+ * @property {Boolean} _isOnlineExpiring
+ * @private
+ */
+OnlineStateManager.prototype._isOnlineExpiring = false;
+
+/**
+ * If we are online, how often do we need to ping to verify we are still online; measured in seconds.
  *
  * Value is reset any time we observe any messages from the server.
  * Measured in miliseconds. NOTE: Websocket has a separate ping which mostly makes
@@ -329,7 +406,7 @@ OnlineStateManager.prototype.onlineCheckId = 0;
  * ping for when our state is offline.
  * @property {Number} [pingFrequency=100000]
  */
-OnlineStateManager.prototype.pingFrequency = 100 * 1000;
+OnlineStateManager.prototype.pingFrequency = 100;
 
 OnlineStateManager._supportedEvents = [
   /**

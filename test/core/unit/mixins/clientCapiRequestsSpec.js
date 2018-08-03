@@ -554,7 +554,7 @@ describe("The Client CAPI Requests Mixin", function() {
                 "hey-ho": "Doh",
                 "content-type": "application/json",
                 accept: "application/vnd.layer+json; version=3.0",
-                "layer-xdk-version": Layer.version.replace(/-.*/, ''),
+                "layer-xdk-version": Layer.packageName + '-' + Layer.version.replace(/-.*/, ''),
                 "client-id": client._tabId,
             });
         });
@@ -571,7 +571,7 @@ describe("The Client CAPI Requests Mixin", function() {
                 "hey-ho": "Doh",
                 "content-type": "application/json",
                 accept: "application/vnd.layer+json; version=3.0",
-                "layer-xdk-version": Layer.version.replace(/-.*/, ''),
+                "layer-xdk-version": Layer.packageName + '-' + Layer.version.replace(/-.*/, ''),
                 "client-id": client._tabId,
             });
         });
@@ -587,7 +587,7 @@ describe("The Client CAPI Requests Mixin", function() {
             expect(headers).toEqual({
                 "content-type": "text/mountain",
                 accept: "application/vnd.layer+json; version=3.0",
-                "layer-xdk-version": Layer.version.replace(/-.*/, ''),
+                "layer-xdk-version": Layer.packageName + '-' + Layer.version.replace(/-.*/, ''),
                 "client-id": client._tabId,
             });
         });

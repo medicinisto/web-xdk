@@ -230,14 +230,14 @@ describe("The Websocket Socket Manager Class", function() {
         it("Should use the correct default url", function() {
            websocketManager._socket = null;
            websocketManager.connect();
-           expect(websocketManager._socket.url).toEqual('wss://websockets.layer.com/?session_token=sessionToken&client-id=' + client._tabId + "&layer-xdk-version=" + Layer.version.replace(/-.*/, ''));
+           expect(websocketManager._socket.url).toEqual('wss://websockets.layer.com/?session_token=sessionToken&client-id=' + client._tabId + "&layer-xdk-version=" + Layer.packageName + '-' + Layer.version.replace(/-.*/, ''));
         });
 
         it("Should allow customization of the websocket url", function() {
             client.websocketUrl = 'wss://staging-websockets.layer.com';
             websocketManager._socket = null;
             websocketManager.connect();
-            expect(websocketManager._socket.url).toEqual('wss://staging-websockets.layer.com/?session_token=sessionToken&client-id=' + client._tabId + "&layer-xdk-version=" + Layer.version.replace(/-.*/, ''));
+            expect(websocketManager._socket.url).toEqual('wss://staging-websockets.layer.com/?session_token=sessionToken&client-id=' + client._tabId + "&layer-xdk-version=" + Layer.packageName + '-' +  Layer.version.replace(/-.*/, ''));
         });
 
         it("Should be subscribed to websocket events", function(done) {
@@ -1203,29 +1203,12 @@ describe("The Websocket Socket Manager Class", function() {
 
           websocketManager._validateSessionBeforeReconnect();
           expect(client.xhr).toHaveBeenCalledWith({
-              url: "/?action=validateConnectionForWebsocket&client=" + Layer.version.replace(/-all/,''),
+              url: `/?action=validateConnectionForWebsocket&client=${Layer.packageName}-${Layer.version.replace(/-all/,'')}`,
               sync: false,
               method: "GET"
             }, jasmine.any(Function));
        });
 
-       it("Should only call once every 30 seconds and ignore extra calls", function() {
-            spyOn(client, "xhr");
-            spyOn(websocketManager, "_isOpen").and.returnValue(false);
-
-            websocketManager._validateSessionBeforeReconnect();
-            websocketManager._validateSessionBeforeReconnect();
-            websocketManager._validateSessionBeforeReconnect();
-            websocketManager._validateSessionBeforeReconnect();
-            websocketManager._validateSessionBeforeReconnect();
-            expect(client.xhr.calls.count()).toEqual(1);
-            websocketManager._lastValidateSessionRequest = Date.now() - 60 * 1000;
-            jasmine.clock().tick(60 * 1000);
-            expect(client.xhr.calls.count()).toEqual(2);
-            websocketManager._lastValidateSessionRequest = Date.now() - 600 * 1000;
-            jasmine.clock().tick(600 * 1000);
-            expect(client.xhr.calls.count()).toEqual(2);
-       });
 
        it("Should call connect if successful", function() {
           spyOn(websocketManager, "connect");

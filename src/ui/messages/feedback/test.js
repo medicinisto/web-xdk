@@ -377,15 +377,6 @@ describe('Feedback Message Components', function() {
       expect(model.rating).toEqual(0);
     });
 
-    it("Should limit length", function() {
-      ui.maxByteLength = 10;
-
-      ui.nodes.input.value = "hello there";
-      ui._onInputEvent({target: ui.nodes.input});
-
-      expect(ui.nodes.input.value).toEqual("hello ther");
-    });
-
     it("Should update the comment", function() {
       ui.nodes.input.value = "hello there";
       ui._onInputChange();

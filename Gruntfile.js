@@ -321,6 +321,19 @@ module.exports = function (grunt) {
         version: "<%= pkg.version %>"
       }
     },
+    packageName: {
+      build: {
+        files: [
+          {
+            dest: 'src/name.js',
+            src: 'src/name.js'
+          }
+        ]
+      },
+      options: {
+        name: "<%= pkg.name %>"
+      }
+    },
     'generate-specrunner': {
       dev: {
         files: [
@@ -477,6 +490,23 @@ module.exports = function (grunt) {
     // Iterate over each file set and fire away on that set
     this.files.forEach(function(fileGroup) {
       replace(fileGroup, options.version);
+    });
+  });
+
+  grunt.registerMultiTask('packageName', 'Assign product name', function() {
+    var options = this.options();
+
+
+    function replace(fileGroup, name) {
+      fileGroup.src.forEach(function(file, index) {
+        var contents = grunt.file.read(file);
+        grunt.file.write(fileGroup.dest, "export default '" + name + "';\n");
+      });
+    }
+
+    // Iterate over each file set and fire away on that set
+    this.files.forEach(function(fileGroup) {
+      replace(fileGroup, options.name);
     });
   });
 
@@ -700,6 +730,7 @@ module.exports = function (grunt) {
   grunt.registerTask('generate-npm', [
     'remove:tmp', // cleanup old build
     'version',  // Verify version.js is up to date
+    'packageName', // Verify the package name is up to date
     'commonjsify', // Replace es6 import/export with something that browserify can work with; write to tmp/commonjs
     'optimize-webcomponents', // Strip out comments/white-space from webcomponents (overwrite tmp/commonjs)
     'full-babel:es5files', // write tmp/es5 with code that jsduck and IE11 can understand
@@ -712,6 +743,7 @@ module.exports = function (grunt) {
   grunt.registerTask('generate-build-file', [
     'remove:tmp', // cleanup old build
     'version',  // Verify version.js is up to date
+    'packageName', // Verify the package name is up to date
     'commonjsify', // Replace es6 import/export with something that browserify can work with; write to tmp/commonjs
     'optimize-webcomponents', // Strip out comments/white-space from webcomponents (overwrite tmp/commonjs)
     'browserify:build', // Generate a build file from the optimized webcomponents and commonjsified files

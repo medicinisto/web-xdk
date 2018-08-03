@@ -202,7 +202,8 @@ Typically its easiest to start development with `index-all` but the above option
 
 Fixes aimed at websocket stability:
 
-* Changes exponential backoff for websocket reconnect and Replaying of missed events to start at a higher interval
+* Changes exponential backoff for websocket reconnect
+* Refactors Online State Manager and how it handles invalid websockets
 * Adds client events for debugging; see API Reference for details.
   * websocket:connecting
   * websocket:disconnecting

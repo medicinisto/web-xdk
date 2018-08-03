@@ -22,6 +22,7 @@ import { getNativeSupport } from '../../utils/native-support';
 import { ErrorDictionary } from '../layer-error';
 import { WEBSOCKET_PROTOCOL } from '../../constants';
 import version from '../../version';
+import packageName from '../../name';
 
 const { logger } = Util;
 const { getClient } = Settings;
@@ -152,7 +153,7 @@ export default class SocketManager extends Root {
     this._lastCounter = -1;
 
     // Get the URL and connect to it
-    const url = `${getClient().websocketUrl}/?session_token=${getClient().sessionToken}&client-id=${getClient()._tabId}&layer-xdk-version=${version}`;
+    const url = `${getClient().websocketUrl}/?session_token=${getClient().sessionToken}&client-id=${getClient()._tabId}&layer-xdk-version=${packageName}-${version}`;
 
     logger.info('Websocket-Manager: Connecting');
 
@@ -731,36 +732,23 @@ export default class SocketManager extends Root {
   _validateSessionBeforeReconnect() {
     if (this.isDestroyed || !getClient().isOnline || !getClient().isAuthenticated || this._isOpen()) return;
 
-    const maxDelay = this.maxDelaySecondsBetweenReconnect * 1000;
-    const diff = Date.now() - this._lastValidateSessionRequest - maxDelay;
-    if (diff < 0) {
-      // This is identical to whats in _scheduleReconnect and could be cleaner
-      if (!this._reconnectId) {
-        this._reconnectId = setTimeout(() => {
-          this._reconnectId = 0;
-          this._validateSessionBeforeReconnect();
-        }, Math.abs(diff) + 1000);
+    getClient().xhr({
+      url: '/?action=validateConnectionForWebsocket&client=' + packageName + '-' + version,
+      method: 'GET',
+      sync: false,
+    }, (result) => {
+      if (result.success) {
+        this.trigger('connecting',
+          { from: '_validateSessionBeforeReconnect', why: 'has valid session token' });
+        this.connect();
+      } else if (result.status === 401) {
+        // client-authenticator.js captures this state and handles it; `connect()` will be called once reauthentication completes
+      } else {
+        this.trigger('schedule-reconnect',
+          { from: '_validateSessionBeforeReconnect', why: 'Unexpected error: ' + result.status });
+        this._scheduleReconnect();
       }
-    } else {
-      this._lastValidateSessionRequest = Date.now();
-      getClient().xhr({
-        url: '/?action=validateConnectionForWebsocket&client=' + version,
-        method: 'GET',
-        sync: false,
-      }, (result) => {
-        if (result.success) {
-          this.trigger('connecting',
-            { from: '_validateSessionBeforeReconnect', why: 'has valid session token' });
-          this.connect();
-        } else if (result.status === 401) {
-          // client-authenticator.js captures this state and handles it; `connect()` will be called once reauthentication completes
-        } else {
-          this.trigger('schedule-reconnect',
-            { from: '_validateSessionBeforeReconnect', why: 'Unexpected error: ' + result.status });
-          this._scheduleReconnect();
-        }
-      });
-    }
+    });
   }
 }
 
@@ -795,12 +783,6 @@ SocketManager.prototype._replayRetryCount = 0;
 
 SocketManager.prototype._lastGetCounterRequest = 0;
 SocketManager.prototype._lastGetCounterId = 0;
-
-/**
- * Time in miliseconds since the last call to _validateSessionBeforeReconnect
- * @property {Number} _lastValidateSessionRequest
- */
-SocketManager.prototype._lastValidateSessionRequest = 0;
 
 /**
  * Frequency with which the websocket checks to see if any websocket notifications
