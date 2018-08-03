@@ -16,8 +16,7 @@
  * @extends Layer.UI.Component
  */
 import { registerComponent } from '../../components/component';
-import { registerStatusModel } from '../../ui-utils/';
-import FeedbackModel from './layer-feedback-message-model';
+import './layer-feedback-message-model';
 import MessageViewMixin from '../message-view-mixin';
 import Clickable from '../../mixins/clickable';
 import './layer-feedback-message-large-view';

@@ -446,7 +446,8 @@ export default class SocketManager extends Root {
       const delay = Util.getExponentialBackoffSeconds(maxDelay, backoffCounter);
       logger.info('Websocket-Manager: replay retry in ' + delay + ' seconds');
       setTimeout(() => {
-        this.trigger('replaying-events', { from: '_replayEventsComplete', why: '_replayRetryCount: ' + this._replayRetryCount });
+        this.trigger('replaying-events',
+          { from: '_replayEventsComplete', why: '_replayRetryCount: ' + this._replayRetryCount });
         this._replayEvents(timestamp);
       }, delay * 1000);
       this._replayRetryCount++;
@@ -555,11 +556,18 @@ export default class SocketManager extends Root {
       // If we've missed a counter, replay to get; note that we had to update _lastCounter
       // for replayEvents to work correctly.
       if (skippedCounter) {
-        if (!this._lastSkippedCounter || this._lastSkippedCounter + SocketManager.IGNORE_SKIPPED_COUNTER_INTERVAL < Date.now()) {
-          this.trigger('replaying-events', { from: 'resync', why: `Counter skipped from ${lastCounter} to ${msg.counter}` });
+        if (!this._lastSkippedCounter ||
+            this._lastSkippedCounter + SocketManager.IGNORE_SKIPPED_COUNTER_INTERVAL < Date.now()
+        ) {
+          this.trigger('replaying-events',
+            { from: 'resync', why: `Counter skipped from ${lastCounter} to ${msg.counter}` });
           this.resync(this._lastTimestamp);
         } else {
-          this.trigger('ignore-skipped-counter', { from: 'resync', why: `Counter skipped from ${lastCounter} to ${msg.counter} but last resync was ${Date.now() - this._lastSkippedCounter} seconds ago` });
+          this.trigger('ignore-skipped-counter', {
+            from: 'resync',
+            why: `Counter skipped from ${lastCounter} to ${msg.counter} but last resync ` +
+              `was ${Date.now() - this._lastSkippedCounter} seconds ago`,
+          });
         }
         this._lastSkippedCounter = Date.now();
       } else {
@@ -741,13 +749,14 @@ export default class SocketManager extends Root {
         sync: false,
       }, (result) => {
         if (result.success) {
-          this.trigger('connecting', { from: '_validateSessionBeforeReconnect', why: 'has valid session token' });
+          this.trigger('connecting',
+            { from: '_validateSessionBeforeReconnect', why: 'has valid session token' });
           this.connect();
-        }
-        if (result.status === 401) {
+        } else if (result.status === 401) {
           // client-authenticator.js captures this state and handles it; `connect()` will be called once reauthentication completes
         } else {
-          this.trigger('schedule-reconnect', { from: '_validateSessionBeforeReconnect', why: 'Unexpected error: ' + result.status });
+          this.trigger('schedule-reconnect',
+            { from: '_validateSessionBeforeReconnect', why: 'Unexpected error: ' + result.status });
           this._scheduleReconnect();
         }
       });
@@ -804,9 +813,9 @@ SocketManager.prototype.pingFrequency = 30000;
 /**
  * Delay between reconnect attempts
  *
- * @property {Number} [maxDelaySecondsBetweenReconnect=30]
+ * @property {Number} [maxDelaySecondsBetweenReconnect=600]
  */
-SocketManager.prototype.maxDelaySecondsBetweenReconnect = 30;
+SocketManager.prototype.maxDelaySecondsBetweenReconnect = 600;
 
 /**
  * The Socket Connection instance

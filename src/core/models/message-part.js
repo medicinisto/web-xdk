@@ -310,7 +310,7 @@ export default class MessagePart extends Root {
 
     if (this.body) {
       this.url = typeof this.body === 'string' ?
-        `data:${this.mimeType};utf8,${escape(this.body.replace(/\s*\n\s*/g, '')) }` : URL.createObjectURL(this.body);
+        `data:${this.mimeType};utf8,${escape(this.body.replace(/\s*\n\s*/g, ''))}` : URL.createObjectURL(this.body);
       return this._fetchStreamComplete(this.__url, callback);
     }
 

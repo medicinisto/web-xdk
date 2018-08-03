@@ -95,11 +95,21 @@ const ClientWebsockets = {
       });
 
       this.socketManager.on('connecting', evt => this.trigger('websocket:connecting'));
-      this.socketManager.on('disconnecting', evt => this.trigger('websocket:disconnecting', { from: evt.from, why: evt.why }));
-      this.socketManager.on('replaying-events', evt => this.trigger('websocket:replaying-events', { from: evt.from, why: evt.why }));
-      this.socketManager.on('schedule-reconnect', evt => this.trigger('websocket:schedule-reconnect', { from: evt.from, why: evt.why }));
-      this.socketManager.on('scheduling-reconnect', evt => this.trigger('websocket:scheduling-reconnect', { counter: evt.counter, delay: evt.delay }));
-      this.socketManager.on('ignore-skipped-counter', evt => this.trigger('websocket:ignore-skipped-counter', { from: evt.from, why: evt.why }));
+      this.socketManager.on('disconnecting', evt => this.trigger('websocket:disconnecting', {
+        from: evt.from, why: evt.why,
+      }));
+      this.socketManager.on('replaying-events', evt => this.trigger('websocket:replaying-events', {
+        from: evt.from, why: evt.why,
+      }));
+      this.socketManager.on('schedule-reconnect', evt => this.trigger('websocket:schedule-reconnect', {
+        from: evt.from, why: evt.why,
+      }));
+      this.socketManager.on('scheduling-reconnect', evt => this.trigger('websocket:scheduling-reconnect', {
+        counter: evt.counter, delay: evt.delay,
+      }));
+      this.socketManager.on('ignore-skipped-counter', evt => this.trigger('websocket:ignore-skipped-counter', {
+        from: evt.from, why: evt.why,
+      }));
     },
     destroy() {
       this.socketManager.destroy();
