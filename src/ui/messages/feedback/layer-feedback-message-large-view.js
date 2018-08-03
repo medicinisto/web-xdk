@@ -29,30 +29,6 @@ import { get as getGraphic } from '../../resources/graphics/';
 import '../../resources/graphics/star';
 import '../../resources/graphics/feedback';
 
-// Snippet from https://stackoverflow.com/questions/2848462/count-bytes-in-textarea-using-javascript/12206089#12206089
-function getUTF8Length(s) {
-  let len = 0;
-  let i;
-  let code;
-  for (i = 0; i < s.length; i++) {
-    code = s.charCodeAt(i);
-    if (code <= 0x7f) {
-      len += 1;
-    } else if (code <= 0x7ff) {
-      len += 2;
-    } else if (code >= 0xd800 && code <= 0xdfff) {
-      // Surrogate pair: These take 4 bytes in UTF-8 and 2 chars in UCS-2
-      // (Assume next char is the other [valid] half and just skip it)
-      len += 4; i++;
-    } else if (code < 0xffff) {
-      len += 3;
-    } else {
-      len += 4;
-    }
-  }
-  return len;
-}
-
 
 registerComponent('layer-feedback-message-large-view', {
   mixins: [MessageViewMixin, Clickable],
@@ -67,7 +43,7 @@ registerComponent('layer-feedback-message-large-view', {
         layer-id='ratedAt'></layer-date>
     </div>
     <div class='layer-feedback-message-view-ratings' layer-id='ratings'></div>
-    <textarea class='layer-feedback-message-view-input' layer-id='input' placeholder='Add a comment...'></textarea>
+    <textarea maxlength="400" class='layer-feedback-message-view-input' layer-id='input' placeholder='Add a comment...'></textarea>
     <div class='layer-feedback-message-view-comment' layer-id='comment'></div>
     <layer-action-button layer-id='button' text='Send'></layer-action-button>
   `,
@@ -151,7 +127,6 @@ registerComponent('layer-feedback-message-large-view', {
     onCreate() {
       this.addClickHandler('rate', this.nodes.ratings, this._onClick.bind(this));
       this.nodes.input.addEventListener('change', this._onInputChange.bind(this));
-      this.nodes.input.addEventListener('input', this._onInputEvent.bind(this));
       this.addClickHandler('send', this.nodes.button, this.onSend.bind(this));
     },
 
@@ -203,26 +178,6 @@ registerComponent('layer-feedback-message-large-view', {
           this.model.rating = index + 1;
           this.onRerender();
         }
-      }
-    },
-
-    /**
-     * Whenever there is an input event from the textarea, insure that the length doesn't excede maximum length.
-     *
-     * @param {KeyboardEvent} evt
-     * @method _onInputEvent
-     * @private
-     */
-    _onInputEvent(evt) {
-      const maxByteLength = this.properties.maxByteLength;
-      let length = getUTF8Length(evt.target.value);
-      if (length > maxByteLength) {
-        let s = evt.target.value;
-        while (length > maxByteLength) {
-          s = s.substring(0, s.length - 1);
-          length = getUTF8Length(s);
-        }
-        evt.target.value = s;
       }
     },
 
