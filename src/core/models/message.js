@@ -276,6 +276,7 @@ export default class Message extends Syncable {
       mPart.on('messageparts:change', this._onMessagePartChange, this);
       if (!part.id) part.id = `${this.id}/parts/${part._tmpUUID || Util.generateUUID()}`;
       this._addToMimeAttributesMap(mPart);
+      part._message = this;
       this.trigger('change', {
         property: 'parts',
         oldValue,

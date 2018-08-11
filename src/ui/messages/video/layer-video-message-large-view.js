@@ -226,7 +226,7 @@ registerComponent('layer-video-message-large-view', {
       }, this);
     },
 
-    _updateWidth() {
+    updateWidth() {
       this._resizeContent();
     },
   },

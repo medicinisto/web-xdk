@@ -75,6 +75,7 @@ registerComponent('layer-replaceable-content', {
      */
     _onProcessReplaceableContent() {
       if (!this.name) throw new Error('Unnamed replaceable content detected');
+      if (this.properties.contentAdded) return;
 
       let processed = false;
 
@@ -278,6 +279,20 @@ registerComponent('layer-replaceable-content', {
         }
       });
       return node;
+    },
+
+    /**
+     * Append the specified node to the Replaceable Content node; will prevent processing of `replaceableContent` property.
+     *
+     * If used after `replaceableContent` property is applied, then both content will be present.
+     *
+     * @method appendToContent
+     * @param {HTMLElement} node
+     */
+    appendToContent(node) {
+      this.properties.contentAdded = true;
+      this.nodes.content.appendChild(node);
+      this.classList.remove('layer-replaceable-content-empty');
     },
   },
 });

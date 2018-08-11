@@ -91,5 +91,8 @@ registerComponent('layer-title-bar', {
     onCreate() {
       this.nodes.buttons._onAfterCreate();
     },
+    addButton(node) {
+      this.nodes.buttons.appendToContent(node);
+    },
   },
 });

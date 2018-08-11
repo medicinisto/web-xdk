@@ -73,10 +73,16 @@ registerComponent('layer-titled-message-view-container', {
       },
     },
 
+    /**
+     * Icon for the titlebar; comes from `this.properties.ui.getIconClass()`
+     *
+     * @property {String} icon
+     */
     icon: {
       value: '',
-      set(icon) {
+      set(icon, oldIcon) {
         this.nodes.titlebar.icon = icon;
+        this.toggleClass('layer-title-icon-empty', !(icon));
       },
     },
   },
@@ -89,6 +95,13 @@ registerComponent('layer-titled-message-view-container', {
       if (this.properties.ui.getIconClass) this.iconClass = this.properties.ui.getIconClass();
       if (this.properties.ui.getIcon) this.icon = this.properties.ui.getIcon();
       this.title = this.properties.ui.getTitle();
+    },
+    addButton(node) {
+
+      if (!this.nodes.titlebar._internalState.onAfterCreateCalled) {
+        this.nodes.titlebar._onAfterCreate();
+      }
+      this.nodes.titlebar.addButton(node);
     },
   },
 });

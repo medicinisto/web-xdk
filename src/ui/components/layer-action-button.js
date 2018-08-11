@@ -149,12 +149,15 @@ registerComponent('layer-action-button', {
     _onClick(evt) {
       if (!this.event || this.disabled) return;
       if (evt) {
+        evt.target.blur(); // Sometimes the button keeps its "clicked" state which is wrong
         evt.preventDefault();
         evt.stopPropagation();
         if (this.contains(document.activeElement)) {
           document.activeElement.blur(); // Sometimes the button keeps its ":active" or ":focus" state which is wrong
         }
       }
+
+      if (!this.event || this.disabled) return;
 
       let node = this;
       while (!node.isMessageTypeView && node.parentComponent) {

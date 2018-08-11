@@ -65,7 +65,7 @@ mixins.WidthTracker = {
 
     // Once added to the document, obtain our current size
     onAttach() {
-      this._updateWidth();
+      this.updateWidth();
     },
 
     /**
@@ -75,16 +75,15 @@ mixins.WidthTracker = {
      * @private
      */
     _handleResize() {
-      this._throttler(this._updateWidth.bind(this));
+      this._throttler(this.updateWidth.bind(this));
     },
 
     /**
      * Update the width property based on browser size changes
      *
-     * @method _updateWidth
-     * @private
+     * @method updateWidth
      */
-    _updateWidth() {
+    updateWidth() {
       this.width = this.clientWidth;
     },
   },

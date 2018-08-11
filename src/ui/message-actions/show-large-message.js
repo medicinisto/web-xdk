@@ -41,3 +41,5 @@ const showLargeView = ({ messageViewer, model, data }) => {
 };
 
 register('layer-show-large-message', showLargeView);
+
+module.exports = showLargeView;

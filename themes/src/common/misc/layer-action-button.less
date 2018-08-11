@@ -1,31 +1,56 @@
 /* See layer-button-card for where these are used */
-layer-action-button, layer-url-button {
 
+.layer-action-button-style {
+  padding: 8px 12px;
+  text-align: center;
+  background-color: @button-message-type-background;
+  color: @button-message-type-text;
+  font-size: @button-message-type-size;
+  border-radius: 0px;
+  border-width: 0px;
+  min-height: 44px;
+  box-sizing: border-box;
+  margin: 0px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.layer-action-button-focus-style {
+  background-color: @button-message-type-focus-background !important;
+  color: @button-message-type-focus-text;
+}
+
+.layer-action-button-hover-style {
+  background-color: @button-message-type-hover-background;
+  color: @button-message-type-hover-text;
+}
+
+.layer-action-button-disabled-style {
+  background-color: @button-message-type-disabled-background;
+  color: @button-message-type-disabled-text;
+  cursor: default;
+}
+
+.layer-action-button-selected-style {
+  background-color: @button-message-type-selected-background;
+  color: @button-message-type-selected-text;
+}
+
+layer-action-button, layer-url-button {
   button {
-    background-color: @button-message-type-background;
-    color: @button-message-type-text;
-    font-size: @button-message-type-size;
-    border-radius: 0px;
-    border-width: 0px;
-    min-height: 44px;
-    margin: 0px;
-    font-weight: bold;
+    .layer-action-button-style;
   }
   button:focus, button:active {
-    background-color: @button-message-type-focus-background !important;
-    color: @button-message-type-focus-text;
+    .layer-action-button-focus-style;
   }
   button:hover {
-    background-color: @button-message-type-hover-background;
-    color: @button-message-type-hover-text;
+    .layer-action-button-hover-style;
   }
   button:disabled {
-    background-color: @button-message-type-disabled-background;
-    color: @button-message-type-disabled-text;
+    .layer-action-button-disabled-style;
   }
 
   &.layer-action-button-selected button {
-    background-color: @button-message-type-selected-background;
-    color: @button-message-type-selected-text;
+    .layer-action-button-selected-style;
   }
 }
