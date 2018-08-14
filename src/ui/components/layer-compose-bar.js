@@ -527,8 +527,8 @@ registerComponent('layer-compose-bar', {
      */
     _onKeyDown(event) {
       if (event.keyCode === ENTER) {
+        event.preventDefault();
         if (!event.shiftKey && !event.ctrlKey && !event.metaKey) {
-          event.preventDefault();
           this.send();
         } else {
           event.target.value += '\n';
@@ -560,9 +560,11 @@ registerComponent('layer-compose-bar', {
      */
     onRender() {
       setTimeout(() => {
-        this.nodes.resizer.innerHTML = this.nodes.input.value.replace(/\n/g, '<br/>') || '&nbsp;';
-        this.nodes.lineHeighter.innerHTML = this.nodes.input.value.replace(/\n/g, '<br/>') || '&nbsp;';
-        const willBeOneLine = !this.nodes.input.value.match(/\n/) &&
+        // Add a '.' after a string ending in a newline to insure that the height shows the cursor on its new line
+        const value = this.nodes.input.value.replace(/([\n\r])$/, '$1.');
+        this.nodes.resizer.innerHTML = value.replace(/\n/g, '<br/>') || '&nbsp;';
+        this.nodes.lineHeighter.innerHTML = value.replace(/\n/g, '<br/>') || '&nbsp;';
+        const willBeOneLine = !value.match(/\n/) &&
           (this.nodes.resizer.clientHeight - this.nodes.lineHeighter.clientHeight < 10);
 
         // Prevent scrollbar flickering in and then out
