@@ -354,7 +354,8 @@ describe('Feedback Message Components', function() {
       model.responses.addState('rating', 5);
       model.responses.part = {updatedAt: new Date("2010-10-10")};
       ui.onRerender();
-      expect(ui.nodes.ratedAt.innerHTML).toEqual("October 2010");
+      expect(ui.nodes.ratedAt.innerHTML).toMatch(/October/);
+      expect(ui.nodes.ratedAt.innerHTML).toMatch(/2010/);
     });
 
     it("Should change ratings on selecting enabled star", function() {

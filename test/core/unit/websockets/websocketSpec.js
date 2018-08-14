@@ -1200,10 +1200,9 @@ describe("The Websocket Socket Manager Class", function() {
        it("Should validate the session", function() {
           spyOn(client, "xhr");
           spyOn(websocketManager, "_isOpen").and.returnValue(false);
-
           websocketManager._validateSessionBeforeReconnect();
           expect(client.xhr).toHaveBeenCalledWith({
-              url: `/?action=validateConnectionForWebsocket&client=${Layer.packageName}-${Layer.version.replace(/-all/,'')}`,
+              url: '/?action=validateConnectionForWebsocket&client=' + Layer.packageName + '-' + Layer.version.replace(/-all/,''),
               sync: false,
               method: "GET"
             }, jasmine.any(Function));

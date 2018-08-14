@@ -2,6 +2,21 @@
 describe('layer-dialog', function() {
   var el, client, testRoot;
 
+
+  function click(el) {
+    if (Layer.Utils.isIOS) {
+      var evt = new Event('touchstart', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+
+      var evt = new Event('touchend', { bubbles: true });
+      evt.touches = [{screenX: 400, screenY: 400}];
+      el.dispatchEvent(evt);
+    } else {
+      el.click();
+    }
+  }
+
   beforeAll(function() {
     var style = document.createElement('style');
     style.innerText = ".layer-dialog-title-bar {min-height: 24px;}";
@@ -178,10 +193,10 @@ describe('layer-dialog', function() {
 
     it("Should dismiss the dialog if clicking on the dialog background but not on the dialog foreground", function() {
       expect(el.parentNode).toBe(testRoot);
-      el.nodes.inner.click();
+      click(el.nodes.inner);
       expect(el.parentNode).toBe(testRoot);
 
-      el.click();
+      click(el);
       expect(el.parentNode).not.toBe(testRoot);
     });
 
@@ -202,7 +217,7 @@ describe('layer-dialog', function() {
 
     it("Should close on clicking the close button", function() {
       expect(el.parentNode).toBe(testRoot);
-      el.nodes.titleBar.nodes.close.click();
+      click(el.nodes.titleBar.nodes.close);
       expect(el.parentNode).not.toBe(testRoot);
     });
 

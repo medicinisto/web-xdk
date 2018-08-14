@@ -145,7 +145,7 @@ registerComponent('layer-audio-message-view', {
     resetAudio() {
       this.properties.audio.pause();
       this.properties.audio.currentTime = 0;
-      this.properties.audio.load(); // chrome needs this for ogg; safari needs this for mp3. Wierd.
+      if (this.properties.audio.load) this.properties.audio.load(); // chrome needs this for ogg; safari needs this for mp3. Wierd.
       this.playing = false;
       this.renderProgressBar();
       this.renderBufferBar();
@@ -217,9 +217,11 @@ registerComponent('layer-audio-message-view', {
      * @private
      */
     _setupPlayButton() {
+      const span = document.createElement('span'); // needed as we can't set styles on an SVGObject in IE 11
       const playButton = this.properties.playButton = getGraphicDom('large-play')();
-      playButton.classList.add('layer-play-button');
-      this.parentComponent.customControls = playButton;
+      span.appendChild(playButton);
+      span.classList.add('layer-play-button');
+      this.parentComponent.customControls = span;
       this.addClickHandler('play-button', playButton, this.onPlayClick.bind(this));
     },
 
@@ -404,6 +406,11 @@ registerComponent('layer-audio-message-view', {
      */
     onError(err) {
       if (this._internalState.onDetachCalled) return;
+
+      if (err.name === 'NotAllowedError') {
+        this.playing = false;
+        return;
+      }
 
       this.messageViewer.classList.add('layer-audio-not-playable');
       this._swapButtons('large-not-playable');

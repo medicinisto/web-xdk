@@ -420,7 +420,7 @@ describe("The Client CAPI Auth Mixin", function() {
 
             // Pretest
             expect(client.sessionToken).toEqual("");
-
+debugger;
             // Run
             client.connect("FrodoTheDodo");
             requests.mostRecent().response({

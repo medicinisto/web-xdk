@@ -20,10 +20,10 @@ describe('Audio Message Components', function() {
       this.src = src;
     };
     Object.defineProperty(window.Audio.prototype, "src", {
-      get(value) {
+      get: function(value) {
         return this.__src || "";
       },
-      set(value) {
+      set: function(value) {
         this.__src = value;
         setTimeout(function() {
           if (value === "https://google.com") {

@@ -672,6 +672,11 @@ registerComponent('layer-audio-message-large-view', {
       // Do this before trying to refresh a sourceUrl because we may have connectivity issues and that might be the cause of the error
       this.classList.remove('layer-audio-playing');
 
+      if (err.name === 'NotAllowedError') {
+        this.playing = false;
+        return;
+      }
+
       this.disabled = true;
 
       // If the source url has expired, then these would not be equal, and calling getSourceUrl will trigger our model change event we setup above

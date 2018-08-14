@@ -337,7 +337,7 @@ describe('layer-compose-bar', function() {
         target: el.nodes.input
       });
       expect(el.send).not.toHaveBeenCalledWith();
-      expect(preventSpy).not.toHaveBeenCalledWith();
+      expect(preventSpy).toHaveBeenCalledWith();
     });
 
     it("Should preventDefault and insert a tab if tabs are enabled", function() {
