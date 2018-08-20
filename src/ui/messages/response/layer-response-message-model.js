@@ -15,9 +15,10 @@
  *
  * ### Importing
  *
- * Included with the standard build. For custom build, Import with:
+ * Included with the standard build. For custom build, Import with one of:
  *
  * ```
+ * import '@layerhq/web-xdk/ui/messages/response/layer-response-message-model';
  * import '@layerhq/web-xdk/ui/messages/response/layer-response-message-view';
  * ```
  *

@@ -518,7 +518,7 @@ MessageTypeModel.DefineFileBehaviors({
   classDef: ImageModel,
   propertyName: 'source',
   mimeTypeProperty: 'mimeType',
-  nameProperty: 'title',
+  // nameProperty: 'title', Uncomment this to have file names automatically used as titles when sending an Image in the source Message Part
   roleName: 'source',
 });
 

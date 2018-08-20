@@ -40,18 +40,30 @@ layer-title-bar {
 
   .layer-title-close-button {
     cursor: pointer;
-    .layer-close-button-line {
+    svg {
+      flex-grow: 1;
+    }
+    .layer-svg-strokable {
       stroke: @layer-close-button-color;
+    }
+    .layer-svg-fillable {
       fill: @layer-close-button-color;
+    }
+    .layer-svg-strokable-background {
+      stroke: transparent;
     }
 
     display: flex;
     width: 24px;
     height: 24px;
 
-    &:hover .layer-close-button-line {
-      stroke: @layer-close-button-hover-color;
-      fill: @layer-close-button-hover-color;
+    &:hover  {
+      .layer-svg-strokable {
+        stroke: @layer-close-button-hover-color;
+      }
+      .layer-svg-fillable {
+        fill: @layer-close-button-hover-color;
+      }
     }
   }
 }

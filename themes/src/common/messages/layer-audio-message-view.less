@@ -202,13 +202,16 @@ layer-audio-message-large-view {
   }
 
 
-  &.layer-audio-message-large-view-width-small:not(.layer-is-ios), &.layer-audio-message-large-view-width-medium:not(.layer-is-ios) {
+  &.layer-audio-message-large-view-width-tiny:not(.layer-is-ios),
+  &.layer-audio-message-large-view-width-small:not(.layer-is-ios),
+  &.layer-audio-message-large-view-width-medium:not(.layer-is-ios) {
     .layer-audio-forward-fifteen, .layer-audio-rewind-fifteen {
       display: none;
     }
   }
 
-  &.layer-audio-message-large-view-width-small {
+  &.layer-audio-message-large-view-width-small,
+  &.layer-audio-message-large-view-width-tiny {
     .layer-audio-volume-range, .layer-audio-volume-range-disabled {
       display: none;
     }

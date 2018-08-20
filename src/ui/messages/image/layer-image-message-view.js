@@ -19,7 +19,7 @@ import 'blueimp-load-image/js/load-image-meta';
 import 'blueimp-load-image/js/load-image-exif';
 
 import { registerComponent } from '../../components/component';
-import { logger } from '../../../utils';
+import { logger, isIE11 } from '../../../utils';
 import MessageViewMixin from '../message-view-mixin';
 import './layer-image-message-model';
 
@@ -79,12 +79,12 @@ registerComponent('layer-image-message-view', {
     },
 
     /**
-     * If showing only the image, and no metadata below it, use a maximum height of 768px.
+     * If showing only the image, and no metadata below it, use a maximum height of 450px.
      *
-     * @property {Number} [maxHeightWithoutMetadata=768]
+     * @property {Number} [maxHeightWithoutMetadata=450]
      */
     maxHeightWithoutMetadata: {
-      value: 768,
+      value: 450,
     },
 
     /**
@@ -182,6 +182,7 @@ registerComponent('layer-image-message-view', {
         this.model.previewWidth = img.naturalWidth;
         this.model.previewHeight = img.naturalHeight;
         this._resizeContent();
+        if (isIE11) this._setupIE11Image(img.src);
       }
     },
 
@@ -223,7 +224,12 @@ registerComponent('layer-image-message-view', {
           ImageManager(blob, (canvas) => {
             if (canvas instanceof HTMLElement) {
               this.properties.usingCanvas = true;
-              this.nodes.image.src = canvas.toDataURL();
+              if (isIE11) {
+                this._setupIE11Image(canvas.toDataURL());
+                this.classList.remove('layer-loading-data');
+              } else {
+                this.nodes.image.src = canvas.toDataURL();
+              }
               this.isHeightAllocated = true;
             } else {
               logger.error('LAYER-IMAGE-MESSAGE-VIEW: expected canvas but instead got: ', canvas);
@@ -231,6 +237,16 @@ registerComponent('layer-image-message-view', {
           }, options);
         },
       );
+    },
+
+    /**
+     * IE11 does not support `object-fit: cover` and so we do some DOM manipulation to fix that.
+     *
+     * @param {String} url
+     */
+    _setupIE11Image(url) {
+      this.style.backgroundImage = `url("${url}")`;
+      this.classList.add('layer-image-view-ie11-mode');
     },
   },
 });

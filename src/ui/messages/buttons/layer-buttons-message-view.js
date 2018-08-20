@@ -59,6 +59,11 @@ registerComponent('layer-buttons-message-view', {
           return this.properties.maxWidth;
         }
       },
+      set(value) {
+        if (this.properties.contentView) {
+          this.properties.contentView.nodes.ui.maxWidth = value;
+        }
+      },
     },
 
     /**
@@ -77,7 +82,7 @@ registerComponent('layer-buttons-message-view', {
       },
       set(value) {
         if (this.properties.contentView) {
-          this.properties.contentView.minWidth = value;
+          this.properties.contentView.nodes.ui.minWidth = value;
         }
       },
     },

@@ -410,6 +410,9 @@ export const isIOS = global.navigator ? Boolean(global.navigator.userAgent.match
 export const isSafari = global.navigator ?
   Boolean(global.navigator.userAgent.match(/(safari)/i)) &&
   global.navigator.vendor.match(/apple/i) : false;
+export const isIE11 = !!global.MSInputMethodContext && !!document.documentMode;
+
+
 export const hasLocalStorage = typeof Storage !== 'undefined' && global.localStorage instanceof Storage;
 
 /**

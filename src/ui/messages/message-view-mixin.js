@@ -75,9 +75,13 @@ mixins.MessageViewMixin = {
       value: 256,
       valueLowPriority: true,
       set(value) {
+        const availableWidth = this.getAvailableMessageWidth();
         const realValue = this.minWidth; // get the real value from the getter, if one is provided
-        this.style.minWidth = realValue ? realValue + 'px' : '';
-        if (this.messageViewer) this.messageViewer.style.minWidth = this.style.minWidth;
+        const adjustedValue = realValue ? Math.min(availableWidth, realValue) : '';
+        this.style.minWidth = adjustedValue ? adjustedValue + 'px' : '';
+        if (this.messageViewer) {
+          this.messageViewer.style.minWidth = this.style.minWidth;
+        }
       },
     },
 
@@ -90,8 +94,10 @@ mixins.MessageViewMixin = {
      */
     maxWidth: {
       set(value) {
+        const availableWidth = this.getAvailableMessageWidth();
         const realValue = this.maxWidth;
-        this.style.maxWidth = realValue ? realValue + 'px' : '';
+        const adjustedValue = realValue ? Math.min(availableWidth, realValue) : '';
+        this.style.maxWidth = adjustedValue ? adjustedValue + 'px' : '';
         if (this.messageViewer) this.messageViewer.style.maxWidth = this.style.maxWidth;
       },
     },
@@ -213,6 +219,15 @@ mixins.MessageViewMixin = {
       }
     },
 
+    getFullAvailableMessageWidth(messageViewer) {
+      if (messageViewer) {
+        return this.getAvailableMessageWidth(messageViewer);
+      } else if (this.messageViewer) {
+        return this.messageViewer.getFullAvailableMessageWidth(null);
+      } else {
+        return this.clientWidth;
+      }
+    },
 
     /**
      * Returns the maximum number of pixels width allowed for a message given the current Message Width List.

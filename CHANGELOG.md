@@ -132,6 +132,16 @@ Large Message Views can be displayed anywhere, even outside of the `<layer-dialo
 
 Note that only Audio and Video messages have defined Large Message Views at this time.
 
+Developers who have looked at early versions of the Large Message Viewer, the following changes should be noted:
+
+* Renames `layer-open-expanded-view` action to `layer-show-large-message`
+* Renames the Model static property `messageRendererExpanded` to `largeMessageRenderer`
+* Removes `<layer-message-viewer-expanded/>` in favor of `<layer-message-viewer size='large' />`
+    * For the full `<layer-message-viewer-expanded />` experience, put `<layer-message-viewer size='large' />` inside of a `<layer-dialog />`
+* Renames `<layer-feedback-message-expanded-view />` to `<layer-feedback-message-large-view />` which is now rendered within the `<layer-message-viewer size='large' />`
+
+These changes impact customers who adopted the incomplete Large Message View prior to its official release.
+
 ### New Message Types
 
 * Adds Audio Message
@@ -215,15 +225,13 @@ Fixes aimed at websocket stability:
 
 #### Other Changes
 
-* Large Message View has changed (not previously an officially documented/released component):
-    * Renames `layer-open-expanded-view` action to `layer-show-large-message`
-    * Renames the Model static property `messageRendererExpanded` to `largeMessageRenderer`
-    * Removes `<layer-message-viewer-expanded/>` in favor of `<layer-message-viewer size='large' />`
-        * For the full `<layer-message-viewer-expanded />` experience, put `<layer-message-viewer size='large' />` inside of a `<layer-dialog />`
-    * Renames `<layer-feedback-message-expanded-view />` to `<layer-feedback-message-large-view />` which is now rendered within the `<layer-message-viewer size='large' />`
-
-These changes impact customers who adopted the incomplete Large Message View prior to its official release.
-
+* Image Messages
+    * If sent using the File Upload Button (or drag and drop) no longer use the file name as a title; Images default to being sent without a title.
+    * If sent without a title, now have a maximum height of 450px and a maximum width based on the width of the Message List
+    * Image Viewer now shows a loading indicator
+    * Fixes rendering/scaling of images for IE11; note that this uses background-image and hides the `<img />` tag so this may impact CSS used if you support IE11
+* File Message
+    * File Message maximum width is reduced
 * Message Type Model Changes
     * Adds `presend()` method that will generate a message and call `message.presend()` so that users may preview it in their Message List without having sent it yet.
     * Supports concept of Slots for organizing Message Metadata (optional -- for use in designing Custom Messages)

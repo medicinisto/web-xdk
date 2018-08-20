@@ -210,14 +210,21 @@ registerComponent('layer-audio-message-large-view', {
       },
     },
 
-    // Customize the WidthTracker Mixin
-    widthMediumStart: {
-      value: 380,
-    },
-
-    // Customize the WidthTracker Mixin
-    widthLargeStart: {
-      value: 480,
+    /**
+     * widths defines for the WidthTracker mixin when this Conversation View
+     * is in its Small, Medium or Large forms.
+     *
+     * @property {Object} widths
+     * @property {Number} widths.small
+     * @property {Number} widths.medium
+     * @property {Number} widths.large
+     */
+    widths: {
+      value: {
+        small: 300,
+        medium: 360,
+        large: 430,
+      },
     },
 
     /**

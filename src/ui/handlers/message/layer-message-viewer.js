@@ -382,12 +382,18 @@ registerComponent('layer-message-viewer', {
     getAvailableMessageWidth() {
       if (this.parentComponent) {
         if (this.parentComponent.classList.contains('layer-message-item')) {
-          const width = this.parentNode.clientWidth;
+          let width = this.parentNode.clientWidth;
+          if (width === 0) {
+            // If no width yet, get the message-list's width minus the usual 8px margin on each side
+            // This errs on providing more space as its actually 12px for wider screens, but wider screens
+            // typically don't need the full width.
+            width = this.parentComponent.parentComponent.clientWidth - 16;
+          }
 
           // 95%, 80% and 70% must be changed both here and in layer-message-viewer.less
           if (
             this.nodes.ui.hideMessageItemRightAndLeftContent ||
-            width > conversationViewWidths.large
+            width < conversationViewWidths.medium
           ) {
             return Math.round(width * 0.95);
           } else if (width < conversationViewWidths.large) {
@@ -401,6 +407,16 @@ registerComponent('layer-message-viewer', {
       }
 
       return this.parentNode.clientWidth;
+    },
+
+    /**
+     * Get the width available to the Message Viewer without accounting for rules for how much width the Message List allows.
+     *
+     * @method getFullAvailableMessageWidth
+     * @returns {Number}
+     */
+    getFullAvailableMessageWidth() {
+      return this.parentNode ? this.parentNode.clientWidth : 300;
     },
 
     /**

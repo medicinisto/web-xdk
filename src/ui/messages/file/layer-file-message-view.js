@@ -43,7 +43,7 @@ registerComponent('layer-file-message-view', {
       value: 192,
     },
     maxWidth: {
-      value: 384,
+      value: 212,
     },
   },
   methods: {

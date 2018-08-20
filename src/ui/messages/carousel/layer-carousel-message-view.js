@@ -56,10 +56,12 @@ registerComponent('layer-carousel-message-view', {
     display: none;
   }
   .layer-carousel-message-view-items {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
+    white-space: nowrap;
     overflow-x: hidden;
+  }
+  .layer-carousel-message-view-items > layer-message-viewer {
+    display: inline-block;
+    white-space: initial;
   }
   .layer-carousel-message-view-items:after {
     content: "";
@@ -172,12 +174,14 @@ registerComponent('layer-carousel-message-view', {
       // Clear the DOM
       this.nodes.items.innerHTML = '';
 
-      // Calculate a maximum allowed Carousel Item Width
-      const maxCardWidth = this.getMaxMessageWidth();
+      // Calculate a maximum allowed Carousel Item Width, add 30px
+      // so that we can see the start of the next item in the carousel
+      const maxCardWidth = this.getMaxMessageWidth() - 30;
 
       // Generate/reuse each Carousel Item
       this.model.items.forEach((item) => {
         let card;
+        if (item.isDestroyed) return;
 
         // See if we've already generated the Carousel Item UI and add it back into the DOM if so.
         for (let i = 0; i < itemUIs.length; i++) {
@@ -201,9 +205,10 @@ registerComponent('layer-carousel-message-view', {
         // Apply some appropiate widths based on the cards preferences and behaviors and our Maximum
         // Carousel Item Width calculated above.
         const minWidth = Math.min(maxCardWidth, card.nodes.ui.minWidth);
-        const maxWidth = card.nodes.ui.maxWidth ? Math.min(maxCardWidth, card.nodes.ui.maxWidth) : maxCardWidth;
-        if (maxWidth < minWidth) {
+        const maxWidth = (card.nodes.ui.maxWidth ? Math.min(maxCardWidth, card.nodes.ui.maxWidth) : maxCardWidth);
+        if (maxWidth < minWidth || maxWidth < card.clientWidth) {
           card.style.maxWidth = card.style.minWidth = card.style.width = maxWidth + 'px';
+          card.nodes.ui.maxWidth = card.nodes.ui.minWidth = maxWidth;
         }
       });
 
@@ -243,7 +248,7 @@ registerComponent('layer-carousel-message-view', {
      * @private
      */
     _adjustCarouselWidth() {
-      const width = this.getAvailableMessageWidth();
+      const width = this.getFullAvailableMessageWidth();
       if (!width) return;
       this.messageViewer.style.maxWidth = (width - 2) + 'px';
     },

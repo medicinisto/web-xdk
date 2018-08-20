@@ -18,6 +18,7 @@ import MessageViewMixin from '../message-view-mixin';
 import VideoModel from './layer-video-message-model';
 import Clickable from '../../mixins/clickable';
 import WidthTracker from '../../mixins/width-tracker';
+import { isIOS } from '../../../utils';
 
 registerComponent('layer-video-message-large-view', {
   mixins: [MessageViewMixin, Clickable, WidthTracker],
@@ -81,7 +82,8 @@ registerComponent('layer-video-message-large-view', {
     onAfterCreate() {
       const player = this.nodes.player;
 
-      player.autoplay = this.autoplay;
+      player.autoplay = this.autoplay && !isIOS;
+      player.preload = 'metadata';
 
       // If the model indicates we left off somewhere when previously playing this,
       // resume playback once the data is loaded.
