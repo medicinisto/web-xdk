@@ -75,16 +75,17 @@ export default class MessageTypeResponseSummary extends Root {
    * @method addState
    * @param {String} name
    * @param {String} value
+   * @param {String} [identityId=getClient().user.id]
    */
-  addState(name, value) {
-    const operations = this._trackers[name].addValue(value);
+  addState(name, value, identityId = getClient().user.id) {
+    const operations = this._trackers[name].addValue(value, identityId);
     if (operations && operations.length) {
       const evt = {
         property: 'responses.' + name,
-        newValue: this.getState(name, getClient().user.id),
+        newValue: this.getState(name, identityId),
         addedValue: operations[0].value,
         oldValue: operations[0].oldValue,
-        identityId: getClient().user.id,
+        identityId,
       };
       this._addOperations(operations, evt);
       this.parentModel._triggerAsync('message-type-model:change', evt);
@@ -134,15 +135,15 @@ export default class MessageTypeResponseSummary extends Root {
    * @param {String} name
    * @param {String} value
    */
-  removeState(name, value) {
-    const oldValue = this.getState(name, getClient().user.id);
+  removeState(name, value, identityId = getClient().user.id) {
+    const oldValue = this.getState(name, identityId);
     const operations = this._trackers[name].removeValue(value);
     if (operations && operations.length) {
       const evt = {
         property: 'responses.' + name,
-        newValue: this.getState(name, getClient().user.id),
+        newValue: this.getState(name, identityId),
         oldValue,
-        identityId: getClient().user.id,
+        identityId,
       };
       this._addOperations(operations, evt);
       this.parentModel._triggerAsync('message-type-model:change', evt);
@@ -245,13 +246,7 @@ export default class MessageTypeResponseSummary extends Root {
 
       // Fix up the response model's properties and then call `send`
       else {
-        const response = this._currentResponseModel;
-        this._currentResponseModel = null;
-
-        if (!response.responseTo) response.responseTo = this.parentModel.message.id;
-        if (!response.responseToNodeId) {
-          response.responseToNodeId = this.parentModel.part ? this.parentModel.nodeId : this.parentModel.parentId;
-        }
+        const response = this.getPreparedResponseModel();
         response.send({ conversation: this.parentModel.message.getConversation() });
       }
     } else if (this.parentModel.message) {
@@ -259,6 +254,25 @@ export default class MessageTypeResponseSummary extends Root {
     } else {
       this.parentModel.once('message-type-model:has-new-message', this.sendResponseMessage.bind(this), this);
     }
+  }
+
+  /**
+   * Set up the Response Message Model that we've been building via addState/removeState calls and return it.
+   *
+   * Used primarily by {@link #sendResponseMessage}
+   *
+   * @method getPreparedResponseModel
+   * @returns {Layer.UI.messages.ResponseMessageModel}
+   */
+  getPreparedResponseModel() {
+    const response = this._currentResponseModel;
+    this._currentResponseModel = null;
+
+    if (!response.responseTo) response.responseTo = this.parentModel.message.id;
+    if (!response.responseToNodeId) {
+      response.responseToNodeId = this.parentModel.part ? this.parentModel.nodeId : this.parentModel.parentId;
+    }
+    return response;
   }
 
   /**

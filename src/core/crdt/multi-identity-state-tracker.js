@@ -124,8 +124,7 @@ export default class CRDTMultiIdentityStateTracker {
    * @param {String|Number|Boolean} value
    * @returns {Layer.Core.CRDT.Changes[]}
    */
-  addValue(value) {
-    const identityId = getClient().user.id;
+  addValue(value, identityId = getClient().user.id) {
     this._addUser(identityId);
     return this.users[identityId].add(value);
   }
@@ -137,8 +136,7 @@ export default class CRDTMultiIdentityStateTracker {
    * @param {String|Number|Boolean} value
    * @returns {Layer.Core.CRDT.Changes[]}
    */
-  removeValue(value) {
-    const identityId = getClient().user.id;
+  removeValue(value, identityId = getClient().user.id) {
     this._addUser(identityId);
     return this.users[identityId].remove(value);
   }

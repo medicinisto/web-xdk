@@ -1,1 +1,1 @@
-export default '@layerhq/web-xdk-prerelease';
+export default '@layerhq/web-xdk';
