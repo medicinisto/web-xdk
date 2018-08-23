@@ -749,7 +749,8 @@ module.exports = function (grunt) {
     'browserify:build', // Generate a build file from the optimized webcomponents and commonjsified files
     'full-babel:build', // Update build file with babelified version
     'notify:browserify',
-    "generate-quicktests", "generate-smalltests" // Update SpecRunner to run new test files
+    //"generate-quicktests",
+    "generate-smalltests" // Update SpecRunner to run new test files
   ]);
 
   grunt.registerTask('build', [

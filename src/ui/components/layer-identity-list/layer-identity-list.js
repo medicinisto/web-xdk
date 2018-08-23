@@ -212,7 +212,7 @@ registerComponent('layer-identity-list', {
    * The user has clicked to deselect a identity in the identities list, and your app wants to immediately see
    * the complete list of selected identities.
    *
-   * {@link #event#layer-identity-selected} asks you to confirm before the selection changes, thus you do not
+   * {@link #event-layer-identity-selected} asks you to confirm before the selection changes, thus you do not
    * have the complete list of selected identities. Therefore use this event to get the complete list:
    *
    *    identityList.onIdentitySelectionComplete = function(evt) {

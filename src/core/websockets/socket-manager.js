@@ -878,7 +878,7 @@ SocketManager._supportedEvents = [
    * Websocket is being closed
    *
    * @event disconnecting
-   * @param {Layer.Core.Event} evt
+   * @param {Layer.Core.LayerEvent} evt
    * @param {String} evt.from  Describes where the call to scheduleReconnect originated from
    * @param {String} evt.why   Provides detail on why the call was made from there
    */
@@ -887,7 +887,7 @@ SocketManager._supportedEvents = [
   /**
    * Websocket Event.replay is about to be issued
    * @event replaying-events
-   * @param {Layer.Core.Event} evt
+   * @param {Layer.Core.LayerEvent} evt
    * @param {String} evt.from  Describes where the call to Event.replay originated from
    * @param {String} evt.why   Provides detail on why the call was made from there
    */
@@ -897,7 +897,7 @@ SocketManager._supportedEvents = [
    * scheduleReconnect has been called
    *
    * @event scheduling-reconnect
-   * @param {Layer.Core.Event} evt
+   * @param {Layer.Core.LayerEvent} evt
    * @param {Number} evt.counter
    * @param {Number} evt.delay
    */
@@ -907,7 +907,7 @@ SocketManager._supportedEvents = [
    * Websocket reconnect has been scheduled
    *
    * @event schedule-reconnect
-   * @param {Layer.Core.Event} evt
+   * @param {Layer.Core.LayerEvent} evt
    * @param {String} evt.from  Describes where the call to scheduleReconnect originated from
    * @param {String} evt.why   Provides detail on why the call was made from there
    */
@@ -917,7 +917,7 @@ SocketManager._supportedEvents = [
    * Websocket ignored skipped counters without checking for missed websocket data
    *
    * @event ignore-skipped-counter
-   * @param {Layer.Core.Event} evt
+   * @param {Layer.Core.LayerEvent} evt
    * @param {String} evt.from  Describes where the call to scheduleReconnect originated from
    * @param {String} evt.why   Provides detail on why the call was made from there
    */

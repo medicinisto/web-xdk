@@ -33,7 +33,7 @@ const ClientWebsockets = {
      * Websocket is being closed
      *
      * @event websocket:disconnecting
-     * @param {Layer.Core.Event} evt
+     * @param {Layer.Core.LayerEvent} evt
      * @param {String} evt.from  Describes where the call to scheduleReconnect originated from
      * @param {String} evt.why   Provides detail on why the call was made from there
      */
@@ -42,7 +42,7 @@ const ClientWebsockets = {
     /**
      * Websocket Event.replay is about to be issued
      * @event websocket:replaying-events
-     * @param {Layer.Core.Event} evt
+     * @param {Layer.Core.LayerEvent} evt
      * @param {String} evt.from  Describes where the call to Event.replay originated from
      * @param {String} evt.why   Provides detail on why the call was made from there
      */
@@ -52,7 +52,7 @@ const ClientWebsockets = {
      * scheduleReconnect has been called
      *
      * @event websocket:scheduling-reconnect
-     * @param {Layer.Core.Event} evt
+     * @param {Layer.Core.LayerEvent} evt
      * @param {Number} evt.counter
      * @param {Number} evt.delay
      */
@@ -62,7 +62,7 @@ const ClientWebsockets = {
      * Websocket reconnect has been scheduled
      *
      * @event websocket:schedule-reconnect
-     * @param {Layer.Core.Event} evt
+     * @param {Layer.Core.LayerEvent} evt
      * @param {String} evt.from  Describes where the call to scheduleReconnect originated from
      * @param {String} evt.why   Provides detail on why the call was made from there
      */
@@ -72,7 +72,7 @@ const ClientWebsockets = {
      * Websocket ignored skipped counters without checking for missed websocket data
      *
      * @event websocket:ignore-skipped-counter
-     * @param {Layer.Core.Event} evt
+     * @param {Layer.Core.LayerEvent} evt
      * @param {String} evt.from  Describes where the call to scheduleReconnect originated from
      * @param {String} evt.why   Provides detail on why the call was made from there
      */
