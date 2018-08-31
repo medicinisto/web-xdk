@@ -1,6 +1,12 @@
 # Web XDK Change Log
 
-## 4.1.0
+## 4.1.0-pre1.2
+
+* Large Message Dialog now rerenders title when Message Model state changes
+* Message Viewer no longer add click/tap event handlers for its Large Message View
+* Action Button now blurs rather than retaining focus on clicking
+
+## 4.1.0-pre1
 
 _Breaking Changes_:
 

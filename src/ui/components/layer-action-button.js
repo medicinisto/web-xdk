@@ -147,7 +147,6 @@ registerComponent('layer-action-button', {
      * @private
      */
     _onClick(evt) {
-      if (!this.event || this.disabled) return;
       if (evt) {
         evt.target.blur(); // Sometimes the button keeps its "clicked" state which is wrong
         evt.preventDefault();

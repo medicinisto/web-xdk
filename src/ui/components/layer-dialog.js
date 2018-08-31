@@ -266,16 +266,9 @@ registerComponent('layer-dialog', {
       }
 
       const content = this.properties.content;
-      if (content.getTitle) {
-        this.nodes.titleBar.title = content.getTitle();
-      }
-
-      if (content.getIconClass) {
-        this.iconClass = content.getIconClass();
-      }
-
-      if (content.getIcon) {
-        this.icon = content.getIcon();
+      this.setupTitlebar();
+      if (content.model) {
+        content.model.on('message-type-model:change', this.setupTitlebar, this);
       }
 
       // If we are managing pop state, then push our state to the history, and listen for it to be popped.
@@ -305,6 +298,22 @@ registerComponent('layer-dialog', {
           wasUnread: this.model.message.isUnread,
           inBackground: isInBackground(),
         });
+      }
+    },
+
+    setupTitlebar() {
+      const content = this.properties.content;
+
+      if (content.getTitle) {
+        this.nodes.titleBar.title = content.getTitle();
+      }
+
+      if (content.getIconClass) {
+        this.iconClass = content.getIconClass();
+      }
+
+      if (content.getIcon) {
+        this.icon = content.getIcon();
       }
     },
 

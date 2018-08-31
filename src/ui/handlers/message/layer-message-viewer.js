@@ -169,14 +169,13 @@ registerComponent('layer-message-viewer', {
     },
   },
   methods: {
-    // Standard lifecycle event insures that _handleSelection will be called when clicked
-    onCreate() {
-      this.addClickHandler('message-click', this, this._handleSelection.bind(this), false, true);
-    },
 
     // Standard lifecycle event insures that setupMessage is called
     onAfterCreate() {
       if (this.message) this._setupMessage();
+      if (this.size !== 'large') {
+        this.addClickHandler('message-click', this, this._handleSelection.bind(this), false, true);
+      }
     },
 
     /**
