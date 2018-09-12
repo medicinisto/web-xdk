@@ -187,7 +187,7 @@ export default class VideoModel extends MessageTypeModel {
   // See parent class
   setupSlots() {
     const firstSlot = [
-      this.title || this.sourceUrl.replace(/(.*\/)?(.*?)(\..*)?$/, '$2'),
+      this.title || this.sourceUrl.replace(/(.*\/)?(.*?)$/, '$2'),
     ].filter(value => value);
 
     const secondSlot = [
@@ -228,9 +228,10 @@ export default class VideoModel extends MessageTypeModel {
     let str = '';
 
     let hrs = Math.floor(this.duration / 3600);
-    if (!hrs) hrs = '00';
-    else if (hrs < 10) hrs = '0' + hrs;
-    str += hrs + ':';
+    if (hrs) {
+      if (hrs < 10) hrs = '0' + hrs;
+      str += hrs + ':';
+    }
 
     const afterHours = this.duration % 3600;
     let mins = Math.floor(afterHours / 60);

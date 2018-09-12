@@ -268,7 +268,7 @@ describe('Audio Message Components', function() {
       expect(new AudioModel({
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
-      }).getTitle()).toEqual("e");
+      }).getTitle()).toEqual("e.mp3");
 
       var audioBlob = generateBlob(mp3Base64, "audio/mp3");
       var model = new AudioModel({
@@ -627,11 +627,11 @@ describe('Audio Message Components', function() {
       ui.parentNode.parentNode.style.width = '300px';
       ui.onAfterCreate();
 
-      expect(ui.nodes.title.innerText.trim()).toEqual('compl');
+      expect(ui.nodes.title.innerText.trim()).toEqual('compl.mp3');
       expect(ui.nodes.description1.innerText.trim()).toEqual('artist');
       expect(ui.nodes.description2.innerText.trim()).toEqual('album');
       expect(ui.nodes.description3.innerText.trim()).toEqual('genre');
-      expect(ui.nodes.footer1.innerText.trim()).toEqual('00:00:05');
+      expect(ui.nodes.footer1.innerText.trim()).toEqual('00:05');
       expect(ui.nodes.footer2.innerText.trim()).toEqual('5K');
     });
 

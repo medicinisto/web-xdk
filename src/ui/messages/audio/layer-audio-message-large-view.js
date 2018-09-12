@@ -257,6 +257,16 @@ registerComponent('layer-audio-message-large-view', {
      * @private
      */
     _dragging: {},
+
+    // Allows calculations to account for spacing around the poster;
+    // TODO: May need to make this actually set padding via DOM manipulation
+    paddingLeft: {
+      value: 32,
+    },
+    paddingRight: {
+      value: 32,
+    },
+
   },
   methods: {
     onCreate() {
@@ -390,6 +400,25 @@ registerComponent('layer-audio-message-large-view', {
         // If it needed to be allocated, its now allocated
         this.isHeightAllocated = true;
       }
+    },
+
+    // This makes _resizeContent render correctly by accounting for paddingLeft and paddingRight;
+    // however, it may mess things up if rendering Large Audio Message in the Message List
+    getMaxMessageWidth: {
+      mode: registerComponent.MODES.OVERWRITE,
+      value: function value() {
+        let width = this.getAvailableMessageWidth();
+        if (width) {
+          width = width - this.paddingLeft - this.paddingRight;
+          if (this.maxWidth) {
+            return Math.min(width, this.maxWidth);
+          } else {
+            return width;
+          }
+        } else {
+          return this.maxWidth;
+        }
+      },
     },
 
     /**
