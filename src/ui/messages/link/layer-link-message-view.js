@@ -16,10 +16,12 @@
 
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
+import Clickable from '../../mixins/clickable';
+
 import './layer-link-message-model';
 
 registerComponent('layer-link-message-view', {
-  mixins: [MessageViewMixin],
+  mixins: [MessageViewMixin, Clickable],
 
   style: `
   layer-message-viewer.layer-link-message-view layer-standard-message-view-container {
@@ -82,6 +84,9 @@ registerComponent('layer-link-message-view', {
     },
   },
   methods: {
+    onCreate() {
+      this.addClickHandler('message-click', this.nodes.link, this._linkClicked.bind(this));
+    },
 
     /**
      * Whenever a the model changes or is created, rerender basic properties.
@@ -119,6 +124,10 @@ registerComponent('layer-link-message-view', {
 
     isPlainLink() {
       return !this.model.imageUrl && !this.parentComponent.isShowingMetadata;
+    },
+
+    _linkClicked() {
+      this.messageViewer._runAction();
     },
   },
 });
