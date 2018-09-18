@@ -8,6 +8,7 @@ export default {
     Identity: [],
     MessageTypeModel: [],
     MessagePart: [],
+    ResponseSummaryModel: [],
   },
   Websockets: {},
   MessageTypeModels: {},
