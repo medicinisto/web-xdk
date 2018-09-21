@@ -45,7 +45,15 @@ describe('Video Message Components', function() {
           return new Blob( [view], { type: type });
       }
   }
+  var originalTimeout;
+  beforeAll(function() {
+    originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+  });
 
+  afterAll(function() {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
+  });
 
 
   beforeEach(function() {
@@ -230,7 +238,7 @@ describe('Video Message Components', function() {
         artist: "art",
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
-      }).getTitle()).toEqual("e");
+      }).getTitle()).toEqual("e.mp3");
 
       // If there is metadata to prevent promotion of, show "Video Message"
       var audioBlob = generateBlob(mp3Base64, "audio/mp3");
@@ -275,7 +283,7 @@ describe('Video Message Components', function() {
         size: 60000,
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
-      }).getDescription()).toEqual("00:00:50");
+      }).getDescription()).toEqual("00:50");
 
       expect(new VideoModel({
         size: 60000,
@@ -308,7 +316,7 @@ describe('Video Message Components', function() {
         size: 60000,
         sourceUrl: "a/b/c/e.mp3",
         mimeType: "audio/mp3",
-      }).getFooter()).toEqual("00:00:50");
+      }).getFooter()).toEqual("00:50");
 
 
       expect(new VideoModel({
@@ -515,7 +523,7 @@ describe('Video Message Components', function() {
       // Posttest
       expect(el.querySelector('.layer-standard-card-container-title').innerText.trim()).toEqual('title');
       expect(el.querySelector('.layer-standard-card-container-description').innerText.trim()).toEqual('artist');
-      expect(el.querySelector('.layer-standard-card-container-footer').innerText.trim()).toEqual('00:00:50');
+      expect(el.querySelector('.layer-standard-card-container-footer').innerText.trim()).toEqual('00:50');
     });
 
     it("Should open large video message", function() {
@@ -582,10 +590,10 @@ describe('Video Message Components', function() {
       ui.style.height = '200px';
       ui.parentNode.parentNode.style.width = '300px';
 
-      expect(ui.nodes.title.innerText.trim()).toEqual('ElephantsDream');
+      expect(ui.nodes.title.innerText.trim()).toEqual('ElephantsDream.mp4');
       expect(ui.nodes.description1.innerText.trim()).toEqual('subtitle');
       expect(ui.nodes.description2.innerText.trim()).toEqual('artist');
-      expect(ui.nodes.footer1.innerText.trim()).toEqual('00:00:05');
+      expect(ui.nodes.footer1.innerText.trim()).toEqual('00:05');
       expect(ui.nodes.footer2.innerText.trim()).toEqual('5K');
       expect(ui.nodes.footer3.innerText.trim()).toEqual(new Date('2010-10-10T00:00:00').toLocaleString());
     });

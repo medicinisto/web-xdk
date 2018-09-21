@@ -277,6 +277,7 @@ export default class ChoiceModel extends MessageTypeModel {
    * @method selectAnswer
    * @param {Object} answerData
    * @param {String} answerData.id   ID of the choice that is to be selected
+   * @returns {null|Promise} if using the SAPI integration, a Promise is returned, else null is returned
    */
   selectAnswer(answerData) {
     // If selection is not enabled, just quit.
@@ -284,9 +285,9 @@ export default class ChoiceModel extends MessageTypeModel {
 
     if (!this.message) throw new Error(ErrorDictionary.messageMissing);
     if (this.allowMultiselect) {
-      this._selectMultipleAnswers(answerData);
+      return this._selectMultipleAnswers(answerData);
     } else {
-      this._selectSingleAnswer(answerData);
+      return this._selectSingleAnswer(answerData);
     }
   }
 
@@ -298,6 +299,7 @@ export default class ChoiceModel extends MessageTypeModel {
    * @private
    * @param {Object} answerData
    * @param {String} answerData.id   ID of the choice that is to be selected
+   * @returns {null|Promise} if using the SAPI integration, a Promise is returned, else null is returned
    */
   _selectMultipleAnswers(answerData) {
     let action;
@@ -354,7 +356,7 @@ export default class ChoiceModel extends MessageTypeModel {
 
     this.responses.setResponseMessageText(messageText);
 
-    this.responses.sendResponseMessage();
+    const result = this.responses.sendResponseMessage();
 
     // Update the selected answer and update the UI
     // TODO: Use function to look at all state and get selectedAnswer
@@ -367,6 +369,8 @@ export default class ChoiceModel extends MessageTypeModel {
       newValue: this.selectedAnswer,
       oldValue: initialSelectedAnswer,
     });
+
+    return result;
   }
 
   /**
@@ -388,6 +392,7 @@ export default class ChoiceModel extends MessageTypeModel {
    * @private
    * @param {Object} answerData
    * @param {String} answerData.id   ID of the choice that is to be selected
+   * @returns {null|Promise} if using the SAPI integration, a Promise is returned, else null is returned
    */
   _selectSingleAnswer(answerData) {
     const initialSelectedAnswer = this.selectedAnswer;
@@ -429,10 +434,9 @@ export default class ChoiceModel extends MessageTypeModel {
     if (Object.keys(customResponseData).length) {
       this.responses.addState('custom_response_data', customResponseData);
     }
-
     this.responses.setResponseMessageText(messageText);
 
-    this.responses.sendResponseMessage();
+    const result = this.responses.sendResponseMessage();
 
     // Update the selected answer and update the UI
     // TODO: Use function to look at all state and get selectedAnswer
@@ -443,6 +447,7 @@ export default class ChoiceModel extends MessageTypeModel {
       newValue: this.selectedAnswer,
       oldValue: initialSelectedAnswer,
     });
+    return result;
   }
 
 

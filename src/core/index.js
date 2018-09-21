@@ -12,6 +12,7 @@ import './mixins/message-part-capi';
 import './mixins/message-capi';
 import './mixins/message-type-model-capi';
 import './mixins/message-layer-ui-backwards-compat';
+import './mixins/response-summary-capi';
 
 // Client Mixins
 import './mixins/client-capi-authentication';

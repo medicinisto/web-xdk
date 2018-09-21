@@ -1,5 +1,12 @@
 # Web XDK Change Log
 
+## 4.1.0-pre1.3
+
+* Fixes to Audio Message Large View's poster in small sizes
+* Audio/Video file names now include file extension
+* Style changes to Receipt Message
+* Adds Large Message View for Receipt Message
+
 ## 4.1.0-pre1.2
 
 * Large Message Dialog now rerenders title when Message Model state changes

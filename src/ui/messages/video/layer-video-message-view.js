@@ -64,6 +64,10 @@ registerComponent('layer-video-message-view', {
       value: 250,
     },
 
+    minWidth: {
+      value: 192,
+    },
+
     /**
      * Minimum width allowed for a preview image in px.
      *

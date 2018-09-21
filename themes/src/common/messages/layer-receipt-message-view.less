@@ -1,6 +1,6 @@
 layer-receipt-message-product-view {
-  padding: 12px;
   border-bottom: solid 1px @color-g3;
+  padding: 8px 12px;
 
   .layer-receipt-message-view-quantity:not(:empty)::before {
     content: "Quantity: ";
@@ -14,13 +14,16 @@ layer-receipt-message-product-view {
 
   .layer-receipt-message-view-price {
     color: @color-g5;
-    font-size: @font-medium;
+    font-size: @font-small;
     padding: 4px 0px;
   }
 
-  .layer-receipt-message-view-options:not(:empty)::before {
-    content: "Options: ";
+  .layer-receipt-message-view-options, .layer-receipt-message-view-quantity {
+    color: @color-g6;
+    font-size: @font-small;
   }
+
+
   & > .layer-receipt-message-image {
     width: 20%;
     margin-right: 12px;
@@ -32,8 +35,10 @@ layer-receipt-message-product-view {
   }
 }
 
-
-layer-receipt-message-view {
+layer-receipt-message-large-view {
+  padding: 8px 24px 0px 24px;
+}
+layer-receipt-message-view, layer-receipt-message-large-view {
   min-width: 192px;
   .layer-receipt-details {
     .layer-card-body-outer {
@@ -79,6 +84,7 @@ layer-receipt-message-view {
   .layer-receipt-detail-item {
     padding: 8px 12px;
   }
+
   .layer-receipt-detail-item.layer-receipt-summary {
     padding: 12px 12px;
     align-items: flex-end;
@@ -94,13 +100,21 @@ layer-receipt-message-view {
     padding-bottom: 0px;
   }
 
-  .layer-receipt-summary {
+  .layer-receipt-summary, .layer-receipt-subtotals > div {
     display: flex;
     flex-direction: row;
+    div {
+      flex-grow: 1;
+      text-align: right;
+      padding: 4px 0px;
+    }
   }
+
+  .layer-receipt-subtotals > div {
+    font-size: @font-medium;
+  }
+
   .layer-receipt-price {
-    flex-grow: 1;
-    text-align: right;
     font-size: @font-larger;
   }
   .layer-receipt-summary label {

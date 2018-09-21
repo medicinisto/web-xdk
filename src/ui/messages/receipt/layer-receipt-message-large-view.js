@@ -20,11 +20,10 @@ import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import './layer-receipt-message-product-view';
 import './layer-receipt-message-model';
-import './layer-receipt-message-large-view';
 import { get as getGraphic } from '../../resources/graphics/';
 import '../../resources/graphics/receipt';
 
-registerComponent('layer-receipt-message-view', {
+registerComponent('layer-receipt-message-large-view', {
   template: `
   <div class="layer-receipt-for-products" layer-id="products"></div>
   <div class='layer-receipt-details'>
@@ -32,43 +31,55 @@ registerComponent('layer-receipt-message-view', {
       <label>Paid with</label>
       <div class="layer-receipt-paid-with layer-receipt-card-description" layer-id='paidWith'></div>
     </div>
-    <div class='layer-address layer-receipt-detail-item'>
+    <div class='layer-shipping-address layer-receipt-detail-item'>
       <label>Ship to</label>
-      <layer-message-viewer layer-id='shipTo' hide-map='true'></layer-message-viewer>
+      <layer-message-viewer layer-id='shipTo'></layer-message-viewer>
     </div>
+    <div class='layer-billing-address layer-receipt-detail-item'>
+      <label>Bill to</label>
+      <layer-message-viewer layer-id='billTo' hide-map='true'></layer-message-viewer>
+    </div>
+
+    <div class='layer-receipt-detail-item layer-receipt-subtotals'>
+      <div class='layer-subtotal'>
+        <label>Subtotal</label>
+        <div class="layer-receipt-subtotal layer-receipt-card-description" layer-id='subtotal'></div>
+      </div>
+
+      <div class='layer-shipping'>
+        <label>Shipping</label>
+        <div class="layer-receipt-shipping layer-receipt-card-description" layer-id='shipping'></div>
+      </div>
+
+      <div class='layer-taxes'>
+        <label>Taxes</label>
+        <div class="layer-receipt-taxes layer-receipt-card-description" layer-id='taxes'></div>
+      </div>
+    </div>
+
     <div class='layer-receipt-summary layer-receipt-detail-item'>
       <label>Total</label>
       <div class='layer-receipt-price' layer-id='total'></div>
     </div>
   </div>
   `,
-  style: `layer-receipt-message-view {
+  style: `layer-receipt-message-large-view {
     display: block;
+    overflow-y: auto;
   }
-  layer-message-viewer.layer-receipt-message-view {
+  layer-message-viewer.layer-receipt-message-large-view {
     padding-bottom: 0px;
   }
-  layer-receipt-message-view.layer-receipt-no-payment .layer-paid-with {
+  layer-receipt-message-large-view.layer-receipt-no-payment .layer-paid-with {
     display: none;
   }
-  layer-receipt-message-view .layer-receipt-detail-item layer-message-viewer {
+  layer-receipt-message-large-view .layer-receipt-detail-item layer-message-viewer {
     display: block;
   }
   `,
   mixins: [MessageViewMixin],
   properties: {
 
-    // Use the Titled Message Container
-    messageViewContainerTagName: {
-      noGetterFromSetter: true,
-      value: 'layer-titled-message-view-container',
-    },
-    minWidth: {
-      value: 384,
-    },
-    maxWidth: {
-      value: 500,
-    },
   },
   methods: {
 
@@ -121,7 +132,33 @@ registerComponent('layer-receipt-message-view', {
         shipTo.nodes.ui.hideMap = true;
       }
 
+      if (this.model.billingAddress) {
+        const billTo = this.nodes.billTo;
+        this.model.billingAddress.showAddress = true;
+        billTo.model = this.model.billingAddress;
+        billTo.cardBorderStyle = 'none';
+        billTo._onAfterCreate();
+        billTo.nodes.ui.hideMap = true;
+      }
+
       // Setup the Totals and Paid With sections
+      this.nodes.subtotal.innerHTML = Number(this.model.summary.subtotal)
+        .toLocaleString(navigator.language, {
+          currency: this.model.currency,
+          style: 'currency',
+        });
+
+        this.nodes.shipping.innerHTML = Number(this.model.summary.shippingCost)
+        .toLocaleString(navigator.language, {
+          currency: this.model.currency,
+          style: 'currency',
+        });
+
+        this.nodes.taxes.innerHTML = Number(this.model.summary.totalTax)
+        .toLocaleString(navigator.language, {
+          currency: this.model.currency,
+          style: 'currency',
+        });
       this.nodes.total.innerHTML = Number(this.model.summary.totalCost)
         .toLocaleString(navigator.language, {
           currency: this.model.currency,

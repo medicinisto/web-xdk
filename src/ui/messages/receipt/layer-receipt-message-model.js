@@ -378,6 +378,14 @@ ReceiptModel.MIMEType = 'application/vnd.layer.receipt+json';
  */
 ReceiptModel.messageRenderer = 'layer-receipt-message-view';
 
+/**
+ * The UI Component to render the Large Receipt Model.
+ *
+ * @static
+ * @property {String} [largeMessageRenderer=layer-receipt-message-large-view]
+ */
+ReceiptModel.largeMessageRenderer = 'layer-receipt-message-large-view';
+
 // Finish setting up the Class
 Root.initClass.apply(ReceiptModel, [ReceiptModel, 'ReceiptModel']);
 
