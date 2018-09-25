@@ -1,5 +1,9 @@
 # Web XDK Change Log
 
+## 4.0.5
+
+* Handles errors caused by `localStorage` being disabled by the browser
+
 ## 4.0.4
 
 * WEB-1796: Fixes Image Orientation for rotated images sent via Safari
