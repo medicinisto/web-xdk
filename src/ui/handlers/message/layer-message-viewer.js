@@ -167,6 +167,7 @@ registerComponent('layer-message-viewer', {
         if (value) this.classList.add('layer-root-viewer');
       },
     },
+    openActionData: {},
   },
   methods: {
 
@@ -176,6 +177,7 @@ registerComponent('layer-message-viewer', {
       if (this.size !== 'large') {
         this.addClickHandler('message-click', this, this._handleSelection.bind(this), false, true);
       }
+      if (!this.openActionData) this.openActionData = {};
     },
 
     /**

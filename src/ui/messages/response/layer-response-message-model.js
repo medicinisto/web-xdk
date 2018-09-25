@@ -299,5 +299,8 @@ ResponseModel.messageRenderer = 'layer-response-message-view';
 // Register the Message Model Class with the Client
 Core.Client.registerMessageTypeModelClass(ResponseModel, 'ResponseModel');
 
+// Register the Class
+Core.Root.initClass.apply(ResponseModel, [ResponseModel, 'ResponseModel']);
+
 // Register the message to be handled as a Status Message
 registerStatusModel(ResponseModel);

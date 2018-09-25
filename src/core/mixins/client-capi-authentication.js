@@ -220,7 +220,7 @@ const ClientAuth = {
      * @private
      */
     _isPersistedSessionsDisabled() {
-      return !global.localStorage || (this.persistenceFeatures && !this.persistenceFeatures.sessionToken);
+      return !Util.hasLocalStorage || (this.persistenceFeatures && !this.persistenceFeatures.sessionToken);
     },
 
     /**
@@ -369,7 +369,7 @@ const ClientAuth = {
      * @param {Function} callback
      */
     _clearStoredData(callback) {
-      if (global.localStorage) localStorage.removeItem(LOCALSTORAGE_KEYS.SESSIONDATA + this.appId);
+      if (Util.hasLocalStorage) localStorage.removeItem(LOCALSTORAGE_KEYS.SESSIONDATA + this.appId);
       const waitForCallback = this._runMixins('clear-stored-data', [callback]);
       if (!waitForCallback && callback) callback();
     },
@@ -409,7 +409,7 @@ const ClientAuth = {
       if (!this.isTrustedDevice || this._isPersistedSessionsDisabled() || this._hasUserIdChanged(userId)) {
         this._clearStoredData();
       }
-      if (this.isTrustedDevice) {
+      if (this.isTrustedDevice && !this._isPersistedSessionsDisabled()) {
         user = this._restoreLastUser();
         if (user) this.user = user;
       }
@@ -766,7 +766,7 @@ const ClientAuth = {
 
       if (this.sessionToken) {
         this.sessionToken = '';
-        if (global.localStorage) {
+        if (Util.hasLocalStorage) {
           localStorage.removeItem(LOCALSTORAGE_KEYS.SESSIONDATA + this.appId);
         }
       }

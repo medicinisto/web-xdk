@@ -2,6 +2,11 @@
 
 ## 4.1.0
 
+* Query filter property now applies filter against `conversation.lastMessage` before adding the last message to the query results
+* Fix handles case where browser has disabled localStorage
+
+## 4.1.0-pre1.3
+
 * Fixes to Audio Message Large View's poster in small sizes
 * Audio/Video file names now include file extension
 

@@ -165,15 +165,18 @@ export default class MessagesQuery extends Query {
     // If there are no results, then its a new query; automatically populate it with the Conversation's lastMessage.
     if (this.data.length === 0) {
       if (conversation && conversation.lastMessage) {
-        this.data = [this._getData(conversation.lastMessage)];
-        // Trigger the change event
-        this._triggerChange({
-          type: 'data',
-          pagedToEnd: this.pagedToEnd,
-          data: [this._getData(conversation.lastMessage)],
-          query: this,
-          target: getClient(),
-        });
+        const lastMessage = conversation.lastMessage;
+        if (!this.filter || this.filter(lastMessage)) {
+          this.data = [this._getData(lastMessage)];
+          // Trigger the change event
+          this._triggerChange({
+            type: 'data',
+            pagedToEnd: this.pagedToEnd,
+            data: [this._getData(lastMessage)],
+            query: this,
+            target: getClient(),
+          });
+        }
       }
     }
   }

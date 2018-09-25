@@ -412,8 +412,13 @@ export const isSafari = global.navigator ?
   global.navigator.vendor.match(/apple/i) : false;
 export const isIE11 = !!global.MSInputMethodContext && !!document.documentMode;
 
-
-export const hasLocalStorage = typeof Storage !== 'undefined' && global.localStorage instanceof Storage;
+let hasLocalStorageTmp = false;
+try {
+  hasLocalStorageTmp = typeof Storage !== 'undefined' && global.localStorage instanceof Storage;
+} catch (e) {
+  // No-op
+}
+export const hasLocalStorage = hasLocalStorageTmp;
 
 /**
  * Simple array inclusion test
