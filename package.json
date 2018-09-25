@@ -1,6 +1,6 @@
 {
   "name": "@layerhq/web-xdk",
-  "version": "4.0.5",
+  "version": "4.0.6",
   "description": "The Layer eXperience SDK for Web provides a library for talking to Layer Services, and a library of widgets to simplify adding chat capabilities into your application.",
   "main": "lib/index.js",
   "repository": {
