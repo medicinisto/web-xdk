@@ -417,7 +417,12 @@ registerComponent('layer-message-viewer', {
      * @returns {Number}
      */
     getFullAvailableMessageWidth() {
-      return this.parentNode ? this.parentNode.clientWidth : 300;
+      if (this.parentNode) {
+        // TODO: This is a performance hit, and should be done as part of a precalculation step performed on all message viewers before setting any sizes
+        return parseInt(global.getComputedStyle(this.parentNode).getPropertyValue('width'), 10);
+      } else {
+        return 300;
+      }
     },
 
     /**

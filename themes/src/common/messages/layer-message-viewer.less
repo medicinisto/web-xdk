@@ -31,14 +31,22 @@ layer-message-item-received layer-standard-message-view-container.layer-standard
   }
 }
 
-layer-message-item-sent .layer-root-viewer > layer-standard-message-view-container.layer-standard-message-view-no-metadata > .layer-card-top {
-  background-color: @message-item-bubble-sent-background-color;
-  color: @message-item-bubble-text-sent-color;
-  flex-grow: 1;
+layer-message-item-sent {
+  layer-standard-message-view-container.layer-standard-message-view-no-metadata > .layer-card-top {
+    background-color: @message-item-bubble-received-background-color;
+    color: @message-item-bubble-received-color;
+    flex-grow: 1;
+  }
 
-  a, a:visited {
+  .layer-root-viewer > layer-standard-message-view-container.layer-standard-message-view-no-metadata > .layer-card-top {
+    background-color: @message-item-bubble-sent-background-color;
     color: @message-item-bubble-text-sent-color;
-    text-decoration: underline;
+    flex-grow: 1;
+
+    a, a:visited {
+      color: @message-item-bubble-text-sent-color;
+      text-decoration: underline;
+    }
   }
 }
 

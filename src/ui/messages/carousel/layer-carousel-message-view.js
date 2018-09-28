@@ -42,17 +42,17 @@ registerComponent('layer-carousel-message-view', {
     max-width: 100%;
     position: relative;
   }
-  layer-carousel-message-view .layer-next-icon {
+  layer-carousel-message-view > .layer-next-icon {
     display: inline-block;
     z-index: 10;
     position: absolute;
     cursor: pointer;
   }
 
-  layer-carousel-message-view.layer-carousel-end .layer-next-icon:not(.layer-previous-icon) {
+  layer-carousel-message-view.layer-carousel-end > .layer-next-icon:not(.layer-previous-icon) {
     display: none;
   }
-  layer-carousel-message-view.layer-carousel-start .layer-previous-icon {
+  layer-carousel-message-view.layer-carousel-start > .layer-previous-icon {
     display: none;
   }
   .layer-carousel-message-view-items {

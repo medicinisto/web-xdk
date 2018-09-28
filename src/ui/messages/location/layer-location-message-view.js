@@ -27,6 +27,8 @@ import MessageViewMixin from '../message-view-mixin';
 import './layer-location-message-model';
 import { logger } from '../../../utils';
 import Settings from '../../../settings';
+import { get as getGraphic } from '../../resources/graphics/';
+import '../../resources/graphics/next-arrow';
 
 registerComponent('layer-location-message-view', {
   mixins: [MessageViewMixin],
@@ -68,6 +70,10 @@ registerComponent('layer-location-message-view', {
 
     maxWidth: {
       value: 384,
+      get() {
+        if (this.hideMap) return 192;
+        return this.value;
+      },
     },
 
     /**
@@ -155,6 +161,7 @@ registerComponent('layer-location-message-view', {
       if (this.hideMap) {
         const arrow = document.createElement('div');
         arrow.classList.add('layer-next-icon');
+        arrow.innerHTML = getGraphic('next-arrow')();
         this.parentComponent.customControls = arrow;
       }
 

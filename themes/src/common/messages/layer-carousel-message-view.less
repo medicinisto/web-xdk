@@ -45,4 +45,16 @@ layer-carousel-message-view {
   .layer-carousel-message-view-items > layer-message-viewer {
     margin: 0px 4px;
   }
+
+  .layer-carousel-message-view-items {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+
+    & > layer-message-viewer {
+      display: flex;
+      white-space: initial;
+      flex-direction: row;
+    }
+  }
 }

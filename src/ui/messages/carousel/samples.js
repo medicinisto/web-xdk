@@ -63,9 +63,9 @@ model.send({ conversation: $("layer-conversation-view").conversation });
 
 new TextModel({text: "Simple Choice Button Set Carousel"}).send({ conversation: $("layer-conversation-view").conversation });
 
-ProductModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
-ImageModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
-CarouselModel = client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json')
+ProductModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.product+json')
+ImageModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.image+json')
+CarouselModel = Layer.client.getMessageTypeModelClassForMimeType('application/vnd.layer.carousel+json')
    ButtonsModel = Layer.Core.Client.getMessageTypeModelClass('ButtonsModel')
    ChoiceModel = Layer.Core.Client.getMessageTypeModelClass('ChoiceModel')
 model = new CarouselModel({

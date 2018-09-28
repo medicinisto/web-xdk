@@ -1,7 +1,8 @@
 layer-buttons-message-view {
   min-width: @message-type-standard-minimum-width;
 
-  .layer-button-content layer-message-viewer {
+  & > .layer-button-content > layer-message-viewer.layer-standard-message-view-no-metadata,
+  & > .layer-button-content layer-message-viewer {
     border-width: 0px;
     border-radius: 0px;
   }

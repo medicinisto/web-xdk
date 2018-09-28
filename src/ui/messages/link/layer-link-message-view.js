@@ -17,6 +17,8 @@
 import { registerComponent } from '../../components/component';
 import MessageViewMixin from '../message-view-mixin';
 import Clickable from '../../mixins/clickable';
+import { get as getGraphic } from '../../resources/graphics/';
+import '../../resources/graphics/next-arrow';
 
 import './layer-link-message-model';
 
@@ -114,6 +116,7 @@ registerComponent('layer-link-message-view', {
       if (useArrow) {
         const arrow = document.createElement('div');
         arrow.classList.add('layer-next-icon');
+        arrow.innerHTML = getGraphic('next-arrow')();
         this.parentComponent.customControls = arrow;
       }
 

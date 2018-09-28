@@ -4,6 +4,10 @@
 
 * Query filter property now applies filter against `conversation.lastMessage` before adding the last message to the query results
 * Fix handles case where browser has disabled localStorage
+* Conversation List now updates Conversation Titles when a participant's name is updated
+* Carousel rendering changes now cause each carousel item to have the same height
+* A Text Message without metadata inside of a Button Message now renders correctly
+
 
 ## 4.1.0-pre1.3
 
