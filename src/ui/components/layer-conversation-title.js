@@ -65,10 +65,13 @@ registerComponent('layer-conversation-title', {
      * @private
      */
     onRerender(evt) {
-      if (!evt || evt.hasProperty('metadata') ||
+      if (!evt ||
+        evt.hasProperty('metadata') ||
+        evt.hasProperty('participants') ||
         evt.hasProperty('participants.displayName') ||
         evt.hasProperty('participants.firstName') ||
-        evt.hasProperty('participants.lastName')) {
+        evt.hasProperty('participants.lastName')
+      ) {
         const conversation = this.item;
 
         // If no conversation, empty the widget
