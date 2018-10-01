@@ -191,7 +191,7 @@ registerComponent('layer-audio-message-view', {
      * @private
      */
     _hasValidPreview() {
-      return (this.model.preview || this.model.previewUrl) && (this.model.previewWidth && this.model.previewHeight);
+      return this.model.preview || this.model.previewUrl;
     },
 
     /**
@@ -245,7 +245,7 @@ registerComponent('layer-audio-message-view', {
     _resizeContent() {
       const width = this.getAvailableMessageWidth();
       if (width) {
-        if ((this.model.preview || this.model.previewUrl) && (this.model.previewWidth && this.model.previewHeight)) {
+        if (this.model.preview || this.model.previewUrl) {
           // Setup sizes for this node and the parent node
           const sizes = this.getBestDimensions({
             contentWidth: this.model.previewWidth,

@@ -72,7 +72,7 @@ registerComponent('layer-location-message-view', {
       value: 384,
       get() {
         if (this.hideMap) return 192;
-        return this.value;
+        return this.properties.maxWidth;
       },
     },
 
