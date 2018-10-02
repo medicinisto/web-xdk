@@ -1,12 +1,34 @@
+layer-message-viewer.layer-video-message-view.layer-root-viewer.layer-standard-message-view-no-metadata {
+  border-width: 1px;
+  layer-standard-message-view-container.layer-standard-message-view-no-metadata {
+    cursor: pointer;
+    & > .layer-card-top {
+      background-color: transparent;
+    }
+  }
+}
+
 layer-video-message-view {
-  background-color: @color-black;
-  background-size: cover;
-  background-position: 50% 50%;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  position: relative;
+
+  &:not(.layer-video-message-has-preview) {
+    .layer-video-message-preview {
+      background-color: @color-black;
+    }
+  }
+
+  .layer-video-message-preview {
+    background-size: cover;
+    background-position: 50% 50%;
+  }
+
   svg {
+    position: absolute;
     width: 36px;
     height: 36px;
     .layer-svg-fillable {

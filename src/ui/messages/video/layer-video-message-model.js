@@ -294,6 +294,7 @@ export default class VideoModel extends MessageTypeModel {
    * @private
    */
   __getPreviewWidth() {
+    if (!this.previewUrl && !this.preview) return 0;
     if (this.__previewWidth) return this.__previewWidth;
     if (this.__previewHeight && this.__aspectRatio) return this.__previewHeight * this.__aspectRatio;
     return this.width;
@@ -306,6 +307,7 @@ export default class VideoModel extends MessageTypeModel {
    * @private
    */
   __getPreviewHeight() {
+    if (!this.previewUrl && !this.preview) return 0;
     if (this.__previewHeight) return this.__previewHeight;
     if (this.__previewWidth && this.__aspectRatio) return this.__previewWidth / this.__aspectRatio;
     return this.height;

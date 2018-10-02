@@ -33,7 +33,7 @@ registerComponent('layer-video-message-view', {
       align-items: center;
     }
   `,
-  template: getGraphic('large-play')(),
+  template: getGraphic('large-play')() + '<div layer-id="preview" class="layer-video-message-preview"></div>',
   properties: {
 
     /**
@@ -95,7 +95,12 @@ registerComponent('layer-video-message-view', {
         this.replaceChild(getGraphicDom('large-not-playable')(), this.firstChild);
       }
       if (this.model.preview || this.model.previewUrl) {
-        this.model.getPreviewUrl(url => (this.style.backgroundImage = 'url(' + url + ')'));
+        this.model.getPreviewUrl((url) => {
+          if (url) {
+            this.nodes.preview.style.backgroundImage = 'url(' + url + ')';
+          }
+          this.toggleClass('layer-video-message-has-preview', Boolean(url));
+        });
       }
       this._resizeContent();
     },
@@ -109,19 +114,25 @@ registerComponent('layer-video-message-view', {
     _resizeContent() {
       const width = this.getAvailableMessageWidth();
       if (width) {
-        // Setup sizes for this node and the parent node
-        const sizes = this.getBestDimensions({
-          contentWidth: this.model.previewWidth,
-          contentHeight: this.model.previewHeight,
-          maxHeight: this.maxHeight,
-          maxWidth: this.maxWidth,
-          minHeight: this.minPreviewHeight,
-          minWidth: this.minPreviewWidth,
-        });
-        this.style.width = sizes.width + 'px';
-        this.style.height = sizes.height + 'px';
-        if (sizes.width >= this.minWidth) {
-          this.messageViewer.width = sizes.width;
+        if (this.model.previewWidth) {
+          // Setup sizes for this node and the parent node
+          const sizes = this.getBestDimensions({
+            contentWidth: this.model.previewWidth,
+            contentHeight: this.model.previewHeight,
+            maxHeight: this.maxHeight,
+            maxWidth: this.maxWidth,
+            minHeight: this.minPreviewHeight,
+            minWidth: this.minPreviewWidth,
+          });
+          this.nodes.preview.style.width = this.style.width = sizes.width + 'px';
+          this.nodes.preview.style.height = this.style.height = sizes.height + 'px';
+
+          if (sizes.width >= this.minWidth) {
+            this.messageViewer.width = sizes.width;
+          }
+        } else {
+          this.nodes.preview.style.width = this.maxWidth + 'px';
+          this.nodes.preview.style.height = this.maxHeight + 'px';
         }
 
         this.isHeightAllocated = true;
