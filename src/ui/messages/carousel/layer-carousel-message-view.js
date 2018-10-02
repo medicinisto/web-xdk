@@ -169,7 +169,7 @@ registerComponent('layer-carousel-message-view', {
       this._adjustCarouselWidth();
 
       // Cache all of the items so we can resuse them
-      const itemUIs = Array.prototype.slice.call(this.nodes.items.childNodes);
+      let itemUIs = Array.prototype.slice.call(this.nodes.items.childNodes);
 
       // Clear the DOM
       this.nodes.items.innerHTML = '';
@@ -200,6 +200,24 @@ registerComponent('layer-carousel-message-view', {
             model: item,
             parentNode: this.nodes.items,
           });
+        }
+      });
+
+      // Two loops are needed; the first one adds all the items so that the number of items can evenly influence
+      // layout and sizing of all elements (else the first element gets sized when it is alone in the space and all
+      // others are sized when there is a prior card)
+      itemUIs = Array.prototype.slice.call(this.nodes.items.childNodes);
+      this.model.items.forEach((item) => {
+        let card;
+        if (item.isDestroyed) return;
+
+        // Find the card
+        for (let i = 0; i < itemUIs.length; i++) {
+          if (itemUIs[i].model === item) {
+            card = itemUIs[i];
+            this.nodes.items.appendChild(card);
+            break;
+          }
         }
 
         // Apply some appropiate widths based on the cards preferences and behaviors and our Maximum
