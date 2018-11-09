@@ -276,7 +276,7 @@ module.exports = function (grunt) {
         options: {
           'builtin-classes': false,
           'warnings': ['-no_doc', '-dup_member', '-link_ambiguous', '-cat_class_missing'],
-          'external': ['HTMLTemplateElement', 'WebSocket', 'Blob', 'KeyboardEvent', 'DocumentFragment', 'IDBVersionChangeEvent', 'IDBKeyRange', 'IDBDatabase', 'File', 'Canvas', 'CustomEvent', 'Set', 'Uint8Array', 'Audio'],
+          'external': ['HTMLTemplateElement', 'WebSocket', 'Blob', 'KeyboardEvent', 'DocumentFragment', 'IDBVersionChangeEvent', 'IDBKeyRange', 'IDBDatabase', 'File', 'Canvas', 'CustomEvent', 'Set', 'Uint8Array', 'Audio', 'Promise', 'Layer.Core.Membership', 'Layer.Core.Channel'],
           'title': 'Layer Web XDK - API Documentation',
           'categories': ['jsduck-config/categories.json'],
           'head-html': HTML_HEAD,
