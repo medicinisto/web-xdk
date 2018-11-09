@@ -9,6 +9,11 @@
     * Changes now cause each carousel item to have the same height
     * Fixes carousels of Button Messages to correctly apply width constraints of the Button Message's Content
 * A Text Message without metadata inside of a Button Message now renders correctly
+* Websocket fixes:
+    * Failure to replay missed events when reconnecting the websocket will no longer start a retry loop.  If it fails, the client will get missed events the next time the query refires rather than as a live update.  This behavior can be changed back to older behavior by setting the SocketManager's `ENABLE_REPLAY_RETRIES` static property.
+    * Now treats unstable connections as failed connections and uses exponential backoff to reconnect
+    * No longer depends on `counter` coming in order; this allows for the possibility of a dropped packet, but prevents hammering server with `Event.replay` when its under pressure
+
 
 ## 4.1.0-pre1.3
 

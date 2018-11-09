@@ -134,6 +134,10 @@ registerComponent('layer-avatar', {
           if (matches.length === newValue.length) return;
         }
 
+        if (oldValue) {
+          oldValue.forEach(user => user.off(null, null, this));
+        }
+
         if (!newValue) newValue = [];
         if (!Array.isArray(newValue)) newValue = [newValue];
         newValue = newValue.map((identity) => {
@@ -151,6 +155,10 @@ registerComponent('layer-avatar', {
 
         // Rerender if we just changed the users we are displaying... unless the first render call is still pending
         if (this._internalState.onRenderCalled) this.onRender();
+
+        if (newValue) {
+          newValue.forEach(user => user.on('identities:change', this._userChangeEvent, this));
+        }
       },
     },
 
@@ -325,6 +333,14 @@ registerComponent('layer-avatar', {
           if (this.users.indexOf(userA) > this.users.indexOf(userB)) return 1;
           return -1;
         });
+    },
+
+    _userChangeEvent(evt) {
+      const changes = evt.getChangesFor('avatarUrl')
+        .concat(evt.getChangesFor('firstName'))
+        .concat(evt.getChangesFor('lastName'))
+        .concat(evt.getChangesFor('displayName'));
+      if (changes.length) this.onRender();
     },
   },
 });

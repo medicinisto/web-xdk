@@ -62,7 +62,7 @@ export default class SocketManager extends Root {
       this.connect();
     }, this);
 
-    this._lastTimestamp = Date.now();
+    this._lastTimestamp = 0;
   }
 
   /**
@@ -75,8 +75,7 @@ export default class SocketManager extends Root {
   _reset() {
     this._lastTimestamp = 0;
     this._lastDataFromServerTimestamp = 0;
-    this._lastCounter = null;
-    this._hasCounter = false;
+    this._hasZeroCounter = false;
 
     this._needsReplayFrom = null;
   }
@@ -150,8 +149,6 @@ export default class SocketManager extends Root {
 
     this._closing = false;
 
-    this._lastCounter = -1;
-
     // Get the URL and connect to it
     const url = `${getClient().websocketUrl}/?session_token=${getClient().sessionToken}&client-id=${getClient()._tabId}&layer-xdk-version=${packageName}-${version}`;
 
@@ -214,7 +211,7 @@ export default class SocketManager extends Root {
       this._removeSocketEvents();
       if (this._socket) {
         this._socket.close();
-        this._socket = null;
+        if (this._socket) this._socket = null;
       }
     } catch (e) {
       // No-op
@@ -233,12 +230,12 @@ export default class SocketManager extends Root {
   _onOpen() {
     this._clearConnectionFailed();
     if (this._isOpen()) {
-      this._lostConnectionCount = 0;
+      // this._lostConnectionCount = 0; // see _onMessage
       this._lastSkippedCounter = 0;
       this.isOpen = true;
-      this.trigger('connected');
+      this.trigger('connected', { verified: false });
       logger.debug('Websocket-Manager: Connected');
-      if (this._hasCounter && this._lastTimestamp) {
+      if (this._lastTimestamp) {
         this.trigger('replaying-events', { from: 'resync', why: 'reconnected' });
         this.resync(this._lastTimestamp);
       } else {
@@ -281,6 +278,11 @@ export default class SocketManager extends Root {
       this.trigger('schedule-reconnect', { from: '_onError', why: 'websocket failed to open' });
       this._scheduleReconnect();
     } else {
+      if (!this._hasZeroCounter) {
+        logger.error('An apparrently open connection has closed without any messages; ' +
+          'there may be a problem with the websocket services');
+        this._lostConnectionCount++;
+      }
       this._onSocketClose();
       this._socket.close();
       this._socket = null;
@@ -418,6 +420,46 @@ export default class SocketManager extends Root {
    * @param  {Boolean}   success
    */
   _replayEventsComplete(timestamp, callback, success) {
+    if (SocketManager.ENABLE_REPLAY_RETRIES) {
+      this._replayEventsCompleteWithRetries(timestamp, callback, success);
+    } else {
+      this._replayEventsCompleteWithoutRetries(timestamp, callback, success);
+    }
+  }
+
+  /**
+   * Callback for handling completion of replay if retries are disabled using
+   * `SocketManager.ENABLE_REPLAY_RETRIES`
+   *
+   * @method _replayEventsCompleteWithRetries
+   * @private
+   * @param  {Date}     timestamp
+   * @param  {Function} callback
+   * @param  {Boolean}   success
+   */
+  _replayEventsCompleteWithoutRetries(timestamp, callback, success) {
+    if (success) {
+      this._replayRetryCount = 0;
+      this._needsReplayFrom = null;
+      logger.info('Websocket replay complete');
+      if (callback) callback();
+    } else {
+      this._needsReplayFrom = null;
+      logger.warn('Websocket Event.replay has failed');
+    }
+  }
+
+  /**
+   * Callback for handling completion of replay if retries are enabled using
+   * `SocketManager.ENABLE_REPLAY_RETRIES`
+   *
+   * @method _replayEventsCompleteWithRetries
+   * @private
+   * @param  {Date}     timestamp
+   * @param  {Function} callback
+   * @param  {Boolean}   success
+   */
+  _replayEventsCompleteWithRetries(timestamp, callback, success) {
     if (success) {
       this._replayRetryCount = 0;
 
@@ -548,31 +590,23 @@ export default class SocketManager extends Root {
     this._lostConnectionCount = 0;
     try {
       const msg = JSON.parse(evt.data);
-      const lastCounter = this._lastCounter;
-      const skippedCounter = lastCounter + 1 !== msg.counter;
-      this._hasCounter = true;
-      this._lastCounter = msg.counter;
+      const hasZero = msg.counter === 0;
+      const isNewConnection = !this._hasZeroCounter && hasZero;
+      this._hasZeroCounter = this._hasZeroCounter || hasZero;
+
       this._lastDataFromServerTimestamp = Date.now();
 
-      // If we've missed a counter, replay to get; note that we had to update _lastCounter
-      // for replayEvents to work correctly.
-      if (skippedCounter) {
-        if (!this._lastSkippedCounter ||
-            this._lastSkippedCounter + SocketManager.IGNORE_SKIPPED_COUNTER_INTERVAL < Date.now()
-        ) {
-          this.trigger('replaying-events',
-            { from: 'resync', why: `Counter skipped from ${lastCounter} to ${msg.counter}` });
-          this.resync(this._lastTimestamp);
-        } else {
-          this.trigger('ignore-skipped-counter', {
-            from: 'resync',
-            why: `Counter skipped from ${lastCounter} to ${msg.counter} but last resync ` +
-              `was ${Date.now() - this._lastSkippedCounter} seconds ago`,
-          });
-        }
-        this._lastSkippedCounter = Date.now();
+      // If we're seeing counter of 0 for the second time, our connection has been reset
+      if (hasZero && !isNewConnection) {
+        this.trigger('replaying-events', { from: '_onMessage', why: 'Zero Counter' });
+        this.resync(this._lastTimestamp);
       } else {
         this._lastTimestamp = new Date(msg.timestamp).getTime();
+        if (hasZero && isNewConnection) {
+          this.trigger('connected', {
+            verified: true,
+          });
+        }
       }
 
       this.trigger('message', {
@@ -662,6 +696,7 @@ export default class SocketManager extends Root {
   _onSocketClose() {
     logger.debug('Websocket-Manager: closed');
     this.isOpen = false;
+    this._hasZeroCounter = false;
     if (!this._closing) {
       this.trigger('schedule-reconnect', { from: '_onSocketClose', why: 'Socket closed' });
       this._scheduleReconnect();
@@ -774,8 +809,7 @@ SocketManager.prototype._connectionFailedId = 0;
 
 SocketManager.prototype._lastTimestamp = 0;
 SocketManager.prototype._lastDataFromServerTimestamp = 0;
-SocketManager.prototype._lastCounter = null;
-SocketManager.prototype._hasCounter = false;
+SocketManager.prototype._hasZeroCounter = false;
 
 SocketManager.prototype._needsReplayFrom = null;
 
@@ -832,6 +866,17 @@ SocketManager.prototype._lastSkippedCounter = 0;
  * @property {Number} [IGNORE_SKIPPED_COUNTER_INTERVAL=60000]
  */
 SocketManager.IGNORE_SKIPPED_COUNTER_INTERVAL = 60000;
+
+
+/**
+ * If enabled, a failure in replaying missed events will be retried. Otherwise,
+ * a failure to replay missed events will accept that some data may have been lost this session,
+ * but will be available next time queries refire.
+ *
+ * @static
+ * @property {Boolean} [ENABLE_REPLAY_RETRIES=false]
+ */
+SocketManager.ENABLE_REPLAY_RETRIES = false;
 
 SocketManager._supportedEvents = [
   /**
